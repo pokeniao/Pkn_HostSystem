@@ -26,6 +26,19 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid>
+            <WrapPanel Margin="50">
+                <Border
+                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                    Width="140"
+                    Height="80"
+                    CornerRadius="10"
+                    >
+                    <ui:TextBlock Text="连接PLC" Margin="10"/>
+                </Border>
+            </WrapPanel>
+
+
         </Grid>
         <Grid Grid.Column="1" Cursor="Arrow">
             <StackPanel>

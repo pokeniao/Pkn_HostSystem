@@ -1,14 +1,13 @@
-﻿using System.Text.RegularExpressions;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using System.Text.RegularExpressions;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
 using WPF_NET.Base;
 using WPF_NET.Message;
 using WPF_NET.Models;
 using WPF_NET.Views.Windows;
-using Wpf.Ui;
-using Wpf.Ui.Controls;
-using log4net;
 
 namespace WPF_NET.ViewModels.Windows;
 
