@@ -12,6 +12,38 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       mc:Ignorable="d"
       Title="HomePage">
+    <Page.Resources>
+        <!-- 展开动画 -->
+        <Storyboard x:Key="OPENcontentPLC">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                           Storyboard.TargetProperty="(FrameworkElement.Width)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="400" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                           Storyboard.TargetProperty="(FrameworkElement.Height)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="600" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <!-- 收缩动画 -->
+        <Storyboard x:Key="CLOSEcontentPLC">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                           Storyboard.TargetProperty="(FrameworkElement.Width)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                           Storyboard.TargetProperty="(FrameworkElement.Height)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
     <Page.DataContext>
         <viewModels:HomePageViewModel />
     </Page.DataContext>
@@ -27,18 +59,188 @@
         </Grid.RowDefinitions>
         <Grid>
             <WrapPanel Margin="50">
-                <Border
-                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                    Width="140"
-                    Height="80"
-                    CornerRadius="10"
-                    >
-                    <ui:TextBlock Text="连接PLC" Margin="10"/>
+                <ui:CardAction
+                    Name="CA_ConnectPLC"
+                    Width="180"
+                    Height="102"
+                    IsChevronVisible="False"
+                    VerticalAlignment="Stretch" Click="CA_ConnectPLC_Click">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Image
+                            Width="60"
+                            Margin="0,0,0,15"
+                            Source="../../Assets/plc2.ico" />
+                        <ui:TextBlock Grid.Column="1" Text="连接PLC" VerticalAlignment="Center" />
+                    </Grid>
+                </ui:CardAction>
+                <Border x:Name="border" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                        Width="180"
+                        CornerRadius="10"
+                        Opacity="0"
+                        Visibility="Collapsed"
+                        Height="102" BorderThickness="1" RenderTransformOrigin="0.5,0.5">
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <SkewTransform />
+                            <RotateTransform />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                    <StackPanel>
+                        <TabControl Margin="20 0" HorizontalAlignment="Center"
+
+                                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
+                            <TabItem>
+                                <TabItem.Header>
+                                    <TextBlock FontWeight="Bold" Text="TCP通讯设置" Margin="30 0 0 0" />
+                                </TabItem.Header>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <WrapPanel Margin="5 ">
+                                        <Border Margin="5">
+                                            <TextBlock Text="IP地址" FontSize="15" HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center">
+                                            </TextBlock>
+                                        </Border>
+                                        <ComboBox Name="cbb_modbus_tpc_ip" Width="250"
+                                                  ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}"
+                                                  SelectedIndex="0"
+                                                  Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}"
+                                                  DropDownOpened="ComboBox_DropDownOpened_1">
+                                        </ComboBox>
+                                    </WrapPanel>
+                                    <WrapPanel Margin="5">
+                                        <Border Margin="5">
+                                            <TextBlock Text="端口号" FontSize="15" HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center">
+                                            </TextBlock>
+                                        </Border>
+                                        <ui:NumberBox Width="250"
+                                                      Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
+                                                      Minimum="0" Maximum="65535">
+                                        </ui:NumberBox>
+                                    </WrapPanel>
+
+                                </StackPanel>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <TextBlock FontWeight="Bold" Text="串口通讯设置" Margin="30 0 0 0" />
+                                </TabItem.Header>
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <WrapPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0 5">
+                                            <Border VerticalAlignment="Center" Width="58">
+                                                <TextBlock Text="端口号" HorizontalAlignment="Right" Margin="5" />
+                                            </Border>
+                                            <ComboBox Margin="0 0 10 0" Width="90"
+                                                      ItemsSource="{Binding ModbusToolModel.ModbusRtu_COM}"
+                                                      SelectedIndex="0" DropDownOpened="ComboBox_DropDownOpened"
+                                                      Text="{Binding ModbusToolModel.ModbusRtu_COM_select}">
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                            <Border HorizontalAlignment="Center" Width="58" VerticalAlignment="Center">
+                                                <TextBlock Text="波特率" Margin="5" HorizontalAlignment="Right" />
+                                            </Border>
+                                            <ComboBox Margin="0 0 10 0" Width="90"
+                                                      ItemsSource="{Binding ModbusToolModel.ModbusRtu_baudRate}"
+                                                      SelectedIndex="0"
+                                                      Text="{Binding ModbusToolModel.ModbusRtu_baudRate_select}">
+                                            </ComboBox>
+                                        </StackPanel>
+
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Width="58">
+                                                <TextBlock Text="数据位" HorizontalAlignment="Right" Margin="5" />
+                                            </Border>
+
+                                            <ComboBox Margin="0 0 10 0" Width="90"
+                                                      ItemsSource="{Binding ModbusToolModel.ModbusRtu_dataBits}"
+                                                      SelectedIndex="0"
+                                                      Text="{Binding ModbusToolModel.ModbusRtu_dataBits_select}">
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                            <Border HorizontalAlignment="Center" Width="58" VerticalAlignment="Center">
+                                                <TextBlock Text="停止位" Margin="5" HorizontalAlignment="Right" />
+                                            </Border>
+                                            <ComboBox Width="90"
+                                                      ItemsSource="{Binding ModbusToolModel.ModbusRtu_stopBits}"
+                                                      Text="{Binding ModbusToolModel.ModbusRtu_stopBits_select}" />
+                                        </StackPanel>
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Width="58">
+                                                <TextBlock Text="校验位" HorizontalAlignment="Right" Margin="5" />
+                                            </Border>
+                                            <ComboBox Margin="0 0 5 0" Width="90"
+                                                      ItemsSource="{Binding ModbusToolModel.ModbusRtu_parity}"
+                                                      SelectedIndex="0"
+                                                      Text="{Binding ModbusToolModel.ModbusRtu_parity_select}">
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                            <Button Content="连接" Margin="5 0" Width="65" Height="35"
+                                                    Command="{Binding ConnectRTUCommand}"
+                                                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }" />
+                                            <Button Content="断开" Margin="5 0" Width="65" Height="35"
+                                                    Command="{Binding CloseCommand}"
+                                                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }" />
+                                        </StackPanel>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </TabItem>
+                        </TabControl>
+                        <TabControl Margin="5" Height="300">
+                            <TabItem>
+                                <TabItem.Header>
+                                    读取寄存器
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    读取线圈
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    写线圈
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    写寄存器
+                                </TabItem.Header>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    套接字通讯
+                                </TabItem.Header>
+                            </TabItem>
+                        </TabControl>
+                        <WrapPanel Margin="0,30,0,0" HorizontalAlignment="Right">
+                            <ui:ToggleSwitch OffContent="关闭TCP" OnContent="打开TCP" />
+                            <ui:ToggleSwitch OffContent="关闭Modbus" OnContent="打开Modbus" Margin="10,0,0,0" />
+                            <Button Content="确认" Width="100" Margin="20,0" Click="ButtonBase_OnClick"/>
+                        </WrapPanel>
+                    </StackPanel>
                 </Border>
             </WrapPanel>
-
-
         </Grid>
         <Grid Grid.Column="1" Cursor="Arrow">
             <StackPanel>

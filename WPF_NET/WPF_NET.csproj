@@ -16,6 +16,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\plc2.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Assets\pokeniao.ico" />
   </ItemGroup>
 
@@ -27,6 +31,10 @@
     <PackageReference Include="RestSharp" Version="112.1.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="WPF-UI" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\plc2.ico" />
   </ItemGroup>
 
   <ItemGroup>
