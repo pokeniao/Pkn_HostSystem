@@ -1,5 +1,7 @@
 ﻿using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using WPF_NET.ViewModels;
 
 
@@ -11,6 +13,7 @@ namespace WPF_NET.Views.Pages
     public partial class HomePage : Page
     {
         private HomePageViewModel HomePageViewModel { get; set; }
+
         public HomePage()
         {
             InitializeComponent();
@@ -25,14 +28,46 @@ namespace WPF_NET.Views.Pages
             {
                 if (LogListBox != null && LogListBox.Items.Count > 0)
                 {
-                    //  LogListBox.SelectedIndex = LogListBox.Items.Count - 1;
-                    //  LogListBox.SelectedItem = LogListBox.Items[^1];
                     LogListBox.ScrollIntoView(LogListBox.Items[^1]);
-
                 }
             });
-
         }
 
+        private void CA_ConnectPLC_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            CA_ConnectPLC.Visibility = Visibility.Collapsed;
+            border.Visibility = Visibility.Visible;
+            Storyboard? storyboard = FindResource("OPENcontentPLC") as Storyboard;
+
+            storyboard?.Begin();
+        }
+
+        #region 下拉Combobox
+
+        private void ComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+        }
+
+        private void ComboBox_DropDownOpened_1(object sender, EventArgs e)
+        {
+        }
+
+        #endregion
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            Storyboard? storyboard = FindResource("CLOSEcontentPLC") as Storyboard;
+            storyboard?.Begin();
+            Task.Run(async () =>
+                {
+                   await Task.Delay(300);
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        border.Visibility = Visibility.Collapsed;
+                        CA_ConnectPLC.Visibility = Visibility.Visible;
+                    }));
+                }
+            );
+        }
     }
 }
