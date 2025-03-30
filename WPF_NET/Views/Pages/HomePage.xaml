@@ -1,0 +1,52 @@
+﻿<Page x:Class="WPF_NET.Views.Pages.HomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:WPF_NET.Views.Pages"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:viewModels="clr-namespace:WPF_NET.ViewModels"
+      d:DesignHeight="714.5" d:DesignWidth="1000"
+      ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+      ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      mc:Ignorable="d"
+      Title="HomePage">
+    <Page.DataContext>
+        <viewModels:HomePageViewModel />
+    </Page.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid>
+        </Grid>
+        <Grid Grid.Column="1" Cursor="Arrow">
+            <StackPanel>
+                <ui:TextBlock FontTypography="Subtitle" Text="日志" Margin="30 10"></ui:TextBlock>
+                <Border Margin="30 0"
+                        Height="550"
+                        BorderThickness="2"
+                        CornerRadius="10"
+                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
+                    <ListBox Name="LogListBox"
+                             ItemsSource="{Binding HomePageModel.LogListBox ,UpdateSourceTrigger=PropertyChanged}" />
+                </Border>
+
+                <StackPanel>
+                    <Button Content="滚动到底部" Command="{Binding ScrollToBottomCommand}"
+                            CommandParameter="{Binding  ElementName=LogListBox}" HorizontalAlignment="Right"
+                            Margin="30 0">
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
