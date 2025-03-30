@@ -18,7 +18,7 @@
                  ExtendsContentIntoTitleBar="True"
                  WindowBackdropType="Mica"
                  WindowCornerPreference="Round"
-                >
+                 SizeChanged="MainWindow_OnSizeChanged">
 
     <!-- ApplicationBackgroundBrush → 全局背景色（深色模式/浅色模式切换）。 -->
     <!-- TextFillColorPrimaryBrush → 文本颜色（适应主题）。 -->
@@ -37,12 +37,15 @@
         </Grid.ColumnDefinitions>
 
         <ui:TitleBar
-         
+
             Title="Pkn上位机"
             FontSize="18"
             Icon="" Grid.ColumnSpan="2" VerticalAlignment="Center" />
 
-        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" Grid.ColumnSpan="2" OpenPaneLength="220">
+        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" Grid.ColumnSpan="2" OpenPaneLength="220"
+                           PaneClosed="RootNavigation_OnPaneClosed"
+                           PaneOpened="RootNavigation_OnPaneOpened"
+                           >
             <ui:NavigationView.AutoSuggestBox>
                 <ui:AutoSuggestBox x:Name="AutoSuggestBox" PlaceholderText="Search">
                     <ui:AutoSuggestBox.Icon>
