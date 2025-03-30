@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+	        <ApplicationIcon>applicationIcon.ico</ApplicationIcon>	   
+	  
+	  
+    <UseWindowsForms>False</UseWindowsForms>
+    <ApplicationIcon>Assets\pokeniao.ico</ApplicationIcon>
+    <RootNamespace>WPF_NET</RootNamespace>
+    <StartupObject>WPF_NET.App</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\pokeniao.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="log4net" Version="3.0.4" />
+    <PackageReference Include="NModbus" Version="3.0.81" />
+    <PackageReference Include="NModbus.Serial" Version="3.0.81" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="WPF-UI" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="AssemblyInfo.cs">
+    
+    </Compile>
+  </ItemGroup>
+</Project>
