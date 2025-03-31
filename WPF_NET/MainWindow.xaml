@@ -3,7 +3,6 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:pages="clr-namespace:WPF_NET.Views.Pages"
                  mc:Ignorable="d"
@@ -40,12 +39,15 @@
 
             Title="Pkn上位机"
             FontSize="18"
-            Icon="" Grid.ColumnSpan="2" VerticalAlignment="Center" />
+            Grid.ColumnSpan="2" VerticalAlignment="Center">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="../../Assets/pokeniao_logo_圆角_128.ico" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
 
         <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" Grid.ColumnSpan="2" OpenPaneLength="220"
                            PaneClosed="RootNavigation_OnPaneClosed"
-                           PaneOpened="RootNavigation_OnPaneOpened"
-                           >
+                           PaneOpened="RootNavigation_OnPaneOpened">
             <ui:NavigationView.AutoSuggestBox>
                 <ui:AutoSuggestBox x:Name="AutoSuggestBox" PlaceholderText="Search">
                     <ui:AutoSuggestBox.Icon>

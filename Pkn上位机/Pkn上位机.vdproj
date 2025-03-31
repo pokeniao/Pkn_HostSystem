@@ -27,7 +27,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_29483D8933A744F3BBE8964147FA1E2B"
+        "MsmKey" = "8:_AB49A6679FCD4308886249D238357A84"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -92,6 +92,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -123,10 +131,10 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_29483D8933A744F3BBE8964147FA1E2B"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AB49A6679FCD4308886249D238357A84"
             {
-            "SourcePath" = "8:..\\..\\..\\icon文件\\pokeniao.ico"
-            "TargetName" = "8:pokeniao.ico"
+            "SourcePath" = "8:..\\..\\..\\icon文件\\pokeniao_logo_圆角_128.ico"
+            "TargetName" = "8:pokeniao_logo_圆角_128.ico"
             "Tag" = "8:"
             "Folder" = "8:_94529689BAB2496F8DBCA250C8FF8DE8"
             "Condition" = "8:"
@@ -351,7 +359,7 @@
             "Target" = "8:_CC7BA51A711849EBA4871DE7C59EF077"
             "Folder" = "8:_90944B7ADE004387933AD06FF5EE8B80"
             "WorkingFolder" = "8:_94529689BAB2496F8DBCA250C8FF8DE8"
-            "Icon" = "8:_29483D8933A744F3BBE8964147FA1E2B"
+            "Icon" = "8:_AB49A6679FCD4308886249D238357A84"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_6089FF92AA2A4F35BB8D492BF175A5D0"
@@ -365,7 +373,7 @@
             "Target" = "8:_1E055146135C46AFBB166B46C4796B87"
             "Folder" = "8:_90944B7ADE004387933AD06FF5EE8B80"
             "WorkingFolder" = "8:_94529689BAB2496F8DBCA250C8FF8DE8"
-            "Icon" = "8:_29483D8933A744F3BBE8964147FA1E2B"
+            "Icon" = "8:_AB49A6679FCD4308886249D238357A84"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_CB33288BC8434607BE85677151019D91"
@@ -379,7 +387,7 @@
             "Target" = "8:_CC7BA51A711849EBA4871DE7C59EF077"
             "Folder" = "8:_94529689BAB2496F8DBCA250C8FF8DE8"
             "WorkingFolder" = "8:_94529689BAB2496F8DBCA250C8FF8DE8"
-            "Icon" = "8:_29483D8933A744F3BBE8964147FA1E2B"
+            "Icon" = "8:_AB49A6679FCD4308886249D238357A84"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_EDB92B8E6F68475E8A72CA70C9B02D0B"
@@ -393,7 +401,7 @@
             "Target" = "8:_1E055146135C46AFBB166B46C4796B87"
             "Folder" = "8:_5FCADEE975D644EF945F05A580EB6A25"
             "WorkingFolder" = "8:_94529689BAB2496F8DBCA250C8FF8DE8"
-            "Icon" = "8:_29483D8933A744F3BBE8964147FA1E2B"
+            "Icon" = "8:_AB49A6679FCD4308886249D238357A84"
             "Feature" = "8:"
             }
         }

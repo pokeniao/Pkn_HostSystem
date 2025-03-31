@@ -18,18 +18,22 @@ public partial class HomePageViewModel : ObservableRecipient
     public HomePageViewModel()
     {
         log = new LogBase<HomePageViewModel>();
-
+        //全局的
         GlobalMannager.GlobalDictionary.TryGetValue("LogListBox", out object obj);
         HomePageModel = new HomePageModel()
         {
             LogListBox = (ObservableCollection<string>)obj,
-            LogListBox2 = new ObservableCollection<string>()
         };
     }
 
     [RelayCommand]
     public void ScrollToBottom(ListBox LogListBox)
     {
+        if (LogListBox.Items.Count == 0)
+        {
+            return;
+        }
+
         LogListBox.ScrollIntoView(LogListBox.Items[^1]);
     }
 }
