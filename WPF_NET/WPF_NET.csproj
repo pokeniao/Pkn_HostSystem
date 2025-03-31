@@ -5,14 +5,14 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
-	        <ApplicationIcon>applicationIcon.ico</ApplicationIcon>	   
+    <UseWPF>true</UseWPF>	   
 	  
 	  
     <UseWindowsForms>False</UseWindowsForms>
-    <ApplicationIcon>Assets\pokeniao.ico</ApplicationIcon>
     <RootNamespace>WPF_NET</RootNamespace>
     <StartupObject>WPF_NET.App</StartupObject>
+    <ApplicationIcon>Assets\pokeniao_logo_圆角_128.ico</ApplicationIcon>
+    <PackageIcon>pokeniao_logo_圆角_128.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,12 +20,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\pokeniao.ico" />
+    <Resource Include="Assets\pokeniao_logo_圆角_128.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\icon文件\其他图片资源\pokeniao_logo_圆角_128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="log4net" Version="3.0.4" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="NModbus" Version="3.0.81" />
     <PackageReference Include="NModbus.Serial" Version="3.0.81" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
@@ -38,6 +46,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\pokeniao_logo_圆角_128.ico">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

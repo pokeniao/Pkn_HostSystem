@@ -62,15 +62,20 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
     [RelayCommand]
     public void DeleteHttpButton(LoadMesPage page)
     {
+        //获取当前行
+        LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
+        if (item == null)
+        {
+            log.WarningAndShow("没有数据不需要删除", "用户在操作删除,但HTTP数据已删除完");
+            return;
+        }
         MessageBox messageBox = new MessageBox("删除此条Http");
         bool? boxResult = messageBox.ShowDialog();
         if (boxResult == true)
         {
-            //获取当前行
-            LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
             string name = item.Name;
             LoadMesPageModel.MesPojoList.Remove(item);
-            log.SuccessAndShow($"删除Mes成功 name:{name}");
+            log.SuccessAndShow($"删除HTTP成功 name:{name}");
         }
     }
     [RelayCommand]
