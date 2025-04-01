@@ -36,12 +36,31 @@ namespace WPF_NET.Base
 
         public bool IsTCPConnect()
         {
-            //判断TCP
-            if (tcpClient != null)
-                if (tcpClient.Connected == true)
-                    return true;
+            if (tcpClient == null || tcpClient.Client == null) return false;
 
-            return false;
+            // 1. 检查是否仍然连接
+            if (!tcpClient.Connected) return false;
+
+            // 2. 使用 Poll 检查是否可读（如果对方关闭，读取状态将会变更）
+            if (tcpClient.Client.Poll(0, SelectMode.SelectRead))
+            {
+                byte[] buffer = new byte[1];
+                if (tcpClient.Client.Receive(buffer, SocketFlags.Peek) == 0)
+                {
+                    // 连接已关闭
+                    return false;
+                }
+            }
+
+            return true;
+
+
+            //判断TCP
+            // if (tcpClient != null )
+            //     if (tcpClient.Connected == true)
+            //         return true;
+            //
+            // return false;
         }
 
         public bool IsRTUConnect()

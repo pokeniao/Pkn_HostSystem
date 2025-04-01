@@ -51,6 +51,13 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
     public void UpdateHttpButton(LoadMesPage page)
     {
         LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
+
+        if (item ==null)
+        {
+            log.WarningAndShow("没有选中行","当前HTTP列表没有数据,用户点击更新操作");
+            return;
+        }
+
         LoadMesAddWindow addWindow = new LoadMesAddWindow("更新HTTP请求", item);
         bool? b = addWindow.ShowDialog();
         if (b == true)
