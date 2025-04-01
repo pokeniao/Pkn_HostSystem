@@ -45,6 +45,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
     [RelayCommand]
     public void Confirm(LoadMesAddWindow window)
     {
+      
         //先判断是否为空
         if (LoadMesAddAndUpdateWindowModel.Name == null)
         {

@@ -201,15 +201,6 @@
                                                           Text="{Binding ModbusToolModel.ModbusRtu_parity_select}">
                                                 </ComboBox>
                                             </StackPanel>
-                                            <StackPanel Orientation="Horizontal" Margin="0 5">
-
-                                                <Button Content="连接" Margin="5 0" Width="65" Height="35"
-                                                        Command="{Binding ConnectRTUCommand}"
-                                                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }" />
-                                                <Button Content="断开" Margin="5 0" Width="65" Height="35"
-                                                        Command="{Binding CloseCommand}"
-                                                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }" />
-                                            </StackPanel>
                                         </WrapPanel>
                                     </StackPanel>
                                 </TabItem>
@@ -247,9 +238,9 @@
                         </StackPanel>
                         <Grid Grid.Row="1">
                             <StackPanel Orientation="Horizontal" Margin="0,30" HorizontalAlignment="Right">
-                                <ui:ToggleSwitch OffContent="关闭TCP" OnContent="打开TCP" />
-                                <ui:ToggleSwitch OffContent="关闭Modbus" OnContent="打开Modbus" Margin="10,0,0,0" />
-                                <Button Content="确认" Width="100" Margin="20,0" Click="ButtonBase_OnClick" />
+                                <ui:ToggleSwitch OffContent="关闭Socket" OnContent="打开Socket" />
+                                <ui:ToggleSwitch OffContent="关闭Modbus" OnContent="打开Modbus" IsChecked="{Binding ConnectPLCModebusBool}" Command="{Binding ConnectModbusCommand}" Margin="7,0,0,0" />
+                                <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick" />
                             </StackPanel>
                         </Grid>
                     </Grid>
@@ -276,6 +267,8 @@
                     </Button>
                 </StackPanel>
             </StackPanel>
+
         </Grid>
+        <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter"/>
     </Grid>
 </Page>

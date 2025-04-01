@@ -18,6 +18,8 @@ namespace WPF_NET.Views.Pages
         {
             InitializeComponent();
             HomePageViewModel = (HomePageViewModel)DataContext;
+            HomePageViewModel.setSnackbarPresenter(SnackbarPresenter);
+
             //添加LogListBox监听
             HomePageViewModel.HomePageModel.LogListBox.CollectionChanged += Item_CollectionChanged;
         }
@@ -46,12 +48,13 @@ namespace WPF_NET.Views.Pages
 
         private void ComboBox_DropDownOpened(object sender, EventArgs e)
         {
+            HomePageViewModel.ModbusToolModel.ModbusRtu_COM = HomePageViewModel.ModbusBase.getCOM().ToList();
         }
 
         private void ComboBox_DropDownOpened_1(object sender, EventArgs e)
         {
+            HomePageViewModel.ModbusToolModel.ModbusTcp_Ip = HomePageViewModel.ModbusBase.getIpAddress().ToList();
         }
-
         #endregion
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
