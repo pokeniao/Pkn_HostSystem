@@ -3,11 +3,13 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Windows.Controls;
-using WPF_NET.Base;
-using WPF_NET.Models;
-using WPF_NET.Static;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using WPF_NET.Base;
+using WPF_NET.Models;
+using WPF_NET.Pojo;
+using WPF_NET.Static;
+using WPF_NET.Views.Pages;
 
 namespace WPF_NET.ViewModels;
 
@@ -36,6 +38,8 @@ public partial class HomePageViewModel : ObservableRecipient
         HomePageModel = new HomePageModel()
         {
             LogListBox = (ObservableCollection<string>)obj,
+            ReadRegDvg = new ObservableCollection<SetModbusPojo>(),
+            ReadCoiDvg = new ObservableCollection<SetModbusPojo>()
         };
         //初始化Model
         ModbusToolModel = new ModbusToolModel()
@@ -89,12 +93,15 @@ public partial class HomePageViewModel : ObservableRecipient
         else
         {
             StopConnectModbus();
+            ModbusBase.CloseRTU();
+            ModbusBase.CloseTCP();
         }
     }
 
     public async void StartConnectModbus()
     {
         await LazyConnectPLCModebus.Value;
+      
     }
 
     public void StopConnectModbus()
@@ -102,6 +109,8 @@ public partial class HomePageViewModel : ObservableRecipient
         cts.Cancel();
         cts = new CancellationTokenSource();
         LazyConnectPLCModebus = new Lazy<Task>(() => Task.Run(() => ReconnectionModbus(cts.Token)));
+
+        _ = GlobalMannager.GlobalDictionary.TryRemove("HomeRegDvg", out object value);
     }
 
     public async Task ReconnectionModbus(CancellationToken token)
@@ -116,11 +125,27 @@ public partial class HomePageViewModel : ObservableRecipient
                 await ModbusBase.OpenTcpMaster(ModbusToolModel.ModbusTcp_Ip_select, ModbusToolModel.ModbusTcp_Port);
                 if (ModbusBase.IsTCPConnect())
                 {
-                    log.SuccessAndShowTask("连接成功");
+                    log.SuccessAndShowTask("ModbusTCP连接成功");
+                    GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
                 }
                 else
                 {
-                    log.WarningAndShowTask("连接失败,请检查IP端口号");
+                    //串口连接
+                    await ModbusBase.OpenRTUMaster(ModbusToolModel.ModbusRtu_COM_select,
+                        int.Parse(ModbusToolModel.ModbusRtu_baudRate_select),
+                        int.Parse(ModbusToolModel.ModbusRtu_dataBits_select),
+                        ModbusToolModel.ModbusRtu_stopBits_select, ModbusToolModel.ModbusRtu_parity_select);
+
+                    if (ModbusBase.IsRTUConnect())
+                    {
+                        log.SuccessAndShowTask("ModbusRtu连接成功");
+                        GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
+                    }
+                    else
+                    {
+                        log.WarningAndShowTask("连接失败,请检查设置");
+
+                    }
                 }
             }
 
@@ -135,4 +160,22 @@ public partial class HomePageViewModel : ObservableRecipient
             }
         }
     }
+
+
+    #region 删除行
+    [RelayCommand]
+    public void DeleteReadRegDvg(HomePage page)
+    {
+        SetModbusPojo? item = page.readRegDvg.SelectedItem as SetModbusPojo;
+
+        if (item != null)
+        {
+            if (page.readRegDvg.Items.Count > 2)
+            {
+                HomePageModel.ReadRegDvg.Remove(item);
+            }
+        }
+    }
+    #endregion
+
 }
