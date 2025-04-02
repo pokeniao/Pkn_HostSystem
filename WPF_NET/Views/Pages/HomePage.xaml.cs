@@ -2,7 +2,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using WPF_NET.Pojo;
 using WPF_NET.ViewModels;
+using MessageBox = Wpf.Ui.Controls.MessageBox;
 
 
 namespace WPF_NET.Views.Pages
@@ -49,6 +51,7 @@ namespace WPF_NET.Views.Pages
 
             storyboard?.Begin();
         }
+
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             Storyboard? storyboard = FindResource("CLOSEcontentPLC") as Storyboard;
@@ -78,8 +81,44 @@ namespace WPF_NET.Views.Pages
         {
             HomePageViewModel.ModbusToolModel.ModbusTcp_Ip = HomePageViewModel.ModbusBase.getIpAddress().ToList();
         }
+
         #endregion
 
 
+        #region 连接编辑提交,检测
+
+        private async void SetConnectDg_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.EditAction == DataGridEditAction.Commit)
+            {
+                var textBox = e.EditingElement as TextBox;
+                if (string.IsNullOrWhiteSpace(textBox?.Text))
+                {
+                    MessageBox messageBox = new Wpf.Ui.Controls.MessageBox()
+                    {
+                        Title = "提示",
+                        Content = "不能为null",
+                    };
+                    _ = await messageBox.ShowDialogAsync();
+                    e.Cancel = true; // ❌ 阻止编辑提交
+                }
+
+                foreach (var connectPojo in HomePageViewModel.HomePageModel.SetConnectDg)
+                {
+                    if (connectPojo.Name == textBox?.Text)
+                    {
+                        MessageBox messageBox = new Wpf.Ui.Controls.MessageBox()
+                        {
+                            Title = "提示",
+                            Content = "名字已经存在,请修改",
+                        };
+                        _ = await messageBox.ShowDialogAsync();
+                        e.Cancel = true; // ❌ 阻止编辑提交
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }

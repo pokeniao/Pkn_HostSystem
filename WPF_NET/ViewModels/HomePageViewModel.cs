@@ -38,8 +38,7 @@ public partial class HomePageViewModel : ObservableRecipient
         HomePageModel = new HomePageModel()
         {
             LogListBox = (ObservableCollection<string>)obj,
-            ReadRegDvg = new ObservableCollection<SetModbusPojo>(),
-            ReadCoiDvg = new ObservableCollection<SetModbusPojo>()
+            SetConnectDg = new ObservableCollection<ConnectPojo>()
         };
         //初始化Model
         ModbusToolModel = new ModbusToolModel()
@@ -110,7 +109,7 @@ public partial class HomePageViewModel : ObservableRecipient
         cts = new CancellationTokenSource();
         LazyConnectPLCModebus = new Lazy<Task>(() => Task.Run(() => ReconnectionModbus(cts.Token)));
 
-        _ = GlobalMannager.GlobalDictionary.TryRemove("HomeRegDvg", out object value);
+      //  _ = GlobalMannager.GlobalDictionary.TryRemove("HomeRegDvg", out object value);
     }
 
     public async Task ReconnectionModbus(CancellationToken token)
@@ -126,7 +125,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 if (ModbusBase.IsTCPConnect())
                 {
                     log.SuccessAndShowTask("ModbusTCP连接成功");
-                    GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
+                 //   GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
                 }
                 else
                 {
@@ -139,7 +138,7 @@ public partial class HomePageViewModel : ObservableRecipient
                     if (ModbusBase.IsRTUConnect())
                     {
                         log.SuccessAndShowTask("ModbusRtu连接成功");
-                        GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
+                      //  GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
                     }
                     else
                     {
@@ -166,13 +165,13 @@ public partial class HomePageViewModel : ObservableRecipient
     [RelayCommand]
     public void DeleteReadRegDvg(HomePage page)
     {
-        SetModbusPojo? item = page.readRegDvg.SelectedItem as SetModbusPojo;
-
+        ConnectPojo? item = page.setConnectDg.SelectedItem as ConnectPojo;
+        var source  = page.setConnectDg.ItemsSource as ObservableCollection<ConnectPojo>;
         if (item != null)
         {
-            if (page.readRegDvg.Items.Count > 2)
+            if (source.Count> 0 && item.Name!=null)
             {
-                HomePageModel.ReadRegDvg.Remove(item);
+                HomePageModel.SetConnectDg.Remove(item);
             }
         }
     }
