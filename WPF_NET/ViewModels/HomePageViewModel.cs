@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
+using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
@@ -61,15 +62,16 @@ public partial class HomePageViewModel : ObservableRecipient
         LazyConnectPLCModebus = new Lazy<Task>(() => Task.Run(() => ReconnectionModbus(cts.Token)));
     }
 
-    #region 弹窗SnackbarService
 
+    #region 弹窗SnackbarService
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
     {
         SnackbarService.SetSnackbarPresenter(snackbarPresenter);
     }
-
     #endregion
 
+
+    #region 滚动到底部
     [RelayCommand]
     public void ScrollToBottom(ListBox LogListBox)
     {
@@ -77,12 +79,16 @@ public partial class HomePageViewModel : ObservableRecipient
         {
             return;
         }
-
         LogListBox.ScrollIntoView(LogListBox.Items[^1]);
     }
 
 
     [RelayCommand]
+
+    #endregion
+
+
+    #region 连接网络
     public void ConnectModbus()
     {
         if (ConnectPLCModebusBool)
@@ -100,7 +106,7 @@ public partial class HomePageViewModel : ObservableRecipient
     public async void StartConnectModbus()
     {
         await LazyConnectPLCModebus.Value;
-      
+
     }
 
     public void StopConnectModbus()
@@ -109,7 +115,7 @@ public partial class HomePageViewModel : ObservableRecipient
         cts = new CancellationTokenSource();
         LazyConnectPLCModebus = new Lazy<Task>(() => Task.Run(() => ReconnectionModbus(cts.Token)));
 
-      //  _ = GlobalMannager.GlobalDictionary.TryRemove("HomeRegDvg", out object value);
+        //  _ = GlobalMannager.GlobalDictionary.TryRemove("HomeRegDvg", out object value);
     }
 
     public async Task ReconnectionModbus(CancellationToken token)
@@ -125,7 +131,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 if (ModbusBase.IsTCPConnect())
                 {
                     log.SuccessAndShowTask("ModbusTCP连接成功");
-                 //   GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
+                    //   GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
                 }
                 else
                 {
@@ -138,7 +144,7 @@ public partial class HomePageViewModel : ObservableRecipient
                     if (ModbusBase.IsRTUConnect())
                     {
                         log.SuccessAndShowTask("ModbusRtu连接成功");
-                      //  GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
+                        //  GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
                     }
                     else
                     {
@@ -161,7 +167,10 @@ public partial class HomePageViewModel : ObservableRecipient
     }
 
 
-    #region 删除行
+    #endregion
+
+
+    #region 删除网络设置行
     [RelayCommand]
     public void DeleteReadRegDvg(HomePage page)
     {
@@ -174,6 +183,20 @@ public partial class HomePageViewModel : ObservableRecipient
                 HomePageModel.SetConnectDg.Remove(item);
             }
         }
+    }
+    #endregion
+
+
+    #region 设置网络配置
+    [RelayCommand]
+    public void SetConnectConfig(HomePage page)
+    {
+        ConnectPojo? item = page.setConnectDg.SelectedItem as ConnectPojo;
+
+        page.IpSet.Visibility = Visibility.Visible;
+
+        HomePageModel.CurrentSetName = "当前配置:" + item.Name;
+
     }
     #endregion
 

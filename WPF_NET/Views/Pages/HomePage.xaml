@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:viewModels="clr-namespace:WPF_NET.ViewModels"
+      xmlns:home="clr-namespace:WPF_NET.Server.Home"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -42,6 +43,9 @@
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+
+        <home:HomePageAllowButtonConverter x:Key="HomePageRunButtonConverter" />
+
     </Page.Resources>
     <Page.DataContext>
         <viewModels:HomePageViewModel />
@@ -107,14 +111,30 @@
                                 Height="200"
                                 AutoGenerateColumns="False"
                                 CellEditEnding="SetConnectDg_OnCellEditEnding"
+                               
                                 >
+
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="连接名" Width="*" Binding="{Binding Name }" />
+                                    <DataGridTextColumn Header="连接名" Width="*" Binding="{Binding Name  }" />
                                     <DataGridTemplateColumn Width="0.8*" Header="配置">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Grid>
-                                                    <Button Content="配置" />
+                                                    <Button Name="配置" Content="配置"
+                                                            Command="{Binding HomePageViewModel.SetConnectConfigCommand,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }">
+                                                        <Button.IsEnabled>
+                                                            <MultiBinding
+                                                                Converter="{StaticResource HomePageRunButtonConverter}">
+                                                                <!-- 绑定 IsNewItem -->
+                                                                <Binding
+                                                                    RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                                    Path="IsNewItem" />
+                                                                <!-- 绑定 NoSet -->
+                                                                <Binding Path="NoSet" />
+                                                            </MultiBinding>
+                                                        </Button.IsEnabled>
+                                                    </Button>
                                                 </Grid>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -124,7 +144,17 @@
                                             <DataTemplate>
                                                 <Grid>
                                                     <ui:ToggleSwitch OffContent="关闭" OnContent="启动"
-                                                                     IsChecked="{Binding Open}" />
+                                                                     IsChecked="{Binding Open}">
+                                                        <ui:ToggleSwitch.IsEnabled>
+                                                            <MultiBinding
+                                                                Converter="{StaticResource HomePageRunButtonConverter}">
+                                                                <Binding
+                                                                    RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                                    Path="IsNewItem" />
+                                                                <Binding Path="Open"></Binding>
+                                                            </MultiBinding>
+                                                        </ui:ToggleSwitch.IsEnabled>
+                                                    </ui:ToggleSwitch>
                                                 </Grid>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -136,8 +166,19 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Grid>
-                                                    <CheckBox Command="{Binding DataContext.DeleteReadRegDvgCommand  ,RelativeSource={RelativeSource AncestorType=Page}}"
-                                                              CommandParameter="{Binding  RelativeSource={RelativeSource AncestorType=Page} }"/>
+                                                    <CheckBox
+                                                        Command="{Binding DataContext.DeleteReadRegDvgCommand  ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                        CommandParameter="{Binding  RelativeSource={RelativeSource AncestorType=Page} }">
+                                                        <CheckBox.IsEnabled>
+                                                            <MultiBinding
+                                                                Converter="{StaticResource HomePageRunButtonConverter}">
+                                                                <Binding
+                                                                    RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                                    Path="IsNewItem" />
+                                                                <Binding Path="Open"></Binding>
+                                                            </MultiBinding>
+                                                        </CheckBox.IsEnabled>
+                                                    </CheckBox>
                                                 </Grid>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -146,13 +187,16 @@
                             </DataGrid>
 
                             <Border
+                                Name="IpSet"
                                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                                 Margin="0, 15"
                                 CornerRadius="10"
-                                MinWidth="370">
+                                MinWidth="370"
+                                Visibility="Collapsed" >
                                 <StackPanel>
-                                    <TabControl HorizontalAlignment="Left">
+                                    <TextBlock Text="{Binding HomePageModel.CurrentSetName}" Margin="10"/>
+                                        <TabControl HorizontalAlignment="Left">
                                         <TabItem>
                                             <TabItem.Header>
                                                 <TextBlock FontWeight="Bold" Text="TCP通讯设置" Margin="30 0 0 0" />
@@ -221,14 +265,12 @@
                                                 </WrapPanel>
                                                 <WrapPanel>
                                                     <StackPanel Orientation="Horizontal" Margin="0 5">
-
                                                         <Border HorizontalAlignment="Center"
                                                                 VerticalAlignment="Center"
                                                                 Width="58">
                                                             <TextBlock Text="数据位" HorizontalAlignment="Right"
                                                                        Margin="5" />
                                                         </Border>
-
                                                         <ComboBox Margin="0 0 10 0" Width="90"
                                                                   ItemsSource="{Binding ModbusToolModel.ModbusRtu_dataBits}"
                                                                   SelectedIndex="0"

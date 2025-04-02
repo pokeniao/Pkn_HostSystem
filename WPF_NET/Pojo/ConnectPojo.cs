@@ -9,8 +9,10 @@ public class ConnectPojo
 {
     public string Name { get; set; }
 
+    public string NoSetName { get; set; } = "配置";
 
-    public bool Set { get; set; }
+
+    public bool NoSet { get; set; } = true;
 
     public bool Open { get; set; }
 

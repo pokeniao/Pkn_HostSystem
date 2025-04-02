@@ -16,8 +16,8 @@
             </Border>
 
             <WrapPanel HorizontalAlignment="Right" Margin="0,5,30,20" VerticalAlignment="Bottom">
-                <Button Content="确认" Width="70" Margin="30,0" Click="Button_Click" />
-                <Button Content="取消" Width="70" Click="Button_Click_1" />
+                <Button Content="确认" Width="70" Margin="30,0" Click="Button_Click"  IsDefault="True"/>
+                <Button Content="取消" Width="70" Click="Button_Click_1"  IsCancel="True"/>
             </WrapPanel>
         </StackPanel>
     </Grid>

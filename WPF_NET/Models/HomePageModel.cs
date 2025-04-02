@@ -11,4 +11,6 @@ public partial class HomePageModel : ObservableObject
 
     [ObservableProperty] private ObservableCollection<ConnectPojo> setConnectDg;
 
+    [ObservableProperty] private string currentSetName;
+
 }
