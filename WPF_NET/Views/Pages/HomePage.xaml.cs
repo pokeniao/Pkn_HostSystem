@@ -28,12 +28,18 @@ namespace WPF_NET.Views.Pages
         {
             Dispatcher.Invoke(() =>
             {
-                if (LogListBox != null && LogListBox.Items.Count > 0)
+                //不在聚焦,自动下滑
+                if (!LogListBox.IsKeyboardFocusWithin)
                 {
-                    LogListBox.ScrollIntoView(LogListBox.Items[^1]);
+                    if (LogListBox != null && LogListBox.Items.Count > 0)
+                    {
+                        LogListBox.ScrollIntoView(LogListBox.Items[^1]);
+                    }
                 }
             });
         }
+
+        #region PLC连接卡片的播放动画
 
         private void CA_ConnectPLC_Click(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -43,6 +49,23 @@ namespace WPF_NET.Views.Pages
 
             storyboard?.Begin();
         }
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            Storyboard? storyboard = FindResource("CLOSEcontentPLC") as Storyboard;
+            storyboard?.Begin();
+            Task.Run(async () =>
+                {
+                    await Task.Delay(300);
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        border.Visibility = Visibility.Collapsed;
+                        CA_ConnectPLC.Visibility = Visibility.Visible;
+                    }));
+                }
+            );
+        }
+
+        #endregion
 
         #region 下拉Combobox
 
@@ -57,20 +80,6 @@ namespace WPF_NET.Views.Pages
         }
         #endregion
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-        {
-            Storyboard? storyboard = FindResource("CLOSEcontentPLC") as Storyboard;
-            storyboard?.Begin();
-            Task.Run(async () =>
-                {
-                   await Task.Delay(300);
-                    Dispatcher.Invoke(new Action(() =>
-                    {
-                        border.Visibility = Visibility.Collapsed;
-                        CA_ConnectPLC.Visibility = Visibility.Visible;
-                    }));
-                }
-            );
-        }
+
     }
 }

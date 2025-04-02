@@ -15,8 +15,8 @@ public class LogBase<T>
 
     public LogBase()
     {
-        this.log = LogManager.GetLogger(typeof(T));
-        GlobalMannager.GlobalDictionary.TryGetValue("LogListBox", out object obj);
+        log = LogManager.GetLogger(typeof(T));
+        GlobalMannager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
         list = (ObservableCollection<string>)obj;
     }
 
@@ -136,7 +136,7 @@ public class LogBase<T>
         Application.Current.Dispatcher.Invoke(() =>
         {
             snackbarService.Show("提示", message, ControlAppearance.Success, new SymbolIcon(SymbolRegular.Checkmark16),
-            TimeSpan.FromSeconds(1));
+                TimeSpan.FromSeconds(1));
         });
         LogListAdd(logMessage);
     }
@@ -147,7 +147,7 @@ public class LogBase<T>
         Application.Current.Dispatcher.Invoke(() =>
         {
             snackbarService.Show("提示", message, ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Alert24),
-            TimeSpan.FromSeconds(1));
+                TimeSpan.FromSeconds(1));
         });
         LogListAdd(logMessage);
     }
@@ -158,7 +158,7 @@ public class LogBase<T>
         Application.Current.Dispatcher.Invoke(() =>
         {
             snackbarService.Show("提示", message, ControlAppearance.Danger,
-            new SymbolIcon(SymbolRegular.Alert24), TimeSpan.FromSeconds(5));
+                new SymbolIcon(SymbolRegular.Alert24), TimeSpan.FromSeconds(5));
         });
         LogListAdd(logMessage);
     }
@@ -167,13 +167,10 @@ public class LogBase<T>
 
     public void LogListAdd(string message)
     {
-        if (list.Count == 500)
-        {
-            list.Clear();
-        }
         Application.Current.Dispatcher.Invoke(() =>
-
         {
+            if (list.Count == 500) list.Clear();
+
             list.Add($"{DateTime.UtcNow.ToString("MM-dd HH:mm:ss.ffff")}:  {message}");
         });
     }

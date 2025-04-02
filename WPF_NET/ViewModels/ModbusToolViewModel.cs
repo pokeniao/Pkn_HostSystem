@@ -1,8 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using log4net;
-using System;
-using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Windows;
 using Wpf.Ui;
@@ -277,7 +274,7 @@ public partial class ModbusToolViewModel : ObservableRecipient
     {
         var address = (int)ModbusToolModel.StartAddress;
         var modbusPojos = value.Select((b, index) => new ModbusPojo<object>
-            { address = address++, value = b }).ToList();
+        { address = address++, value = b }).ToList();
         ModbusToolModel.ReadDvgList = modbusPojos;
     }
 

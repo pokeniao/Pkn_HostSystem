@@ -54,13 +54,6 @@ namespace WPF_NET.Base
 
             return true;
 
-
-            //判断TCP
-            // if (tcpClient != null )
-            //     if (tcpClient.Connected == true)
-            //         return true;
-            //
-            // return false;
         }
 
         public bool IsRTUConnect()

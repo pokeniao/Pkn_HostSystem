@@ -207,39 +207,117 @@
                             </TabControl>
                             <TabControl Margin="5" Height="300" Width="400"
                                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                                        >
-                                <TabItem Width="80"> 
+                                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
+                                <TabItem Width="80">
                                     <TabItem.Header>
                                         读取寄存器
                                     </TabItem.Header>
+                                    <DataGrid
+                                        Name="readRegDvg"
+                                        AutoGenerateColumns="False"
+                                        ItemsSource="{Binding HomePageModel.ReadRegDvg}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Width="0.5*" Header="名字" Binding="{Binding Name}"/>
+
+                                            <DataGridTemplateColumn Width="*" Header="起始地址">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <ui:TextBlock Text="{Binding StartAddress}"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.CellEditingTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <ui:NumberBox Text="{Binding StartAddress,UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellEditingTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn Width="*" Header="结束地址">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <ui:TextBlock Text="{Binding EndAddress}"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.CellEditingTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <ui:NumberBox Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellEditingTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Width="auto" Header="删除">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <CheckBox Command="{Binding DataContext.DeleteReadRegDvgCommand  ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                       CommandParameter="{Binding  RelativeSource={RelativeSource AncestorType=Page} }"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+
+                                    </DataGrid>
                                 </TabItem>
                                 <TabItem Width="80">
                                     <TabItem.Header>
                                         读取线圈
                                     </TabItem.Header>
+                                    <DataGrid>
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Width="*" Header="名字" />
+                                            <DataGridTextColumn Width="*" Header="起始地址" />
+                                            <DataGridTextColumn Width="*" Header="结束地址" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
                                 </TabItem>
                                 <TabItem Width="60">
                                     <TabItem.Header>
                                         写线圈
                                     </TabItem.Header>
+                                    <DataGrid>
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Width="*" Header="名字" />
+                                            <DataGridTextColumn Width="*" Header="起始地址" />
+                                            <DataGridTextColumn Width="*" Header="结束地址" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
                                 </TabItem>
                                 <TabItem Width="80">
                                     <TabItem.Header>
                                         写寄存器
                                     </TabItem.Header>
+                                    <DataGrid>
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Width="*" Header="名字" />
+                                            <DataGridTextColumn Width="*" Header="起始地址" />
+                                            <DataGridTextColumn Width="*" Header="结束地址" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
                                 </TabItem>
                                 <TabItem Width="80">
                                     <TabItem.Header>
                                         套接字通讯
                                     </TabItem.Header>
+                                    <DataGrid>
+
+                                    </DataGrid>
                                 </TabItem>
                             </TabControl>
                         </StackPanel>
                         <Grid Grid.Row="1">
                             <StackPanel Orientation="Horizontal" Margin="0,30" HorizontalAlignment="Right">
                                 <ui:ToggleSwitch OffContent="关闭Socket" OnContent="打开Socket" />
-                                <ui:ToggleSwitch OffContent="关闭Modbus" OnContent="打开Modbus" IsChecked="{Binding ConnectPLCModebusBool}" Command="{Binding ConnectModbusCommand}" Margin="7,0,0,0" />
+                                <ui:ToggleSwitch OffContent="关闭Modbus" OnContent="打开Modbus"
+                                                 IsChecked="{Binding ConnectPLCModebusBool}"
+                                                 Command="{Binding ConnectModbusCommand}" Margin="7,0,0,0" />
                                 <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick" />
                             </StackPanel>
                         </Grid>
@@ -249,7 +327,7 @@
         </Grid>
         <Grid Grid.Column="1" Cursor="Arrow">
             <StackPanel>
-                <ui:TextBlock FontTypography="Subtitle" Text="日志" Margin="30 10"></ui:TextBlock>
+                <ui:TextBlock FontTypography="Subtitle" Text="日志" Margin="30 10"/>
                 <Border Margin="30 0"
                         Height="550"
                         BorderThickness="2"
@@ -257,6 +335,7 @@
                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                     <ListBox Name="LogListBox"
+
                              ItemsSource="{Binding HomePageModel.LogListBox ,UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
 
@@ -269,6 +348,6 @@
             </StackPanel>
 
         </Grid>
-        <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter"/>
+        <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" />
     </Grid>
 </Page>
