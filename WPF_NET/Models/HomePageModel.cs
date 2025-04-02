@@ -9,7 +9,6 @@ public partial class HomePageModel : ObservableObject
     
     [ObservableProperty] private ObservableCollection<string> logListBox;
 
-    [ObservableProperty] private ObservableCollection<SetModbusPojo> readRegDvg;
-    [ObservableProperty] private ObservableCollection<SetModbusPojo> readCoiDvg;
+    [ObservableProperty] private ObservableCollection<ConnectPojo> setConnectDg;
 
 }

@@ -52,9 +52,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
     {
         LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
 
-        if (item ==null)
+        if (item == null)
         {
-            log.WarningAndShow("没有选中行","当前HTTP列表没有数据,用户点击更新操作");
+            log.WarningAndShow("没有选中行", "当前HTTP列表没有数据,用户点击更新操作");
             return;
         }
 
@@ -76,6 +76,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
             log.WarningAndShow("没有数据不需要删除", "用户在操作删除,但HTTP数据已删除完");
             return;
         }
+
         MessageBox messageBox = new MessageBox("删除此条Http");
         bool? boxResult = messageBox.ShowDialog();
         if (boxResult == true)
@@ -85,12 +86,12 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
             log.SuccessAndShow($"删除HTTP成功 name:{name}");
         }
     }
+
     [RelayCommand]
     public void JogHttpButton(LoadMesPage page)
     {
         LoadMesServer loadMesServer = new LoadMesServer(LoadMesPageModel.MesPojoList);
         bool succeed = loadMesServer.runJog();
-
 
 
         if (succeed)
@@ -117,7 +118,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
     {
         LoadMesAddAndUpdateWindowModel loadMesAddAndUpdateWindowModel = message.Value;
         LoadMesPageModel.MesPojoList.Add(loadMesAddAndUpdateWindowModel);
-        log.Info($"添加一行HTTP请求: Name:{loadMesAddAndUpdateWindowModel.Name} 请求方式:{loadMesAddAndUpdateWindowModel.Ajax} 请求路径:{loadMesAddAndUpdateWindowModel.HttpPath}" +
-                 $"请求消息体:{loadMesAddAndUpdateWindowModel.Request} 请求条件{loadMesAddAndUpdateWindowModel.ToString()}");
+        log.Info(
+            $"添加一行HTTP请求: Name:{loadMesAddAndUpdateWindowModel.Name} 请求方式:{loadMesAddAndUpdateWindowModel.Ajax} 请求路径:{loadMesAddAndUpdateWindowModel.HttpPath}" +
+            $"请求消息体:{loadMesAddAndUpdateWindowModel.Request} 请求条件{loadMesAddAndUpdateWindowModel.ToString()}");
     }
 }
