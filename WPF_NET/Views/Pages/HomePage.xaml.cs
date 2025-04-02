@@ -2,9 +2,12 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using Wpf.Ui.Controls;
 using WPF_NET.Pojo;
 using WPF_NET.ViewModels;
-using MessageBox = Wpf.Ui.Controls.MessageBox;
+using MessageBox = WPF_NET.Views.Windows.MessageBox;
+using TextBox = System.Windows.Controls.TextBox;
 
 
 namespace WPF_NET.Views.Pages
@@ -14,7 +17,7 @@ namespace WPF_NET.Views.Pages
     /// </summary>
     public partial class HomePage : Page
     {
-        private HomePageViewModel HomePageViewModel { get; set; }
+        public HomePageViewModel HomePageViewModel { get; set; }
 
         public HomePage()
         {
@@ -24,6 +27,7 @@ namespace WPF_NET.Views.Pages
 
             //添加LogListBox监听
             HomePageViewModel.HomePageModel.LogListBox.CollectionChanged += Item_CollectionChanged;
+
         }
 
         private void Item_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -89,32 +93,45 @@ namespace WPF_NET.Views.Pages
 
         private async void SetConnectDg_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
         {
+            ConnectPojo? item = setConnectDg.SelectedItem as ConnectPojo;
+
+
             if (e.EditAction == DataGridEditAction.Commit)
             {
                 var textBox = e.EditingElement as TextBox;
                 if (string.IsNullOrWhiteSpace(textBox?.Text))
                 {
-                    MessageBox messageBox = new Wpf.Ui.Controls.MessageBox()
-                    {
-                        Title = "提示",
-                        Content = "不能为null",
-                    };
-                    _ = await messageBox.ShowDialogAsync();
+                    MessageBox messageBox = new MessageBox("不能为null");
+                    messageBox.ShowDialog();
                     e.Cancel = true; // ❌ 阻止编辑提交
+                    return;
                 }
 
                 foreach (var connectPojo in HomePageViewModel.HomePageModel.SetConnectDg)
                 {
-                    if (connectPojo.Name == textBox?.Text)
+
+                    if (item.Name == null && connectPojo.Name == textBox?.Text)
                     {
-                        MessageBox messageBox = new Wpf.Ui.Controls.MessageBox()
-                        {
-                            Title = "提示",
-                            Content = "名字已经存在,请修改",
-                        };
-                        _ = await messageBox.ShowDialogAsync();
+                        MessageBox messageBox = new MessageBox("名字已经存在,请修改");
+
+                        messageBox.ShowDialog();
                         e.Cancel = true; // ❌ 阻止编辑提交
+                        return;
                     }
+                    else if (item.Name != null)
+                    {
+                        //当前名字已存在,不会提示报错自己已存在
+                        string thisName = item.Name;
+                        if (connectPojo.Name == textBox?.Text && thisName != textBox?.Text)
+                        {
+                            MessageBox messageBox = new MessageBox("名字已经存在, 请修改");
+
+                            messageBox.ShowDialog();
+                            e.Cancel = true; // ❌ 阻止编辑提交
+                            return;
+                        }
+                    }
+
                 }
             }
         }
