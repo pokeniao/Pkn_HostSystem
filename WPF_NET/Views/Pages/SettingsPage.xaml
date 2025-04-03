@@ -60,7 +60,7 @@
                         <ui:TextBlock
                             Margin="5"
                             Padding="10"
-                            Text="合作联系邮箱: 1625229957@qq.com" />
+                            Text="联系&amp;Bug反馈邮箱: 1625229957@qq.com" />
                         <ui:Anchor
                             Margin="0"
                             Padding="16"

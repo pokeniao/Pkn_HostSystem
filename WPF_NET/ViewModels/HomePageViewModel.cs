@@ -25,11 +25,6 @@ public partial class HomePageViewModel : ObservableRecipient
     public SnackbarService SnackbarService { get; set; } = new SnackbarService();
     public ModbusBase ModbusBase { get; set; } = new ModbusBase();
 
-    [ObservableProperty] private bool connectPLCModebusBool;
-
-    //令牌生成
-    private CancellationTokenSource cts = new CancellationTokenSource();
-    private Lazy<Task> LazyConnectPLCModebus;
 
     public HomePageViewModel()
     {
@@ -57,21 +52,21 @@ public partial class HomePageViewModel : ObservableRecipient
             StartAddress = 0,
             ReadCount = 1,
         };
-
-        //初始化创建懒加载
-        LazyConnectPLCModebus = new Lazy<Task>(() => Task.Run(() => ReconnectionModbus(cts.Token)));
     }
 
 
     #region 弹窗SnackbarService
+
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
     {
         SnackbarService.SetSnackbarPresenter(snackbarPresenter);
     }
+
     #endregion
 
 
     #region 滚动到底部
+
     [RelayCommand]
     public void ScrollToBottom(ListBox LogListBox)
     {
@@ -79,6 +74,7 @@ public partial class HomePageViewModel : ObservableRecipient
         {
             return;
         }
+
         LogListBox.ScrollIntoView(LogListBox.Items[^1]);
     }
 
@@ -87,69 +83,126 @@ public partial class HomePageViewModel : ObservableRecipient
 
     #endregion
 
-
     #region 连接网络
-    public void ConnectModbus()
+
+    public void ConnectModbus(HomePage page)
     {
-        if (ConnectPLCModebusBool)
+        ConnectPojo? selectedItem = page.setConnectDg.SelectedItem as ConnectPojo;
+        if (selectedItem.Open)
         {
-            StartConnectModbus();
+            StartConnectModbus(selectedItem.Name, selectedItem);
         }
         else
         {
-            StopConnectModbus();
-            ModbusBase.CloseRTU();
-            ModbusBase.CloseTCP();
+            StopConnectModbus(selectedItem.Name);
         }
     }
 
-    public async void StartConnectModbus()
+    public async void StartConnectModbus(string key, ConnectPojo connectPojo)
     {
-        await LazyConnectPLCModebus.Value;
+        if (key == null)
+        {
+            log.ErrorAndShow("请先填写好连接名,并且回车确认");
+            return;
+        }
 
+        if (GlobalMannager.NetWorkDictionary.TryGetValue(key, out NetWorkPoJo netWorkPoJo))
+        {
+            await netWorkPoJo.Task.Value;
+        }
+        else
+        {
+            //令牌生成
+            CancellationTokenSource cts = new CancellationTokenSource();
+            ModbusBase modbusBase = new ModbusBase();
+            NetWorkPoJo workPoJo = new NetWorkPoJo()
+            {
+                NetWorkName = key,
+                CancellationTokenSource = cts,
+                ModbusBase = modbusBase,
+                ConnectPojo = connectPojo
+            };
+            Lazy<Task> lazy = new Lazy<Task>(() => ReconnectionModbus(cts.Token, workPoJo));
+            //创建网络连接
+            workPoJo.Task = lazy;
+            GlobalMannager.NetWorkDictionary.TryAdd(key, workPoJo);
+            await lazy.Value;
+        }
     }
 
-    public void StopConnectModbus()
+    public void StopConnectModbus(string key)
     {
+        if (key == null)
+        {
+            return;
+        }
+        GlobalMannager.NetWorkDictionary.TryGetValue(key, out NetWorkPoJo netWorkPoJo);
+
+        //取出密钥
+        CancellationTokenSource cts = netWorkPoJo.CancellationTokenSource;
         cts.Cancel();
+        //创建新密钥
         cts = new CancellationTokenSource();
-        LazyConnectPLCModebus = new Lazy<Task>(() => Task.Run(() => ReconnectionModbus(cts.Token)));
 
-        //  _ = GlobalMannager.GlobalDictionary.TryRemove("HomeRegDvg", out object value);
+        //更新网络连接
+        netWorkPoJo.CancellationTokenSource = cts;
+        netWorkPoJo.Task = new Lazy<Task>(() => Task.Run(() => ReconnectionModbus(cts.Token, netWorkPoJo)));
+
+        //更新网络体
+        GlobalMannager.NetWorkDictionary.AddOrUpdate(key, netWorkPoJo,
+            (k, oldCts) => netWorkPoJo);
+
+        if (netWorkPoJo.ModbusBase.IsTCPConnect() || netWorkPoJo.ModbusBase.IsRTUConnect())
+        {
+            //停止Modbus
+            netWorkPoJo.ModbusBase.CloseRTU();
+            netWorkPoJo.ModbusBase.CloseTCP();
+            log.SuccessAndShowTask($"{key}:  连接断开");
+        }
+       
     }
 
-    public async Task ReconnectionModbus(CancellationToken token)
+    public async Task ReconnectionModbus(CancellationToken token, NetWorkPoJo netWorkPoJo)
     {
+        ModbusBase modbusBase = netWorkPoJo.ModbusBase;
+
+        string Name = netWorkPoJo.NetWorkName;
         int whileTime = 5000;
         while (!token.IsCancellationRequested)
         {
-            if (ModbusBase.IsTCPConnect() || ModbusBase.IsRTUConnect())
-            { }
+            if (modbusBase.IsTCPConnect() || modbusBase.IsRTUConnect())
+            {
+            }
             else
             {
-                await ModbusBase.OpenTcpMaster(ModbusToolModel.ModbusTcp_Ip_select, ModbusToolModel.ModbusTcp_Port);
-                if (ModbusBase.IsTCPConnect())
+                await modbusBase.OpenTcpMaster(netWorkPoJo.ConnectPojo.IP, netWorkPoJo.ConnectPojo.Port);
+                if (modbusBase.IsTCPConnect())
                 {
-                    log.SuccessAndShowTask("ModbusTCP连接成功");
-                    //   GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
+                    log.SuccessAndShowTask($"{Name}:  ModbusTCP连接成功");
                 }
                 else
                 {
                     //串口连接
-                    await ModbusBase.OpenRTUMaster(ModbusToolModel.ModbusRtu_COM_select,
-                        int.Parse(ModbusToolModel.ModbusRtu_baudRate_select),
-                        int.Parse(ModbusToolModel.ModbusRtu_dataBits_select),
-                        ModbusToolModel.ModbusRtu_stopBits_select, ModbusToolModel.ModbusRtu_parity_select);
-
-                    if (ModbusBase.IsRTUConnect())
+                    try
                     {
-                        log.SuccessAndShowTask("ModbusRtu连接成功");
-                        //  GlobalMannager.GlobalDictionary.TryAdd("HomeRegDvg", HomePageModel.ReadRegDvg);
+                        await modbusBase.OpenRTUMaster(netWorkPoJo.ConnectPojo.Com,
+                            int.Parse(netWorkPoJo.ConnectPojo.BaudRate),
+                            int.Parse(netWorkPoJo.ConnectPojo.DataBits),
+                            netWorkPoJo.ConnectPojo.StopBits, netWorkPoJo.ConnectPojo.Parity);
+                    }
+                    catch (Exception e)
+                    {
+                        log.ErrorAndShow($"{Name}:  网络无配置,请配置好重新连接!");
+                        return;
+                    }
+
+                    if (modbusBase.IsRTUConnect())
+                    {
+                        log.SuccessAndShowTask($"{Name}:  ModbusRtu连接成功");
                     }
                     else
                     {
-                        log.WarningAndShowTask("连接失败,请检查设置");
-
+                        log.WarningAndShowTask($"{Name}:  连接失败,请检查设置");
                     }
                 }
             }
@@ -166,38 +219,86 @@ public partial class HomePageViewModel : ObservableRecipient
         }
     }
 
-
     #endregion
 
 
     #region 删除网络设置行
+
     [RelayCommand]
     public void DeleteReadRegDvg(HomePage page)
     {
         ConnectPojo? item = page.setConnectDg.SelectedItem as ConnectPojo;
-        var source  = page.setConnectDg.ItemsSource as ObservableCollection<ConnectPojo>;
+        var source = page.setConnectDg.ItemsSource as ObservableCollection<ConnectPojo>;
         if (item != null)
         {
-            if (source.Count> 0 && item.Name!=null)
+            if (source.Count > 0 && item.Name != null )
             {
-                HomePageModel.SetConnectDg.Remove(item);
+                if (item.Open != true)
+                {
+                    HomePageModel.SetConnectDg.Remove(item);
+                    GlobalMannager.NetWorkDictionary.Remove(item.Name, out _);
+                    log.SuccessAndShow("删除成功!", $"{item.Name}->连接被删除");
+                }
+                else
+                {
+                    log.WarningAndShow($"{item.Name}处于运行状态不能删除,请先停止");
+                    return;
+                }
+                
             }
         }
     }
+
     #endregion
 
 
     #region 设置网络配置
+
     [RelayCommand]
     public void SetConnectConfig(HomePage page)
     {
         ConnectPojo? item = page.setConnectDg.SelectedItem as ConnectPojo;
 
         page.IpSet.Visibility = Visibility.Visible;
+        string currentState = "当前状态: 未配置";
+        if (item.IP != null || item.Com != null)
+        {
+            currentState = "当前状态: 已配置";
+        }
 
-        HomePageModel.CurrentSetName = "当前配置:" + item.Name;
+        HomePageModel.CurrentSetName = "当前配置:" + item.Name+"    "+ currentState;
 
+        
+        if (item.IP != null )
+        {
+            ModbusToolModel.ModbusTcp_Ip_select = item.IP;
+            ModbusToolModel.ModbusTcp_Port = item.Port;
+
+        }
+        if(item.Com != null)
+        {
+            ModbusToolModel.ModbusRtu_COM_select = item.Com;
+            ModbusToolModel.ModbusRtu_baudRate_select = item.BaudRate;
+            ModbusToolModel.ModbusRtu_dataBits_select = item.DataBits;
+            ModbusToolModel.ModbusRtu_parity_select = item.Parity;
+            ModbusToolModel.ModbusRtu_stopBits_select = item.StopBits;
+        }
     }
-    #endregion
 
+    [RelayCommand]
+    public void Commitconfig(HomePage page)
+    {
+        ConnectPojo? item = page.setConnectDg.SelectedItem as ConnectPojo;
+
+        page.IpSet.Visibility = Visibility.Collapsed;
+        item.IP = ModbusToolModel.ModbusTcp_Ip_select;
+        item.Port = ModbusToolModel.ModbusTcp_Port;
+        item.Com = ModbusToolModel.ModbusRtu_COM_select;
+        item.BaudRate = ModbusToolModel.ModbusRtu_baudRate_select;
+        item.DataBits = ModbusToolModel.ModbusRtu_dataBits_select;
+        item.Parity = ModbusToolModel.ModbusRtu_parity_select;
+        item.StopBits = ModbusToolModel.ModbusRtu_stopBits_select;
+    }
+
+    #endregion
 }

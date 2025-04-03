@@ -5,12 +5,12 @@ using System.IO.Ports;
 
 namespace WPF_NET.Pojo;
 
+/// <summary>
+/// 连接网络的POJO
+/// </summary>
 public class ConnectPojo
 {
     public string Name { get; set; }
-
-    public string NoSetName { get; set; } = "配置";
-
 
     public bool NoSet { get; set; } = true;
 

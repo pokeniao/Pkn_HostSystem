@@ -144,7 +144,11 @@
                                             <DataTemplate>
                                                 <Grid>
                                                     <ui:ToggleSwitch OffContent="关闭" OnContent="启动"
-                                                                     IsChecked="{Binding Open}">
+                                                                     IsChecked="{Binding Open ,UpdateSourceTrigger=PropertyChanged}"
+                                                                     
+                                                                     Command="{Binding DataContext.ConnectModbusCommand ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
+                                                        
                                                         <ui:ToggleSwitch.IsEnabled>
                                                             <MultiBinding
                                                                 Converter="{StaticResource HomePageRunButtonConverter}">
@@ -162,7 +166,7 @@
 
                                     </DataGridTemplateColumn>
 
-                                    <DataGridTemplateColumn Header="删除" Width="0.7*">
+                                    <DataGridTemplateColumn Header="删除" Width="0.9*">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Grid>
@@ -308,7 +312,10 @@
                                             </StackPanel>
                                         </TabItem>
                                     </TabControl>
-                                    <Button Content="设置" HorizontalAlignment="Right" Margin="20,5" />
+                                    <Button Content="设置" HorizontalAlignment="Right" Margin="20,5" 
+                                            Command="{Binding CommitconfigCommand}"
+                                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }"
+                                            />
                                 </StackPanel>
                             </Border>
                         </StackPanel>
