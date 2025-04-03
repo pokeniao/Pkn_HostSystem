@@ -53,7 +53,6 @@ namespace WPF_NET.Base
             }
 
             return true;
-
         }
 
         public bool IsRTUConnect()
@@ -162,7 +161,23 @@ namespace WPF_NET.Base
                     Parity = parity //奇偶校验
                 };
                 //第二步: 打开串口
-                await Task.Run(() => { serialPort.Open(); });
+                bool b = await Task.Run(() =>
+                {
+                    try
+                    {
+                        serialPort.Open();
+                        return true;
+                    }
+                    catch (Exception e)
+                    {
+                        return false;
+                    }
+                });
+                if (!b)
+                {
+                    return false;
+                }
+
                 //创建Modbus主站
                 var factory = new ModbusFactory();
                 modbusMaster = factory.CreateRtuMaster(serialPort);
