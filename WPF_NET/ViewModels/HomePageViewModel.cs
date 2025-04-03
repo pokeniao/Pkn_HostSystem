@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui;
@@ -90,17 +91,19 @@ public partial class HomePageViewModel : ObservableRecipient
         ConnectPojo? selectedItem = page.setConnectDg.SelectedItem as ConnectPojo;
         if (selectedItem.Open)
         {
-            StartConnectModbus(selectedItem.Name, selectedItem);
+            StartConnectModbus(selectedItem);
         }
         else
         {
-            StopConnectModbus(selectedItem.Name);
+            StopConnectModbus(selectedItem);
         }
     }
 
-    public async void StartConnectModbus(string key, ConnectPojo connectPojo)
+    public async void StartConnectModbus(ConnectPojo connectPojo)
     {
-        if (key == null)
+        string key = connectPojo.Id;
+        string Name = connectPojo.Name;
+        if (Name == null)
         {
             log.ErrorAndShow("请先填写好连接名,并且回车确认");
             return;
@@ -117,7 +120,7 @@ public partial class HomePageViewModel : ObservableRecipient
             ModbusBase modbusBase = new ModbusBase();
             NetWorkPoJo workPoJo = new NetWorkPoJo()
             {
-                NetWorkName = key,
+                NetWorkId = key,
                 CancellationTokenSource = cts,
                 ModbusBase = modbusBase,
                 ConnectPojo = connectPojo
@@ -130,9 +133,11 @@ public partial class HomePageViewModel : ObservableRecipient
         }
     }
 
-    public void StopConnectModbus(string key)
+    public void StopConnectModbus(ConnectPojo connectPojo)
     {
-        if (key == null)
+        string key = connectPojo.Id;
+        string name = connectPojo.Name;
+        if (name == null)
         {
             return;
         }
@@ -157,7 +162,7 @@ public partial class HomePageViewModel : ObservableRecipient
             //停止Modbus
             netWorkPoJo.ModbusBase.CloseRTU();
             netWorkPoJo.ModbusBase.CloseTCP();
-            log.SuccessAndShowTask($"{key}:  连接断开");
+            log.SuccessAndShowTask($"{name}:  连接断开");
         }
        
     }
@@ -166,7 +171,7 @@ public partial class HomePageViewModel : ObservableRecipient
     {
         ModbusBase modbusBase = netWorkPoJo.ModbusBase;
 
-        string Name = netWorkPoJo.NetWorkName;
+        string Name = netWorkPoJo.ConnectPojo.Name;
         int whileTime = 5000;
         while (!token.IsCancellationRequested)
         {
@@ -192,7 +197,7 @@ public partial class HomePageViewModel : ObservableRecipient
                     }
                     catch (Exception e)
                     {
-                        log.ErrorAndShow($"{Name}:  网络无配置,请配置好重新连接!");
+                        log.ErrorAndShowTask($"{Name}:  网络无配置,请配置好重新连接!");
                         return;
                     }
 
@@ -236,7 +241,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 if (item.Open != true)
                 {
                     HomePageModel.SetConnectDg.Remove(item);
-                    GlobalMannager.NetWorkDictionary.Remove(item.Name, out _);
+                    GlobalMannager.NetWorkDictionary.Remove(item.Id, out _);
                     log.SuccessAndShow("删除成功!", $"{item.Name}->连接被删除");
                 }
                 else
