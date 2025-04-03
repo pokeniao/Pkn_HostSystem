@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO.Ports;
+using WPF_NET.Base;
 
 namespace WPF_NET.Pojo;
 
@@ -10,6 +11,8 @@ namespace WPF_NET.Pojo;
 /// </summary>
 public class ConnectPojo
 {
+
+    public string Id { get; set; } = new SnowflakeIdGenerator(1, 1).GetId().ToString();
     public string Name { get; set; }
 
     public bool NoSet { get; set; } = true;

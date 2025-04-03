@@ -5,7 +5,7 @@ namespace WPF_NET.Pojo;
 public class NetWorkPoJo
 {
     //连接名 ,用于分辨当前连接
-    public string NetWorkName { get; set; }
+    public string NetWorkId { get; set; }
 
     // 连接体 <--> 用于发送Modbus
     public ModbusBase ModbusBase { get; set; }
