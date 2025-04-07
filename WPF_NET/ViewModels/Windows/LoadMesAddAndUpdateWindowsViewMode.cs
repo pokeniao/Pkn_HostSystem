@@ -1,13 +1,19 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Text.RegularExpressions;
+using DynamicData;
+using DynamicData.Binding;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using WPF_NET.Base;
 using WPF_NET.Message;
 using WPF_NET.Models;
+using WPF_NET.Pojo;
+using WPF_NET.Static;
 using WPF_NET.Views.Windows;
+using WPF_NET.Pojo.Page.MESTcp;
 
 namespace WPF_NET.ViewModels.Windows;
 
@@ -21,15 +27,23 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public bool add;
 
+    public  ObservableCollection<string> ReqMethodList { get; set; } = ["动态获取", "常量", "方法集"];
+
+    public ObservableCollectionExtended<MesTcpPojo> Para_dyn { get; set; } =
+        new ObservableCollectionExtended<MesTcpPojo>();
     public LoadMesAddAndUpdateWindowsViewModel()
     {
         LoadMesAddAndUpdateWindowModel = new LoadMesAddAndUpdateWindowModel()
         {
             Ajax = "POST",
-            Condition = []
+            Condition = new ObservableCollection<ConditionItem>()
+            {
+            }
         };
         Log = new LogBase<LoadMesAddAndUpdateWindowsViewModel>(SnackbarService);
-        add = true;
+
+        GlobalMannager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
+         add = true;
     }
 
     public LoadMesAddAndUpdateWindowsViewModel(LoadMesAddAndUpdateWindowModel _LoadMesAddAndUpdateWindowModel)

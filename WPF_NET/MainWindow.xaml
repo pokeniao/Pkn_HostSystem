@@ -79,6 +79,16 @@
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Earth16" />
                     </ui:NavigationViewItem.Icon>
+                    <ui:NavigationViewItem.MenuItems>
+                        <ui:NavigationViewItem
+                            Content="动态通讯内容"
+                            NavigationCacheMode="Enabled"
+                            TargetPageType="{x:Type pages:MesTcpPage}">
+                            <ui:NavigationViewItem.Icon>
+                                <ui:SymbolIcon Symbol="Earth16" />
+                            </ui:NavigationViewItem.Icon>
+                        </ui:NavigationViewItem>
+                    </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
 
                 <ui:NavigationViewItem

@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows.Controls;
+using System.Windows.Input;
 using WPF_NET.Models;
 using WPF_NET.ViewModels.Windows;
 
@@ -9,6 +10,7 @@ namespace WPF_NET.Views.Windows
     /// </summary>
     public partial class LoadMesAddWindow
     {
+        public LoadMesAddAndUpdateWindowsViewModel viewModel { get; set; }
         public LoadMesAddWindow()
         {
             InitializeComponent();
@@ -18,7 +20,7 @@ namespace WPF_NET.Views.Windows
         {
             DataContext = new LoadMesAddAndUpdateWindowsViewModel();
             Title.Text = title;
-            LoadMesAddAndUpdateWindowsViewModel viewModel = (LoadMesAddAndUpdateWindowsViewModel)DataContext;
+            viewModel = (LoadMesAddAndUpdateWindowsViewModel)DataContext;
             viewModel.setSnackbarService(SnackbarPresenter);
         }
 
