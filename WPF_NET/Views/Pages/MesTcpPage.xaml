@@ -1,0 +1,122 @@
+﻿<Page x:Class="WPF_NET.Views.Pages.MesTcpPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:WPF_NET.Views.Pages"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:viewModels="clr-namespace:WPF_NET.ViewModels"
+      mc:Ignorable="d"
+      Title="MesTcpPage"
+      d:DataContext="{d:DesignInstance viewModels:MesTcpViewModel}"
+      d:DesignHeight="714.5" d:DesignWidth="1000"
+      ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+      ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+            <StackPanel Margin="15,10">
+                <TextBlock Text="可配置连接" FontSize="18" FontWeight="Black" />
+                <Border Margin="4 "
+                        Height="590"
+                        BorderThickness="2"
+                        CornerRadius="10"
+                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
+                    <ListBox Name="DynNameListBox" ItemsSource="{Binding MesTcpModel.DynNetList}"
+                             DisplayMemberPath="Name"
+                             SelectionChanged="DynNameListBox_OnSelectionChanged" />
+                </Border>
+                <WrapPanel HorizontalAlignment="Right">
+                    <Button Content="添加" Command="{Binding AddDynCommand }" Margin="5,0" />
+                    <Button Content="删除" Command="{Binding DeleteDynCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
+                            Margin="5,0" />
+                </WrapPanel>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1">
+            <StackPanel>
+                <Border
+                    Margin="30"
+                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                    Height="300"
+                    CornerRadius="10">
+                    <TextBox
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Auto"
+                        TextWrapping="Wrap"
+                        AcceptsReturn="True"
+                        Background="{x:Null}"
+                        Style="{x:Null}"
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                </Border>
+                <DataGrid
+                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                    Height="300"
+                    ItemsSource="{Binding MesTcpModel.DynConditionItemList}"
+                    AutoGenerateColumns="False"
+                    Margin="30, 0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="请求名" Width="*"  Binding="{Binding Name}"/>
+                        <DataGridTemplateColumn Header="通讯名" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding ConnectName}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <ComboBox
+                                            ItemsSource="{Binding DataContext.MesTcpModel.NetWorkList,  RelativeSource={RelativeSource AncestorType=Page}}"
+                                            DisplayMemberPath="ConnectPojo.Name"
+                                            SelectedValuePath="ConnectPojo.Name"
+                                            SelectedValue="{Binding ConnectName}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="请求方式" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding MethodName}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <ComboBox
+                                            ItemsSource="{Binding DataContext.MesTcpModel.MethodName,  RelativeSource={RelativeSource AncestorType=Page}}"
+                                            SelectedValue="{Binding MethodName}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="参数" Width="2*">
+
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Grid>
+        <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" />
+    </Grid>
+</Page>

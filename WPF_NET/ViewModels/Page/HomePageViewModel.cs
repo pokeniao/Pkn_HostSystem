@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
+using DynamicData;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using WPF_NET.Base;
@@ -109,8 +110,10 @@ public partial class HomePageViewModel : ObservableRecipient
             return;
         }
 
-        if (GlobalMannager.NetWorkDictionary.TryGetValue(key, out NetWorkPoJo netWorkPoJo))
+        var lookup = GlobalMannager.NetWorkDictionary.Lookup(key);
+        if (lookup.HasValue)
         {
+            NetWorkPoJo netWorkPoJo = lookup.Value;
             await netWorkPoJo.Task.Value;
         }
         else
@@ -128,8 +131,8 @@ public partial class HomePageViewModel : ObservableRecipient
             Lazy<Task> lazy = new Lazy<Task>(() => ReconnectionModbus(cts.Token, workPoJo));
             //创建网络连接
             workPoJo.Task = lazy;
-            GlobalMannager.NetWorkDictionary.TryAdd(key, workPoJo);
-            await lazy.Value;
+            GlobalMannager.NetWorkDictionary.AddOrUpdate(workPoJo);
+            await workPoJo.Task.Value;
         }
     }
 
@@ -141,7 +144,8 @@ public partial class HomePageViewModel : ObservableRecipient
         {
             return;
         }
-        GlobalMannager.NetWorkDictionary.TryGetValue(key, out NetWorkPoJo netWorkPoJo);
+     
+        NetWorkPoJo netWorkPoJo = GlobalMannager.NetWorkDictionary.Lookup(key).Value;
 
         //取出密钥
         CancellationTokenSource cts = netWorkPoJo.CancellationTokenSource;
@@ -154,8 +158,7 @@ public partial class HomePageViewModel : ObservableRecipient
         netWorkPoJo.Task = new Lazy<Task>(() => Task.Run(() => ReconnectionModbus(cts.Token, netWorkPoJo)));
 
         //更新网络体
-        GlobalMannager.NetWorkDictionary.AddOrUpdate(key, netWorkPoJo,
-            (k, oldCts) => netWorkPoJo);
+        GlobalMannager.NetWorkDictionary.AddOrUpdate(netWorkPoJo);
 
         if (netWorkPoJo.ModbusBase.IsTCPConnect() || netWorkPoJo.ModbusBase.IsRTUConnect())
         {
@@ -241,7 +244,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 if (item.Open != true)
                 {
                     HomePageModel.SetConnectDg.Remove(item);
-                    GlobalMannager.NetWorkDictionary.Remove(item.Id, out _);
+                    GlobalMannager.NetWorkDictionary.Remove(item.Id);
                     log.SuccessAndShow("删除成功!", $"{item.Name}->连接被删除");
                 }
                 else
