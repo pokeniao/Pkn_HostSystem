@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
@@ -51,7 +52,7 @@ public partial class MesTcpViewModel : ObservableRecipient
             MesTcpPojo mesTcpPojo = new MesTcpPojo()
             {
                 Name = addDynWindow.viewModel.Name,
-                DynCondition = new ObservableCollection<DynConditionItem>()
+                DynCondition = new ObservableCollection<DynConditionItem>(),
             };
             if (GlobalMannager.DynDictionary.Lookup(addDynWindow.viewModel.Name).HasValue)
             {
