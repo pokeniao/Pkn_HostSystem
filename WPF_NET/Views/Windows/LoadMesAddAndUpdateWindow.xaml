@@ -70,6 +70,7 @@
                                  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                  AcceptsReturn="True"
+                                 FontSize="15"
                                  Text="{Binding LoadMesAddAndUpdateWindowModel.Request ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
                     </StackPanel>
                     <StackPanel Margin="5">
@@ -128,6 +129,19 @@
                                             </Grid>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellEditingTemplate>
+                                </DataGridTemplateColumn>
+
+
+                                <DataGridTemplateColumn Header ="删除" Width="0.5*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <CheckBox>
+
+                                                </CheckBox>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>

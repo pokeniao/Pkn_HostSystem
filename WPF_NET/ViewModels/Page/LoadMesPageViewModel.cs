@@ -88,10 +88,11 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
     }
 
     [RelayCommand]
-    public void JogHttpButton(LoadMesPage page)
+    public async Task JogHttpButton(LoadMesPage page)
     {
+        //手动发送Http请求
         LoadMesServer loadMesServer = new LoadMesServer(LoadMesPageModel.MesPojoList);
-        bool succeed = loadMesServer.runJog();
+        bool succeed = await loadMesServer.runJog();
 
 
         if (succeed)

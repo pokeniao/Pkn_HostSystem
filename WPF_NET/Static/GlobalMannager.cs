@@ -24,7 +24,9 @@ public static class GlobalMannager
     /// </summary>
     public static SourceCache<NetWorkPoJo,string > NetWorkDictionary = new SourceCache<NetWorkPoJo, string>(n=>n.NetWorkId);
 
-
+    /// <summary>
+    /// 动态连接的字典
+    /// </summary>
     public static SourceCache<MesTcpPojo, string> DynDictionary = new SourceCache<MesTcpPojo, string>(n => n.Name);
 
     static GlobalMannager()
