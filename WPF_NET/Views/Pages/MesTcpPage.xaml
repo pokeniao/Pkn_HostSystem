@@ -7,6 +7,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:viewModels="clr-namespace:WPF_NET.ViewModels"
       xmlns:loadMes="clr-namespace:WPF_NET.Server.LoadMes"
+      xmlns:converter="clr-namespace:WPF_NET.Base.Converter"
       mc:Ignorable="d"
       Title="MesTcpPage"
       d:DataContext="{d:DesignInstance viewModels:MesTcpViewModel}"
@@ -16,7 +17,7 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
     <Page.Resources>
-        <loadMes:LoadMesBooleanToVisibilityConverter x:Key="LoadMesBooleanToVisibilityConverter" />
+        <converter:BooleanVisibilityConverter x:Key="LoadMesBooleanToVisibilityConverter" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -41,7 +42,7 @@
                         Margin="5"
                         Name="DynNameListBox" ItemsSource="{Binding MesTcpModel.DynNetList}"
                         DisplayMemberPath="Name"
-                        SelectionChanged="DynNameListBox_OnSelectionChanged" >
+                        SelectionChanged="DynNameListBox_OnSelectionChanged">
                     </ListBox>
                 </Border>
                 <WrapPanel HorizontalAlignment="Right">
@@ -59,7 +60,7 @@
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
-                    Height="300"
+                    Height="265"
                     CornerRadius="10">
                     <TextBox
                         Margin="5"
@@ -77,6 +78,7 @@
                         FontSize="16" />
                 </Border>
                 <DataGrid
+                    Name="DynConditionDataGrid"
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                     Height="300"
@@ -191,7 +193,6 @@
                                         </Grid>
                                         <Grid
                                             Visibility="{Binding showSocket ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}">
-
                                         </Grid>
                                     </Grid>
                                 </DataTemplate>
@@ -199,6 +200,11 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
+                <WrapPanel Margin="20,3">
+                </WrapPanel>
+                <Button Content="删除" Width="100"  HorizontalAlignment="Right"  Margin="30,0"
+                        Command="{Binding DeleteDynConditionCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType= Page}}"/>
             </StackPanel>
         </Grid>
         <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" />

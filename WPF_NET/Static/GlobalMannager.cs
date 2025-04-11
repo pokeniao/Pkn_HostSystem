@@ -31,6 +31,7 @@ public static class GlobalMannager
 
     static GlobalMannager()
     {
-        GlobalDictionary.TryAdd("LogListBox",new ObservableCollection<string>()); 
+        GlobalDictionary.TryAdd("LogListBox",new ObservableCollection<string>());
+        GlobalDictionary.TryAdd("MesLogListBox", new ObservableCollection<string>());
     }
 }

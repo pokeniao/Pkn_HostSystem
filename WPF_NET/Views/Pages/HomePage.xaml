@@ -44,7 +44,7 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
-        <home:HomePageAllowButtonConverter x:Key="HomePageRunButtonConverter" />
+        <home:NewRowAllowButtonConverter x:Key="HomePageRunButtonConverter" />
 
     </Page.Resources>
     <Page.DataContext>

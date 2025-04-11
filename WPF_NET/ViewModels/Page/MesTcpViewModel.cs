@@ -85,6 +85,27 @@ public partial class MesTcpViewModel : ObservableRecipient
         }
     }
 
+    [RelayCommand]
+    public void DeleteDynCondition(MesTcpPage page)
+    {
+        DynConditionItem? item = page.DynConditionDataGrid.SelectedItem as DynConditionItem;
+
+        MesTcpPojo? mesTcpPojo = page.DynNameListBox.SelectedItem as MesTcpPojo;
+        if (item != null)
+        {
+         
+            if (mesTcpPojo.DynCondition.Remove(item))
+            {
+                log.SuccessAndShowTask("删除成功");
+            }
+            else
+            {
+                log.WarningAndShow("删除已经不存在");
+                return;
+            }
+        }
+    }
+
     #endregion
 
 

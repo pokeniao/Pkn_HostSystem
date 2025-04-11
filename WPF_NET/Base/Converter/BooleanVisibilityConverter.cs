@@ -2,9 +2,9 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace WPF_NET.Server.LoadMes;
+namespace WPF_NET.Base.Converter;
 
-public class LoadMesBooleanToVisibilityConverter :IValueConverter
+public class BooleanVisibilityConverter :IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
