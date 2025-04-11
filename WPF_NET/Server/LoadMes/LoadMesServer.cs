@@ -11,6 +11,7 @@ using WPF_NET.Models;
 using WPF_NET.Pojo;
 using WPF_NET.Pojo.Page.MESTcp;
 using WPF_NET.Static;
+using WPF_NET.ViewModels;
 
 namespace WPF_NET.Server.LoadMes;
 
@@ -18,16 +19,16 @@ public class LoadMesServer
 {
     private ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
 
-    private LogBase<LoadMesServer> log;
+    private MesLogBase<LoadMesServer> log;
 
     public LoadMesServer(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList)
     {
         this.mesPojoList = mesPojoList;
-        log = new LogBase<LoadMesServer>();
+        log = new MesLogBase<LoadMesServer>();
     }
 
     /// <summary>
-    /// 查找是否存在
+    /// 循环查找当前行是否存在
     /// </summary>
     /// <param name="Name"></param>
     /// <returns></returns>
@@ -76,12 +77,31 @@ public class LoadMesServer
                     request = StaticMessage(request, itemKey, itemValue);
                     break;
                 case "方法集":
+                    var value2 = await MethodMessage(request, itemValue);
+                    request = StaticMessage(request, itemKey, value2);
                     break;
             }
         }
 
-        log.Info($"request 值为: {request}");
+
         return request;
+    }
+
+    private async Task<string> MethodMessage(string request, string itemValue)
+    {
+        if (itemValue == null)
+        {
+            return null;
+        }
+
+        switch (itemValue)
+        {
+            case "当前时间":
+                return DateTime.Now.ToString();
+                break;
+            default:
+                return string.Empty;
+        }
     }
 
 
@@ -106,13 +126,19 @@ public class LoadMesServer
         return request;
     }
 
-
+    /// <summary>
+    /// 动态嵌入内容
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="DynName"></param>
+    /// <returns></returns>
     public async Task<string> DynMessage(string request, string DynName)
     {
         if (DynName == null)
         {
             return null;
         }
+
         var lookup = GlobalMannager.DynDictionary.Lookup(DynName);
         if (!lookup.HasValue) return string.Empty;
         var mesTcpPojo = lookup.Value;
@@ -143,7 +169,7 @@ public class LoadMesServer
     }
 
     /// <summary>
-    /// 获取网络
+    /// 循环遍历获取网络
     /// </summary>
     /// <returns></returns>
     public string getNetKey(string ConnectName)
@@ -247,7 +273,7 @@ public class LoadMesServer
                         var low = value.Substring(2);
                         var high = value.Substring(0, 2);
 
-                        var ByteLow = byte.Parse(low,NumberStyles.HexNumber);
+                        var ByteLow = byte.Parse(low, NumberStyles.HexNumber);
                         var ByteHigh = byte.Parse(high, NumberStyles.HexNumber);
                         result_3.Add(ByteHigh);
                         result_3.Add(ByteLow);
@@ -269,20 +295,87 @@ public class LoadMesServer
     /// <summary>
     /// 手动发送HTTP消息
     /// </summary>
-    public async Task<bool> runJog()
+    public async Task<bool> RunOne(string Name)
+    {
+        //获取当前Name的行数据
+        LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
+        //得到消息体
+        return await SendHttp(item);
+    }
+
+    public async Task<bool> RunAll()
     {
         foreach (var item in mesPojoList)
         {
-            var request = await PackRequest(item.Name);
-            if (request != null)
+            await SendHttp(item);
+        }
+
+        return true;
+    }
+
+    public async Task<bool> SendHttp(LoadMesAddAndUpdateWindowModel item)
+    {
+        //得到消息体
+        var request = await PackRequest(item.Name);
+        //日志显示发送内容
+        log.Info($"{item.Name}--发送内容: {request}");
+        if (request != null)
+        {
+            //创建连接
+            var client = new RestClient(item.HttpPath);
+            RestRequest requestBody;
+            //创建请求
+            switch (item.Ajax)
             {
-                var client = new RestClient(item.HttpPath);
+                case "POST":
+                    requestBody = new RestRequest(item.Api, Method.Post);
+                    break;
+                case "GET":
+                    requestBody = new RestRequest(item.Api, Method.Get);
+                    break;
+                case "DELETE":
+                    requestBody = new RestRequest(item.Api, Method.Delete);
+                    break;
+                case "PUT":
+                    requestBody = new RestRequest(item.Api, Method.Put);
+                    break;
+                default:
+                    requestBody = new RestRequest();
+                    break;
+            }
 
-                var requestBody = new RestRequest(item.Api, Method.Post);
+            //添加请求体
+            switch (item.RequestMethod)
+            {
+                case "JSON":
+                    //会自动设置 Content-Type: application/json，并把内容当作 JSON 处理。
+                    requestBody.AddStringBody(request, DataFormat.Json);
+                    break;
+                case "XML":
+                    //表示数据格式是 XML。
+                    requestBody.AddStringBody(request, DataFormat.Xml);
+                    break;
+                case "TEXT":
+                    //一般用于你想自己完全控制请求内容或用于 GET 请求等不带 body 的请求。
+                    requestBody.AddStringBody(request, DataFormat.None);
+                    break;
+                default:
+                    requestBody.AddStringBody(request, DataFormat.None);
+                    break;
+            }
 
-                requestBody.AddStringBody(request, DataFormat.Json);
-
-                RestResponse response = await client.ExecuteAsync(requestBody);
+            //发送请求
+            RestResponse response = await client.ExecuteAsync(requestBody);
+            //判断
+            if (response.IsSuccessStatusCode)
+            {
+                item.Response = response.Content;
+                log.Info($"{item.Name}--发送请求返回: {item.Response}");
+            }
+            else
+            {
+                item.Response = response.ErrorMessage;
+                log.Info($"{item.Name}--发送请求返回: {item.Response}");
             }
         }
 

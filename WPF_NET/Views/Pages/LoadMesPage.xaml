@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="1.5*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid>
@@ -44,6 +44,20 @@
                             <DataGridTextColumn Header="名称" Width="*" Binding="{Binding Name}" />
                             <DataGridTextColumn Header="请求地址" Width="*" Binding="{Binding HttpPath}" />
                             <DataGridTextColumn Header="请求类型" Width="*" Binding="{Binding Ajax}" />
+                            <DataGridTextColumn Header="循环时间(s)" Width="*" Binding="{Binding CycTime}"/>
+                            <DataGridTemplateColumn Header="启动" Width="0.6*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <ui:ToggleSwitch
+                                                OffContent="关闭" OnContent="启动"
+                                                IsChecked="{Binding RunCyc,UpdateSourceTrigger=PropertyChanged}"
+                                                Command="{Binding DataContext.RunHttpCycCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
@@ -61,19 +75,12 @@
                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
-                        Width="400" Height="600"
+                        Width="370" Height="600"
                         CornerRadius="10"
                         >
-                    <TextBox Style="{x:Null}" Background="{x:Null}" BorderThickness="0"
-                             TextWrapping="Wrap"
-                             AcceptsReturn="True"
-                             VerticalScrollBarVisibility="Auto"
-                             HorizontalScrollBarVisibility="Auto"
-                             Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                             FontSize="13"
-                             IsReadOnly="True"
-                        />
+                        <ListBox Name="HttpLogListBox"  ItemsSource="{Binding LoadMesPageModel.ReturnMessageList}"/>
                     </Border>
+                    <Button Content="滑动到底部" Click="ButtonBase_OnClick"/>
                 </StackPanel>
               
 

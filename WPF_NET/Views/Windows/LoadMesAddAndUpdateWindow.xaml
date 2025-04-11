@@ -6,6 +6,8 @@
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:windows="clr-namespace:WPF_NET.ViewModels.Windows"
                  xmlns:loadMes="clr-namespace:WPF_NET.Server.LoadMes"
+                 xmlns:converter="clr-namespace:WPF_NET.Base.Converter"
+                 xmlns:home="clr-namespace:WPF_NET.Server.Home"
                  d:DataContext="{d:DesignInstance windows:LoadMesAddAndUpdateWindowsViewModel}"
                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                  ExtendsContentIntoTitleBar="True"
@@ -18,7 +20,8 @@
                  Height="800"
                  WindowStartupLocation="CenterScreen">
     <Window.Resources>
-        <loadMes:LoadMesBooleanToVisibilityConverter x:Key="LoadMesBooleanToVisibilityConverter"/>
+        <converter:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
+        <home:NewRowAllowButtonConverter x:Key="NewRowAllowButtonConverter" />
     </Window.Resources>
 
     <Grid>
@@ -27,7 +30,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-       
+
         <StackPanel>
             <Border VerticalAlignment="Center" Height="40" MouseDown="Border_MouseDown">
                 <TextBlock Name="Title" FontWeight="Black" FontSize="16" Margin="30,9" />
@@ -39,7 +42,7 @@
                 </Grid>
                 <StackPanel HorizontalAlignment="Center" ZIndex="1">
                     <WrapPanel Margin="5">
-                        <TextBlock Text="名称" Margin="10" />
+                        <TextBlock Name="HTTP_Name" Text="名称" Margin="10" />
                         <TextBox Width="300" Text="{Binding LoadMesAddAndUpdateWindowModel.Name}" />
                     </WrapPanel>
                     <WrapPanel Margin="5">
@@ -62,16 +65,37 @@
                         <TextBox Width="300"
                                  Text="{Binding LoadMesAddAndUpdateWindowModel.Api,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
                     </WrapPanel>
+                    <WrapPanel Margin="5">
+                        <TextBlock Text="循环时间(s)" Margin="10" />
+                        <ui:NumberBox
+                            Value="{Binding LoadMesAddAndUpdateWindowModel.CycTime ,UpdateSourceTrigger=PropertyChanged ,Mode=TwoWay }"
+                            Width="150" />
+                    </WrapPanel>
+
                     <StackPanel Margin="5">
-                        <TextBlock Text="请求体" Margin="10" />
-                        <TextBox Width="400" Height="200" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
-                                 HorizontalScrollBarVisibility="Auto"
-                                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                                 Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                                 AcceptsReturn="True"
-                                 FontSize="15"
-                                 Text="{Binding LoadMesAddAndUpdateWindowModel.Request ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                        <WrapPanel>
+                            <TextBlock Text="请求体" Margin="10" />
+                            <ComboBox Width="140" Margin="15,0,0,10"
+                                      Text="{Binding LoadMesAddAndUpdateWindowModel.RequestMethod}">
+                                <ComboBoxItem Content="JSON" />
+                                <ComboBoxItem Content="XML" />
+                                <ComboBoxItem Content="TEXT" />
+                            </ComboBox>
+                        </WrapPanel>
+
+                        <GroupBox Header="内容"
+                                  Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <TextBox Width="400" Height="150" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Auto"
+                                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                     BorderThickness="0"
+                                     AcceptsReturn="True"
+
+                                     FontSize="15"
+                                     Text="{Binding LoadMesAddAndUpdateWindowModel.Request ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                        </GroupBox>
                     </StackPanel>
                     <StackPanel Margin="5">
                         <TextBlock Text="请求键值" Margin="10" />
@@ -99,45 +123,59 @@
                                             <Grid>
                                                 <ComboBox
                                                     ItemsSource="{Binding DataContext.ReqMethodList ,RelativeSource={RelativeSource AncestorType=Window}}"
-                                                    SelectedValue="{Binding Method,UpdateSourceTrigger=PropertyChanged }"/>
+                                                    SelectedValue="{Binding Method,UpdateSourceTrigger=PropertyChanged }" />
                                             </Grid>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellEditingTemplate>
                                 </DataGridTemplateColumn>
 
                                 <DataGridTemplateColumn Header="参数" Width="*">
-                                    
+
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
-                                                <TextBlock Text="{Binding Value}"/>
+                                                <TextBlock Text="{Binding Value}" />
                                             </Grid>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                     <DataGridTemplateColumn.CellEditingTemplate>
                                         <DataTemplate>
                                             <Grid>
-                                                <ComboBox Visibility="{Binding show_para_dyn ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}" 
-                                                          ItemsSource="{Binding DataContext.Para_dyn ,  RelativeSource={RelativeSource AncestorType=Window}}"
-                                                          Text="{Binding Dyn_Value}"
-                                                          DisplayMemberPath ="Name"
-                                                          />
-                                                <TextBox Visibility="{Binding show_para_static ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}" 
-                                                           Text="{Binding Static_Value}"/>
-                                                <ComboBox  Visibility="{Binding show_method ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}" 
-                                                           Text="{Binding Method_value}"/>
+                                                <ComboBox
+                                                    Visibility="{Binding show_para_dyn ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                                    ItemsSource="{Binding DataContext.Para_dyn ,  RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    Text="{Binding Dyn_Value}"
+                                                    DisplayMemberPath="Name" />
+                                                <TextBox
+                                                    Visibility="{Binding show_para_static ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                                    Text="{Binding Static_Value}" />
+                                                <ComboBox
+                                                    ItemsSource="{Binding DataContext. MethodCollection,  RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    Visibility="{Binding show_method ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                                    Text="{Binding Method_value}" />
                                             </Grid>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellEditingTemplate>
                                 </DataGridTemplateColumn>
 
 
-                                <DataGridTemplateColumn Header ="删除" Width="0.5*">
+                                <DataGridTemplateColumn Header="删除" Width="0.5*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
-                                                <CheckBox>
+                                                <CheckBox
+                                                    Click="ButtonBase_OnClick">
+                                                    <CheckBox.IsEnabled>
+                                                        <MultiBinding
+                                                            Converter="{StaticResource NewRowAllowButtonConverter}">
+                                                            <Binding
+                                                                RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                                Path="IsNewItem"
+                                                                Mode="OneWay" />
+                                                            <Binding Path="IsNewLine" />
+                                                        </MultiBinding>
 
+                                                    </CheckBox.IsEnabled>
                                                 </CheckBox>
                                             </Grid>
                                         </DataTemplate>
@@ -149,7 +187,7 @@
                 </StackPanel>
             </Grid>
         </StackPanel>
-        <DockPanel Grid.Row="2" Margin="0,10">
+        <DockPanel Grid.Row="2" Margin="0,2">
             <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right">
                 <Button Content="确认" IsDefault="True"
                         Width="100" Command="{Binding ConfirmCommand}"

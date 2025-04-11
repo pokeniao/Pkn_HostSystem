@@ -59,5 +59,6 @@ namespace WPF_NET.Views.Pages
                 mesTcpPojo.Message = viewModel.MesTcpModel.Message;
             }
         }
+
     }
 }

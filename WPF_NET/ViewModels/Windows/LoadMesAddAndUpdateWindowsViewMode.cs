@@ -26,16 +26,25 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
     public SnackbarService SnackbarService { get; set; } = new SnackbarService();
 
     public bool add;
+    //当前已存在集合
+    public ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
+
+    public string LastName;
 
     public ObservableCollection<string> ReqMethodList { get; set; } = ["动态获取", "常量", "方法集"];
 
-    public ObservableCollectionExtended<MesTcpPojo> Para_dyn { get; set; } = new ObservableCollectionExtended<MesTcpPojo>();
 
+    public ObservableCollection<string> MethodCollection { get; set; } = ["当前时间"];
+
+    public ObservableCollectionExtended<MesTcpPojo> Para_dyn { get; set; } = new ObservableCollectionExtended<MesTcpPojo>();
+    //添加
     public LoadMesAddAndUpdateWindowsViewModel()
     {
         LoadMesAddAndUpdateWindowModel = new LoadMesAddAndUpdateWindowModel()
         {
             Ajax = "POST",
+            CycTime = 300,
+            RequestMethod = "JSON",
             Condition = new ObservableCollection<ConditionItem>()
             {
             }
@@ -44,13 +53,14 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
         GlobalMannager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
         add = true;
     }
-
+    //修改
     public LoadMesAddAndUpdateWindowsViewModel(LoadMesAddAndUpdateWindowModel _LoadMesAddAndUpdateWindowModel)
     {
         LoadMesAddAndUpdateWindowModel = _LoadMesAddAndUpdateWindowModel;
         Log = new LogBase<LoadMesAddAndUpdateWindowsViewModel>(SnackbarService);
         add = false;
         GlobalMannager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
+        LastName = _LoadMesAddAndUpdateWindowModel.Name;
     }
 
     /// <summary>
@@ -65,6 +75,15 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
         {
             Log.WarningAndShow("Name不能为空", "用户添加时,输入的Name参数不正确,Name不能为空");
             return;
+        }
+        
+        foreach (var item in mesPojoList)
+        {
+            if (item.Name == LoadMesAddAndUpdateWindowModel.Name && item.Name != LastName)
+            {
+                Log.WarningAndShow("名称已存在,请修改", "用户添加时,输入的Name参数已存在");
+                return;
+            }
         }
 
         if (LoadMesAddAndUpdateWindowModel.HttpPath == null)

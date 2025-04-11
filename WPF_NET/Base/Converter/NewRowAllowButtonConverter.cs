@@ -3,7 +3,7 @@ using System.Windows.Data;
 
 namespace WPF_NET.Server.Home;
 
-public class HomePageAllowButtonConverter: IMultiValueConverter
+public class NewRowAllowButtonConverter: IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {

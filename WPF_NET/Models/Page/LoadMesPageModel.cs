@@ -7,4 +7,6 @@ public partial class LoadMesPageModel : ObservableObject
 {
     [ObservableProperty]
     private ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
+
+    [ObservableProperty] private ObservableCollection<string> returnMessageList;
 }

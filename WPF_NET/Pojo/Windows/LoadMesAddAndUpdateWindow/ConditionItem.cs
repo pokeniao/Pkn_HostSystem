@@ -76,6 +76,9 @@ public class ConditionItem : ObservableObject
         }
     }
 
+
+    public bool IsNewLine { get; set; }
+
     // 必须添加无参构造函数
     public ConditionItem()
     {
