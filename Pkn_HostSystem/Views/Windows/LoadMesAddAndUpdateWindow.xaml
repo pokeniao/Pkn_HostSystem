@@ -1,0 +1,199 @@
+﻿<ui:FluentWindow x:Class="Pkn_HostSystem.Views.Windows.LoadMesAddWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:windows="clr-namespace:Pkn_HostSystem.ViewModels.Windows"
+                 xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
+                 d:DataContext="{d:DesignInstance windows:LoadMesAddAndUpdateWindowsViewModel}"
+                 Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowStyle="None"
+                 WindowBackdropType="Mica"
+                 WindowCornerPreference="Round"
+                 mc:Ignorable="d"
+                 MaxWidth="500"
+                 Width="500"
+                 Height="800"
+                 WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <converter:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
+        <converter:NewRowAllowButtonConverter x:Key="NewRowAllowButtonConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <Border VerticalAlignment="Center" Height="40" MouseDown="Border_MouseDown">
+                <TextBlock Name="Title" FontWeight="Black" FontSize="16" Margin="30,9" />
+            </Border>
+            <Grid>
+                <Grid ZIndex="2">
+                    <ui:SnackbarPresenter HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                          Name="SnackbarPresenter" />
+                </Grid>
+                <StackPanel HorizontalAlignment="Center" ZIndex="1">
+                    <WrapPanel Margin="5">
+                        <TextBlock Name="HTTP_Name" Text="名称" Margin="10" />
+                        <TextBox Width="300" Text="{Binding LoadMesAddAndUpdateWindowModel.Name}" />
+                    </WrapPanel>
+                    <WrapPanel Margin="5">
+                        <TextBlock Text="请求" Margin="10" />
+                        <ComboBox Width="100"
+                                  Text="{Binding LoadMesAddAndUpdateWindowModel.Ajax}">
+                            <ComboBoxItem Content="GET" />
+                            <ComboBoxItem Content="POST" />
+                            <ComboBoxItem Content="UPDATE" />
+                            <ComboBoxItem Content="DELETE" />
+                        </ComboBox>
+                    </WrapPanel>
+                    <WrapPanel Margin="5">
+                        <TextBlock Text="HTTP路径" Margin="10" />
+                        <TextBox Width="300"
+                                 Text="{Binding LoadMesAddAndUpdateWindowModel.HttpPath,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                    </WrapPanel>
+                    <WrapPanel Margin="5">
+                        <TextBlock Text="API接口" Margin="10" />
+                        <TextBox Width="300"
+                                 Text="{Binding LoadMesAddAndUpdateWindowModel.Api,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                    </WrapPanel>
+                    <WrapPanel Margin="5">
+                        <TextBlock Text="循环时间(s)" Margin="10" />
+                        <ui:NumberBox
+                            Value="{Binding LoadMesAddAndUpdateWindowModel.CycTime ,UpdateSourceTrigger=PropertyChanged ,Mode=TwoWay }"
+                            Width="150" />
+                    </WrapPanel>
+
+                    <StackPanel Margin="5">
+                        <WrapPanel>
+                            <TextBlock Text="请求体" Margin="10" />
+                            <ComboBox Width="140" Margin="15,0,0,10"
+                                      Text="{Binding LoadMesAddAndUpdateWindowModel.RequestMethod}">
+                                <ComboBoxItem Content="JSON" />
+                                <ComboBoxItem Content="XML" />
+                                <ComboBoxItem Content="TEXT" />
+                            </ComboBox>
+                        </WrapPanel>
+
+                        <GroupBox Header="内容"
+                                  Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <TextBox Width="400" Height="150" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Auto"
+                                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                     BorderThickness="0"
+                                     AcceptsReturn="True"
+
+                                     FontSize="15"
+                                     Text="{Binding LoadMesAddAndUpdateWindowModel.Request ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                        </GroupBox>
+                    </StackPanel>
+                    <StackPanel Margin="5">
+                        <TextBlock Text="请求键值" Margin="10" />
+                        <DataGrid
+                            Name="ReqDataGrid"
+                            Width="400" Height="200" BorderThickness="1" BorderBrush="AliceBlue"
+                            CanUserAddRows="True"
+                            AutoGenerateColumns="False"
+                            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            ItemsSource="{Binding LoadMesAddAndUpdateWindowModel.Condition}"
+                            IsReadOnly="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="键名称" Width="0.5*" Binding="{Binding Key}" />
+
+                                <DataGridTemplateColumn Header="请求方式" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <TextBlock Margin="5,0" Text="{Binding Method }"></TextBlock>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <DataGridTemplateColumn.CellEditingTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <ComboBox
+                                                    ItemsSource="{Binding DataContext.ReqMethodList ,RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    SelectedValue="{Binding Method,UpdateSourceTrigger=PropertyChanged }" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="参数" Width="*">
+
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <TextBlock Text="{Binding Value}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <DataGridTemplateColumn.CellEditingTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <ComboBox
+                                                    Visibility="{Binding show_para_dyn ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                                    ItemsSource="{Binding DataContext.Para_dyn ,  RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    Text="{Binding Dyn_Value}"
+                                                    DisplayMemberPath="Name" />
+                                                <TextBox
+                                                    Visibility="{Binding show_para_static ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                                    Text="{Binding Static_Value}" />
+                                                <ComboBox
+                                                    ItemsSource="{Binding DataContext. MethodCollection,  RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    Visibility="{Binding show_method ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                                    Text="{Binding Method_value}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>
+                                </DataGridTemplateColumn>
+
+
+                                <DataGridTemplateColumn Header="删除" Width="0.5*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <CheckBox
+                                                    Click="ButtonBase_OnClick">
+                                                    <CheckBox.IsEnabled>
+                                                        <MultiBinding
+                                                            Converter="{StaticResource NewRowAllowButtonConverter}">
+                                                            <Binding
+                                                                RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                                Path="IsNewItem"
+                                                                Mode="OneWay" />
+                                                            <Binding Path="IsNewLine" />
+                                                        </MultiBinding>
+
+                                                    </CheckBox.IsEnabled>
+                                                </CheckBox>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <DockPanel Grid.Row="2" Margin="0,2">
+            <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+                <Button Content="确认" IsDefault="True"
+                        Width="100" Command="{Binding ConfirmCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+                <Button Content="取消" IsCancel="True"
+                        Width="100" Margin="70,0" Command="{Binding CancelCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+            </WrapPanel>
+        </DockPanel>
+    </Grid>
+</ui:FluentWindow>

@@ -1,0 +1,21 @@
+﻿using Pkn_HostSystem.Base;
+
+namespace Pkn_HostSystem.Pojo.Page.HomePage;
+
+public class NetWorkPoJo
+{
+    //连接名 ,用于分辨当前连接
+    public string NetWorkId { get; set; }
+
+    // 连接体 <--> 用于发送Modbus
+    public ModbusBase ModbusBase { get; set; }
+
+    //令牌 控制线程开启关闭
+    public CancellationTokenSource CancellationTokenSource { get; set; }
+
+    //任务-->网络任务
+    public Lazy<Task> Task { get; set; }
+
+    //网络信息
+    public ConnectPojo ConnectPojo { get; set; }
+}

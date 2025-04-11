@@ -1,0 +1,124 @@
+﻿<ui:FluentWindow x:Class="Pkn_HostSystem.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:pages="clr-namespace:Pkn_HostSystem.Views.Pages"
+                 mc:Ignorable="d"
+                 Title="上位机系统"
+                 Width="1220"
+                 Height="762.5"
+                 MinWidth="1000"
+                 WindowStartupLocation="CenterScreen"
+                 ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+                 ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                 Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 WindowCornerPreference="Round"
+                 SizeChanged="MainWindow_OnSizeChanged">
+
+    <!-- ApplicationBackgroundBrush → 全局背景色（深色模式/浅色模式切换）。 -->
+    <!-- TextFillColorPrimaryBrush → 文本颜色（适应主题）。 -->
+    <!-- ExtendsContentIntoTitleBar="True"	隐藏系统标题栏，让内容区域延伸到标题栏。 -->
+    <!-- WindowBackdropType="Mica"	启用 Mica 透明背景（类似 Win11 风格）。 -->
+    <!-- WindowCornerPreference="Round"	设置窗口圆角（Win11 默认支持）。 -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="213*" />
+            <ColumnDefinition Width="889*" />
+        </Grid.ColumnDefinitions>
+
+        <ui:TitleBar
+
+            Title="Pkn上位机"
+            FontSize="18"
+            Grid.ColumnSpan="2" VerticalAlignment="Center">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="../../Assets/pokeniao_logo_圆角_128.ico" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
+
+        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" Grid.ColumnSpan="2" OpenPaneLength="220"
+                           PaneClosed="RootNavigation_OnPaneClosed"
+                           PaneOpened="RootNavigation_OnPaneOpened">
+            <ui:NavigationView.AutoSuggestBox>
+                <ui:AutoSuggestBox x:Name="AutoSuggestBox" PlaceholderText="Search">
+                    <ui:AutoSuggestBox.Icon>
+                        <ui:IconSourceElement>
+                            <ui:SymbolIconSource Symbol="Search24" />
+                        </ui:IconSourceElement>
+                    </ui:AutoSuggestBox.Icon>
+                </ui:AutoSuggestBox>
+            </ui:NavigationView.AutoSuggestBox>
+            <ui:NavigationView.Header>
+                <ui:BreadcrumbBar
+                    Margin="42,32,0,0"
+                    FontSize="28"
+                    FontWeight="DemiBold" />
+            </ui:NavigationView.Header>
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem
+                    Content="主页"
+                    NavigationCacheMode="Enabled"
+                    TargetPageType="{x:Type pages:HomePage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Home24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem
+                    Content="上传mes"
+                    NavigationCacheMode="Enabled"
+                    TargetPageType="{x:Type pages:LoadMesPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Earth16" />
+                    </ui:NavigationViewItem.Icon>
+                    <ui:NavigationViewItem.MenuItems>
+                        <ui:NavigationViewItem
+                            Content="动态通讯内容"
+                            NavigationCacheMode="Enabled"
+                            TargetPageType="{x:Type pages:MesTcpPage}">
+                            <ui:NavigationViewItem.Icon>
+                                <ui:SymbolIcon Symbol="Earth16" />
+                            </ui:NavigationViewItem.Icon>
+                        </ui:NavigationViewItem>
+                    </ui:NavigationViewItem.MenuItems>
+                </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem
+                    NavigationCacheMode="Enabled" Content="工具">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Wrench16" />
+                    </ui:NavigationViewItem.Icon>
+                    <ui:NavigationViewItem.MenuItems>
+                        <ui:NavigationViewItem
+                            Content="Modbus发送工具"
+                            NavigationCacheMode="Enabled"
+                            TargetPageType="{x:Type pages:ModbusToolPage}">
+                            <ui:NavigationViewItem.Icon>
+                                <ui:SymbolIcon Symbol="Wrench16" />
+                            </ui:NavigationViewItem.Icon>
+                        </ui:NavigationViewItem>
+                    </ui:NavigationViewItem.MenuItems>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.MenuItems>
+            <ui:NavigationView.FooterMenuItems>
+                <ui:NavigationViewItem
+                    Content="设置"
+                    NavigationCacheMode="Disabled"
+                    TargetPageType="{x:Type pages:SettingsPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Settings24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.FooterMenuItems>
+
+        </ui:NavigationView>
+    </Grid>
+</ui:FluentWindow>
