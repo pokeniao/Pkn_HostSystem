@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35506.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pkn_HostSystem", "Pkn_HostSystem\Pkn_HostSystem.csproj", "{1CF1D904-1A48-2E67-8805-207512731795}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pkn_WinForm", "Pkn_WinForm\Pkn_WinForm.csproj", "{A43B62F8-398A-4605-A5B8-02FC95C3FECA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1CF1D904-1A48-2E67-8805-207512731795}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CF1D904-1A48-2E67-8805-207512731795}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CF1D904-1A48-2E67-8805-207512731795}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CF1D904-1A48-2E67-8805-207512731795}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A43B62F8-398A-4605-A5B8-02FC95C3FECA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A43B62F8-398A-4605-A5B8-02FC95C3FECA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A43B62F8-398A-4605-A5B8-02FC95C3FECA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A43B62F8-398A-4605-A5B8-02FC95C3FECA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0BB3D79-40A5-444F-9533-243BB2BE59C9}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,211 @@
+﻿<Page x:Class="Pkn_HostSystem.Views.Pages.MesTcpPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:viewModels="clr-namespace:Pkn_HostSystem.ViewModels"
+      xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
+      xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
+      mc:Ignorable="d"
+      Title="MesTcpPage"
+      d:DataContext="{d:DesignInstance page:MesTcpViewModel}"
+      d:DesignHeight="714.5" d:DesignWidth="1000"
+      ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+      ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <Page.Resources>
+        <converter:BooleanVisibilityConverter x:Key="LoadMesBooleanToVisibilityConverter" />
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+            <StackPanel Margin="15,10">
+                <TextBlock Text="动态连接对象" FontSize="18" FontWeight="Black" />
+                <Border Margin="4 "
+                        Height="590"
+                        BorderThickness="2"
+                        CornerRadius="10"
+                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
+                    <ListBox
+                        Margin="5"
+                        Name="DynNameListBox" ItemsSource="{Binding MesTcpModel.DynNetList}"
+                        DisplayMemberPath="Name"
+                        SelectionChanged="DynNameListBox_OnSelectionChanged">
+                    </ListBox>
+                </Border>
+                <WrapPanel HorizontalAlignment="Right">
+                    <Button Content="添加" Command="{Binding AddDynCommand }" Margin="5,0" />
+                    <Button Content="删除" Command="{Binding DeleteDynCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
+                            Margin="5,0" />
+                </WrapPanel>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1">
+            <StackPanel>
+                <Border
+                    Margin="30"
+                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    Height="265"
+                    CornerRadius="10">
+                    <TextBox
+                        Margin="5"
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Auto"
+                        TextWrapping="Wrap"
+                        AcceptsReturn="True"
+                        Background="{x:Null}"
+                        BorderBrush="{x:Null}"
+                        BorderThickness="0"
+                        Style="{x:Null}"
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Text="{Binding MesTcpModel.Message ,UpdateSourceTrigger= PropertyChanged }"
+                        TextChanged="TextBoxBase_OnTextChanged"
+                        FontSize="16" />
+                </Border>
+                <DataGrid
+                    Name="DynConditionDataGrid"
+                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                    Height="300"
+                    ItemsSource="{Binding MesTcpModel.DynConditionItemList}"
+                    AutoGenerateColumns="False"
+                    Margin="30, 0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="请求名" Width="*" Binding="{Binding Name}" />
+                        <DataGridTemplateColumn Header="通讯名" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding ConnectName}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <ComboBox
+                                            ItemsSource="{Binding DataContext.MesTcpModel.NetWorkList,  RelativeSource={RelativeSource AncestorType=Page}}"
+                                            DisplayMemberPath="ConnectPojo.Name"
+                                            SelectedValuePath="ConnectPojo.Name"
+                                            SelectedValue="{Binding ConnectName}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="请求方式" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding MethodName}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <ComboBox
+                                            ItemsSource="{Binding DataContext.MesTcpModel.MethodName,  RelativeSource={RelativeSource AncestorType=Page}}"
+                                            SelectedValue="{Binding MethodName ,UpdateSourceTrigger=PropertyChanged}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="参数" Width="2*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding ShowValue}" Margin="5" TextAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid
+                                            Visibility="{Binding showReadCoil ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}">
+                                            <WrapPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                                    <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        Text="{Binding StationAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="150" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="150" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <TextBlock Text="结束地址" Margin="5" TextAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="150" />
+                                                </StackPanel>
+                                            </WrapPanel>
+                                        </Grid>
+
+                                        <Grid
+                                            Visibility="{Binding showReadReg ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}">
+                                            <WrapPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                                    <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        Text="{Binding StationAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="150" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="150" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <TextBlock Text="结束地址" Margin="5" TextAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="150" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <TextBlock Text="模式" Margin="5" TextAlignment="Center" />
+                                                    <ComboBox
+                                                        SelectedValue="{Binding BitNet ,UpdateSourceTrigger=PropertyChanged}"
+                                                        ItemsSource="{Binding DataContext.MesTcpModel.BitNet, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                        Width="150" />
+                                                </StackPanel>
+                                            </WrapPanel>
+                                        </Grid>
+                                        <Grid
+                                            Visibility="{Binding showSocket ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}">
+                                        </Grid>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <WrapPanel Margin="20,3">
+                </WrapPanel>
+                <Button Content="删除" Width="100"  HorizontalAlignment="Right"  Margin="30,0"
+                        Command="{Binding DeleteDynConditionCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType= Page}}"/>
+            </StackPanel>
+        </Grid>
+        <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" />
+    </Grid>
+</Page>
