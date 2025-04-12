@@ -24,16 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\icon文件\其他图片资源\pokeniao_logo_圆角_128.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="DynamicData" Version="9.2.1" />
     <PackageReference Include="log4net" Version="3.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NModbus" Version="3.0.81" />
     <PackageReference Include="NModbus.Serial" Version="3.0.81" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
@@ -50,7 +45,7 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Update="log4net.config">
+    <None Update="Config\log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

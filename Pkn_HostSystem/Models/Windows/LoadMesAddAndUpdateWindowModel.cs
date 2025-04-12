@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 
 namespace Pkn_HostSystem.Models.Windows;
@@ -11,7 +12,7 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     [ObservableProperty] private string ajax;
     [ObservableProperty] private string httpPath;
     [ObservableProperty] private string api;
-    [ObservableProperty] private int cycTime ;
+    [ObservableProperty] private int cycTime;
     [ObservableProperty] private string requestMethod;
     [ObservableProperty] private string request;
     [ObservableProperty] private ObservableCollection<ConditionItem> condition;
@@ -19,16 +20,16 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     [ObservableProperty] private bool runCyc;
 
 
+    //令牌 循环进程任务
+    [JsonIgnore] public CancellationTokenSource cts { get; set; }
 
-    //令牌 控制线程开启关闭
-    public CancellationTokenSource cts { get; set; }
-    //任务
-    public Lazy<Task> Task { get; set; }
+    //循环进程任务
+    [JsonIgnore] public Lazy<Task> Task { get; set; }
 
 
     public override string ToString()
     {
-        return string.Join(',', Enumerable.Select<ConditionItem, string>(Condition, c =>$"Key={c.Key} Value ={c.Value}"));
+        return string.Join(',',
+            Enumerable.Select<ConditionItem, string>(Condition, c => $"Key={c.Key} Value ={c.Value}"));
     }
 }
-

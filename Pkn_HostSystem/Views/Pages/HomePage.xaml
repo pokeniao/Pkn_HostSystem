@@ -8,6 +8,7 @@
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
       xmlns:page1="clr-namespace:Pkn_HostSystem.ViewModels.Page"
+      d:DataContext="{d:DesignInstance page:HomePageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -49,9 +50,6 @@
         <converter:NewRowAllowButtonConverter x:Key="HomePageRunButtonConverter" />
 
     </Page.Resources>
-    <Page.DataContext>
-        <page1:HomePageViewModel />
-    </Page.DataContext>
 
     <Grid>
         <Grid.ColumnDefinitions>

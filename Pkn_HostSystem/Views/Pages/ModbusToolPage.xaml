@@ -9,7 +9,7 @@
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:modbusTool="clr-namespace:Pkn_HostSystem.Server.ModbusTool"
       xmlns:page1="clr-namespace:Pkn_HostSystem.ViewModels.Page"
-
+      d:DataContext="{d:DesignInstance page:ModbusToolViewModel}"
       mc:Ignorable="d"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -20,9 +20,6 @@
         <modbusTool:openTextBoxbyTrue x:Key="openTextBoxbyTrue" />
         <modbusTool:openCheckBoxbyFalse x:Key="openCheckBoxbyFalse" />
     </Page.Resources>
-    <Page.DataContext>
-        <page1:ModbusToolViewModel />
-    </Page.DataContext>
 
     <Grid>
         <Grid.RowDefinitions>

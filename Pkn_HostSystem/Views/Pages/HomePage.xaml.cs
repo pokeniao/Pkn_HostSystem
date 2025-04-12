@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using HomePageViewModel = Pkn_HostSystem.ViewModels.Page.HomePageViewModel;
 using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
@@ -20,6 +21,8 @@ namespace Pkn_HostSystem.Views.Pages
         public HomePage()
         {
             InitializeComponent();
+            DataContext = Ioc.Default.GetRequiredService<HomePageViewModel>();
+
             HomePageViewModel = (HomePageViewModel)DataContext;
             HomePageViewModel.setSnackbarPresenter(SnackbarPresenter);
 

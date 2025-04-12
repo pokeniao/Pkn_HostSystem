@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Pojo.Page.ModbusTool;
 using ModbusToolViewModel = Pkn_HostSystem.ViewModels.Page.ModbusToolViewModel;
 
@@ -15,6 +16,7 @@ namespace Pkn_HostSystem.Views.Pages
         public ModbusToolPage()
         {
             InitializeComponent();
+            DataContext = Ioc.Default.GetRequiredService<ModbusToolViewModel>();
             viewModel = (ModbusToolViewModel)DataContext;
             viewModel.setSnackbarPresenter(SnackbarPresenter);
         }

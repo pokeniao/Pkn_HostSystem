@@ -8,14 +8,13 @@
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:page1="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance page:LoadMesPageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Title="LoadMesPage">
-    <Page.DataContext>
-        <page1:LoadMesPageViewModel />
-    </Page.DataContext>
+
 
     <Grid>
         <Grid.RowDefinitions>

@@ -280,7 +280,7 @@ public class LoadMesServer
         }
         catch (Exception e)
         {
-            throw;
+            log.Error("执行失败,TCP或RTU未连接上");
         }
 
         return result;
