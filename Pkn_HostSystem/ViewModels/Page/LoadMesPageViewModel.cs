@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Message;
 using Pkn_HostSystem.Models.Page;
@@ -31,17 +32,25 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
 
     public LoadMesPageViewModel()
     {
-        GlobalMannager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
-        LoadMesPageModel = new LoadMesPageModel()
+        LoadMesPageModel = AppJsonStorage<LoadMesPageModel>.Load();
+        if (LoadMesPageModel == null)
         {
-            MesPojoList = [],
-            ReturnMessageList = (ObservableCollection<string>)value
-        };
+            GlobalMannager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
+            LoadMesPageModel = new LoadMesPageModel()
+            {
+                MesPojoList = [],
+                ReturnMessageList = (ObservableCollection<string>)value
+            };
+        }
+        else
+        {
+            GlobalMannager.GlobalDictionary["MesLogListBox"] = LoadMesPageModel.ReturnMessageList;
+        }
         SnackbarService = new SnackbarService();
         log = new LogBase<LoadMesPageViewModel>(SnackbarService);
+        loadMesServer = new LoadMesServer(LoadMesPageModel.MesPojoList);
         // 启用监听
         IsActive = true;
-        loadMesServer = new LoadMesServer(LoadMesPageModel.MesPojoList);
     }
 
     [RelayCommand]
@@ -120,14 +129,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
 
         if (item.RunCyc)
         {
-            if (item.Task == null)
-            {
-                item.cts = new CancellationTokenSource();
-                item.Task = new Lazy<Task>(() => RunHttpCyc(item));
-            }
-
-            //运行
-            Task task = item.Task.Value;
+            OpenCyc(item);
         }
         else
         {
@@ -136,6 +138,20 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
             item.cts = new CancellationTokenSource();
             item.Task = new Lazy<Task>(() => RunHttpCyc(item));
         }
+    }
+    /// <summary>
+    /// 启动循环的方法
+    /// </summary>
+    /// <param name="item"></param>
+    public void OpenCyc(LoadMesAddAndUpdateWindowModel item)
+    {
+        if (item.Task == null)
+        {
+            item.cts = new CancellationTokenSource();
+            item.Task = new Lazy<Task>(() => RunHttpCyc(item));
+        }
+        //运行
+        Task task = item.Task.Value;
     }
 
     public async Task RunHttpCyc(LoadMesAddAndUpdateWindowModel model)
@@ -147,17 +163,12 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
             await Task.Delay(model.CycTime * 1000, model.cts.Token);
         }
     }
-
-
     #region SnackBar弹窗
-
     public void setSnackbarService(SnackbarPresenter snackbarPresenter)
     {
         SnackbarService.SetSnackbarPresenter(snackbarPresenter);
     }
-
     #endregion
-
     /// <summary>
     /// 接受消息处理
     /// </summary>
@@ -170,5 +181,11 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
         log.Info(
             $"添加一行HTTP请求: Name:{loadMesAddAndUpdateWindowModel.Name} 请求方式:{loadMesAddAndUpdateWindowModel.Ajax} 请求路径:{loadMesAddAndUpdateWindowModel.HttpPath}" +
             $"请求消息体:{loadMesAddAndUpdateWindowModel.Request} 请求条件{loadMesAddAndUpdateWindowModel.ToString()}");
+    }
+
+    [RelayCommand]
+    public void Save()
+    {
+        AppJsonStorage<LoadMesPageModel>.Save(LoadMesPageModel);
     }
 }

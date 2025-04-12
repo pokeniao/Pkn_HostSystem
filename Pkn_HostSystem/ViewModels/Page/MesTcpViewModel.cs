@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Pojo.Page.HomePage;
@@ -10,6 +10,7 @@ using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
+using System.Collections.ObjectModel;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -19,21 +20,35 @@ public partial class MesTcpViewModel : ObservableRecipient
 {
     public SnackbarService SnackbarService { get; set; }
     public LogBase<MesTcpViewModel> log;
+
     public MesTcpModel MesTcpModel { get; set; }
 
-  
+
     public MesTcpViewModel()
     {
         SnackbarService = new SnackbarService();
-        log = new LogBase<MesTcpViewModel>(SnackbarService);
-        //Model初始化
-        MesTcpModel = new MesTcpModel()
+
+
+        MesTcpModel = AppJsonStorage<MesTcpModel>.Load();
+        if (MesTcpModel == null)
         {
-            NetWorkList = new ObservableCollectionExtended<NetWorkPoJo>(),
-            DynNetList = new ObservableCollectionExtended<MesTcpPojo>(),
-        };
-        GlobalMannager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe();
-        GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
+            //Model初始化
+            MesTcpModel = new MesTcpModel()
+            {
+                NetWorkList = new ObservableCollectionExtended<NetWorkPoJo>(),
+                DynNetList = new ObservableCollectionExtended<MesTcpPojo>(),
+            };
+            GlobalMannager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe();
+            GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
+        }
+        else
+        {
+            //GlobalMannager.NetWorkDictionary.AddOrUpdate(MesTcpModel.NetWorkList);
+            GlobalMannager.DynDictionary.AddOrUpdate(MesTcpModel.DynNetList);
+            GlobalMannager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe();
+            GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
+        }
+        log = new LogBase<MesTcpViewModel>(SnackbarService);
     }
 
     #region dyn添加删除修改
@@ -92,7 +107,6 @@ public partial class MesTcpViewModel : ObservableRecipient
         MesTcpPojo? mesTcpPojo = page.DynNameListBox.SelectedItem as MesTcpPojo;
         if (item != null)
         {
-         
             if (mesTcpPojo.DynCondition.Remove(item))
             {
                 log.SuccessAndShowTask("删除成功");
@@ -104,16 +118,19 @@ public partial class MesTcpViewModel : ObservableRecipient
             }
         }
     }
-
     #endregion
 
 
     #region 弹窗SnackbarService
-
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
     {
         SnackbarService.SetSnackbarPresenter(snackbarPresenter);
     }
-
     #endregion
+
+    [RelayCommand]
+    public void Save()
+    {
+        AppJsonStorage<MesTcpModel>.Save(MesTcpModel);
+    }
 }

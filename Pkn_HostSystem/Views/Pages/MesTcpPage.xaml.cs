@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using MesTcpViewModel = Pkn_HostSystem.ViewModels.Page.MesTcpViewModel;
 
@@ -9,7 +10,7 @@ namespace Pkn_HostSystem.Views.Pages
     /// </summary>
     public partial class MesTcpPage : Page
     {
-        public MesTcpViewModel viewModel { get; set; } =new MesTcpViewModel();
+        public MesTcpViewModel viewModel { get; set; } = Ioc.Default.GetRequiredService<MesTcpViewModel>();
         public MesTcpPage()
         {
             InitializeComponent();

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Base.Log;
 using LoadMesPageViewModel = Pkn_HostSystem.ViewModels.Page.LoadMesPageViewModel;
 
 namespace Pkn_HostSystem.Views.Pages
@@ -12,10 +14,14 @@ namespace Pkn_HostSystem.Views.Pages
     {
 
         public LoadMesPageViewModel LoadMesPageViewModel { get; set; }
+
+
+        public LogBase<LoadMesPage> Log = new LogBase<LoadMesPage>();
         public LoadMesPage()
         {
             InitializeComponent();
-            LoadMesPageViewModel = (LoadMesPageViewModel)this.DataContext;
+            DataContext = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
+            LoadMesPageViewModel = (LoadMesPageViewModel)DataContext;
             LoadMesPageViewModel.setSnackbarService(SnackbarPresenter);
             //添加为ReturnMessageList监听
             LoadMesPageViewModel.LoadMesPageModel.ReturnMessageList.CollectionChanged += Item_CollectionChanged;
@@ -30,7 +36,14 @@ namespace Pkn_HostSystem.Views.Pages
                 {
                     if (HttpLogListBox != null && HttpLogListBox.Items.Count > 0)
                     {
-                        HttpLogListBox.ScrollIntoView(HttpLogListBox.Items[^1]);
+                        try
+                        {
+                            HttpLogListBox.ScrollIntoView(HttpLogListBox.Items[^1]);
+                        }
+                        catch (Exception exception)
+                        {
+                            Log.Error($"页面下滑刷新报错:--{exception}");
+                        }
                     }
                 }
             });

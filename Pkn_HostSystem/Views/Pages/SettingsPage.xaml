@@ -8,14 +8,12 @@
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:page1="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance page:SettingsPageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Title="SettingsPage">
-    <Page.DataContext>
-        <page1:SettingsPageViewModel/>
-    </Page.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -42,6 +40,13 @@
                     Checked="OnAutoThemeRadioButtonChecked"
                     Content="系统主题"
                     GroupName="themeSelect" />
+                <StackPanel Margin="0,12,0,0">
+                    <TextBlock Text="保存"  FontSize="18" FontWeight="Bold" />
+                    <WrapPanel>
+                        <Button Content="保存" Margin="40,5,0,0" Command="{Binding SaveProgramCommand}"/>
+                        <Button Content="重置" Margin="30,5,0,0" Command="{Binding ReSetProgramCommand}"/>
+                    </WrapPanel>
+                </StackPanel>
                 <TextBlock Text="About" FontSize="18" FontWeight="Bold" Margin="0,24,0,8" />
                 <ui:CardExpander>
                     <ui:CardExpander.Icon>

@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.ViewModels.Page;
 using Wpf.Ui.Appearance;
 
 namespace Pkn_HostSystem.Views.Pages
@@ -12,6 +14,7 @@ namespace Pkn_HostSystem.Views.Pages
         public SettingsPage()
         {
             InitializeComponent();
+            DataContext = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
             if (ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark)
             {
                 DarkThemeRadioButton.IsChecked = true;

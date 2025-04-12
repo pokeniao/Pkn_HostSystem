@@ -1,8 +1,8 @@
-﻿using System.IO.Ports;
+﻿using NModbus;
+using NModbus.Serial;
+using System.IO.Ports;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using NModbus;
-using NModbus.Serial;
 
 namespace Pkn_HostSystem.Base
 {
@@ -10,7 +10,6 @@ namespace Pkn_HostSystem.Base
     {
         //串口
         private SerialPort serialPort { get; set; }
-
         //网口
         private TcpClient tcpClient { get; set; }
 
