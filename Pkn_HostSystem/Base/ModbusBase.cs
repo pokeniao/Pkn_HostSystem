@@ -156,7 +156,10 @@ namespace Pkn_HostSystem.Base
                     BaudRate = baudRate, //波特率
                     DataBits = dataBits, //数据位
                     StopBits = stopBits, //停止位
-                    Parity = parity //奇偶校验
+                    Parity = parity, //奇偶校验
+                    ReadTimeout = ReadTimeout, //设置超时时间 ,必须要有,不然连接会一直等待
+                    WriteTimeout = ReadTimeout
+
                 };
                 //第二步: 打开串口
                 bool b = await Task.Run(() =>
@@ -181,6 +184,7 @@ namespace Pkn_HostSystem.Base
                 modbusMaster = factory.CreateRtuMaster(serialPort);
                 modbusMaster.Transport.ReadTimeout = ReadTimeout;
                 modbusMaster.Transport.Retries = Retries;
+                
                 return true;
             }
             catch (Exception)
@@ -200,7 +204,9 @@ namespace Pkn_HostSystem.Base
                 BaudRate = baudRate, //波特率
                 DataBits = dataBits, //数据位
                 StopBits = stopBits, //停止位
-                Parity = parity //奇偶校验
+                Parity = parity, //奇偶校验
+                ReadTimeout = ReadTimeout, //设置超时时间 ,必须要有,不然连接会一直等待
+                WriteTimeout = ReadTimeout
             };
             //第二步: 打开串口
             try
@@ -212,6 +218,7 @@ namespace Pkn_HostSystem.Base
                 var modbusSlave = factory.CreateSlave(slaveAddress);
                 rtuSlaveNetwork.AddSlave(modbusSlave); //添加从站
                 rtuSlaveNetwork.ListenAsync(); // 启动从站监听
+                
                 return true;
             }
             catch (Exception)
