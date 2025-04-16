@@ -27,7 +27,7 @@ public partial class HomePageViewModel : ObservableRecipient
     public SnackbarService SnackbarService { get; set; } = new();
     public ModbusBase ModbusBase { get; set; } = new();
 
-
+    public List<string> NetMethod { get; set; } = ["ModbusTcp","ModbusRtu","Tcp客户端","Tcp服务器"];
     public HomePageViewModel()
     {
         if (HomePageModel == null)
@@ -294,11 +294,12 @@ public partial class HomePageViewModel : ObservableRecipient
             ModbusToolModel.ModbusRtu_dataBits_select = item.DataBits;
             ModbusToolModel.ModbusRtu_parity_select = item.Parity;
             ModbusToolModel.ModbusRtu_stopBits_select = item.StopBits;
+            ModbusToolModel.NetMethod_select = item.NetMethod;
         }
     }
 
     [RelayCommand]
-    public void Commitconfig(HomePage page)
+    public void CommitConfig(HomePage page)
     {
         var item = page.setConnectDg.SelectedItem as ConnectPojo;
 
@@ -310,6 +311,7 @@ public partial class HomePageViewModel : ObservableRecipient
         item.DataBits = ModbusToolModel.ModbusRtu_dataBits_select;
         item.Parity = ModbusToolModel.ModbusRtu_parity_select;
         item.StopBits = ModbusToolModel.ModbusRtu_stopBits_select;
+        item.NetMethod = ModbusToolModel.NetMethod_select;
     }
 
     #endregion

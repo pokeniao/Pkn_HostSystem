@@ -4,10 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-      xmlns:viewModels="clr-namespace:Pkn_HostSystem.ViewModels"
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
-      xmlns:page1="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       d:DataContext="{d:DesignInstance page:HomePageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -50,7 +48,6 @@
         <converter:NewRowAllowButtonConverter x:Key="HomePageRunButtonConverter" />
 
     </Page.Resources>
-
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -110,9 +107,7 @@
                                 Width="400"
                                 Height="200"
                                 AutoGenerateColumns="False"
-                                CellEditEnding="SetConnectDg_OnCellEditEnding"
-                               
-                                >
+                                CellEditEnding="SetConnectDg_OnCellEditEnding">
 
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="连接名" Width="*" Binding="{Binding Name  }" />
@@ -145,17 +140,17 @@
                                                 <Grid>
                                                     <ui:ToggleSwitch OffContent="关闭" OnContent="启动"
                                                                      IsChecked="{Binding Open ,UpdateSourceTrigger=PropertyChanged}"
-                                                                     
+
                                                                      Command="{Binding DataContext.ConnectModbusCommand ,RelativeSource={RelativeSource AncestorType=Page}}"
                                                                      CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
-                                                        
+
                                                         <ui:ToggleSwitch.IsEnabled>
                                                             <MultiBinding
                                                                 Converter="{StaticResource HomePageRunButtonConverter}">
                                                                 <Binding
                                                                     RelativeSource="{RelativeSource AncestorType=DataGridRow}"
                                                                     Path="IsNewItem" />
-                                                                <Binding Path="Open"></Binding>
+                                                                <Binding Path="Open" />
                                                             </MultiBinding>
                                                         </ui:ToggleSwitch.IsEnabled>
                                                     </ui:ToggleSwitch>
@@ -179,7 +174,7 @@
                                                                 <Binding
                                                                     RelativeSource="{RelativeSource AncestorType=DataGridRow}"
                                                                     Path="IsNewItem" />
-                                                                <Binding Path="Open"></Binding>
+                                                                <Binding Path="Open" />
                                                             </MultiBinding>
                                                         </CheckBox.IsEnabled>
                                                     </CheckBox>
@@ -197,46 +192,61 @@
                                 Margin="0, 15"
                                 CornerRadius="10"
                                 MinWidth="370"
-                                Visibility="Collapsed" >
+                                Visibility="Collapsed">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding HomePageModel.CurrentSetName}" Margin="10"/>
-                                        <TabControl HorizontalAlignment="Left">
-                                        <TabItem>
+                                    <Border
+                                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="0,1,0,1"
+                                        Margin="4">
+                                        <TextBlock Text="{Binding HomePageModel.CurrentSetName}" Margin="10" />
+                                    </Border>
+                                    <Border
+                                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="0,0,0,1"
+                                        Margin="4">
+                                        <WrapPanel>
+                                            <TextBlock Text="当前选择的通讯" Margin="10" TextAlignment="Center" />
+                                            <ComboBox Width="150" ItemsSource="{Binding NetMethod}"
+                                                      SelectedValue="{Binding ModbusToolModel.NetMethod_select}" />
+                                            <Button Content="设置" HorizontalAlignment="Right" Margin="20,5"
+                                                    Command="{Binding CommitConfigCommand}"
+                                                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }" />
+                                        </WrapPanel>
+                                    </Border>
+
+                                    <TabControl HorizontalAlignment="Left" Margin="0,0,0,15">
+                                        <TabItem Width="122">
                                             <TabItem.Header>
-                                                <TextBlock FontWeight="Bold" Text="TCP通讯设置" Margin="30 0 0 0" />
+                                                <TextBlock FontWeight="Bold" FontSize="13" Text="TCP通讯设置" />
                                             </TabItem.Header>
                                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <WrapPanel Margin="5 ">
                                                     <Border Margin="5">
                                                         <TextBlock Text="IP地址" FontSize="15"
                                                                    HorizontalAlignment="Center"
-                                                                   VerticalAlignment="Center">
-                                                        </TextBlock>
+                                                                   VerticalAlignment="Center" />
                                                     </Border>
                                                     <ComboBox Name="cbb_modbus_tpc_ip" Width="250"
                                                               ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}"
                                                               SelectedIndex="0"
                                                               Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}"
-                                                              DropDownOpened="ComboBox_DropDownOpened_1">
-                                                    </ComboBox>
+                                                              DropDownOpened="ComboBox_DropDownOpened_1" />
                                                 </WrapPanel>
                                                 <WrapPanel Margin="5">
                                                     <Border Margin="5">
                                                         <TextBlock Text="端口号" FontSize="15"
                                                                    HorizontalAlignment="Center"
-                                                                   VerticalAlignment="Center">
-                                                        </TextBlock>
+                                                                   VerticalAlignment="Center" />
                                                     </Border>
                                                     <ui:NumberBox Width="250"
                                                                   Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
-                                                                  Minimum="0" Maximum="65535">
-                                                    </ui:NumberBox>
+                                                                  Minimum="0" Maximum="65535" />
                                                 </WrapPanel>
                                             </StackPanel>
                                         </TabItem>
-                                        <TabItem>
+                                        <TabItem Width="122">
                                             <TabItem.Header>
-                                                <TextBlock FontWeight="Bold" Text="串口通讯设置" Margin="30 0 0 0" />
+                                                <TextBlock FontWeight="Bold" FontSize="13" Text="串口通讯设置" />
                                             </TabItem.Header>
                                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                                 <WrapPanel>
@@ -249,8 +259,7 @@
                                                                   ItemsSource="{Binding ModbusToolModel.ModbusRtu_COM}"
                                                                   SelectedIndex="0"
                                                                   DropDownOpened="ComboBox_DropDownOpened"
-                                                                  Text="{Binding ModbusToolModel.ModbusRtu_COM_select}">
-                                                        </ComboBox>
+                                                                  Text="{Binding ModbusToolModel.ModbusRtu_COM_select}" />
                                                     </StackPanel>
                                                     <StackPanel Orientation="Horizontal" Margin="0 5">
 
@@ -262,8 +271,7 @@
                                                         <ComboBox Margin="0 0 10 0" Width="90"
                                                                   ItemsSource="{Binding ModbusToolModel.ModbusRtu_baudRate}"
                                                                   SelectedIndex="0"
-                                                                  Text="{Binding ModbusToolModel.ModbusRtu_baudRate_select}">
-                                                        </ComboBox>
+                                                                  Text="{Binding ModbusToolModel.ModbusRtu_baudRate_select}" />
                                                     </StackPanel>
 
                                                 </WrapPanel>
@@ -278,8 +286,7 @@
                                                         <ComboBox Margin="0 0 10 0" Width="90"
                                                                   ItemsSource="{Binding ModbusToolModel.ModbusRtu_dataBits}"
                                                                   SelectedIndex="0"
-                                                                  Text="{Binding ModbusToolModel.ModbusRtu_dataBits_select}">
-                                                        </ComboBox>
+                                                                  Text="{Binding ModbusToolModel.ModbusRtu_dataBits_select}" />
                                                     </StackPanel>
                                                     <StackPanel Orientation="Horizontal" Margin="0 5">
 
@@ -305,22 +312,34 @@
                                                         <ComboBox Margin="0 0 5 0" Width="90"
                                                                   ItemsSource="{Binding ModbusToolModel.ModbusRtu_parity}"
                                                                   SelectedIndex="0"
-                                                                  Text="{Binding ModbusToolModel.ModbusRtu_parity_select}">
-                                                        </ComboBox>
+                                                                  Text="{Binding ModbusToolModel.ModbusRtu_parity_select}" />
                                                     </StackPanel>
                                                 </WrapPanel>
                                             </StackPanel>
                                         </TabItem>
+                                        <TabItem Width="122">
+                                            <TabItem.Header>
+                                                <TextBlock FontWeight="Bold" FontSize="13" Text="TCP服务器" />
+                                            </TabItem.Header>
+                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <WrapPanel Margin="5">
+                                                    <Border Margin="5">
+                                                        <TextBlock Text="开启服务器端口号" FontSize="15"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ui:NumberBox Width="150"
+                                                                  Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
+                                                                  Minimum="0" Maximum="65535" />
+                                                </WrapPanel>
+                                            </StackPanel>
+                                        </TabItem>
                                     </TabControl>
-                                    <Button Content="设置" HorizontalAlignment="Right" Margin="20,5" 
-                                            Command="{Binding CommitconfigCommand}"
-                                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }"
-                                            />
                                 </StackPanel>
                             </Border>
                         </StackPanel>
                         <Grid Grid.Row="1">
-                            <StackPanel Orientation="Horizontal" Margin="0,30" HorizontalAlignment="Right">
+                            <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
                                 <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick" />
                             </StackPanel>
                         </Grid>

@@ -27,7 +27,7 @@ namespace Pkn_HostSystem.Models.Page
         [ObservableProperty] private int startAddress;
         [ObservableProperty] private int readCount;
 
-
+        [ObservableProperty] private string netMethod_select;
         [ObservableProperty] private string modbusTcp_Ip_select;
         [ObservableProperty] private string funtionCode_select;
         [ObservableProperty] private string modbusRtu_COM_select;
@@ -35,7 +35,7 @@ namespace Pkn_HostSystem.Models.Page
         [ObservableProperty] private string modbusRtu_dataBits_select;
         [ObservableProperty] private StopBits modbusRtu_stopBits_select = StopBits.One;
         [ObservableProperty] private Parity modbusRtu_parity_select;
-
+       
         [ObservableProperty] private List<ModbusPojo<object>> readDvgList;
         [ObservableProperty] private ObservableCollection<ModbusPojo<object>> writeDvgList;
     }

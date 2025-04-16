@@ -1,18 +1,15 @@
-﻿using System.Text.Json.Nodes;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
-using Pkn_HostSystem.Static;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
 namespace Pkn_HostSystem.ViewModels.Page;
 
-public partial class SettingsPageViewModel:ObservableRecipient
+public partial class SettingsPageViewModel : ObservableRecipient
 {
     public SnackbarService SnackbarService { get; set; }
     public LogBase<SettingsPageViewModel> log;
@@ -49,6 +46,7 @@ public partial class SettingsPageViewModel:ObservableRecipient
         AppJsonStorage<MesTcpModel>.Reset();
         log.Info("重置成功");
     }
+
     public bool Save()
     {
         HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
@@ -62,7 +60,6 @@ public partial class SettingsPageViewModel:ObservableRecipient
 
         return true;
     }
-
     #endregion
 
 
