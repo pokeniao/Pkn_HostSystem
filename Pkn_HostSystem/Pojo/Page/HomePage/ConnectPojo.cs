@@ -14,6 +14,9 @@ public class ConnectPojo
 
     public bool NoSet { get; set; } = true;
 
+    //当前选择的通讯模式
+    public string NetMethod { get; set; } 
+
     public bool Open { get; set; }
 
     public string IP { get; set; }
