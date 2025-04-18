@@ -107,7 +107,7 @@ public partial class MesTcpViewModel : ObservableRecipient
         MesTcpPojo? mesTcpPojo = page.DynNameListBox.SelectedItem as MesTcpPojo;
         if (item != null)
         {
-            if (mesTcpPojo.DynCondition.Remove(item))
+            if (mesTcpPojo != null && mesTcpPojo.DynCondition.Remove(item))
             {
                 log.SuccessAndShowTask("删除成功");
             }

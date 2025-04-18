@@ -21,9 +21,8 @@ public partial class MesTcpModel : ObservableObject
 
     [ObservableProperty] private string message;
 
-    [JsonIgnore]
-    public List<string> MethodName { get; set; } = ["读线圈", "读寄存器", "Socket返回"];
-    [JsonIgnore]
-    public List<string> BitNet { get; set; } = ["单寄存器", "双寄存器", "ASCII字符串"];
+    [JsonIgnore] [ObservableProperty] private ObservableCollection<string> methodName;
+    [JsonIgnore] public List<string> BitNet { get; set; } = ["单寄存器", "双寄存器", "ASCII字符串"];
 
+    [ObservableProperty] private ObservableCollection<string> tcpServerConnectionClint;
 }

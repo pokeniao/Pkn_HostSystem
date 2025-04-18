@@ -62,9 +62,6 @@ public partial class SettingsPageViewModel : ObservableRecipient
     }
     #endregion
 
-
-
-
     #region 弹窗SnackbarService
 
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
