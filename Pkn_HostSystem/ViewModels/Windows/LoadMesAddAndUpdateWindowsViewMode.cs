@@ -7,13 +7,13 @@ using DynamicData;
 using DynamicData.Binding;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Message;
+using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Windows;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
-using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
 
 namespace Pkn_HostSystem.ViewModels.Windows;
 
@@ -33,8 +33,13 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public ObservableCollection<string> ReqMethodList { get; set; } = ["动态获取", "常量", "方法集"];
 
+    public ObservableCollection<string> TriggerType { get; set; } = ["循环触发","消息触发"];
+
+    public ObservableCollection<string> ModbusMethod { get; set; } = ["读寄存器", "读线圈"];
 
     public ObservableCollection<string> MethodCollection { get; set; } = ["当前时间"];
+
+    public ObservableCollection<string> NetTrigger { get; set; } = ["ModbusTcp","ModbusRtu","Socket"];
 
     public ObservableCollectionExtended<MesTcpPojo> Para_dyn { get; set; } = new ObservableCollectionExtended<MesTcpPojo>();
     //添加

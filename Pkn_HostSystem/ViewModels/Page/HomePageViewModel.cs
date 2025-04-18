@@ -11,6 +11,8 @@ using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xml.Linq;
+using Newtonsoft.Json.Serialization;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -27,7 +29,8 @@ public partial class HomePageViewModel : ObservableRecipient
     public SnackbarService SnackbarService { get; set; } = new();
     public ModbusBase ModbusBase { get; set; } = new();
 
-    public List<string> NetMethod { get; set; } = ["ModbusTcp","ModbusRtu","Tcp客户端","Tcp服务器"];
+    public List<string> NetMethod { get; set; } = ["ModbusTcp", "ModbusRtu", "Tcp客户端", "Tcp服务器"];
+
     public HomePageViewModel()
     {
         if (HomePageModel == null)
@@ -45,36 +48,34 @@ public partial class HomePageViewModel : ObservableRecipient
             GlobalMannager.GlobalDictionary["LogListBox"] = HomePageModel.LogListBox;
         }
 
-            //初始化Model
-            ModbusToolModel = new ModbusToolModel()
-            {
-                ModbusTcp_Ip = ModbusBase.getIpAddress().ToList(),
-                ModbusTcp_Ip_select = ModbusBase.getIpAddress()[0],
-                ModbusRtu_COM = ModbusBase.getCOM().ToList(),
-                ModbusRtu_COM_select = ModbusBase.getCOM()[0],
-                ModbusTcp_Port = int.Parse("502"),
-                ModbusRtu_baudRate = new List<string>() { "9600", "14400", "19200" },
-                ModbusRtu_baudRate_select = "9600",
-                ModbusRtu_dataBits = new List<string>() { "8", "7" },
-                ModbusRtu_dataBits_select = "8",
-                ModbusRtu_stopBits = Enum.GetValues(typeof(StopBits)).Cast<StopBits>().ToList(),
-                ModbusRtu_parity = Enum.GetValues(typeof(Parity)).Cast<Parity>().ToList(),
-                FuntionCode = new List<string>()
+        //初始化Model
+        ModbusToolModel = new ModbusToolModel()
+        {
+            ModbusTcp_Ip = ModbusBase.getIpAddress().ToList(),
+            ModbusTcp_Ip_select = ModbusBase.getIpAddress()[0],
+            ModbusRtu_COM = ModbusBase.getCOM().ToList(),
+            ModbusRtu_COM_select = ModbusBase.getCOM()[0],
+            ModbusTcp_Port = int.Parse("502"),
+            ModbusRtu_baudRate = new List<string>() { "9600", "14400", "19200" },
+            ModbusRtu_baudRate_select = "9600",
+            ModbusRtu_dataBits = new List<string>() { "8", "7" },
+            ModbusRtu_dataBits_select = "8",
+            ModbusRtu_stopBits = Enum.GetValues(typeof(StopBits)).Cast<StopBits>().ToList(),
+            ModbusRtu_parity = Enum.GetValues(typeof(Parity)).Cast<Parity>().ToList(),
+            FuntionCode = new List<string>()
                 { "01读线圈", "02读输入状态", "03读保持寄存器", "04读输入寄存器", "05写单线圈", "06写单寄存器", "0F写多线圈", "10写多寄存器" },
-                SlaveAddress = 1,
-                StartAddress = 0,
-                ReadCount = 1
-            };
-            log = new LogBase<HomePageViewModel>(SnackbarService);
+            SlaveAddress = 1,
+            StartAddress = 0,
+            ReadCount = 1
+        };
+        log = new LogBase<HomePageViewModel>(SnackbarService);
     }
 
     #region 弹窗SnackbarService
-
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
     {
         SnackbarService.SetSnackbarPresenter(snackbarPresenter);
     }
-
     #endregion
 
     #region 滚动到底部
@@ -118,41 +119,42 @@ public partial class HomePageViewModel : ObservableRecipient
             //不存在需要创建
             if (netWorkPoJo.Task == null)
             {
-                var cts =  new CancellationTokenSource();
+                var cts = new CancellationTokenSource();
                 netWorkPoJo.CancellationTokenSource = cts;
                 netWorkPoJo.ModbusBase = new ModbusBase();
-                netWorkPoJo.Task = new Lazy<Task>(() => ReconnectionModbus(cts.Token, netWorkPoJo));
+                netWorkPoJo.WatsonTcpTool = new WatsonTcpTool();
+                netWorkPoJo.Task = new Lazy<Task>(() => RunAndReconnection(cts.Token, netWorkPoJo));
                 //测试的
                 GlobalMannager.NetWorkDictionary.AddOrUpdate(netWorkPoJo);
             }
 
             await netWorkPoJo.Task.Value;
-
         }
         else
         {
             //令牌生成
             var cts = new CancellationTokenSource();
             var modbusBase = new ModbusBase();
+            var watsonTcpTool = new WatsonTcpTool();
             var workPoJo = new NetWorkPoJo()
             {
                 NetWorkId = key,
                 CancellationTokenSource = cts,
                 ModbusBase = modbusBase,
+                WatsonTcpTool = watsonTcpTool,
                 ConnectPojo = connectPojo
             };
-            var lazy = new Lazy<Task>(() => ReconnectionModbus(cts.Token, workPoJo));
+            var lazy = new Lazy<Task>(() => RunAndReconnection(cts.Token, workPoJo));
             //创建网络连接
             workPoJo.Task = lazy;
             GlobalMannager.NetWorkDictionary.AddOrUpdate(workPoJo);
             await workPoJo.Task.Value;
         }
     }
-
     public void StopConnectModbus(ConnectPojo connectPojo)
     {
         var key = connectPojo.Id;
-        var name = connectPojo.Name;    
+        var name = connectPojo.Name;
         if (name == null) return;
 
         var b = GlobalMannager.NetWorkDictionary.Lookup(key).HasValue;
@@ -172,61 +174,60 @@ public partial class HomePageViewModel : ObservableRecipient
 
         //更新网络连接
         netWorkPoJo.CancellationTokenSource = cts;
-        netWorkPoJo.Task = new Lazy<Task>(() => Task.Run(() => ReconnectionModbus(cts.Token, netWorkPoJo)));
+        netWorkPoJo.Task = new Lazy<Task>(() => Task.Run(() => RunAndReconnection(cts.Token, netWorkPoJo)));
 
         //更新网络体
         GlobalMannager.NetWorkDictionary.AddOrUpdate(netWorkPoJo);
 
-        if (netWorkPoJo.ModbusBase.IsTCPConnect() || netWorkPoJo.ModbusBase.IsRTUConnect())
+        if (netWorkPoJo.ModbusBase.IsTCPConnect())
         {
             //停止Modbus
-            netWorkPoJo.ModbusBase.CloseRTU();
             netWorkPoJo.ModbusBase.CloseTCP();
-            log.SuccessAndShowTask($"{name}:  连接断开");
+            log.SuccessAndShowTask($"ModbusTCP:{name}---连接断开");
+        }
+
+        if (netWorkPoJo.ModbusBase.IsRTUConnect())
+        {
+            netWorkPoJo.ModbusBase.CloseRTU();
+            log.SuccessAndShowTask($"ModbusRTU:{name}---连接断开");
+        }
+        //停止Tcp服务器或者Tcp客户端
+        if (netWorkPoJo.WatsonTcpTool.IsConnected)
+        {
+            netWorkPoJo.WatsonTcpTool.CloseClint();
+            log.SuccessAndShowTask($"TcpClint:{name}---连接断开");
+        }
+
+        if (netWorkPoJo.WatsonTcpTool.IsServerRunning)
+        {
+            netWorkPoJo.WatsonTcpTool.StopServer();
+            log.SuccessAndShowTask($"TcpServer:{name}---连接断开");
         }
     }
 
-    public async Task ReconnectionModbus(CancellationToken token, NetWorkPoJo netWorkPoJo)
+    public async Task RunAndReconnection(CancellationToken token, NetWorkPoJo netWorkPoJo)
     {
-        var modbusBase = netWorkPoJo.ModbusBase;
-
-        var Name = netWorkPoJo.ConnectPojo.Name;
+        WatsonTcpTool watsonTcpTool = netWorkPoJo.WatsonTcpTool;
+        //连接方式
+        string netMethod = netWorkPoJo.ConnectPojo.NetMethod;
         var whileTime = 5000;
         while (!token.IsCancellationRequested)
         {
-            if (modbusBase.IsTCPConnect() || modbusBase.IsRTUConnect())
+            switch (netMethod)
             {
+                case "ModbusTcp":
+                    await ModbusTcpConnect(netWorkPoJo);
+                    break;
+                case "ModbusRtu":
+                    await ModbusRtuConnect(netWorkPoJo);
+                    break;
+                case "Tcp客户端":
+                    await WatsonTcpClintConnect(netWorkPoJo);
+                    break;
+                case "Tcp服务器":
+                    await WatsonTcpServerConnect(netWorkPoJo);
+                    break;
             }
-            else
-            {
-                await modbusBase.OpenTcpMaster(netWorkPoJo.ConnectPojo.IP, netWorkPoJo.ConnectPojo.Port);
-                if (modbusBase.IsTCPConnect())
-                {
-                    log.SuccessAndShowTask($"{Name}:  ModbusTCP连接成功");
-                }
-                else
-                {
-                    //串口连接
-                    try
-                    {
-                        await modbusBase.OpenRTUMaster(netWorkPoJo.ConnectPojo.Com,
-                            int.Parse(netWorkPoJo.ConnectPojo.BaudRate),
-                            int.Parse(netWorkPoJo.ConnectPojo.DataBits),
-                            netWorkPoJo.ConnectPojo.StopBits, netWorkPoJo.ConnectPojo.Parity);
-                    }
-                    catch (Exception e)
-                    {
-                        log.ErrorAndShowTask($"{Name}:  网络无配置,请配置好重新连接!");
-                        return;
-                    }
-
-                    if (modbusBase.IsRTUConnect())
-                        log.SuccessAndShowTask($"{Name}:  ModbusRtu连接成功");
-                    else
-                        log.WarningAndShowTask($"{Name}:  连接失败,请检查设置");
-                }
-            }
-
             //五秒检查一次
             try
             {
@@ -239,8 +240,89 @@ public partial class HomePageViewModel : ObservableRecipient
         }
     }
 
-    #endregion
 
+    public async Task ModbusTcpConnect(NetWorkPoJo netWorkPoJo)
+    {
+        var modbusBase = netWorkPoJo.ModbusBase;
+        if (!modbusBase.IsTCPConnect())
+        {
+            try
+            {
+                await modbusBase.OpenTcpMaster(netWorkPoJo.ConnectPojo.IP, netWorkPoJo.ConnectPojo.Port);
+            }
+            catch (Exception e)
+            {
+                log.ErrorAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  网络无配置,请配置好重新连接!");
+                return;
+            }
+            if (modbusBase.IsTCPConnect())
+            {
+                log.SuccessAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  ModbusTCP连接成功");
+            }
+            else
+            {
+                log.WarningAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  连接失败,请检查设置");
+            }
+        }
+    }
+
+    public async Task ModbusRtuConnect(NetWorkPoJo netWorkPoJo)
+    {
+        var modbusBase = netWorkPoJo.ModbusBase;
+        if (!modbusBase.IsRTUConnect())
+        {
+            //串口连接
+            try
+            {
+                await modbusBase.OpenRTUMaster(netWorkPoJo.ConnectPojo.Com,
+                    int.Parse(netWorkPoJo.ConnectPojo.BaudRate),
+                    int.Parse(netWorkPoJo.ConnectPojo.DataBits),
+                    netWorkPoJo.ConnectPojo.StopBits, netWorkPoJo.ConnectPojo.Parity);
+            }
+            catch (Exception e)
+            {
+                log.ErrorAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  网络无配置,请配置好重新连接!");
+                return;
+            }
+
+            if (modbusBase.IsRTUConnect())
+                log.SuccessAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  ModbusRtu连接成功");
+            else
+                log.WarningAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  连接失败,请检查设置");
+        }
+    }
+
+    public async Task WatsonTcpClintConnect(NetWorkPoJo netWorkPoJo)
+    {
+        if (!netWorkPoJo.WatsonTcpTool.IsClientOpen)
+        {
+            if (netWorkPoJo.WatsonTcpTool.OpenClint(netWorkPoJo.ConnectPojo.IP, netWorkPoJo.ConnectPojo.Port))
+            {
+                log.SuccessAndShowTask("Tcp客户端打开成功");
+            }
+            else
+            {
+                log.WarningAndShowTask("Tcp服务器打开失败");
+            }
+        }
+    }
+
+    public async Task WatsonTcpServerConnect(NetWorkPoJo netWorkPoJo)
+    {
+        if (!netWorkPoJo.WatsonTcpTool.IsServerRunning)
+        {
+            if (netWorkPoJo.WatsonTcpTool.OpenServer(netWorkPoJo.ConnectPojo.Port))
+            {
+                log.SuccessAndShowTask("Tcp服务器打开成功");
+            }
+            else
+            {
+                log.WarningAndShowTask("Tcp服务器打开失败");
+            }
+        }
+ 
+    }
+    #endregion
     #region 删除网络设置行
 
     [RelayCommand]
@@ -313,12 +395,11 @@ public partial class HomePageViewModel : ObservableRecipient
         item.StopBits = ModbusToolModel.ModbusRtu_stopBits_select;
         item.NetMethod = ModbusToolModel.NetMethod_select;
     }
-
     #endregion
 
     [RelayCommand]
     public void Save()
     {
-         AppJsonStorage<HomePageModel>.Save(HomePageModel);
+        AppJsonStorage<HomePageModel>.Save(HomePageModel);
     }
 }

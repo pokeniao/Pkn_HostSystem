@@ -21,8 +21,10 @@ public class WatsonTcpTool
     //服务器是否运行
     public bool IsServerRunning => Server?.IsListening ?? false;
 
-    //客户端连接状态
+    //客户端连接状态,客户端是否连接服务器
     public bool IsConnected => Client?.Connected ?? false;
+
+    public bool IsClientOpen => Client == null ? false : true;
 
     // 线程安全的映射：ipPort <-> Guid   , Guid代表客户端的唯一标识符
     private readonly ConcurrentDictionary<string, Guid> _clientMap = new();
@@ -35,21 +37,29 @@ public class WatsonTcpTool
 
     #region 服务器的打开和停止
 
-    private bool OpenServer(int port)
+    public bool OpenServer(int port)
     {
         if (Server != null && Server.IsListening)
         {
             Log.Info("服务器已经存在,无需创建");
             return false;
         }
+
         //"0.0.0.0"  == IPAddress.Any.ToString()  含义:代表监听所有本地 IPv4 地址 ,如127.0.0.1 网卡, 无线网卡等
         Server = new WatsonTcpServer(IPAddress.Any.ToString(), port);
         RegisterEventsServer();
-        if (!IsServerRunning)
+        try
         {
             Server.Start();
-            Log.Info("服务器创建成功");
         }
+        catch (Exception e)
+        {
+            Log.Error($"错误:{e}");
+            return false;
+        }
+
+        Log.Info("服务器创建成功");
+
         return true;
     }
 
@@ -61,6 +71,7 @@ public class WatsonTcpTool
             Log.Info("服务器停止成功");
         }
 
+        Server = null;
         return true;
     }
 
@@ -170,6 +181,7 @@ public class WatsonTcpTool
     #endregion
 
     #region 客户端打开和关闭
+
     /// <summary>
     /// 连接客户端
     /// </summary>
@@ -181,11 +193,20 @@ public class WatsonTcpTool
         if (Client != null && Client.Connected)
             return false;
 
-        Client = new WatsonTcpClient(serverIp, serverPort);
-        RegisterEventsClient();
-        Client.Connect();
+        try
+        {
+            Client = new WatsonTcpClient(serverIp, serverPort);
+            RegisterEventsClient();
+            Client.Connect();
+        }
+        catch (Exception e)
+        {
+            Log.Error("客户端创建");
+        }
+
         return true;
     }
+
     /// <summary>
     /// 断开客户端连接
     /// </summary>
@@ -196,6 +217,7 @@ public class WatsonTcpTool
         Client = null;
         return true;
     }
+
     #endregion
 
     #region 客户端事件
@@ -208,6 +230,7 @@ public class WatsonTcpTool
 
         Client.Events.MessageReceived += Events_MessageReceivedClient;
     }
+
     /// <summary>
     /// 接收到服务器的消息时事件
     /// </summary>
@@ -215,8 +238,8 @@ public class WatsonTcpTool
     /// <param name="e"></param>
     public virtual void Events_MessageReceivedClient(object? sender, MessageReceivedEventArgs e)
     {
-
     }
+
     /// <summary>
     /// 客户端断开时,事件
     /// </summary>
@@ -225,6 +248,7 @@ public class WatsonTcpTool
     public virtual void Events_ServerDisconnected(object? sender, DisconnectionEventArgs e)
     {
     }
+
     /// <summary>
     /// 客户端连接时,事件
     /// </summary>
@@ -232,7 +256,6 @@ public class WatsonTcpTool
     /// <param name="e"></param>
     public virtual void Events_ServerConnected(object? sender, ConnectionEventArgs e)
     {
-
     }
 
     #endregion
@@ -255,5 +278,6 @@ public class WatsonTcpTool
         var response = await Client.SendAndWaitAsync(timeoutMs, data);
         return Encoding.UTF8.GetString(response.Data);
     }
+
     #endregion
 }

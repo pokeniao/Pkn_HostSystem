@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text;
 using Pkn_HostSystem.Base.Log;
+using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.Static;
@@ -124,8 +125,8 @@ public class LoadMesServer
     /// <summary>
     /// 动态嵌入内容
     /// </summary>
-    /// <param name="request"></param>
-    /// <param name="DynName"></param>
+    /// <param name="request">整个消息体</param>
+    /// <param name="DynName">嵌入名</param>
     /// <returns></returns>
     public async Task<string> DynMessage(string request, string DynName)
     {
@@ -156,12 +157,46 @@ public class LoadMesServer
                     message = StaticMessage(message, itemKey, await ReadCoid(item));
                     break;
                 case "Socket返回":
+                    message = await ReadTcpMessageAsync(item,message);
                     break;
             }
         }
-
-        return message; //测试
+        return message;
     }
+
+    public async Task<string> ReadTcpMessageAsync(DynConditionItem item, string message)
+    {
+        //判断是走客户端发送,还是走服务器发送
+        string itemConnectName = item.ConnectName;
+        string netMethod = "";
+
+        NetWorkPoJo curNetWorkPoJo = null;
+
+        //遍历取出判断当前的网络是什么类型
+        foreach (var netWorkPoJo in GlobalMannager.NetWorkDictionary.Items)
+        {
+            if (netWorkPoJo.ConnectPojo.Name == itemConnectName)
+            {
+                netMethod = netWorkPoJo.ConnectPojo.NetMethod;
+                curNetWorkPoJo = netWorkPoJo;
+            }
+        }
+
+        string response = string.Empty;
+        //更具类型选择发送
+        switch (netMethod)
+        {
+            case "Tcp客户端":
+                response = await curNetWorkPoJo?.WatsonTcpTool.SendWaitClint(message);
+                break;
+
+            case "Tcp服务器":
+                response = await curNetWorkPoJo?.WatsonTcpTool.SendWaitServer(item.SelectPost.ToString(),message);
+                break;
+        }
+        return response;
+    }
+
 
     /// <summary>
     /// 循环遍历获取网络

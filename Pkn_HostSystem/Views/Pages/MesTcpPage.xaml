@@ -101,7 +101,8 @@
                                             ItemsSource="{Binding DataContext.MesTcpModel.NetWorkList,  RelativeSource={RelativeSource AncestorType=Page}}"
                                             DisplayMemberPath="ConnectPojo.Name"
                                             SelectedValuePath="ConnectPojo.Name"
-                                            SelectedValue="{Binding ConnectName}" />
+                                            SelectedValue="{Binding ConnectName,UpdateSourceTrigger=PropertyChanged}"
+                                            SelectionChanged="Selector_OnSelectionChanged"/>
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
@@ -119,7 +120,9 @@
                                     <Grid>
                                         <ComboBox
                                             ItemsSource="{Binding DataContext.MesTcpModel.MethodName,  RelativeSource={RelativeSource AncestorType=Page}}"
-                                            SelectedValue="{Binding MethodName ,UpdateSourceTrigger=PropertyChanged}" />
+                                            SelectedValue="{Binding MethodName ,UpdateSourceTrigger=PropertyChanged}" 
+                                            DropDownOpened="ComboBox_OnDropDownOpened"
+                                            />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
@@ -192,6 +195,10 @@
                                         </Grid>
                                         <Grid
                                             Visibility="{Binding showSocket ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}">
+
+                                            <ComboBox >
+
+                                            </ComboBox>
                                         </Grid>
                                     </Grid>
                                 </DataTemplate>

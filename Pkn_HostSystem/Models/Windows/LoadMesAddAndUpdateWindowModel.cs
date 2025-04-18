@@ -13,11 +13,34 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     [ObservableProperty] private string httpPath;
     [ObservableProperty] private string api;
     [ObservableProperty] private int cycTime;
+
     [ObservableProperty] private string requestMethod;
     [ObservableProperty] private string request;
     [ObservableProperty] private ObservableCollection<ConditionItem> condition;
     [ObservableProperty] private string response;
     [ObservableProperty] private bool runCyc;
+
+
+    //触发类型
+    [ObservableProperty] private string triggerType;
+
+    //触发通讯模式
+    [ObservableProperty] private string netTrigger;
+
+    //Modbus通讯内容
+    [ObservableProperty] private string modbusMethod;
+    [ObservableProperty] private string stationAddress;
+    [ObservableProperty] private string startAddress;
+    [ObservableProperty] private string endAddress;
+
+    //触发消息
+    [ObservableProperty] private string triggerMessage;
+
+    //成功返回消息
+    [ObservableProperty] private string successResponseMessage;
+
+    //失败返回消息
+    [ObservableProperty] private string failResponseMessage;
 
 
     //令牌 循环进程任务

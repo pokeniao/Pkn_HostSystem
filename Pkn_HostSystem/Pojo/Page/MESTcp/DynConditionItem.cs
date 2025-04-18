@@ -23,6 +23,9 @@ public class DynConditionItem : ObservableObject
 
     }
 
+    //选择服务器端口号
+    public int SelectPost { get; set; }
+
     //起始地址
     private int startAddress;
 

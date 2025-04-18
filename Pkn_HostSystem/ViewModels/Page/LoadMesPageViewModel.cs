@@ -46,6 +46,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
         {
             GlobalMannager.GlobalDictionary["MesLogListBox"] = LoadMesPageModel.ReturnMessageList;
         }
+
         SnackbarService = new SnackbarService();
         log = new LogBase<LoadMesPageViewModel>(SnackbarService);
         loadMesServer = new LoadMesServer(LoadMesPageModel.MesPojoList);
@@ -127,9 +128,18 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
         //选中当前行数据
         LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
 
+
         if (item.RunCyc)
         {
-            OpenCyc(item);
+            switch (item?.TriggerType)
+            {
+                case "循环触发":
+                    OpenCyc(item);
+                    break;
+                case "消息触发":
+                    Trigger(item);
+                    break;
+            }
         }
         else
         {
@@ -139,6 +149,45 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
             item.Task = new Lazy<Task>(() => RunHttpCyc(item));
         }
     }
+
+    /// <summary>
+    /// 触发型
+    /// </summary>
+    public void Trigger(LoadMesAddAndUpdateWindowModel item)
+    {
+        if (item.Task == null)
+        {
+            item.cts = new CancellationTokenSource();
+            item.Task = new Lazy<Task>(() => TriggerCyc(item));
+        }
+
+        //运行
+        Task task = item.Task.Value;
+    }
+
+    public async Task TriggerCyc(LoadMesAddAndUpdateWindowModel model)
+    {
+        while (!model.cts.Token.IsCancellationRequested)
+        {
+           //是什么的触发类型
+           switch (model.NetTrigger)
+           {
+                case "ModbusTcp":
+
+
+
+                    break;
+                case "ModbusRtu":
+
+                    break;
+                case "Socket":
+
+                     break;
+           }
+            await Task.Delay(100, model.cts.Token);
+        }
+    }
+
     /// <summary>
     /// 启动循环的方法
     /// </summary>
@@ -150,6 +199,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
             item.cts = new CancellationTokenSource();
             item.Task = new Lazy<Task>(() => RunHttpCyc(item));
         }
+
         //运行
         Task task = item.Task.Value;
     }
@@ -163,12 +213,16 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
             await Task.Delay(model.CycTime * 1000, model.cts.Token);
         }
     }
+
     #region SnackBar弹窗
+
     public void setSnackbarService(SnackbarPresenter snackbarPresenter)
     {
         SnackbarService.SetSnackbarPresenter(snackbarPresenter);
     }
+
     #endregion
+
     /// <summary>
     /// 接受消息处理
     /// </summary>
