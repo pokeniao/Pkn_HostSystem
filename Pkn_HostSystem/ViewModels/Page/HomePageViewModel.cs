@@ -12,6 +12,7 @@ using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
+using KeyenceTool;
 using Newtonsoft.Json.Serialization;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
@@ -29,7 +30,7 @@ public partial class HomePageViewModel : ObservableRecipient
     public SnackbarService SnackbarService { get; set; } = new();
     public ModbusBase ModbusBase { get; set; } = new();
 
-    public List<string> NetMethod { get; set; } = ["ModbusTcp", "ModbusRtu", "Tcp客户端", "Tcp服务器"];
+    public List<string> NetMethod { get; set; } = ["ModbusTcp", "ModbusRtu", "Tcp客户端", "Tcp服务器", "基恩士上位链路通讯"];
 
     public HomePageViewModel()
     {
@@ -123,6 +124,8 @@ public partial class HomePageViewModel : ObservableRecipient
                 netWorkPoJo.CancellationTokenSource = cts;
                 netWorkPoJo.ModbusBase = new ModbusBase();
                 netWorkPoJo.WatsonTcpTool = new WatsonTcpTool();
+                netWorkPoJo.KeyenceHostLinkTool = new KeyenceHostLinkTool();
+
                 netWorkPoJo.Task = new Lazy<Task>(() => RunAndReconnection(cts.Token, netWorkPoJo));
                 //测试的
                 GlobalMannager.NetWorkDictionary.AddOrUpdate(netWorkPoJo);
@@ -136,13 +139,15 @@ public partial class HomePageViewModel : ObservableRecipient
             var cts = new CancellationTokenSource();
             var modbusBase = new ModbusBase();
             var watsonTcpTool = new WatsonTcpTool();
+            var keyenceHostLinkTool = new KeyenceHostLinkTool();
             var workPoJo = new NetWorkPoJo()
             {
                 NetWorkId = key,
                 CancellationTokenSource = cts,
                 ModbusBase = modbusBase,
                 WatsonTcpTool = watsonTcpTool,
-                ConnectPojo = connectPojo
+                ConnectPojo = connectPojo,
+                KeyenceHostLinkTool = keyenceHostLinkTool
             };
             var lazy = new Lazy<Task>(() => RunAndReconnection(cts.Token, workPoJo));
             //创建网络连接
@@ -203,6 +208,12 @@ public partial class HomePageViewModel : ObservableRecipient
             netWorkPoJo.WatsonTcpTool.StopServer();
             log.SuccessAndShowTask($"TcpServer:{name}---连接断开");
         }
+        //停止
+        if (netWorkPoJo.KeyenceHostLinkTool.IsConnected)
+        {
+            netWorkPoJo.KeyenceHostLinkTool.Disconnect();
+            log.SuccessAndShowTask($"上位链路通讯:{name}---连接断开");
+        }
     }
 
     public async Task RunAndReconnection(CancellationToken token, NetWorkPoJo netWorkPoJo)
@@ -227,6 +238,9 @@ public partial class HomePageViewModel : ObservableRecipient
                 case "Tcp服务器":
                     await WatsonTcpServerConnect(netWorkPoJo);
                     break;
+                case "基恩士上位链路通讯":
+                    await KeyneceHostLinkConnect(netWorkPoJo);
+                    break;
             }
             //五秒检查一次
             try
@@ -239,7 +253,28 @@ public partial class HomePageViewModel : ObservableRecipient
             }
         }
     }
-
+    public async Task KeyneceHostLinkConnect(NetWorkPoJo netWorkPoJo)
+    {
+        if (!netWorkPoJo.KeyenceHostLinkTool.IsConnected)
+        {
+            bool connect = netWorkPoJo.KeyenceHostLinkTool.Connect(netWorkPoJo.ConnectPojo.IP, netWorkPoJo.ConnectPojo.Port);
+            if (connect)
+            {
+                if (netWorkPoJo.KeyenceHostLinkTool.IsConnected)
+                {
+                    log.SuccessAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  基恩士上位链路协议连接成功");
+                }
+                else
+                {
+                    log.WarningAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  连接失败,请检查设置");
+                }
+            }
+            else
+            {
+                log.WarningAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  连接失败,请检查设置");
+            }
+        }
+    }
 
     public async Task ModbusTcpConnect(NetWorkPoJo netWorkPoJo)
     {

@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
+using Wpf.Ui.Controls;
 using MesTcpViewModel = Pkn_HostSystem.ViewModels.Page.MesTcpViewModel;
 
 namespace Pkn_HostSystem.Views.Pages
@@ -79,6 +80,9 @@ namespace Pkn_HostSystem.Views.Pages
                         viewModel.MesTcpModel.TcpServerConnectionClint =
                             new ObservableCollection<string>(selectedItem.WatsonTcpTool.GetConnectedClients());
                         break;
+                    case "基恩士上位链路通讯":
+                        viewModel.MesTcpModel.MethodName = ["读DM寄存器", "读R线圈状态"];
+                        break;
                 }
             }
         }
@@ -114,6 +118,9 @@ namespace Pkn_HostSystem.Views.Pages
                     break;
                 case "Tcp服务器":
                     viewModel.MesTcpModel.MethodName = ["Socket返回"];
+                    break;
+                case "基恩士上位链路通讯":
+                    viewModel.MesTcpModel.MethodName = ["读DM寄存器", "读R线圈状态"];
                     break;
             }
         }

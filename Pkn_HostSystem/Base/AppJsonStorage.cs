@@ -20,8 +20,8 @@ public class AppJsonStorage<T> where T : class, new()
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Pkn_HostSystem" // 文件夹名
         );
-
-    private static readonly string FilePath = Path.Combine(AppFolder, typeof(T).Name + ".json");
+    private static readonly string SaveFile = Path.Combine(AppFolder, "程序缓存");
+    private static readonly string FilePath = Path.Combine(SaveFile, typeof(T).Name + ".json");
 
     private static LogBase<AppJsonStorage<T>> log = new();
 
@@ -30,8 +30,8 @@ public class AppJsonStorage<T> where T : class, new()
         try
         {
             //不存在,创建
-            if (!Directory.Exists(AppFolder))
-                Directory.CreateDirectory(AppFolder);
+            if (!Directory.Exists(SaveFile))
+                Directory.CreateDirectory(SaveFile);
             //转成json
             var json = JsonConvert.SerializeObject(config, Formatting.Indented);
             //写入到本地

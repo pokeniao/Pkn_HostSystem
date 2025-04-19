@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
+using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -128,7 +130,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
         //选中当前行数据
         LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
 
-
         if (item.RunCyc)
         {
             switch (item?.TriggerType)
@@ -169,12 +170,10 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
     {
         while (!model.cts.Token.IsCancellationRequested)
         {
-           //是什么的触发类型
-           switch (model.NetTrigger)
-           {
+            //是什么的触发类型
+            switch (model.NetTrigger)
+            {
                 case "ModbusTcp":
-
-
 
                     break;
                 case "ModbusRtu":
@@ -182,8 +181,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
                     break;
                 case "Socket":
 
-                     break;
-           }
+                    break;
+            }
+
             await Task.Delay(100, model.cts.Token);
         }
     }
@@ -210,8 +210,42 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
         {
             //手动发送Http请求
             bool succeed = await loadMesServer.RunOne(model.Name);
+
+
+            //判断是否需要本地保存
+            if (model.LocalSave)
+            {
+                //获取嵌入好的内容
+                LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+                var request = await loadMesServer.PackRequest(item.Name);
+                LocalSave(model, request);
+            }
+
             await Task.Delay(model.CycTime * 1000, model.cts.Token);
         }
+    }
+
+    private static readonly string AppFolder =
+        Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Pkn_HostSystem" // 文件夹名
+        );
+
+    private static readonly string SaveFile = Path.Combine(AppFolder, "Mes上传记录");
+
+    /// <summary>
+    /// 本地保存
+    /// </summary>
+    public void LocalSave(LoadMesAddAndUpdateWindowModel model, string json)
+    {
+        //不存在,创建
+        if (!Directory.Exists(SaveFile))
+            Directory.CreateDirectory(SaveFile);
+        string FilePath = Path.Combine(SaveFile, model.Name + ".csv");
+        CsvHelper csvHelper = new CsvHelper(FilePath);
+        csvHelper.Load();
+        csvHelper.AddRowFromJson(json);
+        csvHelper.Save();
     }
 
     #region SnackBar弹窗

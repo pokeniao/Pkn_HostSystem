@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pkn_HostSystem", "Pkn_HostS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pkn_WinForm", "Pkn_WinForm\Pkn_WinForm.csproj", "{A43B62F8-398A-4605-A5B8-02FC95C3FECA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Pkn_HostSystem_Setup", "Pkn_HostSystem_Setup\Pkn_HostSystem_Setup.vdproj", "{516340D9-195C-F1BD-46F4-B9CED9AA8285}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,8 @@ Global
 		{A43B62F8-398A-4605-A5B8-02FC95C3FECA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A43B62F8-398A-4605-A5B8-02FC95C3FECA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A43B62F8-398A-4605-A5B8-02FC95C3FECA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{516340D9-195C-F1BD-46F4-B9CED9AA8285}.Debug|Any CPU.ActiveCfg = Debug
+		{516340D9-195C-F1BD-46F4-B9CED9AA8285}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

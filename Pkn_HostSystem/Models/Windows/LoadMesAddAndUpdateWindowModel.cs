@@ -42,6 +42,8 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     //失败返回消息
     [ObservableProperty] private string failResponseMessage;
 
+    //是否需要本地保存
+    [ObservableProperty] private bool localSave;
 
     //令牌 循环进程任务
     [JsonIgnore] public CancellationTokenSource cts { get; set; }

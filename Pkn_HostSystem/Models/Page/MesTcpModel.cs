@@ -25,4 +25,5 @@ public partial class MesTcpModel : ObservableObject
     [JsonIgnore] public List<string> BitNet { get; set; } = ["单寄存器", "双寄存器", "ASCII字符串"];
 
     [ObservableProperty] private ObservableCollection<string> tcpServerConnectionClint;
+
 }
