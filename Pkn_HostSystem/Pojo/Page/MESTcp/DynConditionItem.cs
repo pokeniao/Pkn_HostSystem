@@ -81,6 +81,12 @@ public class DynConditionItem : ObservableObject
                 case "Socket返回":
                     value = "暂无";
                     break;
+                case "读DM寄存器":
+                    value = $"起始地址:{StartAddress}";
+                    break;
+                case "读R线圈状态":
+                    value = $"起始地址:{StartAddress}";
+                    break;
             }
 
             return value;
@@ -100,10 +106,12 @@ public class DynConditionItem : ObservableObject
         }
     }
 
-
     public bool showReadReg => MethodName == "读寄存器";
 
     public bool showReadCoil => MethodName == "读线圈";
 
     public bool showSocket => MethodName == "Socket返回";
+
+    public bool showHostLinkReadReg => MethodName == "读DM寄存器";
+    public bool showHostLinkReadCoid => MethodName == "读R线圈状态";
 }

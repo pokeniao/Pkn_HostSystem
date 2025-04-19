@@ -37,7 +37,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public ObservableCollection<string> ModbusMethod { get; set; } = ["读寄存器", "读线圈"];
 
-    public ObservableCollection<string> MethodCollection { get; set; } = ["当前时间"];
+    public ObservableCollection<string> MethodCollection { get; set; } = ["当前时间(yyyy-MM-dd HH:mm:ss)","当前时间(yyyy/MM/dd HH:mm:ss)","当前时间(yyyy-MM-dd)","当前时间(yyyy/MM/dd)"];
 
     public ObservableCollection<string> NetTrigger { get; set; } = ["ModbusTcp","ModbusRtu","Socket"];
 

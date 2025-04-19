@@ -226,11 +226,13 @@
                                                                    HorizontalAlignment="Center"
                                                                    VerticalAlignment="Center" />
                                                     </Border>
-                                                    <ComboBox Name="cbb_modbus_tpc_ip" Width="250"
-                                                              ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}"
-                                                              SelectedIndex="0"
-                                                              Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}"
-                                                              DropDownOpened="ComboBox_DropDownOpened_1" />
+
+                                                    <TextBox  Width="250"     Text="{Binding ModbusToolModel.ModbusTcp_Ip_select ,UpdateSourceTrigger=PropertyChanged}" ></TextBox>
+                                                    <!-- <ComboBox Name="cbb_modbus_tpc_ip" Width="250" -->
+                                                    <!--           ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}" -->
+                                                    <!--           SelectedIndex="0" -->
+                                                    <!--           Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}" -->
+                                                    <!--           DropDownOpened="ComboBox_DropDownOpened_1" /> -->
                                                 </WrapPanel>
                                                 <WrapPanel Margin="5">
                                                     <Border Margin="5">

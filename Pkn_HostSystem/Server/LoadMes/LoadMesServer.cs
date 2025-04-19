@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
+using KeyenceTool;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
@@ -92,8 +94,17 @@ public class LoadMesServer
 
         switch (itemValue)
         {
-            case "当前时间":
-                return DateTime.Now.ToString();
+            case "当前时间(yyyy-MM-dd HH:mm:ss)":
+                return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                break;
+            case "当前时间(yyyy/MM/dd HH:mm:ss)":
+                return DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+                break;
+            case "当前时间(yyyy-MM-dd)":
+                return DateTime.Now.ToString("yyyy-MM-dd");
+                break;
+            case "当前时间(yyyy/MM/dd)":
+                return DateTime.Now.ToString("yyyy/MM/dd");
                 break;
             default:
                 return string.Empty;
@@ -158,6 +169,11 @@ public class LoadMesServer
                     break;
                 case "Socket返回":
                     message = await ReadTcpMessageAsync(item,message);
+                    break;
+                case "读DM寄存器":
+                    message = StaticMessage(message, itemKey, await KeyenceReadDM(item));
+                    break;
+                case "读R线圈状态":
                     break;
             }
         }
@@ -322,6 +338,32 @@ public class LoadMesServer
     }
 
 
+    public async Task<string> KeyenceReadDM(DynConditionItem item)
+    {
+        var itemKey = item.Name;
+        var itemConnectName = item.ConnectName;
+        var methodName = item.MethodName;
+        //获得网络,遍历获取对应的网络
+        var netKey = getNetKey(itemConnectName);
+        if (netKey == null) return null;
+        var netWorkPoJo = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
+        //获得keyenceHostLinkTool
+        KeyenceHostLinkTool keyenceHostLinkTool = netWorkPoJo.KeyenceHostLinkTool;
+        var result = "";
+        try
+        {
+            //获得读寄存器值,获取到内容
+            result = keyenceHostLinkTool.ReadDMCommon(item.StartAddress.ToString());
+        }
+        catch (Exception e)
+        {
+            log.Error("读取失败");
+        }
+
+        return result;
+    }
+
+
     /// <summary>
     /// 手动发送HTTP消息
     /// </summary>
@@ -332,7 +374,7 @@ public class LoadMesServer
         //得到消息体
         return await SendHttp(item);
     }
-
+  
     public async Task<bool> RunAll()
     {
         foreach (var item in mesPojoList)

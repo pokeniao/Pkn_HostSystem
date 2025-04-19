@@ -162,7 +162,6 @@
                                                 </StackPanel>
                                             </WrapPanel>
                                         </Grid>
-
                                         <Grid
                                             Visibility="{Binding showReadReg ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}">
                                             <WrapPanel>
@@ -195,10 +194,28 @@
                                         </Grid>
                                         <Grid
                                             Visibility="{Binding showSocket ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}">
-
                                             <ComboBox >
-
                                             </ComboBox>
+                                        </Grid>
+                                        <Grid
+                                            Visibility="{Binding showHostLinkReadReg ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}"
+                                            >
+                                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                                <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
+                                                <ui:NumberBox
+                                                    Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="150" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid
+                                            Visibility="{Binding showHostLinkReadCoid ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}"
+                                            >
+                                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                                <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
+                                                <ui:NumberBox
+                                                    Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="150" />
+                                            </StackPanel>
                                         </Grid>
                                     </Grid>
                                 </DataTemplate>

@@ -27,6 +27,10 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -190,18 +194,9 @@
                     </StackPanel>
                 </Grid>
             </StackPanel>
-            <DockPanel Grid.Row="2" Margin="0,2">
-                <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-                    <Button Content="确认" IsDefault="True"
-                            Width="100" Command="{Binding ConfirmCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
-                    <Button Content="取消" IsCancel="True"
-                            Width="100" Margin="70,0" Command="{Binding CancelCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
-                </WrapPanel>
-            </DockPanel>
+
         </Grid>
-        <Grid Grid.Column="1" Margin="30,10,10,10">
+        <Grid Grid.Row="0" Grid.Column="1" Margin="30,10,10,10">
             <StackPanel Margin="0,20,0,0">
                 <WrapPanel Margin="10">
                     <TextBlock Text="触发类型" Margin="5" TextAlignment="Center" />
@@ -216,12 +211,11 @@
                         SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.NetTrigger}" />
                 </WrapPanel>
                 <WrapPanel>
-                    <TextBlock Text="Modbus读取方式" Margin="5" TextAlignment="Center"/>
+                    <TextBlock Text="Modbus读取方式" Margin="5" TextAlignment="Center" />
                     <ComboBox
                         Width="100"
                         ItemsSource="{Binding ModbusMethod}"
-                        SelectedValue="{Binding  LoadMesAddAndUpdateWindowModel.ModbusMethod,UpdateSourceTrigger=PropertyChanged}" 
-                    />
+                        SelectedValue="{Binding  LoadMesAddAndUpdateWindowModel.ModbusMethod,UpdateSourceTrigger=PropertyChanged}" />
                 </WrapPanel>
                 <WrapPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
@@ -272,11 +266,26 @@
                          Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                          BorderThickness="0"
                          AcceptsReturn="True"
-
                          FontSize="15"
                          Text="{Binding LoadMesAddAndUpdateWindowModel.FailResponseMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                <WrapPanel>
+                    <TextBlock Text="是否需要保存本地" Margin="5" VerticalAlignment="Center" />
+                    <ui:ToggleSwitch IsChecked="{Binding LoadMesAddAndUpdateWindowModel.LocalSave }"/>
+                </WrapPanel>
+
             </StackPanel>
         </Grid>
+
+        <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,2">
+            <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+                <Button Content="确认" IsDefault="True"
+                        Width="100" Command="{Binding ConfirmCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+                <Button Content="取消" IsCancel="True"
+                        Width="100" Margin="70,0" Command="{Binding CancelCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+            </WrapPanel>
+        </DockPanel>
     </Grid>
 
 </ui:FluentWindow>
