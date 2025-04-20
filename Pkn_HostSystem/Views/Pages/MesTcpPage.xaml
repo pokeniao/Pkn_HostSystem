@@ -16,7 +16,7 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}">
 
     <Page.Resources>
-        <converter:BooleanVisibilityConverter x:Key="LoadMesBooleanToVisibilityConverter" />
+        <converter:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -28,7 +28,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid>
+        <Grid Grid.RowSpan="2">
             <StackPanel Margin="15,10">
                 <TextBlock Text="动态连接对象" FontSize="18" FontWeight="Black" />
                 <Border Margin="4 "
@@ -59,7 +59,7 @@
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
-                    Height="265"
+                    Height="150"
                     CornerRadius="10">
                     <TextBox
                         Margin="5"
@@ -99,10 +99,10 @@
                                     <Grid>
                                         <ComboBox
                                             ItemsSource="{Binding DataContext.MesTcpModel.NetWorkList,  RelativeSource={RelativeSource AncestorType=Page}}"
-                                            DisplayMemberPath="ConnectPojo.Name"
-                                            SelectedValuePath="ConnectPojo.Name"
+                                            DisplayMemberPath="NetworkDetailed.Name"
+                                            SelectedValuePath="NetworkDetailed.Name"
                                             SelectedValue="{Binding ConnectName,UpdateSourceTrigger=PropertyChanged}"
-                                            SelectionChanged="Selector_OnSelectionChanged"/>
+                                            SelectionChanged="Selector_OnSelectionChanged" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
@@ -120,9 +120,8 @@
                                     <Grid>
                                         <ComboBox
                                             ItemsSource="{Binding DataContext.MesTcpModel.MethodName,  RelativeSource={RelativeSource AncestorType=Page}}"
-                                            SelectedValue="{Binding MethodName ,UpdateSourceTrigger=PropertyChanged}" 
-                                            DropDownOpened="ComboBox_OnDropDownOpened"
-                                            />
+                                            SelectedValue="{Binding MethodName ,UpdateSourceTrigger=PropertyChanged}"
+                                            DropDownOpened="ComboBox_OnDropDownOpened" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
@@ -140,7 +139,7 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Grid
-                                            Visibility="{Binding showReadCoil ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}">
+                                            Visibility="{Binding showReadCoil ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <WrapPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,5">
                                                     <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
@@ -155,15 +154,20 @@
                                                         Width="150" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <TextBlock Text="结束地址" Margin="5" TextAlignment="Center" />
+                                                    <TextBlock Text="读取数量" Margin="5" TextAlignment="Center" />
                                                     <ui:NumberBox
                                                         Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
                                                         Width="150" />
                                                 </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
+                                                                     IsChecked="{Binding OpenSwitch}" />
+                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
+                                                </StackPanel>
                                             </WrapPanel>
                                         </Grid>
                                         <Grid
-                                            Visibility="{Binding showReadReg ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}">
+                                            Visibility="{Binding showReadReg ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <WrapPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,5">
                                                     <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
@@ -178,7 +182,7 @@
                                                         Width="150" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <TextBlock Text="结束地址" Margin="5" TextAlignment="Center" />
+                                                    <TextBlock Text="读取数量" Margin="5" TextAlignment="Center" />
                                                     <ui:NumberBox
                                                         Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
                                                         Width="150" />
@@ -190,31 +194,55 @@
                                                         ItemsSource="{Binding DataContext.MesTcpModel.BitNet, RelativeSource={RelativeSource AncestorType=Page}}"
                                                         Width="150" />
                                                 </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
+                                                                     IsChecked="{Binding OpenSwitch}" />
+                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
+                                                </StackPanel>
                                             </WrapPanel>
                                         </Grid>
                                         <Grid
-                                            Visibility="{Binding showSocket ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}">
-                                            <ComboBox >
+                                            Visibility="{Binding showSocket ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                            <ComboBox>
                                             </ComboBox>
                                         </Grid>
                                         <Grid
-                                            Visibility="{Binding showHostLinkReadReg ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}"
-                                            >
-                                            <StackPanel Orientation="Horizontal" Margin="0,5">
-                                                <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
-                                                <ui:NumberBox
-                                                    Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
-                                                    Width="150" />
+                                            Visibility="{Binding showHostLinkReadReg ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        Value="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="150" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                                    <TextBlock Text="模式" Margin="5" TextAlignment="Center" />
+                                                    <ComboBox
+                                                        SelectedValue="{Binding BitNet ,UpdateSourceTrigger=PropertyChanged}"
+                                                        ItemsSource="{Binding DataContext.MesTcpModel.BitNet, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                        Width="150" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
+                                                                     IsChecked="{Binding OpenSwitch}" />
+                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
+                                                </StackPanel>
                                             </StackPanel>
                                         </Grid>
                                         <Grid
-                                            Visibility="{Binding showHostLinkReadCoid ,Converter={StaticResource LoadMesBooleanToVisibilityConverter}}"
-                                            >
-                                            <StackPanel Orientation="Horizontal" Margin="0,5">
-                                                <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
-                                                <ui:NumberBox
-                                                    Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
-                                                    Width="150" />
+                                            Visibility="{Binding showHostLinkReadCoid ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        Value="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="150" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
+                                                                     IsChecked="{Binding OpenSwitch}" />
+                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
+                                                </StackPanel>
                                             </StackPanel>
                                         </Grid>
                                     </Grid>
@@ -225,11 +253,35 @@
                 </DataGrid>
                 <WrapPanel Margin="20,3">
                 </WrapPanel>
-                <Button Content="删除" Width="100"  HorizontalAlignment="Right"  Margin="30,0"
+                <Button Content="删除" Width="100" HorizontalAlignment="Right" Margin="30,0"
                         Command="{Binding DeleteDynConditionCommand}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType= Page}}"/>
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType= Page}}" />
             </StackPanel>
         </Grid>
-        <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" />
+        <Grid Grid.Row="1" Grid.Column="1"
+              Visibility="{Binding MesTcpModel.ShowSwitchSet ,Converter={StaticResource BooleanVisibilityConverter}}">
+            <StackPanel>
+                <DataGrid
+                    Name="DynSwitchDataGrid"
+                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                    Height="150"
+                    Width="400"
+                    ItemsSource="{Binding MesTcpModel.SwitchList}"
+                    AutoGenerateColumns="False"
+                    Margin="30,10">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Case" Width="*"  Binding="{Binding Case}"/>
+                        <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <WrapPanel HorizontalAlignment="Right">
+                    <Button Content="删除" />
+                    <Button Content="关闭" Margin="20,0,180,0" Click="ButtonBase_OnClick2" />
+                </WrapPanel>
+            </StackPanel>
+        </Grid>
+        <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" Margin="0,-5,0,4" />
     </Grid>
 </Page>

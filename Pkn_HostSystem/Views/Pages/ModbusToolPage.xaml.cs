@@ -87,15 +87,15 @@ namespace Pkn_HostSystem.Views.Pages
                 }
         }
 
-        private ObservableCollection<ModbusPojo<object>> WriteView<A>()
+        private ObservableCollection<ModbusToolPojo<object>> WriteView<A>()
         {
-            ObservableCollection<ModbusPojo<object>> bindingList = new ObservableCollection<ModbusPojo<object>>();
+            ObservableCollection<ModbusToolPojo<object>> bindingList = new ObservableCollection<ModbusToolPojo<object>>();
             if (typeof(A) == typeof(bool))
             {
                 int key = viewModel.ModbusToolModel.StartAddress;
                 for (int i = 0; i < viewModel.ModbusToolModel.ReadCount; i++)
                 {
-                    bindingList.Add(new ModbusPojo<object>() { address = key++, value = (object)false ,valueIsBool =true});
+                    bindingList.Add(new ModbusToolPojo<object>() { address = key++, value = (object)false ,valueIsBool =true});
                 }
 
                 return bindingList;
@@ -105,7 +105,7 @@ namespace Pkn_HostSystem.Views.Pages
                 int currentAddress = viewModel.ModbusToolModel.StartAddress;
                 for (int i = 0; i < viewModel.ModbusToolModel.ReadCount; i++)
                 {
-                    bindingList.Add(new ModbusPojo<object>()
+                    bindingList.Add(new ModbusToolPojo<object>()
                         { address = currentAddress, value = (A)(object)(ushort)0, valueIsBool = false });
                     currentAddress++;
                 }

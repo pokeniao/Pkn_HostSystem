@@ -5,5 +5,8 @@ namespace Pkn_HostSystem.Models.Page;
 
 public partial class SettingsPageModel : ObservableObject
 {
+    /// <summary>
+    /// 当前软件的版本
+    /// </summary>
     public string AssemblyVersion { get; set; } = GlobalMannager.AssemblyVersion;
 }

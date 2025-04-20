@@ -94,7 +94,7 @@ namespace Pkn_HostSystem.Views.Pages
 
         private async void SetConnectDg_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
         {
-            ConnectPojo? item = setConnectDg.SelectedItem as ConnectPojo;
+            NetworkDetailed? item = setConnectDg.SelectedItem as NetworkDetailed;
 
 
             if (e.EditAction == DataGridEditAction.Commit)

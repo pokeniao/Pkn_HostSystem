@@ -30,18 +30,20 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid>
+        <Grid Grid.ColumnSpan="2">
+            <Border VerticalAlignment="Center" Height="40" MouseDown="Border_MouseDown">
+                <TextBlock Name="Title" FontWeight="Black" FontSize="16" Margin="30,9" />
+            </Border>
+        </Grid>
+        <Grid  Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-
             <StackPanel>
-                <Border VerticalAlignment="Center" Height="40" MouseDown="Border_MouseDown">
-                    <TextBlock Name="Title" FontWeight="Black" FontSize="16" Margin="30,9" />
-                </Border>
                 <Grid>
                     <Grid ZIndex="2">
                         <ui:SnackbarPresenter HorizontalAlignment="Right" VerticalAlignment="Bottom"
@@ -196,7 +198,7 @@
             </StackPanel>
 
         </Grid>
-        <Grid Grid.Row="0" Grid.Column="1" Margin="30,10,10,10">
+        <Grid Grid.Row="1" Grid.Column="1" Margin="30,10,10,10">
             <StackPanel Margin="0,20,0,0">
                 <WrapPanel Margin="10">
                     <TextBlock Text="触发类型" Margin="5" TextAlignment="Center" />
@@ -276,7 +278,7 @@
             </StackPanel>
         </Grid>
 
-        <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,2">
+        <DockPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,2">
             <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right">
                 <Button Content="确认" IsDefault="True"
                         Width="100" Command="{Binding ConfirmCommand}"

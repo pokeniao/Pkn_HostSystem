@@ -49,11 +49,11 @@ namespace Pkn_HostSystem.Views.Windows
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            ConditionItem? item = ReqDataGrid.SelectedItem as ConditionItem;
+            LoadMesCondition? item = ReqDataGrid.SelectedItem as LoadMesCondition;
 
             viewModel = (LoadMesAddAndUpdateWindowsViewModel)DataContext;
 
-            ObservableCollection<ConditionItem>? items = viewModel?.LoadMesAddAndUpdateWindowModel.Condition;
+            ObservableCollection<LoadMesCondition>? items = viewModel?.LoadMesAddAndUpdateWindowModel.Condition;
 
             if (item?.Key != null)
             {

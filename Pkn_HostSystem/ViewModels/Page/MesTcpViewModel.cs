@@ -35,8 +35,8 @@ public partial class MesTcpViewModel : ObservableRecipient
             //Model初始化
             MesTcpModel = new MesTcpModel()
             {
-                NetWorkList = new ObservableCollectionExtended<NetWorkPoJo>(),
-                DynNetList = new ObservableCollectionExtended<MesTcpPojo>(),
+                NetWorkList = new ObservableCollectionExtended<NetWork>(),
+                DynNetList = new ObservableCollectionExtended<LoadMesDynContent>(),
             };
             GlobalMannager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe();
             GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
@@ -63,10 +63,10 @@ public partial class MesTcpViewModel : ObservableRecipient
         bool? dialog = addDynWindow.ShowDialog();
         if (dialog == true)
         {
-            MesTcpPojo mesTcpPojo = new MesTcpPojo()
+            LoadMesDynContent loadMesDynContent = new LoadMesDynContent()
             {
                 Name = addDynWindow.viewModel.Name,
-                DynCondition = new ObservableCollection<DynConditionItem>(),
+                DynCondition = new ObservableCollection<DynCondition>(),
             };
             if (GlobalMannager.DynDictionary.Lookup(addDynWindow.viewModel.Name).HasValue)
             {
@@ -74,7 +74,7 @@ public partial class MesTcpViewModel : ObservableRecipient
                 return;
             }
 
-            GlobalMannager.DynDictionary.AddOrUpdate(mesTcpPojo);
+            GlobalMannager.DynDictionary.AddOrUpdate(loadMesDynContent);
         }
     }
 
@@ -84,7 +84,7 @@ public partial class MesTcpViewModel : ObservableRecipient
     [RelayCommand]
     public void DeleteDyn(MesTcpPage page)
     {
-        MesTcpPojo? mesTcpPojo = page.DynNameListBox.SelectedItem as MesTcpPojo;
+        LoadMesDynContent? mesTcpPojo = page.DynNameListBox.SelectedItem as LoadMesDynContent;
         if (mesTcpPojo != null)
         {
             if (GlobalMannager.DynDictionary.Lookup(mesTcpPojo.Name).HasValue)
@@ -102,9 +102,9 @@ public partial class MesTcpViewModel : ObservableRecipient
     [RelayCommand]
     public void DeleteDynCondition(MesTcpPage page)
     {
-        DynConditionItem? item = page.DynConditionDataGrid.SelectedItem as DynConditionItem;
+        DynCondition? item = page.DynConditionDataGrid.SelectedItem as DynCondition;
 
-        MesTcpPojo? mesTcpPojo = page.DynNameListBox.SelectedItem as MesTcpPojo;
+        LoadMesDynContent? mesTcpPojo = page.DynNameListBox.SelectedItem as LoadMesDynContent;
         if (item != null)
         {
             if (mesTcpPojo != null && mesTcpPojo.DynCondition.Remove(item))

@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
-using Pkn_HostSystem.Message;
+using Pkn_HostSystem.Models.Message;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Server.LoadMes;
@@ -19,7 +19,7 @@ using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
 
 namespace Pkn_HostSystem.ViewModels.Page;
 
-public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesMessage>
+public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddOneMesMessage>
 {
     public LoadMesPageModel LoadMesPageModel { get; set; }
 
@@ -262,7 +262,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<MesM
     /// </summary>
     /// <param name="message"></param>
     /// <exception cref="NotImplementedException"></exception>
-    public void Receive(MesMessage message)
+    public void Receive(AddOneMesMessage message)
     {
         LoadMesAddAndUpdateWindowModel loadMesAddAndUpdateWindowModel = message.Value;
         LoadMesPageModel.MesPojoList.Add(loadMesAddAndUpdateWindowModel);

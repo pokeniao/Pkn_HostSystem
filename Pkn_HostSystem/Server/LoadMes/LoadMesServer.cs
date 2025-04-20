@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Xml.Linq;
 using KeyenceTool;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
@@ -52,7 +53,7 @@ public class LoadMesServer
         if (loadMesAddAndUpdateWindowModel == null) return null;
 
         //获得当前行的条件
-        var conditionItems = Enumerable.ToList<ConditionItem>(loadMesAddAndUpdateWindowModel.Condition);
+        var conditionItems = Enumerable.ToList<LoadMesCondition>(loadMesAddAndUpdateWindowModel.Condition);
 
 
         //获取请求体
@@ -153,25 +154,43 @@ public class LoadMesServer
         if (message == null) return string.Empty;
 
         var result = "";
-        // 获取其中的条件
+        // 1. 循环获取动态条件
         foreach (var item in mesTcpPojo.DynCondition)
         {
             var itemKey = item.Name;
             var methodName = item.MethodName;
-            //判断什么方式的获取值
+            bool isSwitch = item.OpenSwitch;
+            //2. 判断需要通过什么获取动态内容
             switch (methodName)
             {
                 case "读寄存器":
-                    message = StaticMessage(message, itemKey, await ReadReg(item));
+                    string readReg = await ReadReg(item);
+                    if (isSwitch)
+                    {
+                        readReg = SwitchGetMessage(readReg, item);
+                    }
+
+                    message = StaticMessage(message, itemKey, readReg);
                     break;
                 case "读线圈":
-                    message = StaticMessage(message, itemKey, await ReadCoid(item));
+                    string readCoid = await ReadCoid(item);
+                    if (isSwitch)
+                    {
+                        readCoid = SwitchGetMessage(readCoid, item);
+                    }
+
+                    message = StaticMessage(message, itemKey, readCoid);
                     break;
                 case "Socket返回":
-                    message = await ReadTcpMessageAsync(item,message);
+                    message = await ReadTcpMessageAsync(item, message);
                     break;
                 case "读DM寄存器":
-                    message = StaticMessage(message, itemKey, await KeyenceReadDM(item));
+                    string readDm = await KeyenceReadDM(item);
+                    if (isSwitch)
+                    {
+                        readDm = SwitchGetMessage(readDm, item);
+                    }
+                    message = StaticMessage(message, itemKey, readDm);
                     break;
                 case "读R线圈状态":
                     break;
@@ -179,22 +198,49 @@ public class LoadMesServer
         }
         return message;
     }
+    /// <summary>
+    /// 通过Switch转换
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public string SwitchGetMessage(string message, DynCondition item)
+    {
+        var dynSwitches = item.SwitchList;
 
-    public async Task<string> ReadTcpMessageAsync(DynConditionItem item, string message)
+        foreach (DynSwitch dynSwitch in dynSwitches)
+        {
+            if (dynSwitch.Case == message)
+            {
+                return dynSwitch.Value;
+            }
+        }
+
+        return message;
+    }
+
+
+    /// <summary>
+    /// 读tcp消息
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public async Task<string> ReadTcpMessageAsync(DynCondition item, string message)
     {
         //判断是走客户端发送,还是走服务器发送
         string itemConnectName = item.ConnectName;
         string netMethod = "";
 
-        NetWorkPoJo curNetWorkPoJo = null;
+        NetWork curNetWork = null;
 
         //遍历取出判断当前的网络是什么类型
         foreach (var netWorkPoJo in GlobalMannager.NetWorkDictionary.Items)
         {
-            if (netWorkPoJo.ConnectPojo.Name == itemConnectName)
+            if (netWorkPoJo.NetworkDetailed.Name == itemConnectName)
             {
-                netMethod = netWorkPoJo.ConnectPojo.NetMethod;
-                curNetWorkPoJo = netWorkPoJo;
+                netMethod = netWorkPoJo.NetworkDetailed.NetMethod;
+                curNetWork = netWorkPoJo;
             }
         }
 
@@ -203,13 +249,14 @@ public class LoadMesServer
         switch (netMethod)
         {
             case "Tcp客户端":
-                response = await curNetWorkPoJo?.WatsonTcpTool.SendWaitClint(message);
+                response = await curNetWork?.WatsonTcpTool.SendWaitClint(message);
                 break;
 
             case "Tcp服务器":
-                response = await curNetWorkPoJo?.WatsonTcpTool.SendWaitServer(item.SelectPost.ToString(),message);
+                response = await curNetWork?.WatsonTcpTool.SendWaitServer(item.SelectPost.ToString(), message);
                 break;
         }
+
         return response;
     }
 
@@ -222,7 +269,7 @@ public class LoadMesServer
     {
         var netWorkPoJoes = GlobalMannager.NetWorkDictionary.Items.ToList();
         foreach (var netWorkPoJo in netWorkPoJoes)
-            if (netWorkPoJo.ConnectPojo.Name == ConnectName)
+            if (netWorkPoJo.NetworkDetailed.Name == ConnectName)
                 return netWorkPoJo.NetWorkId;
 
         return null;
@@ -233,7 +280,7 @@ public class LoadMesServer
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public async Task<string> ReadCoid(DynConditionItem item)
+    public async Task<string> ReadCoid(DynCondition item)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;
@@ -262,7 +309,7 @@ public class LoadMesServer
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public async Task<string> ReadReg(DynConditionItem item)
+    public async Task<string> ReadReg(DynCondition item)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;
@@ -282,32 +329,63 @@ public class LoadMesServer
 
             switch (item.BitNet)
             {
-                case "单寄存器":
+                case "单寄存器(无符号)":
                     //用逗号分割
                     result = string.Join(",", Array.ConvertAll(holdingRegisters03, p => $"{p}"));
                     return result;
-                case "双寄存器":
-                    var result_2 = new List<string>();
-                    for (var i = 0; i < holdingRegisters03.Length - 1; i += 2)
-                    {
-                        var low = holdingRegisters03[i].ToString("X4");
-                        var high = holdingRegisters03[i + 1].ToString("X4");
-                        var value = high + low;
-                        var valueInt = int.Parse(value, NumberStyles.HexNumber);
-                        //存入当前数值
-                        result_2.Add(valueInt.ToString());
-
-                        var nextInt = i + 2;
-                        if (nextInt == holdingRegisters03.Length - 1)
-                        {
-                            var value2 = holdingRegisters03[nextInt].ToString("X8");
-                            var valueInt2 = int.Parse(value2, NumberStyles.HexNumber);
-                            result_2.Add(valueInt2.ToString());
-                        }
-                    }
-
-                    //用逗号分割
-                    return string.Join(",", Array.ConvertAll(result_2.ToArray(), p => $"{p}"));
+                case "单寄存器(有符号)":
+                    result = string.Join(",",
+                        Array.ConvertAll(holdingRegisters03,
+                            p => $"{ModbusDataConverter.ConvertFromResponse<short>(p.ToString())}"));
+                    return result;
+                case "双寄存器;无符号;BigEndian":
+                    List<uint> uInt32List1 =
+                        ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.BigEndian);
+                    return string.Join(",", Array.ConvertAll(uInt32List1.ToArray(), p => $"{p}"));
+                case "双寄存器;无符号;LittleEndian":
+                    List<uint> uInt32List2 =
+                        ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.LittleEndian);
+                    return string.Join(",", Array.ConvertAll(uInt32List2.ToArray(), p => $"{p}"));
+                case "双寄存器;无符号;WordSwap":
+                    List<uint> uInt32List3 =
+                        ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.WordSwap);
+                    return string.Join(",", Array.ConvertAll(uInt32List3.ToArray(), p => $"{p}"));
+                case "双寄存器;无符号;ByteSwap":
+                    List<uint> uInt32List4 =
+                        ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.ByteSwap);
+                    return string.Join(",", Array.ConvertAll(uInt32List4.ToArray(), p => $"{p}"));
+                case "双寄存器;有符号;BigEndian":
+                    List<int> int32List1 =
+                        ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.BigEndian);
+                    return string.Join(",", Array.ConvertAll(int32List1.ToArray(), p => $"{p}"));
+                case "双寄存器;有符号;LittleEndian":
+                    List<int> int32List2 =
+                        ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.LittleEndian);
+                    return string.Join(",", Array.ConvertAll(int32List2.ToArray(), p => $"{p}"));
+                case "双寄存器;有符号;WordSwap":
+                    List<int> int32List3 =
+                        ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.WordSwap);
+                    return string.Join(",", Array.ConvertAll(int32List3.ToArray(), p => $"{p}"));
+                case "双寄存器;有符号;ByteSwap":
+                    List<int> int32List4 =
+                        ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.ByteSwap);
+                    return string.Join(",", Array.ConvertAll(int32List4.ToArray(), p => $"{p}"));
+                case "32位浮点数;BigEndian":
+                    List<float> floatList1 =
+                        ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.BigEndian);
+                    return string.Join(",", Array.ConvertAll(floatList1.ToArray(), p => $"{p}"));
+                case "32位浮点数;LittleEndian":
+                    List<float> floatList2 =
+                        ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.LittleEndian);
+                    return string.Join(",", Array.ConvertAll(floatList2.ToArray(), p => $"{p}"));
+                case "32位浮点数;WordSwap":
+                    List<float> floatList3 =
+                        ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.WordSwap);
+                    return string.Join(",", Array.ConvertAll(floatList3.ToArray(), p => $"{p}"));
+                case "32位浮点数;ByteSwap":
+                    List<float> floatList4 =
+                        ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.ByteSwap);
+                    return string.Join(",", Array.ConvertAll(floatList4.ToArray(), p => $"{p}"));
                 case "ASCII字符串":
 
                     var result_3 = new List<byte>();
@@ -316,13 +394,14 @@ public class LoadMesServer
                         //转成16进制
                         var value = itemUshort.ToString("x4");
                         //从2索引截取到结尾
-                        var low = value.Substring(2);
-                        var high = value.Substring(0, 2);
-
+                        var high = value.Substring(2);
+                        var low = value.Substring(0, 2);
                         var ByteLow = byte.Parse(low, NumberStyles.HexNumber);
                         var ByteHigh = byte.Parse(high, NumberStyles.HexNumber);
-                        result_3.Add(ByteHigh);
+
+                        //低位在前
                         result_3.Add(ByteLow);
+                        result_3.Add(ByteHigh);
                     }
 
                     //输出ASCII码转换后的结果
@@ -338,7 +417,7 @@ public class LoadMesServer
     }
 
 
-    public async Task<string> KeyenceReadDM(DynConditionItem item)
+    public async Task<string> KeyenceReadDM(DynCondition item)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;
@@ -353,7 +432,7 @@ public class LoadMesServer
         try
         {
             //获得读寄存器值,获取到内容
-            result = keyenceHostLinkTool.ReadDMCommon(item.StartAddress.ToString());
+            //    result = keyenceHostLinkTool.ReadDMCommon(item.StartAddress.ToString());
         }
         catch (Exception e)
         {
@@ -374,7 +453,7 @@ public class LoadMesServer
         //得到消息体
         return await SendHttp(item);
     }
-  
+
     public async Task<bool> RunAll()
     {
         foreach (var item in mesPojoList)
