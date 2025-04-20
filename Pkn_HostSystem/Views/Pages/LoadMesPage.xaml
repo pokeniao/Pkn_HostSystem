@@ -82,10 +82,7 @@
                     </Border>
                     <Button Content="滑动到底部" Click="ButtonBase_OnClick"/>
                 </StackPanel>
-              
-
             </Grid>
-
         </Grid>
         <ui:SnackbarPresenter Grid.Row="0" Grid.ColumnSpan="2" Name="SnackbarPresenter"
                               VerticalAlignment="Bottom" />

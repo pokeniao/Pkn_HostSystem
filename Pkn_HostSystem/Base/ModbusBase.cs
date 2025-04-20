@@ -483,4 +483,184 @@ namespace Pkn_HostSystem.Base
 
         #endregion
     }
+
+
+
+    /// <summary>
+    /// 静态类,用于格式转换
+    /// </summary>
+    public static class ModbusDataConverter
+    {
+        /// <summary>
+        /// 返回消息格式转换
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        /// <exception cref="FormatException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
+        public static T ConvertFromResponse<T>(string response) where T : struct
+        {
+            //前面是+号的情况 ,TrimStart去除前面的+号
+            response = response.Trim().TrimStart('+');
+
+            try
+            {
+                if (typeof(T) == typeof(ushort))
+                    //
+                    return (T)(object)ushort.Parse(response);
+
+                if (typeof(T) == typeof(short))
+                    return (T)(object)(short)ushort.Parse(response);
+
+                if (typeof(T) == typeof(uint))
+                    return (T)(object)uint.Parse(response);
+
+                if (typeof(T) == typeof(int))
+                    return (T)(object)int.Parse(response);
+
+                if (typeof(T) == typeof(float))
+                {
+                    uint raw = uint.Parse(response);
+                    return (T)(object)BitConverter.ToSingle(BitConverter.GetBytes(raw), 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new FormatException($"无法解析响应 '{response}' 为类型 {typeof(T)}，错误: {ex.Message}");
+            }
+
+            throw new NotSupportedException($"不支持的数据类型: {typeof(T)}");
+        }
+
+        public static string ConvertToWriteData<T>(T value) where T : struct
+        {
+            if (value is ushort)
+                return Convert.ToUInt16(value).ToString();
+
+            if (value is short sval)
+            {
+                ushort uval = (ushort)sval;
+                return uval.ToString();
+            }
+
+            if (value is uint)
+                return Convert.ToUInt32(value).ToString();
+
+            if (value is int)
+                return Convert.ToInt32(value).ToString();
+            if (value is float fval)
+            {
+                var bytes = BitConverter.GetBytes(fval);
+                uint raw = BitConverter.ToUInt32(bytes, 0);
+                return raw.ToString();
+            }
+
+            throw new NotSupportedException($"不支持的数据类型: {typeof(T)}");
+        }
+    }
+
+    public enum ModbusEndian
+    {
+        BigEndian,     // 高字在前，高字节在前
+        LittleEndian,  // 低字在前，低字节在前
+        WordSwap,      // 低字在前，高字节在前
+        ByteSwap       // 高字在前，低字节在前
+    }
+
+    public static class ModbusDoubleRegisterConverter
+    {
+        public static List<uint> ToUInt32List(ushort[] registers, ModbusEndian endian)
+        {
+            var result = new List<uint>();
+            for (int i = 0; i < registers.Length - 1; i += 2)
+            {
+                uint value = ConvertToUInt32(registers[i], registers[i + 1], endian);
+                result.Add(value);
+            }
+            return result;
+        }
+
+        public static List<int> ToInt32List(ushort[] registers, ModbusEndian endian)
+        {
+            var result = new List<int>();
+            foreach (var u in ToUInt32List(registers, endian))
+            {
+                result.Add(unchecked((int)u));
+            }
+            return result;
+        }
+
+        public static List<float> ToFloatList(ushort[] registers, ModbusEndian endian)
+        {
+            var result = new List<float>();
+            foreach (var u in ToUInt32List(registers, endian))
+            {
+                byte[] bytes = BitConverter.GetBytes(u);
+                if (BitConverter.IsLittleEndian)
+                {
+                    // BitConverter 是小端，需要按实际顺序翻转
+                    switch (endian)
+                    {
+                        case ModbusEndian.BigEndian:
+                            Array.Reverse(bytes);
+                            break;
+                        case ModbusEndian.LittleEndian:
+                            // 不动
+                            break;
+                        case ModbusEndian.WordSwap:
+                            bytes = new byte[] { bytes[2], bytes[3], bytes[0], bytes[1] };
+                            break;
+                        case ModbusEndian.ByteSwap:
+                            Array.Reverse(bytes);
+                            break;
+                    }
+                }
+                result.Add(BitConverter.ToSingle(bytes, 0));
+            }
+            return result;
+        }
+
+        private static uint ConvertToUInt32(ushort word1, ushort word2, ModbusEndian endian)
+        {
+            byte[] bytes = new byte[4];
+
+            switch (endian)
+            {
+                case ModbusEndian.BigEndian:
+                    // word1: 高位, word2: 低位
+                    bytes[0] = (byte)(word1 >> 8);
+                    bytes[1] = (byte)(word1 & 0xFF);
+                    bytes[2] = (byte)(word2 >> 8);
+                    bytes[3] = (byte)(word2 & 0xFF);
+                    break;
+
+                case ModbusEndian.LittleEndian:
+                    // word1: 低位, word2: 高位
+                    bytes[0] = (byte)(word1 & 0xFF);
+                    bytes[1] = (byte)(word1 >> 8);
+                    bytes[2] = (byte)(word2 & 0xFF);
+                    bytes[3] = (byte)(word2 >> 8);
+                    break;
+
+                case ModbusEndian.WordSwap:
+                    // word1: 低位, word2: 高位, 但字节顺序不换
+                    bytes[0] = (byte)(word2 >> 8);
+                    bytes[1] = (byte)(word2 & 0xFF);
+                    bytes[2] = (byte)(word1 >> 8);
+                    bytes[3] = (byte)(word1 & 0xFF);
+                    break;
+
+                case ModbusEndian.ByteSwap:
+                    // word1: 高位, word2: 低位, 但字节顺序倒转
+                    bytes[0] = (byte)(word2 & 0xFF);
+                    bytes[1] = (byte)(word2 >> 8);
+                    bytes[2] = (byte)(word1 & 0xFF);
+                    bytes[3] = (byte)(word1 >> 8);
+                    break;
+            }
+
+            return BitConverter.ToUInt32(bytes, 0);
+        }
+    }
 }

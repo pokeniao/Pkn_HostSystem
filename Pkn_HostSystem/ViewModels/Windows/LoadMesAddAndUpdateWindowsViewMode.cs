@@ -1,17 +1,17 @@
-﻿using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using DynamicData.Binding;
 using Pkn_HostSystem.Base.Log;
-using Pkn_HostSystem.Message;
+using Pkn_HostSystem.Models.Message;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Windows;
+using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -33,15 +33,15 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public ObservableCollection<string> ReqMethodList { get; set; } = ["动态获取", "常量", "方法集"];
 
-    public ObservableCollection<string> TriggerType { get; set; } = ["循环触发","消息触发"];
+    public ObservableCollection<string> TriggerType { get; set; } = ["循环触发", "消息触发"];
 
     public ObservableCollection<string> ModbusMethod { get; set; } = ["读寄存器", "读线圈"];
 
-    public ObservableCollection<string> MethodCollection { get; set; } = ["当前时间(yyyy-MM-dd HH:mm:ss)","当前时间(yyyy/MM/dd HH:mm:ss)","当前时间(yyyy-MM-dd)","当前时间(yyyy/MM/dd)"];
+    public ObservableCollection<string> MethodCollection { get; set; } = ["当前时间(yyyy-MM-dd HH:mm:ss)", "当前时间(yyyy/MM/dd HH:mm:ss)", "当前时间(yyyy-MM-dd)", "当前时间(yyyy/MM/dd)"];
 
-    public ObservableCollection<string> NetTrigger { get; set; } = ["ModbusTcp","ModbusRtu","Socket"];
+    public ObservableCollection<string> NetTrigger { get; set; } = ["ModbusTcp", "ModbusRtu", "Socket"];
 
-    public ObservableCollectionExtended<MesTcpPojo> Para_dyn { get; set; } = new ObservableCollectionExtended<MesTcpPojo>();
+    public ObservableCollectionExtended<LoadMesDynContent> Para_dyn { get; set; } = new ObservableCollectionExtended<LoadMesDynContent>();
     //添加
     public LoadMesAddAndUpdateWindowsViewModel()
     {
@@ -50,7 +50,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
             Ajax = "POST",
             CycTime = 300,
             RequestMethod = "JSON",
-            Condition = new ObservableCollection<ConditionItem>()
+            Condition = new ObservableCollection<LoadMesCondition>()
             {
             }
         };
@@ -81,7 +81,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
             Log.WarningAndShow("Name不能为空", "用户添加时,输入的Name参数不正确,Name不能为空");
             return;
         }
-        
+
         foreach (var item in mesPojoList)
         {
             if (item.Name == LoadMesAddAndUpdateWindowModel.Name && item.Name != LastName)
@@ -121,7 +121,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
         if (add)
         {
             //发送消息体
-            WeakReferenceMessenger.Default.Send(new MesMessage(LoadMesAddAndUpdateWindowModel));
+            WeakReferenceMessenger.Default.Send(new AddOneMesMessage(LoadMesAddAndUpdateWindowModel));
         }
 
         window.DialogResult = true;

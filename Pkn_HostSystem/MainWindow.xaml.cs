@@ -49,7 +49,7 @@ namespace Pkn_HostSystem
         {
             //判断软件开启,启动的连接,自动进行连接
             HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
-            ObservableCollection<ConnectPojo> ConnectPojos = homePageViewModel.HomePageModel.SetConnectDg;
+            ObservableCollection<NetworkDetailed> ConnectPojos = homePageViewModel.HomePageModel.SetConnectDg;
             foreach (var connectPojo in ConnectPojos)
             {
                 if (connectPojo.Open == true)

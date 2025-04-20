@@ -41,7 +41,7 @@ public partial class HomePageViewModel : ObservableRecipient
             HomePageModel = new HomePageModel()
             {
                 LogListBox = (ObservableCollection<string>)obj,
-                SetConnectDg = new ObservableCollection<ConnectPojo>()
+                SetConnectDg = new ObservableCollection<NetworkDetailed>()
             };
         }
         else
@@ -80,7 +80,6 @@ public partial class HomePageViewModel : ObservableRecipient
     #endregion
 
     #region 滚动到底部
-
     [RelayCommand]
     public void ScrollToBottom(ListBox LogListBox)
     {
@@ -88,25 +87,23 @@ public partial class HomePageViewModel : ObservableRecipient
 
         LogListBox.ScrollIntoView(LogListBox.Items[^1]);
     }
-
     #endregion
 
     #region 连接网络
-
     [RelayCommand]
     public void ConnectModbus(HomePage page)
     {
-        var selectedItem = page.setConnectDg.SelectedItem as ConnectPojo;
+        var selectedItem = page.setConnectDg.SelectedItem as NetworkDetailed;
         if (selectedItem.Open)
             StartConnectModbus(selectedItem);
         else
             StopConnectModbus(selectedItem);
     }
 
-    public async void StartConnectModbus(ConnectPojo connectPojo)
+    public async void StartConnectModbus(NetworkDetailed networkDetailed)
     {
-        var key = connectPojo.Id;
-        var Name = connectPojo.Name;
+        var key = networkDetailed.Id;
+        var Name = networkDetailed.Name;
         if (Name == null)
         {
             log.ErrorAndShow("请先填写好连接名,并且回车确认");
@@ -140,13 +137,13 @@ public partial class HomePageViewModel : ObservableRecipient
             var modbusBase = new ModbusBase();
             var watsonTcpTool = new WatsonTcpTool();
             var keyenceHostLinkTool = new KeyenceHostLinkTool();
-            var workPoJo = new NetWorkPoJo()
+            var workPoJo = new NetWork()
             {
                 NetWorkId = key,
                 CancellationTokenSource = cts,
                 ModbusBase = modbusBase,
                 WatsonTcpTool = watsonTcpTool,
-                ConnectPojo = connectPojo,
+                NetworkDetailed = networkDetailed,
                 KeyenceHostLinkTool = keyenceHostLinkTool
             };
             var lazy = new Lazy<Task>(() => RunAndReconnection(cts.Token, workPoJo));
@@ -156,90 +153,90 @@ public partial class HomePageViewModel : ObservableRecipient
             await workPoJo.Task.Value;
         }
     }
-    public void StopConnectModbus(ConnectPojo connectPojo)
+    public void StopConnectModbus(NetworkDetailed networkDetailed)
     {
-        var key = connectPojo.Id;
-        var name = connectPojo.Name;
+        var key = networkDetailed.Id;
+        var name = networkDetailed.Name;
         if (name == null) return;
 
         var b = GlobalMannager.NetWorkDictionary.Lookup(key).HasValue;
-        NetWorkPoJo netWorkPoJo;
+        NetWork netWork;
         if (b)
-            netWorkPoJo = GlobalMannager.NetWorkDictionary.Lookup(key).Value;
+            netWork = GlobalMannager.NetWorkDictionary.Lookup(key).Value;
         else
             return;
 
 
         //取出密钥
-        var cts = netWorkPoJo.CancellationTokenSource;
+        var cts = netWork.CancellationTokenSource;
 
         cts?.Cancel();
         //创建新密钥
         cts = new CancellationTokenSource();
 
         //更新网络连接
-        netWorkPoJo.CancellationTokenSource = cts;
-        netWorkPoJo.Task = new Lazy<Task>(() => Task.Run(() => RunAndReconnection(cts.Token, netWorkPoJo)));
+        netWork.CancellationTokenSource = cts;
+        netWork.Task = new Lazy<Task>(() => Task.Run(() => RunAndReconnection(cts.Token, netWork)));
 
         //更新网络体
-        GlobalMannager.NetWorkDictionary.AddOrUpdate(netWorkPoJo);
+        GlobalMannager.NetWorkDictionary.AddOrUpdate(netWork);
 
-        if (netWorkPoJo.ModbusBase.IsTCPConnect())
+        if (netWork.ModbusBase.IsTCPConnect())
         {
             //停止Modbus
-            netWorkPoJo.ModbusBase.CloseTCP();
+            netWork.ModbusBase.CloseTCP();
             log.SuccessAndShowTask($"ModbusTCP:{name}---连接断开");
         }
 
-        if (netWorkPoJo.ModbusBase.IsRTUConnect())
+        if (netWork.ModbusBase.IsRTUConnect())
         {
-            netWorkPoJo.ModbusBase.CloseRTU();
+            netWork.ModbusBase.CloseRTU();
             log.SuccessAndShowTask($"ModbusRTU:{name}---连接断开");
         }
         //停止Tcp服务器或者Tcp客户端
-        if (netWorkPoJo.WatsonTcpTool.IsConnected)
+        if (netWork.WatsonTcpTool.IsConnected)
         {
-            netWorkPoJo.WatsonTcpTool.CloseClint();
+            netWork.WatsonTcpTool.CloseClint();
             log.SuccessAndShowTask($"TcpClint:{name}---连接断开");
         }
 
-        if (netWorkPoJo.WatsonTcpTool.IsServerRunning)
+        if (netWork.WatsonTcpTool.IsServerRunning)
         {
-            netWorkPoJo.WatsonTcpTool.StopServer();
+            netWork.WatsonTcpTool.StopServer();
             log.SuccessAndShowTask($"TcpServer:{name}---连接断开");
         }
         //停止
-        if (netWorkPoJo.KeyenceHostLinkTool.IsConnected)
+        if (netWork.KeyenceHostLinkTool.IsConnected)
         {
-            netWorkPoJo.KeyenceHostLinkTool.Disconnect();
+            netWork.KeyenceHostLinkTool.Disconnect();
             log.SuccessAndShowTask($"上位链路通讯:{name}---连接断开");
         }
     }
 
-    public async Task RunAndReconnection(CancellationToken token, NetWorkPoJo netWorkPoJo)
+    public async Task RunAndReconnection(CancellationToken token, NetWork netWork)
     {
-        WatsonTcpTool watsonTcpTool = netWorkPoJo.WatsonTcpTool;
+        WatsonTcpTool watsonTcpTool = netWork.WatsonTcpTool;
         //连接方式
-        string netMethod = netWorkPoJo.ConnectPojo.NetMethod;
+        string netMethod = netWork.NetworkDetailed.NetMethod;
         var whileTime = 5000;
         while (!token.IsCancellationRequested)
         {
             switch (netMethod)
             {
                 case "ModbusTcp":
-                    await ModbusTcpConnect(netWorkPoJo);
+                    await ModbusTcpConnect(netWork);
                     break;
                 case "ModbusRtu":
-                    await ModbusRtuConnect(netWorkPoJo);
+                    await ModbusRtuConnect(netWork);
                     break;
                 case "Tcp客户端":
-                    await WatsonTcpClintConnect(netWorkPoJo);
+                    await WatsonTcpClintConnect(netWork);
                     break;
                 case "Tcp服务器":
-                    await WatsonTcpServerConnect(netWorkPoJo);
+                    await WatsonTcpServerConnect(netWork);
                     break;
                 case "基恩士上位链路通讯":
-                    await KeyneceHostLinkConnect(netWorkPoJo);
+                    await KeyneceHostLinkConnect(netWork);
                     break;
             }
             //五秒检查一次
@@ -253,85 +250,85 @@ public partial class HomePageViewModel : ObservableRecipient
             }
         }
     }
-    public async Task KeyneceHostLinkConnect(NetWorkPoJo netWorkPoJo)
+    public async Task KeyneceHostLinkConnect(NetWork netWork)
     {
-        if (!netWorkPoJo.KeyenceHostLinkTool.IsConnected)
+        if (!netWork.KeyenceHostLinkTool.IsConnected)
         {
-            bool connect = netWorkPoJo.KeyenceHostLinkTool.Connect(netWorkPoJo.ConnectPojo.IP, netWorkPoJo.ConnectPojo.Port);
+            bool connect = netWork.KeyenceHostLinkTool.Connect(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port);
             if (connect)
             {
-                if (netWorkPoJo.KeyenceHostLinkTool.IsConnected)
+                if (netWork.KeyenceHostLinkTool.IsConnected)
                 {
-                    log.SuccessAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  基恩士上位链路协议连接成功");
+                    log.SuccessAndShowTask($"{netWork.NetworkDetailed.Name}:  基恩士上位链路协议连接成功");
                 }
                 else
                 {
-                    log.WarningAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  连接失败,请检查设置");
+                    log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
                 }
             }
             else
             {
-                log.WarningAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  连接失败,请检查设置");
+                log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
             }
         }
     }
 
-    public async Task ModbusTcpConnect(NetWorkPoJo netWorkPoJo)
+    public async Task ModbusTcpConnect(NetWork netWork)
     {
-        var modbusBase = netWorkPoJo.ModbusBase;
+        var modbusBase = netWork.ModbusBase;
         if (!modbusBase.IsTCPConnect())
         {
             try
             {
-                await modbusBase.OpenTcpMaster(netWorkPoJo.ConnectPojo.IP, netWorkPoJo.ConnectPojo.Port);
+                await modbusBase.OpenTcpMaster(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port);
             }
             catch (Exception e)
             {
-                log.ErrorAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  网络无配置,请配置好重新连接!");
+                log.ErrorAndShowTask($"{netWork.NetworkDetailed.Name}:  网络无配置,请配置好重新连接!");
                 return;
             }
             if (modbusBase.IsTCPConnect())
             {
-                log.SuccessAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  ModbusTCP连接成功");
+                log.SuccessAndShowTask($"{netWork.NetworkDetailed.Name}:  ModbusTCP连接成功");
             }
             else
             {
-                log.WarningAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  连接失败,请检查设置");
+                log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
             }
         }
     }
 
-    public async Task ModbusRtuConnect(NetWorkPoJo netWorkPoJo)
+    public async Task ModbusRtuConnect(NetWork netWork)
     {
-        var modbusBase = netWorkPoJo.ModbusBase;
+        var modbusBase = netWork.ModbusBase;
         if (!modbusBase.IsRTUConnect())
         {
             //串口连接
             try
             {
-                await modbusBase.OpenRTUMaster(netWorkPoJo.ConnectPojo.Com,
-                    int.Parse(netWorkPoJo.ConnectPojo.BaudRate),
-                    int.Parse(netWorkPoJo.ConnectPojo.DataBits),
-                    netWorkPoJo.ConnectPojo.StopBits, netWorkPoJo.ConnectPojo.Parity);
+                await modbusBase.OpenRTUMaster(netWork.NetworkDetailed.Com,
+                    int.Parse(netWork.NetworkDetailed.BaudRate),
+                    int.Parse(netWork.NetworkDetailed.DataBits),
+                    netWork.NetworkDetailed.StopBits, netWork.NetworkDetailed.Parity);
             }
             catch (Exception e)
             {
-                log.ErrorAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  网络无配置,请配置好重新连接!");
+                log.ErrorAndShowTask($"{netWork.NetworkDetailed.Name}:  网络无配置,请配置好重新连接!");
                 return;
             }
 
             if (modbusBase.IsRTUConnect())
-                log.SuccessAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  ModbusRtu连接成功");
+                log.SuccessAndShowTask($"{netWork.NetworkDetailed.Name}:  ModbusRtu连接成功");
             else
-                log.WarningAndShowTask($"{netWorkPoJo.ConnectPojo.Name}:  连接失败,请检查设置");
+                log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
         }
     }
 
-    public async Task WatsonTcpClintConnect(NetWorkPoJo netWorkPoJo)
+    public async Task WatsonTcpClintConnect(NetWork netWork)
     {
-        if (!netWorkPoJo.WatsonTcpTool.IsClientOpen)
+        if (!netWork.WatsonTcpTool.IsClientOpen)
         {
-            if (netWorkPoJo.WatsonTcpTool.OpenClint(netWorkPoJo.ConnectPojo.IP, netWorkPoJo.ConnectPojo.Port))
+            if (netWork.WatsonTcpTool.OpenClint(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port))
             {
                 log.SuccessAndShowTask("Tcp客户端打开成功");
             }
@@ -342,11 +339,11 @@ public partial class HomePageViewModel : ObservableRecipient
         }
     }
 
-    public async Task WatsonTcpServerConnect(NetWorkPoJo netWorkPoJo)
+    public async Task WatsonTcpServerConnect(NetWork netWork)
     {
-        if (!netWorkPoJo.WatsonTcpTool.IsServerRunning)
+        if (!netWork.WatsonTcpTool.IsServerRunning)
         {
-            if (netWorkPoJo.WatsonTcpTool.OpenServer(netWorkPoJo.ConnectPojo.Port))
+            if (netWork.WatsonTcpTool.OpenServer(netWork.NetworkDetailed.Port))
             {
                 log.SuccessAndShowTask("Tcp服务器打开成功");
             }
@@ -358,13 +355,14 @@ public partial class HomePageViewModel : ObservableRecipient
  
     }
     #endregion
+
     #region 删除网络设置行
 
     [RelayCommand]
     public void DeleteReadRegDvg(HomePage page)
     {
-        var item = page.setConnectDg.SelectedItem as ConnectPojo;
-        var source = page.setConnectDg.ItemsSource as ObservableCollection<ConnectPojo>;
+        var item = page.setConnectDg.SelectedItem as NetworkDetailed;
+        var source = page.setConnectDg.ItemsSource as ObservableCollection<NetworkDetailed>;
         if (item != null)
             if (source.Count > 0 && item.Name != null)
             {
@@ -389,7 +387,7 @@ public partial class HomePageViewModel : ObservableRecipient
     [RelayCommand]
     public void SetConnectConfig(HomePage page)
     {
-        var item = page.setConnectDg.SelectedItem as ConnectPojo;
+        var item = page.setConnectDg.SelectedItem as NetworkDetailed;
 
         page.IpSet.Visibility = Visibility.Visible;
         var currentState = "当前状态: 未配置";
@@ -418,7 +416,7 @@ public partial class HomePageViewModel : ObservableRecipient
     [RelayCommand]
     public void CommitConfig(HomePage page)
     {
-        var item = page.setConnectDg.SelectedItem as ConnectPojo;
+        var item = page.setConnectDg.SelectedItem as NetworkDetailed;
 
         page.IpSet.Visibility = Visibility.Collapsed;
         item.IP = ModbusToolModel.ModbusTcp_Ip_select;

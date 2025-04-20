@@ -28,12 +28,12 @@ public static class GlobalMannager
     /// <summary>
     /// 管理 连接的线程池
     /// </summary>
-    public static SourceCache<NetWorkPoJo, string> NetWorkDictionary;
+    public static SourceCache<NetWork, string> NetWorkDictionary;
 
     /// <summary>
     /// 动态连接的字典
     /// </summary>
-    public static SourceCache<MesTcpPojo, string> DynDictionary;
+    public static SourceCache<LoadMesDynContent, string> DynDictionary;
 
     static GlobalMannager()
     {
@@ -43,9 +43,9 @@ public static class GlobalMannager
 
 
         NetWorkDictionary =
-            new SourceCache<NetWorkPoJo, string>(n => n.NetWorkId);
+            new SourceCache<NetWork, string>(n => n.NetWorkId);
 
 
-        DynDictionary = new SourceCache<MesTcpPojo, string>(n => n.Name);
+        DynDictionary = new SourceCache<LoadMesDynContent, string>(n => n.Name);
     }
 }

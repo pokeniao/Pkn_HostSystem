@@ -2,11 +2,16 @@
 
 namespace Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 
-public class ConditionItem : ObservableObject
+public class LoadMesCondition : ObservableObject
 {
+    /// <summary>
+    /// 当前名称
+    /// </summary>
     public string Key { get; set; }
 
-
+    /// <summary>
+    /// 选择请求方式类型
+    /// </summary>
     private string method = "常量";
 
     public string Method
@@ -22,11 +27,16 @@ public class ConditionItem : ObservableObject
         }
     }
 
+    /// <summary>
+    /// 控制参数显示内容
+    /// </summary>
     public bool show_para_dyn => method == "动态获取";
     public bool show_para_static => method == "常量";
-
     public bool show_method => method == "方法集";
 
+    /// <summary>
+    /// 动态参数
+    /// </summary>
     private string dyn_Value;
 
     public string Dyn_Value
@@ -38,7 +48,9 @@ public class ConditionItem : ObservableObject
             OnPropertyChanged(nameof(Value));
         }
     }
-
+    /// <summary>
+    /// 静态参数
+    /// </summary>
     private string static_Value;
 
     public string Static_Value
@@ -51,6 +63,9 @@ public class ConditionItem : ObservableObject
         }
     }
 
+    /// <summary>
+    /// 方法集
+    /// </summary>
     private string method_value;
 
     public string Method_value
@@ -63,6 +78,9 @@ public class ConditionItem : ObservableObject
         }
     }
 
+    /// <summary>
+    /// 显示参数值
+    /// </summary>
     public string Value
     {
         get
@@ -76,11 +94,8 @@ public class ConditionItem : ObservableObject
         }
     }
 
-
+    /// <summary>
+    /// 判断是否是新行
+    /// </summary>
     public bool IsNewLine { get; set; }
-
-    // 必须添加无参构造函数
-    public ConditionItem()
-    {
-    }
 }
