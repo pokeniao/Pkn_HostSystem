@@ -126,7 +126,7 @@
                                                                     RelativeSource="{RelativeSource AncestorType=DataGridRow}"
                                                                     Path="IsNewItem" />
                                                                 <!-- 绑定 NoSet -->
-                                                                <Binding Path="NoSet" />
+                                                                <Binding Path="Open" />
                                                             </MultiBinding>
                                                         </Button.IsEnabled>
                                                     </Button>

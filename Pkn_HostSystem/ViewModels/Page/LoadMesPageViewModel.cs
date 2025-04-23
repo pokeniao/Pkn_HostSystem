@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.IO;
-using System.Xml.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Pkn_HostSystem.Base;
@@ -13,6 +10,8 @@ using Pkn_HostSystem.Server.LoadMes;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
+using System.Collections.ObjectModel;
+using System.IO;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
@@ -40,8 +39,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             GlobalMannager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
             LoadMesPageModel = new LoadMesPageModel()
             {
-                MesPojoList = [],
-                ReturnMessageList = (ObservableCollection<string>)value
+                MesPojoList = [], ReturnMessageList = (ObservableCollection<string>)value
             };
         }
         else
@@ -55,6 +53,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         // 启用监听
         IsActive = true;
     }
+
+
+    #region 添加一行,删除一行,修改一行Http
 
     [RelayCommand]
     public void AddHttpButton()
@@ -113,6 +114,11 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         }
     }
 
+    #endregion
+
+
+    #region 手动触发发送 与 开启Http
+
     [RelayCommand]
     public async Task JogHttpButton(LoadMesPage page)
     {
@@ -127,9 +133,10 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     [RelayCommand]
     public void RunHttpCyc(LoadMesPage page)
     {
-        //选中当前行数据
+        //1. 选中当前行数据
         LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
 
+        //2. 判断是否循环触发,还是消息触发的方式
         if (item.RunCyc)
         {
             switch (item?.TriggerType)
@@ -138,55 +145,25 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                     OpenCyc(item);
                     break;
                 case "消息触发":
-                    Trigger(item);
+                    TriggerCyc(item);
                     break;
             }
         }
+        //3. 停止任务逻辑
         else
         {
             //停止
             item.cts.Cancel();
             item.cts = new CancellationTokenSource();
             item.Task = new Lazy<Task>(() => RunHttpCyc(item));
+            item.Task = new Lazy<Task>(() => RunTrigger(item));
         }
     }
 
-    /// <summary>
-    /// 触发型
-    /// </summary>
-    public void Trigger(LoadMesAddAndUpdateWindowModel item)
-    {
-        if (item.Task == null)
-        {
-            item.cts = new CancellationTokenSource();
-            item.Task = new Lazy<Task>(() => TriggerCyc(item));
-        }
+    #endregion
 
-        //运行
-        Task task = item.Task.Value;
-    }
 
-    public async Task TriggerCyc(LoadMesAddAndUpdateWindowModel model)
-    {
-        while (!model.cts.Token.IsCancellationRequested)
-        {
-            //是什么的触发类型
-            switch (model.NetTrigger)
-            {
-                case "ModbusTcp":
-
-                    break;
-                case "ModbusRtu":
-
-                    break;
-                case "Socket":
-
-                    break;
-            }
-
-            await Task.Delay(100, model.cts.Token);
-        }
-    }
+    #region 循环触发
 
     /// <summary>
     /// 启动循环的方法
@@ -194,11 +171,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     /// <param name="item"></param>
     public void OpenCyc(LoadMesAddAndUpdateWindowModel item)
     {
-        if (item.Task == null)
-        {
-            item.cts = new CancellationTokenSource();
-            item.Task = new Lazy<Task>(() => RunHttpCyc(item));
-        }
+        item.cts = new CancellationTokenSource();
+        item.Task = new Lazy<Task>(() => RunHttpCyc(item));
 
         //运行
         Task task = item.Task.Value;
@@ -210,20 +184,175 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             //手动发送Http请求
             bool succeed = await loadMesServer.RunOne(model.Name);
-
-
             //判断是否需要本地保存
             if (model.LocalSave)
             {
-                //获取嵌入好的内容
+                //从MesServer中取出绑定好的item
                 LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+                //消息体打包
                 var request = await loadMesServer.PackRequest(item.Name);
+                //打包后本地保存
                 LocalSave(model, request);
             }
 
             await Task.Delay(model.CycTime * 1000, model.cts.Token);
         }
     }
+
+    #endregion
+
+
+    #region 消息触发
+
+    /// <summary>
+    /// 触发型
+    /// </summary>
+    public void TriggerCyc(LoadMesAddAndUpdateWindowModel item)
+    {
+        item.cts = new CancellationTokenSource();
+        item.Task = new Lazy<Task>(() => RunTrigger(item));
+
+        //运行
+        Task task = item.Task.Value;
+    }
+
+    public async Task RunTrigger(LoadMesAddAndUpdateWindowModel model)
+    {
+        //1.启动后消息触发循环
+        while (!model.cts.Token.IsCancellationRequested)
+        {
+            //2. 判读更具什么进行的通讯
+            switch (model.NetTrigger)
+            {
+                case "ModbusTcp":
+                    //获取触发位
+                    string currentMessage1 = await ModbusTcpTrigger(model);
+                    //判断是否触发
+                    if (IsTrigger(model.TriggerMessage, currentMessage1))
+                    {
+                        //手动发送Http请求
+                        bool succeed = await loadMesServer.RunOne(model.Name);
+                        //判断是否需要本地保存
+                        if (model.LocalSave)
+                        {
+                            //从MesServer中取出绑定好的item
+                            LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+                            //消息体打包
+                            var request = await loadMesServer.PackRequest(item.Name);
+                            //打包后本地保存
+                            LocalSave(model, request);
+                        }
+
+                        //完成后给触发位停止
+                        if (succeed)
+                        {
+                            await ModbusTcpTriggerWrite(model, true);
+                        }
+                        else
+                        {
+                            await ModbusTcpTriggerWrite(model, false);
+                        }
+                    }
+
+                    break;
+                case "ModbusRtu":
+                    //获取触发位
+                    string currentMessage2 = await ModbusTcpTrigger(model);
+                    //判断是否触发
+                    if (IsTrigger(model.TriggerMessage, currentMessage2))
+                    {
+                        //手动发送Http请求
+                        bool succeed = await loadMesServer.RunOne(model.Name);
+                        //判断是否需要本地保存
+                        if (model.LocalSave)
+                        {
+                            //从MesServer中取出绑定好的item
+                            LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+                            //消息体打包
+                            var request = await loadMesServer.PackRequest(item.Name);
+                            //打包后本地保存
+                            LocalSave(model, request);
+                        }
+
+                        //完成后给触发位停止
+                        if (succeed)
+                        {
+                            await ModbusTcpTriggerWrite(model, true);
+                        }
+                        else
+                        {
+                            await ModbusTcpTriggerWrite(model, false);
+                        }
+                    }
+
+                    break;
+                case "Socket":
+
+                    break;
+            }
+
+            await Task.Delay(model.CycTime, model.cts.Token);
+        }
+    }
+
+    private async Task<string> ModbusTcpTrigger(LoadMesAddAndUpdateWindowModel model)
+    {
+        //获取当前通讯对象
+        LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+        string key = loadMesServer.getNetKey(item.TriggerConnectName);
+        var netWork = GlobalMannager.NetWorkDictionary.Lookup(key).Value;
+        //获得ModBase对象
+        ModbusBase modbusBase = netWork.ModbusBase;
+
+        //读取寄存器
+        ushort[] readHoldingRegisters03 = await modbusBase.ReadHoldingRegisters_03(
+            byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
+            1);
+
+        return readHoldingRegisters03[0].ToString();
+    }
+
+    private async Task<bool> ModbusTcpTriggerWrite(LoadMesAddAndUpdateWindowModel model, bool succeed)
+    {
+        try
+        {
+            //获取当前通讯对象
+            LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+            string key = loadMesServer.getNetKey(item.TriggerConnectName);
+            var netWork = GlobalMannager.NetWorkDictionary.Lookup(key).Value;
+            //获得ModBase对象
+            ModbusBase modbusBase = netWork.ModbusBase;
+            if (succeed)
+            {
+                await modbusBase.WriteRegister_06(
+                    byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress), 2);
+            }
+            else
+            {
+                await modbusBase.WriteRegister_06(
+                    byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress), 3);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool IsTrigger(string triggerMessage, string currentMessage)
+    {
+        if (triggerMessage == currentMessage)
+            return true;
+        return false;
+    }
+
+    #endregion
+
+
+    #region 本地保存当前发送Mes的记录
 
     private static readonly string AppFolder =
         Path.Combine(
@@ -248,6 +377,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         csvHelper.Save();
     }
 
+    #endregion
+
     #region SnackBar弹窗
 
     public void setSnackbarService(SnackbarPresenter snackbarPresenter)
@@ -256,6 +387,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     }
 
     #endregion
+
+    #region MVVM页面消息通讯
 
     /// <summary>
     /// 接受消息处理
@@ -271,9 +404,15 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             $"请求消息体:{loadMesAddAndUpdateWindowModel.Request} 请求条件{loadMesAddAndUpdateWindowModel.ToString()}");
     }
 
+    #endregion
+
+    #region 保存当前Model
+
     [RelayCommand]
     public void Save()
     {
         AppJsonStorage<LoadMesPageModel>.Save(LoadMesPageModel);
     }
+
+    #endregion
 }

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.ViewModels.Windows;
+using System.Windows.Controls;
 using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
 
 namespace Pkn_HostSystem.Views.Windows
@@ -34,7 +35,7 @@ namespace Pkn_HostSystem.Views.Windows
         {
             DataContext = new LoadMesAddAndUpdateWindowsViewModel(item);
             Title.Text = title;
-            LoadMesAddAndUpdateWindowsViewModel viewModel = (LoadMesAddAndUpdateWindowsViewModel)DataContext;
+            viewModel = (LoadMesAddAndUpdateWindowsViewModel)DataContext;
             viewModel.setSnackbarService(SnackbarPresenter);
             viewModel.mesPojoList = mesPojoList;
         }
@@ -60,6 +61,27 @@ namespace Pkn_HostSystem.Views.Windows
                 //从集合中移除
                 items?.Remove(item);
                 viewModel?.Log.SuccessAndShow("删除一个条件",$"Mes请求{HTTP_Name.Text} ,{item.Key}条件被删掉");
+            }
+           
+        }
+        /// <summary>
+        ///  下拉改变,显示循环文本
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox? comboBox = sender as ComboBox;
+
+            switch (comboBox?.SelectedItem)
+            {
+                case "循环触发":
+                    viewModel.LoadMesAddAndUpdateWindowModel.CycText = "循环时间(s)";
+                    break;
+                case "消息触发":
+                    viewModel.LoadMesAddAndUpdateWindowModel.CycText = "循环读取(ms)";
+                    break;
             }
            
         }

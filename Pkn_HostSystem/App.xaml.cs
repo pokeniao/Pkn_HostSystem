@@ -26,11 +26,13 @@ namespace Pkn_HostSystem
                     .AddSingleton<MesTcpViewModel>()
                     .AddSingleton<ModbusToolViewModel>()
                     .AddSingleton<SettingsPageViewModel>()
+                    .AddSingleton<ProductiveViewModel>()
 
                     //页面单例 ,预加载
                     .AddSingleton<MesTcpPage>()
                     .AddSingleton<LoadMesPage>()
                     .AddSingleton<HomePage>()
+                    .AddSingleton<ProductivePage>()
 
                     .BuildServiceProvider()
                 );

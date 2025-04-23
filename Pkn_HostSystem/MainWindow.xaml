@@ -90,8 +90,16 @@
                         </ui:NavigationViewItem>
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
-
                 <ui:NavigationViewItem
+                    Content="生产与消费"
+                    NavigationCacheMode="Enabled"
+                    TargetPageType="{x:Type pages:ProductivePage}"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="ArrowRepeatAll24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                    <ui:NavigationViewItem
                     NavigationCacheMode="Enabled" Content="工具">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Wrench16" />

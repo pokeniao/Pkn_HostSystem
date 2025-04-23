@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DynamicData.Binding;
 using Newtonsoft.Json;
+using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 
 namespace Pkn_HostSystem.Models.Windows;
@@ -57,10 +59,6 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     [ObservableProperty] private string netTrigger;
 
     /// <summary>
-    /// 触发的通讯模式: Modbus需要什么方法 读线圈?读寄存器?
-    /// </summary>
-    [ObservableProperty] private string modbusMethod;
-    /// <summary>
     /// 站地址
     /// </summary>
     [ObservableProperty] private string stationAddress;
@@ -68,10 +66,6 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// 起始地址
     /// </summary>
     [ObservableProperty] private string startAddress;
-    /// <summary>
-    /// 结束地址
-    /// </summary>
-    [ObservableProperty] private string endAddress;
 
     /// <summary>
     /// 触发发送Http的消息内容
@@ -102,6 +96,19 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// 当前Http进程任务
     /// </summary>
     [JsonIgnore] public Lazy<Task> Task { get; set; }
+    /// <summary>
+    /// 用于页面显示什么循环的形式
+    /// </summary>
+    [JsonIgnore] [ObservableProperty] private string cycText = "循环时间(s)";
+    /// <summary>
+    /// 用于绑定显示,已启动的通讯
+    /// </summary>
+     [ObservableProperty] private ObservableCollectionExtended<NetWork> netWorkList;
+
+    /// <summary>
+    /// 当前绑定的触发形的通讯名称
+    /// </summary>
+    [ObservableProperty] private string triggerConnectName;
 
 
     public override string ToString()

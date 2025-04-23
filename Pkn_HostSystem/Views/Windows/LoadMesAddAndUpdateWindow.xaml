@@ -24,8 +24,8 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -44,7 +44,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <StackPanel>
-                <Grid>
+                <Grid >
                     <Grid ZIndex="2">
                         <ui:SnackbarPresenter HorizontalAlignment="Right" VerticalAlignment="Bottom"
                                               Name="SnackbarPresenter" />
@@ -75,12 +75,16 @@
                                      Text="{Binding LoadMesAddAndUpdateWindowModel.Api,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
                         </WrapPanel>
                         <WrapPanel Margin="5">
-                            <TextBlock Text="循环时间(s)" Margin="10" />
+                            <TextBlock Text="{Binding LoadMesAddAndUpdateWindowModel.CycText}" Margin="10" />
                             <ui:NumberBox
                                 Value="{Binding LoadMesAddAndUpdateWindowModel.CycTime ,UpdateSourceTrigger=PropertyChanged ,Mode=TwoWay }"
-                                Width="150" />
+                                Width="120" />
+                            <TextBlock Text="触发类型" Margin="10" TextAlignment="Center" />
+                            <ComboBox ItemsSource="{Binding TriggerType}" Width="110"
+                                      SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.TriggerType}"
+                                      SelectionChanged="Selector_OnSelectionChanged"
+                                      />
                         </WrapPanel>
-
                         <StackPanel Margin="5">
                             <WrapPanel>
                                 <TextBlock Text="请求体" Margin="10" />
@@ -91,8 +95,8 @@
                                     <ComboBoxItem Content="TEXT" />
                                 </ComboBox>
                             </WrapPanel>
-
                             <GroupBox Header="内容"
+                                      Width="400"
                                       Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}">
                                 <TextBox Width="400" Height="150" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
                                          HorizontalScrollBarVisibility="Auto"
@@ -198,83 +202,89 @@
             </StackPanel>
 
         </Grid>
-        <Grid Grid.Row="1" Grid.Column="1" Margin="30,10,10,10">
-            <StackPanel Margin="0,20,0,0">
-                <WrapPanel Margin="10">
-                    <TextBlock Text="触发类型" Margin="5" TextAlignment="Center" />
-                    <ComboBox ItemsSource="{Binding TriggerType}" Width="100"
-                              SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.TriggerType}" />
-                </WrapPanel>
-                <WrapPanel Margin="10">
-                    <TextBlock Text="触发通讯模式" Margin="5" TextAlignment="Center" />
+        <Grid Grid.Row="1" Grid.Column="1" Margin="15,0,10,10">
+            <StackPanel>
+                <WrapPanel>
+                    <TextBlock Text="触发对象"  Margin="5" TextAlignment="Center"/>
+                    <ComboBox Width="120"
+                              ItemsSource="{Binding LoadMesAddAndUpdateWindowModel.NetWorkList}"
+                              DisplayMemberPath="NetworkDetailed.Name"
+                              SelectedValuePath="NetworkDetailed.Name"
+                              SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.TriggerConnectName,UpdateSourceTrigger=PropertyChanged}"
+                              />
+                        <TextBlock Text="触发通讯模式" Margin="5" TextAlignment="Center" />
                     <ComboBox
-                        Width="100"
+                        Width="120"
                         ItemsSource="{Binding NetTrigger}"
                         SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.NetTrigger}" />
                 </WrapPanel>
-                <WrapPanel>
-                    <TextBlock Text="Modbus读取方式" Margin="5" TextAlignment="Center" />
-                    <ComboBox
-                        Width="100"
-                        ItemsSource="{Binding ModbusMethod}"
-                        SelectedValue="{Binding  LoadMesAddAndUpdateWindowModel.ModbusMethod,UpdateSourceTrigger=PropertyChanged}" />
-                </WrapPanel>
-                <WrapPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
-                        <ui:NumberBox
-                            Value="{Binding LoadMesAddAndUpdateWindowModel.StationAddress ,UpdateSourceTrigger=PropertyChanged}"
-                            Width="150" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
-                        <ui:NumberBox
-                            Value="{Binding LoadMesAddAndUpdateWindowModel.StartAddress ,UpdateSourceTrigger=PropertyChanged}"
-                            Width="150" />
-                    </StackPanel>
-                </WrapPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <TextBlock Text="结束地址" Margin="5" TextAlignment="Center" />
-                    <ui:NumberBox
-                        Value="{Binding LoadMesAddAndUpdateWindowModel.EndAddress ,UpdateSourceTrigger=PropertyChanged}"
-                        Width="150" />
-                </StackPanel>
-                <TextBlock Text="触发消息" Margin="5" />
-                <TextBox Width="400" Height="70" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
-                         HorizontalScrollBarVisibility="Auto"
-                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                         Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                         BorderThickness="0"
-                         AcceptsReturn="True"
-                         FontSize="15"
-                         Text="{Binding LoadMesAddAndUpdateWindowModel.TriggerMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
-                <TextBlock Text="完成返回消息" Margin="5" />
-                <TextBox Width="400" Height="70" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
-                         HorizontalScrollBarVisibility="Auto"
-                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                         Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                         BorderThickness="0"
-                         AcceptsReturn="True"
 
-                         FontSize="15"
-                         Text="{Binding LoadMesAddAndUpdateWindowModel.SuccessResponseMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
-                <TextBlock Text="失败返回消息" Margin="5" />
-                <TextBox Width="400" Height="70" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
-                         HorizontalScrollBarVisibility="Auto"
-                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                         Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                         BorderThickness="0"
-                         AcceptsReturn="True"
-                         FontSize="15"
-                         Text="{Binding LoadMesAddAndUpdateWindowModel.FailResponseMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+
+                <TabControl Margin="0,10,0,10">
+                    <TabItem Header="Modbus设置">
+                        <StackPanel>
+                            <WrapPanel Margin="0,10,0,0">
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
+                                    <ui:NumberBox
+                                        Value="{Binding LoadMesAddAndUpdateWindowModel.StationAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                        Width="150" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
+                                    <ui:NumberBox
+                                        Value="{Binding LoadMesAddAndUpdateWindowModel.StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                        Width="150" />
+                                </StackPanel>
+                            </WrapPanel>
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
                 <WrapPanel>
-                    <TextBlock Text="是否需要保存本地" Margin="5" VerticalAlignment="Center" />
-                    <ui:ToggleSwitch IsChecked="{Binding LoadMesAddAndUpdateWindowModel.LocalSave }"/>
+                    <TextBlock Text="触发消息" Margin="0,10,0,0"/>
+                        <TextBox Width="150" Height="20" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
+                                 Margin="10"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                 Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                 BorderThickness="0"
+                                 AcceptsReturn="True"
+                                 FontSize="15"
+                                 Text="{Binding LoadMesAddAndUpdateWindowModel.TriggerMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Text="完成返回消息" Margin="0,10,0,0" />
+                    <TextBox Width="150" Height="20" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
+                             Margin="10"
+                             HorizontalScrollBarVisibility="Auto"
+                             Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                             BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                             Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                             BorderThickness="0"
+                             AcceptsReturn="True"
+                             FontSize="15"
+                             Text="{Binding LoadMesAddAndUpdateWindowModel.SuccessResponseMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                </WrapPanel>
+                
+                <WrapPanel>
+                    <TextBlock Text="失败返回消息" Margin="0,10,0,0" />
+                    <TextBox Width="150" Height="20" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
+                             Margin="10"
+                             HorizontalScrollBarVisibility="Auto"
+                             Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                             BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                             Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                             BorderThickness="0"
+                             AcceptsReturn="True"
+                             FontSize="15"
+                             Text="{Binding LoadMesAddAndUpdateWindowModel.FailResponseMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
                 </WrapPanel>
 
+                <WrapPanel>
+                    <TextBlock Text="是否需要保存本地" Margin="0,10,0,10" VerticalAlignment="Center" />
+                    <ui:ToggleSwitch Margin="10" IsChecked="{Binding LoadMesAddAndUpdateWindowModel.LocalSave }"/>
+                </WrapPanel>
             </StackPanel>
         </Grid>
 
