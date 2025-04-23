@@ -1,8 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Text;
-using System.Xml.Linq;
-using KeyenceTool;
+﻿using KeyenceTool;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Pojo.Page.HomePage;
@@ -10,6 +6,9 @@ using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.Static;
 using RestSharp;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Text;
 using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
 
 namespace Pkn_HostSystem.Server.LoadMes;
@@ -26,6 +25,8 @@ public class LoadMesServer
         log = new MesLogBase<LoadMesServer>();
     }
 
+
+    #region 获取当前行 与获取网络Id方法
     /// <summary>
     /// 循环查找当前行是否存在
     /// </summary>
@@ -41,7 +42,130 @@ public class LoadMesServer
 
         return null;
     }
+    /// <summary>
+    /// 循环遍历获取网络ID
+    /// </summary>
+    /// <returns></returns>
+    public string getNetKey(string ConnectName)
+    {
+        var netWorkPoJoes = GlobalMannager.NetWorkDictionary.Items.ToList();
+        foreach (var netWorkPoJo in netWorkPoJoes)
+            if (netWorkPoJo.NetworkDetailed.Name == ConnectName)
+                return netWorkPoJo.NetWorkId;
 
+        return null;
+    }
+
+
+
+    #endregion
+
+    #region 触发Http请求
+
+    /// <summary>
+    /// 触发单个请求
+    /// </summary>
+    public async Task<bool> RunOne(string Name)
+    {
+        //获取当前Name的行数据
+        LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
+        //得到消息体
+        return await SendHttp(item);
+    }
+
+    /// <summary>
+    /// 全部触发
+    /// </summary>
+    /// <returns></returns>
+    public async Task<bool> RunAll()
+    {
+        foreach (var item in mesPojoList)
+        {
+            await SendHttp(item);
+        }
+
+        return true;
+    }
+
+    #endregion
+
+    #region 发送Http任务
+
+    public async Task<bool> SendHttp(LoadMesAddAndUpdateWindowModel item)
+    {
+        //得到消息体
+        var request = await PackRequest(item.Name);
+        //日志显示发送内容
+        log.Info($"{item.Name}--发送内容: {request}");
+        if (request != null)
+        {
+            //创建连接
+            var client = new RestClient(item.HttpPath);
+            RestRequest requestBody;
+            //创建请求
+            switch (item.Ajax)
+            {
+                case "POST":
+                    requestBody = new RestRequest(item.Api, Method.Post);
+                    break;
+                case "GET":
+                    requestBody = new RestRequest(item.Api, Method.Get);
+                    break;
+                case "DELETE":
+                    requestBody = new RestRequest(item.Api, Method.Delete);
+                    break;
+                case "PUT":
+                    requestBody = new RestRequest(item.Api, Method.Put);
+                    break;
+                default:
+                    requestBody = new RestRequest();
+                    break;
+            }
+
+            //添加请求体
+            switch (item.RequestMethod)
+            {
+                case "JSON":
+                    //会自动设置 Content-Type: application/json，并把内容当作 JSON 处理。
+                    requestBody.AddStringBody(request, DataFormat.Json);
+                    break;
+                case "XML":
+                    //表示数据格式是 XML。
+                    requestBody.AddStringBody(request, DataFormat.Xml);
+                    break;
+                case "TEXT":
+                    //一般用于你想自己完全控制请求内容或用于 GET 请求等不带 body 的请求。
+                    requestBody.AddStringBody(request, DataFormat.None);
+                    break;
+                default:
+                    requestBody.AddStringBody(request, DataFormat.None);
+                    break;
+            }
+
+            //发送请求
+            RestResponse response = await client.ExecuteAsync(requestBody);
+            //判断
+            if (response.IsSuccessStatusCode)
+            {
+                item.Response = response.Content;
+                log.Info($"{item.Name}--发送请求返回: {item.Response}");
+                return true;
+            }
+            else
+            {
+                item.Response = response.ErrorMessage;
+                log.Info($"{item.Name}--发送请求返回: {item.Response}");
+                return false;
+            }
+        }
+
+        return false;
+
+    }
+
+    #endregion
+
+    #region 封装消息请求体方法
     /// <summary>
     /// 包装Request请求
     /// </summary>
@@ -52,7 +176,7 @@ public class LoadMesServer
         var loadMesAddAndUpdateWindowModel = SelectByName(name);
         if (loadMesAddAndUpdateWindowModel == null) return null;
 
-        //获得当前行的条件
+        //获得当前行的条件  将   ObservableCollection<> 转成List
         var conditionItems = Enumerable.ToList<LoadMesCondition>(loadMesAddAndUpdateWindowModel.Condition);
 
 
@@ -86,32 +210,10 @@ public class LoadMesServer
         return request;
     }
 
-    private async Task<string> MethodMessage(string request, string itemValue)
-    {
-        if (itemValue == null)
-        {
-            return null;
-        }
 
-        switch (itemValue)
-        {
-            case "当前时间(yyyy-MM-dd HH:mm:ss)":
-                return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                break;
-            case "当前时间(yyyy/MM/dd HH:mm:ss)":
-                return DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-                break;
-            case "当前时间(yyyy-MM-dd)":
-                return DateTime.Now.ToString("yyyy-MM-dd");
-                break;
-            case "当前时间(yyyy/MM/dd)":
-                return DateTime.Now.ToString("yyyy/MM/dd");
-                break;
-            default:
-                return string.Empty;
-        }
-    }
+    #endregion
 
+    #region 静态嵌入和动态嵌入内容
 
     /// <summary>
     /// 嵌入静态内容
@@ -190,14 +292,51 @@ public class LoadMesServer
                     {
                         readDm = SwitchGetMessage(readDm, item);
                     }
+
                     message = StaticMessage(message, itemKey, readDm);
                     break;
                 case "读R线圈状态":
                     break;
             }
         }
+
         return message;
     }
+
+    #endregion
+
+    #region 方法集内容嵌入
+
+    private async Task<string> MethodMessage(string request, string itemValue)
+    {
+        if (itemValue == null)
+        {
+            return null;
+        }
+
+        switch (itemValue)
+        {
+            case "当前时间(yyyy-MM-dd HH:mm:ss)":
+                return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                break;
+            case "当前时间(yyyy/MM/dd HH:mm:ss)":
+                return DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+                break;
+            case "当前时间(yyyy-MM-dd)":
+                return DateTime.Now.ToString("yyyy-MM-dd");
+                break;
+            case "当前时间(yyyy/MM/dd)":
+                return DateTime.Now.ToString("yyyy/MM/dd");
+                break;
+            default:
+                return string.Empty;
+        }
+    }
+
+    #endregion
+
+    #region Switch转换嵌入
+
     /// <summary>
     /// 通过Switch转换
     /// </summary>
@@ -219,6 +358,9 @@ public class LoadMesServer
         return message;
     }
 
+    #endregion
+
+    #region 套接字通讯获取内容
 
     /// <summary>
     /// 读tcp消息
@@ -260,20 +402,9 @@ public class LoadMesServer
         return response;
     }
 
+    #endregion
 
-    /// <summary>
-    /// 循环遍历获取网络
-    /// </summary>
-    /// <returns></returns>
-    public string getNetKey(string ConnectName)
-    {
-        var netWorkPoJoes = GlobalMannager.NetWorkDictionary.Items.ToList();
-        foreach (var netWorkPoJo in netWorkPoJoes)
-            if (netWorkPoJo.NetworkDetailed.Name == ConnectName)
-                return netWorkPoJo.NetWorkId;
-
-        return null;
-    }
+    #region 动态获取Modbus通讯内容
 
     /// <summary>
     /// 读线圈
@@ -387,7 +518,6 @@ public class LoadMesServer
                         ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.ByteSwap);
                     return string.Join(",", Array.ConvertAll(floatList4.ToArray(), p => $"{p}"));
                 case "ASCII字符串":
-
                     var result_3 = new List<byte>();
                     foreach (var itemUshort in holdingRegisters03)
                     {
@@ -416,6 +546,9 @@ public class LoadMesServer
         return result;
     }
 
+    #endregion
+
+    #region 动态获取基恩士上链路内容
 
     public async Task<string> KeyenceReadDM(DynCondition item)
     {
@@ -429,10 +562,49 @@ public class LoadMesServer
         //获得keyenceHostLinkTool
         KeyenceHostLinkTool keyenceHostLinkTool = netWorkPoJo.KeyenceHostLinkTool;
         var result = "";
+        int startAddress = item.StartAddress;
+        int num = item.EndAddress;
         try
         {
-            //获得读寄存器值,获取到内容
-            //    result = keyenceHostLinkTool.ReadDMCommon(item.StartAddress.ToString());
+            switch (item.BitNet)
+            {
+                case "单寄存器(无符号)":
+                    ushort readDm1 = keyenceHostLinkTool.ReadDM<ushort>(startAddress);
+                    return readDm1.ToString();
+                case "单寄存器(有符号)":
+                    short readDm2 = keyenceHostLinkTool.ReadDM<short>(startAddress);
+                    return readDm2.ToString();
+                case "双寄存器(无符号)":
+                    uint readDm3 = keyenceHostLinkTool.ReadDM<uint>(startAddress);
+                    return readDm3.ToString();
+                case "双寄存器(有符号)":
+                    int readDm4 = keyenceHostLinkTool.ReadDM<int>(startAddress);
+                    return readDm4.ToString();
+                case "32位浮点数":
+                    float readDm5 = keyenceHostLinkTool.ReadDM<float>(startAddress);
+                    return readDm5.ToString();
+                case "ASCII字符串":
+                    ushort[] readDmWords = keyenceHostLinkTool.ReadDMWords(startAddress, num);
+
+                    var result_4 = new List<byte>();
+                    foreach (var itemUshort in readDmWords)
+                    {
+                        //转成16进制
+                        var value = itemUshort.ToString("x4");
+                        //从2索引截取到结尾
+                        var high = value.Substring(2);
+                        var low = value.Substring(0, 2);
+                        var ByteLow = byte.Parse(low, NumberStyles.HexNumber);
+                        var ByteHigh = byte.Parse(high, NumberStyles.HexNumber);
+
+                        //低位在前
+                        result_4.Add(ByteLow);
+                        result_4.Add(ByteHigh);
+                    }
+
+                    //输出ASCII码转换后的结果
+                    return Encoding.ASCII.GetString(result_4.ToArray());
+            }
         }
         catch (Exception e)
         {
@@ -442,94 +614,5 @@ public class LoadMesServer
         return result;
     }
 
-
-    /// <summary>
-    /// 手动发送HTTP消息
-    /// </summary>
-    public async Task<bool> RunOne(string Name)
-    {
-        //获取当前Name的行数据
-        LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
-        //得到消息体
-        return await SendHttp(item);
-    }
-
-    public async Task<bool> RunAll()
-    {
-        foreach (var item in mesPojoList)
-        {
-            await SendHttp(item);
-        }
-
-        return true;
-    }
-
-    public async Task<bool> SendHttp(LoadMesAddAndUpdateWindowModel item)
-    {
-        //得到消息体
-        var request = await PackRequest(item.Name);
-        //日志显示发送内容
-        log.Info($"{item.Name}--发送内容: {request}");
-        if (request != null)
-        {
-            //创建连接
-            var client = new RestClient(item.HttpPath);
-            RestRequest requestBody;
-            //创建请求
-            switch (item.Ajax)
-            {
-                case "POST":
-                    requestBody = new RestRequest(item.Api, Method.Post);
-                    break;
-                case "GET":
-                    requestBody = new RestRequest(item.Api, Method.Get);
-                    break;
-                case "DELETE":
-                    requestBody = new RestRequest(item.Api, Method.Delete);
-                    break;
-                case "PUT":
-                    requestBody = new RestRequest(item.Api, Method.Put);
-                    break;
-                default:
-                    requestBody = new RestRequest();
-                    break;
-            }
-
-            //添加请求体
-            switch (item.RequestMethod)
-            {
-                case "JSON":
-                    //会自动设置 Content-Type: application/json，并把内容当作 JSON 处理。
-                    requestBody.AddStringBody(request, DataFormat.Json);
-                    break;
-                case "XML":
-                    //表示数据格式是 XML。
-                    requestBody.AddStringBody(request, DataFormat.Xml);
-                    break;
-                case "TEXT":
-                    //一般用于你想自己完全控制请求内容或用于 GET 请求等不带 body 的请求。
-                    requestBody.AddStringBody(request, DataFormat.None);
-                    break;
-                default:
-                    requestBody.AddStringBody(request, DataFormat.None);
-                    break;
-            }
-
-            //发送请求
-            RestResponse response = await client.ExecuteAsync(requestBody);
-            //判断
-            if (response.IsSuccessStatusCode)
-            {
-                item.Response = response.Content;
-                log.Info($"{item.Name}--发送请求返回: {item.Response}");
-            }
-            else
-            {
-                item.Response = response.ErrorMessage;
-                log.Info($"{item.Name}--发送请求返回: {item.Response}");
-            }
-        }
-
-        return true;
-    }
+    #endregion
 }

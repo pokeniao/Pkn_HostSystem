@@ -43,10 +43,9 @@ public partial class MesTcpViewModel : ObservableRecipient
         }
         else
         {
-            //GlobalMannager.NetWorkDictionary.AddOrUpdate(MesTcpModel.NetWorkList);
-            GlobalMannager.DynDictionary.AddOrUpdate(MesTcpModel.DynNetList);
-            GlobalMannager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe();
-            GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
+            GlobalMannager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe(); //绑定
+            GlobalMannager.DynDictionary.AddOrUpdate(MesTcpModel.DynNetList); //存入到缓存,后面在绑定
+            GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe(); 
         }
         log = new LogBase<MesTcpViewModel>(SnackbarService);
     }

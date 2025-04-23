@@ -5,7 +5,9 @@ using DynamicData;
 using DynamicData.Binding;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Message;
+using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
+using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.Static;
@@ -35,11 +37,10 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public ObservableCollection<string> TriggerType { get; set; } = ["循环触发", "消息触发"];
 
-    public ObservableCollection<string> ModbusMethod { get; set; } = ["读寄存器", "读线圈"];
-
     public ObservableCollection<string> MethodCollection { get; set; } = ["当前时间(yyyy-MM-dd HH:mm:ss)", "当前时间(yyyy/MM/dd HH:mm:ss)", "当前时间(yyyy-MM-dd)", "当前时间(yyyy/MM/dd)"];
 
     public ObservableCollection<string> NetTrigger { get; set; } = ["ModbusTcp", "ModbusRtu", "Socket"];
+
 
     public ObservableCollectionExtended<LoadMesDynContent> Para_dyn { get; set; } = new ObservableCollectionExtended<LoadMesDynContent>();
     //添加
@@ -52,11 +53,13 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
             RequestMethod = "JSON",
             Condition = new ObservableCollection<LoadMesCondition>()
             {
-            }
+            },
+            NetWorkList = new ObservableCollectionExtended<NetWork>()
         };
         Log = new LogBase<LoadMesAddAndUpdateWindowsViewModel>(SnackbarService);
         GlobalMannager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
         add = true;
+        GlobalMannager.NetWorkDictionary.Connect().Bind(LoadMesAddAndUpdateWindowModel.NetWorkList).Subscribe();
     }
     //修改
     public LoadMesAddAndUpdateWindowsViewModel(LoadMesAddAndUpdateWindowModel _LoadMesAddAndUpdateWindowModel)

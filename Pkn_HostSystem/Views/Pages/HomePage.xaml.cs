@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Pojo.Page.HomePage;
-using HomePageViewModel = Pkn_HostSystem.ViewModels.Page.HomePageViewModel;
+using Pkn_HostSystem.ViewModels.Page;
 using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
 

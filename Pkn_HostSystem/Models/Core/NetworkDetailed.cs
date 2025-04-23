@@ -52,8 +52,4 @@ public class NetworkDetailed
     /// 校验码
     /// </summary>
     public Parity Parity { get; set; }
-    /// <summary>
-    /// 判断是否需要配置 ,限制空行用
-    /// </summary>
-    public bool NoSet { get; set; } = true;
 }

@@ -44,6 +44,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         AppJsonStorage<HomePageModel>.Reset();
         AppJsonStorage<LoadMesPageModel>.Reset();
         AppJsonStorage<MesTcpModel>.Reset();
+        AppJsonStorage<ProductiveModel>.Reset();
         log.Info("重置成功");
     }
 
@@ -57,6 +58,9 @@ public partial class SettingsPageViewModel : ObservableRecipient
 
         MesTcpViewModel mesTcpViewModel = Ioc.Default.GetRequiredService<MesTcpViewModel>();
         mesTcpViewModel.SaveCommand.Execute(null);
+
+        ProductiveViewModel productiveViewModel = Ioc.Default.GetRequiredService<ProductiveViewModel>();
+        productiveViewModel.SaveCommand.Execute(null);
 
         return true;
     }
