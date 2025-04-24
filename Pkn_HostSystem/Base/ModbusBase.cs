@@ -10,6 +10,7 @@ namespace Pkn_HostSystem.Base
     {
         //串口
         private SerialPort serialPort { get; set; }
+
         //网口
         private TcpClient tcpClient { get; set; }
 
@@ -73,15 +74,18 @@ namespace Pkn_HostSystem.Base
 
             try
             {
+                //要在 lock 中使用 await，否则可能造成死锁
                 lock (_lock)
                 {
                     tcpClient = new TcpClient();
-                    tcpClient.ConnectAsync(ip, port);
-                    var factory = new ModbusFactory();
-                    modbusMaster = factory.CreateMaster(tcpClient);
-                    modbusMaster.Transport.ReadTimeout = ReadTimeout;
-                    modbusMaster.Transport.Retries = Retries;
                 }
+
+                await tcpClient.ConnectAsync(ip, port);
+                var factory = new ModbusFactory();
+                modbusMaster = factory.CreateMaster(tcpClient);
+                modbusMaster.Transport.ReadTimeout = ReadTimeout;
+                modbusMaster.Transport.Retries = Retries;
+
 
                 return true;
             }
@@ -159,7 +163,6 @@ namespace Pkn_HostSystem.Base
                     Parity = parity, //奇偶校验
                     ReadTimeout = ReadTimeout, //设置超时时间 ,必须要有,不然连接会一直等待
                     WriteTimeout = ReadTimeout
-
                 };
                 //第二步: 打开串口
                 bool b = await Task.Run(() =>
@@ -184,7 +187,7 @@ namespace Pkn_HostSystem.Base
                 modbusMaster = factory.CreateRtuMaster(serialPort);
                 modbusMaster.Transport.ReadTimeout = ReadTimeout;
                 modbusMaster.Transport.Retries = Retries;
-                
+
                 return true;
             }
             catch (Exception)
@@ -218,7 +221,7 @@ namespace Pkn_HostSystem.Base
                 var modbusSlave = factory.CreateSlave(slaveAddress);
                 rtuSlaveNetwork.AddSlave(modbusSlave); //添加从站
                 rtuSlaveNetwork.ListenAsync(); // 启动从站监听
-                
+
                 return true;
             }
             catch (Exception)
@@ -485,7 +488,6 @@ namespace Pkn_HostSystem.Base
     }
 
 
-
     /// <summary>
     /// 静态类,用于格式转换
     /// </summary>
@@ -562,10 +564,10 @@ namespace Pkn_HostSystem.Base
 
     public enum ModbusEndian
     {
-        BigEndian,     // 高字在前，高字节在前
-        LittleEndian,  // 低字在前，低字节在前
-        WordSwap,      // 低字在前，高字节在前
-        ByteSwap       // 高字在前，低字节在前
+        BigEndian, // 高字在前，高字节在前
+        LittleEndian, // 低字在前，低字节在前
+        WordSwap, // 低字在前，高字节在前
+        ByteSwap // 高字在前，低字节在前
     }
 
     public static class ModbusDoubleRegisterConverter
@@ -578,6 +580,7 @@ namespace Pkn_HostSystem.Base
                 uint value = ConvertToUInt32(registers[i], registers[i + 1], endian);
                 result.Add(value);
             }
+
             return result;
         }
 
@@ -588,6 +591,7 @@ namespace Pkn_HostSystem.Base
             {
                 result.Add(unchecked((int)u));
             }
+
             return result;
         }
 
@@ -616,8 +620,10 @@ namespace Pkn_HostSystem.Base
                             break;
                     }
                 }
+
                 result.Add(BitConverter.ToSingle(bytes, 0));
             }
+
             return result;
         }
 

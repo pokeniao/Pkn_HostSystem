@@ -26,7 +26,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     public SnackbarService SnackbarService { get; set; }
 
 
-    public LogBase<LoadMesPageViewModel> log;
+    public LogBase<LoadMesPageViewModel> Log;
 
     //手动发送Http请求
     private LoadMesServer loadMesServer;
@@ -48,7 +48,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         }
 
         SnackbarService = new SnackbarService();
-        log = new LogBase<LoadMesPageViewModel>(SnackbarService);
+        Log = new LogBase<LoadMesPageViewModel>(SnackbarService);
         loadMesServer = new LoadMesServer(LoadMesPageModel.MesPojoList);
         // 启用监听
         IsActive = true;
@@ -64,7 +64,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         bool? b = addWindow.ShowDialog();
         if (b == true)
         {
-            log.SuccessAndShow("添加MES成功");
+            Log.SuccessAndShow("添加MES成功");
         }
     }
 
@@ -75,7 +75,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         if (item == null)
         {
-            log.WarningAndShow("没有选中行", "当前HTTP列表没有数据,用户点击更新操作");
+            Log.WarningAndShow("没有选中行", "当前HTTP列表没有数据,用户点击更新操作");
             return;
         }
 
@@ -83,7 +83,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         bool? b = addWindow.ShowDialog();
         if (b == true)
         {
-            log.SuccessAndShow($"更新MES成功 name:{item.Name}");
+            Log.SuccessAndShow($"更新MES成功 name:{item.Name}");
         }
     }
 
@@ -94,13 +94,13 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
         if (item == null)
         {
-            log.WarningAndShow("没有数据不需要删除", "用户在操作删除,但HTTP数据已删除完");
+            Log.WarningAndShow("没有数据不需要删除", "用户在操作删除,但HTTP数据已删除完");
             return;
         }
 
         if (item.RunCyc)
         {
-            log.WarningAndShow("删除前请停止运行", $"用户在操作删除,请先停止运行{item.Name}");
+            Log.WarningAndShow("删除前请停止运行", $"用户在操作删除,请先停止运行{item.Name}");
             return;
         }
 
@@ -110,7 +110,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             string name = item.Name;
             LoadMesPageModel.MesPojoList.Remove(item);
-            log.SuccessAndShow($"删除HTTP成功 name:{name}");
+            Log.SuccessAndShow($"删除HTTP成功 name:{name}");
         }
     }
 
@@ -125,7 +125,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         if (succeed)
         {
-            log.SuccessAndShow("手动发送HTTP成功");
+            Log.SuccessAndShow("手动发送HTTP成功");
         }
     }
 
@@ -255,7 +255,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                         }
                         else
                         {
-                            log.Info($"{model.Name}: {request}" );
+                            Log.Info($"{model.Name}: {request}" );
                             //触发停止需求
                             succeed = true;
                         }
@@ -329,9 +329,17 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         ModbusBase modbusBase = netWork.ModbusBase;
 
         //读取寄存器
-        ushort[] readHoldingRegisters03 = await modbusBase.ReadHoldingRegisters_03(
-            byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
-            1);
+        ushort[] readHoldingRegisters03=null;
+        try
+        {
+            readHoldingRegisters03 = await modbusBase.ReadHoldingRegisters_03(
+                byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
+                1);
+        }
+        catch (Exception e)
+        {
+            Log.Error($"{model.Name}在试图启动读取Modbus寄存器时失败,启动未成功");
+        }
 
         return readHoldingRegisters03[0].ToString();
     }
@@ -422,7 +430,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     {
         LoadMesAddAndUpdateWindowModel loadMesAddAndUpdateWindowModel = message.Value;
         LoadMesPageModel.MesPojoList.Add(loadMesAddAndUpdateWindowModel);
-        log.Info(
+        Log.Info(
             $"添加一行HTTP请求: Name:{loadMesAddAndUpdateWindowModel.Name} 请求方式:{loadMesAddAndUpdateWindowModel.Ajax} 请求路径:{loadMesAddAndUpdateWindowModel.HttpPath}" +
             $"请求消息体:{loadMesAddAndUpdateWindowModel.Request} 请求条件{loadMesAddAndUpdateWindowModel.ToString()}");
     }
