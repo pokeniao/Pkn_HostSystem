@@ -5,6 +5,7 @@ using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.ViewModels.Windows;
 using System.Windows.Controls;
 using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
+using Pkn_HostSystem.Models.Core;
 
 namespace Pkn_HostSystem.Views.Windows
 {
@@ -15,14 +16,14 @@ namespace Pkn_HostSystem.Views.Windows
     {
         public LoadMesAddAndUpdateWindowsViewModel viewModel { get; set; }
 
-      
+
         public LoadMesAddWindow()
         {
             InitializeComponent();
-            
         }
+
         //添加
-        public LoadMesAddWindow(string title, ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList) :this()
+        public LoadMesAddWindow(string title, ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList) : this()
         {
             DataContext = new LoadMesAddAndUpdateWindowsViewModel();
             Title.Text = title;
@@ -30,8 +31,10 @@ namespace Pkn_HostSystem.Views.Windows
             viewModel.setSnackbarService(SnackbarPresenter);
             viewModel.mesPojoList = mesPojoList;
         }
+
         //修改
-        public LoadMesAddWindow(string title, LoadMesAddAndUpdateWindowModel item, ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList) :this()
+        public LoadMesAddWindow(string title, LoadMesAddAndUpdateWindowModel item,
+            ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList) : this()
         {
             DataContext = new LoadMesAddAndUpdateWindowsViewModel(item);
             Title.Text = title;
@@ -60,10 +63,10 @@ namespace Pkn_HostSystem.Views.Windows
             {
                 //从集合中移除
                 items?.Remove(item);
-                viewModel?.Log.SuccessAndShow("删除一个条件",$"Mes请求{HTTP_Name.Text} ,{item.Key}条件被删掉");
+                viewModel?.Log.SuccessAndShow("删除一个条件", $"Mes请求{HTTP_Name.Text} ,{item.Key}条件被删掉");
             }
-           
         }
+
         /// <summary>
         ///  下拉改变,显示循环文本
         /// </summary>
@@ -83,7 +86,23 @@ namespace Pkn_HostSystem.Views.Windows
                     viewModel.LoadMesAddAndUpdateWindowModel.CycText = "循环读取(ms)";
                     break;
             }
-           
+        }
+
+        private void DeleteColForDg(object sender, RoutedEventArgs e)
+        {
+            HttpHeader? item = HttpHeader.SelectedItem as HttpHeader;
+            if (item.Key != null)
+            {
+                bool b = viewModel.LoadMesAddAndUpdateWindowModel.HttpHeaders.Remove(item);
+                if (b)
+                {
+                    viewModel?.Log.SuccessAndShow("删除成功");
+                }
+                else
+                {
+                    viewModel?.Log.WarningAndShow("删除失败");
+                }
+            }
         }
     }
 }

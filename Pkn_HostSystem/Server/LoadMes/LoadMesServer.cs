@@ -1,6 +1,7 @@
 ﻿using KeyenceTool;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
@@ -121,7 +122,11 @@ public class LoadMesServer
                     requestBody = new RestRequest();
                     break;
             }
-
+            //添加请求头
+            foreach (var header in item.HttpHeaders)
+            {
+                requestBody.AddHeader(header.Key, header.Value);
+            }
             //添加请求体
             switch (item.RequestMethod)
             {

@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using Newtonsoft.Json;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 
@@ -119,6 +120,10 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// </summary>
     [ObservableProperty] private string triggerConnectName;
 
+    /// <summary>
+    /// 创建Http请求头
+    /// </summary>
+    [ObservableProperty] private ObservableCollection<HttpHeader> httpHeaders = new ObservableCollection<HttpHeader>();
 
     public override string ToString()
     {
