@@ -34,7 +34,6 @@ public class DynCondition : ObservableObject
     /// 当前方法的名称(请求方式) :读线圈,读寄存器
     /// </summary>
     private string methodName;
-
     public string MethodName
     {
         get => methodName;
@@ -54,7 +53,6 @@ public class DynCondition : ObservableObject
     /// 站地址
     /// </summary>
     private int stationAddress = 1;
-
     public int StationAddress
     {
         get => stationAddress;
@@ -65,12 +63,10 @@ public class DynCondition : ObservableObject
         }
 
     }
-
     /// <summary>
     /// 存储当前连接服务器的端口号
     /// </summary>
     public int SelectPost { get; set; }
-
     /// <summary>
     /// 起始地址
     /// </summary>
@@ -147,6 +143,7 @@ public class DynCondition : ObservableObject
         }
     }
 
+    public string SocketSendMessage { get; set; }
 
 
     /// <summary>

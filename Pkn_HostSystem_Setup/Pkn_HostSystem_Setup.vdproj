@@ -87,6 +87,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -215,7 +223,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Pkn_HostSystem_Setup"
         "ProductCode" = "8:{0C72BC71-D03E-487B-B671-3AA2558D4414}"
-        "PackageCode" = "8:{11941FA2-4DA6-48B9-964F-71DA4F3B3FB7}"
+        "PackageCode" = "8:{B309F0DF-E446-432C-8638-E84C406269DB}"
         "UpgradeCode" = "8:{1CB31F93-E555-419A-914D-52825393F66C}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"

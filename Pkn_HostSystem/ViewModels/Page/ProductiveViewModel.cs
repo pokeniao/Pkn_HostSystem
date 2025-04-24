@@ -70,7 +70,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 item.ctsConsumer.Cancel();
                 item.ctsProductive = new CancellationTokenSource();
                 item.ctsConsumer = new CancellationTokenSource();
-                item.TaskProductive =null;
+                item.TaskProductive = null;
                 item.TaskConsumer = null;
             }
         }
@@ -107,12 +107,33 @@ namespace Pkn_HostSystem.ViewModels.Page
                     consumerNetworkDetailed = detailed;
                 }
             }
+
             //3. 获取网络
-            NetWork netWorkProducer = GlobalMannager.NetWorkDictionary.Lookup(producerNetworkDetailed?.Id).Value;
-            NetWork netWorkConsumer = GlobalMannager.NetWorkDictionary.Lookup(consumerNetworkDetailed?.Id).Value;
+            NetWork netWorkProducer;
+            NetWork netWorkConsumer;
+            try
+            {
+                netWorkProducer = GlobalMannager.NetWorkDictionary.Lookup(producerNetworkDetailed?.Id).Value;
+                netWorkConsumer = GlobalMannager.NetWorkDictionary.Lookup(consumerNetworkDetailed?.Id).Value;
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    Log.ErrorAndShowTask("启动失败,网络未开启",$"{item.Name}:启动失败,网络未开启");
+                }
+                catch (Exception exception)
+                {
+                    Log.Error($"{item.Name}:启动失败,网络未开启");
+                }
+          
+                item.Run = false;
+                return;
+            }
 
             //4.创建生产者消费者服务
-            ProductiveConsumerServer productiveConsumerServer = new ProductiveConsumerServer(item.Queue, item.MessageList, netWorkProducer, netWorkConsumer);
+            ProductiveConsumerServer productiveConsumerServer =
+                new ProductiveConsumerServer(item.Queue, item.MessageList, netWorkProducer, netWorkConsumer);
             //5. 创建单利任务
             item.TaskProductive = new Lazy<Task>(() => RunTrigger(item.ctsProductive, netWorkProducer,
                 item.ProductiveStationAddress, item.ProductiveStartAddress, item.ProductiveTriggerValue,
@@ -123,16 +144,18 @@ namespace Pkn_HostSystem.ViewModels.Page
             //6. 运行
             Task task = item.TaskProductive.Value;
             Task task2 = item.TaskConsumer.Value;
+            Log.SuccessAndShowTask("启动成功",$"生产者消费者模式启动成功{item.Name}");
         }
 
         public async Task RunTrigger(CancellationTokenSource cts, NetWork netWork, string stationAddress,
-            string startAddress, string triggerValue, string triggerCyc, bool isProductive, ProductiveConsumerServer productiveConsumerServer)
+            string startAddress, string triggerValue, string triggerCyc, bool isProductive,
+            ProductiveConsumerServer productiveConsumerServer)
         {
             //1.启动后消息触发循环
             while (!cts.Token.IsCancellationRequested)
             {
                 //2. 判读更具什么进行的通讯
-                
+
                 switch (netWork.NetworkDetailed.NetMethod)
                 {
                     case "ModbusTcp":

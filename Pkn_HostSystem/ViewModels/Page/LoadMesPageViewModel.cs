@@ -137,6 +137,11 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
 
         //2. 判断是否循环触发,还是消息触发的方式
+        IsRun(item);
+    }
+
+    public void IsRun(LoadMesAddAndUpdateWindowModel item)
+    {
         if (item.RunCyc)
         {
             switch (item?.TriggerType)
@@ -182,18 +187,30 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     {
         while (!model.cts.Token.IsCancellationRequested)
         {
-            //手动发送Http请求
-            bool succeed = await loadMesServer.RunOne(model.Name);
+
+            //判断一下是否需要发送Http
+            if (model.HttpNeed)
+            {
+                //发送Http请求
+                bool succeed = await loadMesServer.RunOne(model.Name);
+            }
+            //进行一次数据组装
+            //从MesServer中取出绑定好的item
+            LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+            //消息体打包
+            var request = await loadMesServer.PackRequest(item.Name);
             //判断是否需要本地保存
             if (model.LocalSave)
             {
-                //从MesServer中取出绑定好的item
-                LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
-                //消息体打包
-                var request = await loadMesServer.PackRequest(item.Name);
                 //打包后本地保存
                 LocalSave(model, request);
             }
+            //判断一下是否需要转发
+            if (model.TranspondNeed)
+            {
+                
+            }
+
 
             await Task.Delay(model.CycTime * 1000, model.cts.Token);
         }
@@ -230,15 +247,25 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                     //判断是否触发
                     if (IsTrigger(model.TriggerMessage, currentMessage1))
                     {
-                        //手动发送Http请求
-                        bool succeed = await loadMesServer.RunOne(model.Name);
+                        bool succeed =false;
+                        LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name); ;
+                        string request = await loadMesServer.PackRequest(item.Name); ;
+
+                        if (model.HttpNeed)
+                        {
+                            //手动发送Http请求
+                             succeed = await loadMesServer.RunOne(model.Name);
+                        }
+                        else
+                        {
+                            log.Info($"{model.Name}: {request}" );
+                            //触发停止需求
+                            succeed = true;
+                        }
+                            
                         //判断是否需要本地保存
                         if (model.LocalSave)
                         {
-                            //从MesServer中取出绑定好的item
-                            LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
-                            //消息体打包
-                            var request = await loadMesServer.PackRequest(item.Name);
                             //打包后本地保存
                             LocalSave(model, request);
                         }

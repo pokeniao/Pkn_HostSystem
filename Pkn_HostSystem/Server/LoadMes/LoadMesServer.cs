@@ -205,8 +205,6 @@ public class LoadMesServer
                     break;
             }
         }
-
-
         return request;
     }
 
@@ -284,7 +282,13 @@ public class LoadMesServer
                     message = StaticMessage(message, itemKey, readCoid);
                     break;
                 case "Socket返回":
-                    message = await ReadTcpMessageAsync(item, message);
+
+                    string tcp = await ReadTcpMessageAsync(item);
+                    if (isSwitch)
+                    {
+                        tcp = SwitchGetMessage(tcp, item);
+                    }
+                    message = StaticMessage(message, itemKey, tcp);
                     break;
                 case "读DM寄存器":
                     string readDm = await KeyenceReadDM(item);
@@ -292,7 +296,6 @@ public class LoadMesServer
                     {
                         readDm = SwitchGetMessage(readDm, item);
                     }
-
                     message = StaticMessage(message, itemKey, readDm);
                     break;
                 case "读R线圈状态":
@@ -368,7 +371,7 @@ public class LoadMesServer
     /// <param name="item"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public async Task<string> ReadTcpMessageAsync(DynCondition item, string message)
+    public async Task<string> ReadTcpMessageAsync(DynCondition item)
     {
         //判断是走客户端发送,还是走服务器发送
         string itemConnectName = item.ConnectName;
@@ -387,15 +390,16 @@ public class LoadMesServer
         }
 
         string response = string.Empty;
+        TcpTool tcpTool = curNetWork.TcpTool;
         //更具类型选择发送
         switch (netMethod)
         {
             case "Tcp客户端":
-                response = await curNetWork?.WatsonTcpTool.SendWaitClint(message);
+                response = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage);
                 break;
 
             case "Tcp服务器":
-                response = await curNetWork?.WatsonTcpTool.SendWaitServer(item.SelectPost.ToString(), message);
+                await tcpTool.BroadcastAsync(item.SocketSendMessage);
                 break;
         }
 

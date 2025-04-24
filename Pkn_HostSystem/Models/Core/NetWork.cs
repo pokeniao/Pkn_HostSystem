@@ -23,7 +23,7 @@ public class NetWork
     /// <summary>
     /// 存储实例化的套接字通讯体
     /// </summary>
-    [JsonIgnore] public WatsonTcpTool WatsonTcpTool { get; set; }
+    [JsonIgnore] public TcpTool TcpTool { get; set; }
 
     /// <summary>
     /// 令牌 控制当前网络任务
