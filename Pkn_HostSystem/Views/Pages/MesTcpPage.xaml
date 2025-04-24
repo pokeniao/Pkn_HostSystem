@@ -203,8 +203,7 @@
                                         </Grid>
                                         <Grid
                                             Visibility="{Binding showSocket ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <ComboBox>
-                                            </ComboBox>
+                                            <TextBox Text="{Binding SocketSendMessage,UpdateSourceTrigger=PropertyChanged}"/>
                                         </Grid>
                                         <Grid
                                             Visibility="{Binding showHostLinkReadReg ,Converter={StaticResource BooleanVisibilityConverter}}">

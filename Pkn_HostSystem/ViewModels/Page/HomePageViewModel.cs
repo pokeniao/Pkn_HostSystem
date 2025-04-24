@@ -120,7 +120,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 var cts = new CancellationTokenSource();
                 netWorkPoJo.CancellationTokenSource = cts;
                 netWorkPoJo.ModbusBase = new ModbusBase();
-                netWorkPoJo.WatsonTcpTool = new WatsonTcpTool();
+                netWorkPoJo.TcpTool = new TcpTool();
                 netWorkPoJo.KeyenceHostLinkTool = new KeyenceHostLinkTool();
 
                 netWorkPoJo.Task = new Lazy<Task>(() => RunAndReconnection(cts.Token, netWorkPoJo));
@@ -135,14 +135,14 @@ public partial class HomePageViewModel : ObservableRecipient
             //令牌生成
             var cts = new CancellationTokenSource();
             var modbusBase = new ModbusBase();
-            var watsonTcpTool = new WatsonTcpTool();
+            var tcpTool = new TcpTool();
             var keyenceHostLinkTool = new KeyenceHostLinkTool();
             var workPoJo = new NetWork()
             {
                 NetWorkId = key,
                 CancellationTokenSource = cts,
                 ModbusBase = modbusBase,
-                WatsonTcpTool = watsonTcpTool,
+                TcpTool = tcpTool,
                 NetworkDetailed = networkDetailed,
                 KeyenceHostLinkTool = keyenceHostLinkTool
             };
@@ -194,15 +194,15 @@ public partial class HomePageViewModel : ObservableRecipient
             log.SuccessAndShowTask($"ModbusRTU:{name}---连接断开");
         }
         //停止Tcp服务器或者Tcp客户端
-        if (netWork.WatsonTcpTool.IsConnected)
+        if (netWork.TcpTool.IsClientConnected)
         {
-            netWork.WatsonTcpTool.CloseClint();
+            netWork.TcpTool.DisconnectClient();
             log.SuccessAndShowTask($"TcpClint:{name}---连接断开");
         }
 
-        if (netWork.WatsonTcpTool.IsServerRunning)
+        if (netWork.TcpTool.IsServerRunning)
         {
-            netWork.WatsonTcpTool.StopServer();
+            netWork.TcpTool.StopServer();
             log.SuccessAndShowTask($"TcpServer:{name}---连接断开");
         }
         //停止
@@ -211,11 +211,13 @@ public partial class HomePageViewModel : ObservableRecipient
             netWork.KeyenceHostLinkTool.Disconnect();
             log.SuccessAndShowTask($"上位链路通讯:{name}---连接断开");
         }
+        //从全局变量中移除
+        GlobalMannager.NetWorkDictionary.Remove(netWork);
+
     }
 
     public async Task RunAndReconnection(CancellationToken token, NetWork netWork)
     {
-        WatsonTcpTool watsonTcpTool = netWork.WatsonTcpTool;
         //连接方式
         string netMethod = netWork.NetworkDetailed.NetMethod;
         var whileTime = 5000;
@@ -230,10 +232,10 @@ public partial class HomePageViewModel : ObservableRecipient
                     await ModbusRtuConnect(netWork);
                     break;
                 case "Tcp客户端":
-                    await WatsonTcpClintConnect(netWork);
+                    await TcpClintConnect(netWork);
                     break;
                 case "Tcp服务器":
-                    await WatsonTcpServerConnect(netWork);
+                    await TcpServerConnect(netWork);
                     break;
                 case "基恩士上位链路通讯":
                     await KeyneceHostLinkConnect(netWork);
@@ -324,26 +326,26 @@ public partial class HomePageViewModel : ObservableRecipient
         }
     }
 
-    public async Task WatsonTcpClintConnect(NetWork netWork)
+    public async Task TcpClintConnect(NetWork netWork)
     {
-        if (!netWork.WatsonTcpTool.IsClientOpen)
+        if (!netWork.TcpTool.IsClientConnected)
         {
-            if (netWork.WatsonTcpTool.OpenClint(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port))
+            if (await netWork.TcpTool.ConnectToServerAsync(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port))
             {
                 log.SuccessAndShowTask("Tcp客户端打开成功");
             }
             else
             {
-                log.WarningAndShowTask("Tcp服务器打开失败");
+                log.WarningAndShowTask("Tcp客户端打开失败");
             }
         }
     }
 
-    public async Task WatsonTcpServerConnect(NetWork netWork)
+    public async Task TcpServerConnect(NetWork netWork)
     {
-        if (!netWork.WatsonTcpTool.IsServerRunning)
+        if (!netWork.TcpTool.IsServerRunning)
         {
-            if (netWork.WatsonTcpTool.OpenServer(netWork.NetworkDetailed.Port))
+            if (await netWork.TcpTool.StartServerAsync(netWork.NetworkDetailed.Port))
             {
                 log.SuccessAndShowTask("Tcp服务器打开成功");
             }

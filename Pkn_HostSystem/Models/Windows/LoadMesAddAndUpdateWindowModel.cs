@@ -88,6 +88,15 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     [ObservableProperty] private bool localSave;
 
     /// <summary>
+    /// 是否需要发送HTTP请求
+    /// </summary>
+    [ObservableProperty] private bool httpNeed;
+
+    /// <summary>
+    /// 是否需要进行转发
+    /// </summary>
+    [ObservableProperty] private bool transpondNeed;
+    /// <summary>
     /// 令牌 循环进程任务
     /// </summary>
     [JsonIgnore] public CancellationTokenSource cts { get; set; }

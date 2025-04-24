@@ -20,6 +20,7 @@ public class AppJsonStorage<T> where T : class, new()
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Pkn_HostSystem" // 文件夹名
         );
+
     private static readonly string SaveFile = Path.Combine(AppFolder, "程序缓存");
     private static readonly string FilePath = Path.Combine(SaveFile, typeof(T).Name + ".json");
 
@@ -55,7 +56,11 @@ public class AppJsonStorage<T> where T : class, new()
             if (File.Exists(FilePath))
             {
                 var json = File.ReadAllText(FilePath);
-                return JsonConvert.DeserializeObject<T>(json) ?? null;
+                // new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }强制调用set方法 ,那么只要 get 不为 null，默认会走“就地填充”，不调用 set，即：
+                //如果在对象创建时就被初始化了（比如 constructor 或字段初始化），
+                //  Newtonsoft 会把 JSON 中的数组元素一个个 .Add() 到 Numbers 里，而不是重新创建一个新 List 并调用 set Numbers(...)。
+                return JsonConvert.DeserializeObject<T>(json,
+                    new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }) ?? null;
             }
         }
         catch (Exception ex)

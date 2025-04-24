@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using Pkn_HostSystem.Base;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -6,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.Models.Core
 {
-    public class Productive
+    public partial class Productive:ObservableObject
     {
         /// <summary>
         /// 唯一标识名称
@@ -99,7 +100,7 @@ namespace Pkn_HostSystem.Models.Core
         /// <summary>
         /// 当前生产者消费者模式是否开启
         /// </summary>
-        public bool Run { get; set; }
+        [ObservableProperty] public bool run;
 
         /// <summary>
         /// 用于显示当前`触发设定`文本
@@ -146,6 +147,22 @@ namespace Pkn_HostSystem.Models.Core
         /// <summary>
         /// 当前消息队列
         /// </summary>
-        public BlockingCollection<List<ushort>> Queue { get; set; } = new BlockingCollection<List<ushort>>(30);
+        [JsonIgnore]public BlockingCollection<List<ushort>> Queue { get; set; } = new BlockingCollection<List<ushort>>(30);
+
+        // 用于序列化/反序列化的临时缓存
+        [JsonProperty("Queue")]
+        private List<List<ushort>> QueueRaw
+        {
+            get => Queue?.ToList();
+            set
+            {
+                if (value != null)
+                {
+                    Queue = new BlockingCollection<List<ushort>>(30);
+                    foreach (var item in value)
+                        Queue.Add(item);
+                }
+            }
+        }
     }
 }

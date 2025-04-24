@@ -240,43 +240,37 @@
                         </StackPanel>
                     </TabItem>
                 </TabControl>
-                <WrapPanel>
-                    <TextBlock Text="触发消息" Margin="0,10,0,0"/>
-                        <TextBox Width="150" Height="20" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
-                                 Margin="10"
-                                 HorizontalScrollBarVisibility="Auto"
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock Text="触发消息" Margin="0,10,10,0"  TextAlignment="Center"/>
+                        <TextBox Width="150"  
+                             
                                  Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                  BorderThickness="0"
-                                 AcceptsReturn="True"
                                  FontSize="15"
                                  Text="{Binding LoadMesAddAndUpdateWindowModel.TriggerMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
                 </WrapPanel>
-                <WrapPanel>
-                    <TextBlock Text="完成返回消息" Margin="0,10,0,0" />
-                    <TextBox Width="150" Height="20" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
-                             Margin="10"
-                             HorizontalScrollBarVisibility="Auto"
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock Text="完成返回消息" Margin="0,10,10,0" TextAlignment="Center"/>
+                    <TextBox Width="150" 
+                           
                              Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                              BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                              Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                              BorderThickness="0"
-                             AcceptsReturn="True"
                              FontSize="15"
                              Text="{Binding LoadMesAddAndUpdateWindowModel.SuccessResponseMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
                 </WrapPanel>
-                
-                <WrapPanel>
-                    <TextBlock Text="失败返回消息" Margin="0,10,0,0" />
-                    <TextBox Width="150" Height="20" Style="{x:Null}" VerticalScrollBarVisibility="Auto"
-                             Margin="10"
-                             HorizontalScrollBarVisibility="Auto"
+
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock Text="失败返回消息" Margin="0,10,10,0" />
+                    <TextBox Width="150" 
+                             
                              Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                              BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                              Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                              BorderThickness="0"
-                             AcceptsReturn="True"
                              FontSize="15"
                              Text="{Binding LoadMesAddAndUpdateWindowModel.FailResponseMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
                 </WrapPanel>
@@ -284,6 +278,15 @@
                 <WrapPanel>
                     <TextBlock Text="是否需要保存本地" Margin="0,10,0,10" VerticalAlignment="Center" />
                     <ui:ToggleSwitch Margin="10" IsChecked="{Binding LoadMesAddAndUpdateWindowModel.LocalSave }"/>
+                </WrapPanel>
+
+                <WrapPanel>
+                    <TextBlock Text="是否需要发送HTTP请求" Margin="0,10,0,10" VerticalAlignment="Center" />
+                    <ui:ToggleSwitch Margin="10" IsChecked="{Binding LoadMesAddAndUpdateWindowModel.HttpNeed }"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Text="结果是否需要转发" Margin="0,10,0,10" VerticalAlignment="Center" />
+                    <ui:ToggleSwitch Margin="10" IsChecked="{Binding LoadMesAddAndUpdateWindowModel.TranspondNeed }"/>
                 </WrapPanel>
             </StackPanel>
         </Grid>

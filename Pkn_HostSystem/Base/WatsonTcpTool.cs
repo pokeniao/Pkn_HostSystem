@@ -67,14 +67,31 @@ public class WatsonTcpTool
     {
         if (Server != null && Server.IsListening)
         {
-            Server.Stop();
+            try
+            {
+                Server.Stop();
+                Server.Dispose();
+            }
+            catch (AggregateException ex)
+            {
+                foreach (var inner in ex.InnerExceptions)
+                {
+                    if (inner is TaskCanceledException)
+                        Log.Info("[SERVER] 某个后台任务被取消(有客户端连接)");
+                    else
+                        Log.Error($"[SERVER] Stop 过程出现异常: {inner.Message}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[SERVER] 关闭服务时出现异常: {ex.Message}");
+            }
             Log.Info("服务器停止成功");
         }
 
         Server = null;
         return true;
     }
-
     #endregion
 
     #region 服务器发送消息

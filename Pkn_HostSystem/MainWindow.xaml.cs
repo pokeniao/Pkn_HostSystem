@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.ViewModels.Page;
@@ -66,7 +67,19 @@ namespace Pkn_HostSystem
             {
                 if (mesPojo.RunCyc)
                 {
-                    loadMesPageViewModel.OpenCyc(mesPojo);
+                    loadMesPageViewModel.IsRun(mesPojo);
+                }
+            }
+
+            //判断消费者和生产者模式是否开启,自动连接
+            ProductiveViewModel productiveViewModel = Ioc.Default.GetRequiredService<ProductiveViewModel>();
+            ObservableCollection<Productive> productiveModelProductives = productiveViewModel.ProductiveModel.Productives;
+
+            foreach (var productive in productiveModelProductives)
+            {
+                if (productive.Run)
+                {
+                    productiveViewModel.TriggerCyc(productive);
                 }
             }
         }
