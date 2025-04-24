@@ -44,8 +44,8 @@ namespace Pkn_HostSystem
         /// <param name="e"></param>
         protected override void OnExit(ExitEventArgs e)
         {
-            SettingsPageViewModel viewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
-            viewModel.Save();
+            // SettingsPageViewModel viewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
+            // viewModel.Save();
 
             base.OnExit(e);
         }

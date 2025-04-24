@@ -116,7 +116,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
     #endregion
 
-
     #region 手动触发发送 与 开启Http
 
     [RelayCommand]
@@ -167,7 +166,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
     #endregion
 
-
     #region 循环触发
 
     /// <summary>
@@ -217,7 +215,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     }
 
     #endregion
-
 
     #region 消息触发
 
@@ -377,7 +374,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     }
 
     #endregion
-
 
     #region 本地保存当前发送Mes的记录
 
