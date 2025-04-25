@@ -15,7 +15,7 @@ namespace Pkn_HostSystem.Base
         private TcpClient tcpClient { get; set; }
 
         //超时时间
-        public int ReadTimeout { get; set; } = 1000;
+        public int ReadTimeout { get; set; } = 300;
 
         //等待时间
         public int Retries { get; set; } = 3;
@@ -78,15 +78,12 @@ namespace Pkn_HostSystem.Base
                 lock (_lock)
                 {
                     tcpClient = new TcpClient();
+                    tcpClient.ConnectAsync(ip, port);
+                    var factory = new ModbusFactory();
+                    modbusMaster = factory.CreateMaster(tcpClient);
+                    modbusMaster.Transport.ReadTimeout = ReadTimeout;
+                    modbusMaster.Transport.Retries = Retries;
                 }
-
-                await tcpClient.ConnectAsync(ip, port);
-                var factory = new ModbusFactory();
-                modbusMaster = factory.CreateMaster(tcpClient);
-                modbusMaster.Transport.ReadTimeout = ReadTimeout;
-                modbusMaster.Transport.Retries = Retries;
-
-
                 return true;
             }
             catch (Exception e)

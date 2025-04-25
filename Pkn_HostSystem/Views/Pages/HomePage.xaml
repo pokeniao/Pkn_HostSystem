@@ -364,9 +364,13 @@
                 </Border>
 
                 <StackPanel>
-                    <Button Content="滚动到底部" Command="{Binding ScrollToBottomCommand}"
-                            CommandParameter="{Binding  ElementName=LogListBox}" HorizontalAlignment="Right"
-                            Margin="30 0" />
+                    <WrapPanel HorizontalAlignment="Right">
+                        <Button Content="清空日志" Click="ClearLog"/>
+                        <Button Content="滚动到底部" Command="{Binding ScrollToBottomCommand}"
+                                CommandParameter="{Binding  ElementName=LogListBox}" 
+                                Margin="30 0" />
+                    </WrapPanel>
+                  
                 </StackPanel>
             </StackPanel>
 

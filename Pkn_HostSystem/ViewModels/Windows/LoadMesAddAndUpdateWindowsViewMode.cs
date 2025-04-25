@@ -39,9 +39,6 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public ObservableCollection<string> MethodCollection { get; set; } = ["当前时间(yyyy-MM-dd HH:mm:ss)", "当前时间(yyyy/MM/dd HH:mm:ss)", "当前时间(yyyy-MM-dd)", "当前时间(yyyy/MM/dd)"];
 
-    public ObservableCollection<string> NetTrigger { get; set; } = ["ModbusTcp", "ModbusRtu", "Socket"];
-
-
     public ObservableCollectionExtended<LoadMesDynContent> Para_dyn { get; set; } = new ObservableCollectionExtended<LoadMesDynContent>();
     //添加
     public LoadMesAddAndUpdateWindowsViewModel()
@@ -69,6 +66,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
         add = false;
         GlobalMannager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
         LastName = _LoadMesAddAndUpdateWindowModel.Name;
+        GlobalMannager.NetWorkDictionary.Connect().Bind(LoadMesAddAndUpdateWindowModel.NetWorkList).Subscribe();
     }
 
     /// <summary>

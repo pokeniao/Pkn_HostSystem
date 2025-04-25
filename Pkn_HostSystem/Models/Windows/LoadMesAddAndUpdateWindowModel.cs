@@ -55,33 +55,28 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// </summary>
     [ObservableProperty] private string triggerType;
     /// <summary>
-    /// 触发的通讯模式:ModbusTcp,ModbusRtu,Socket等
-    /// </summary>
-    [ObservableProperty] private string netTrigger;
-
-    /// <summary>
     /// 站地址
     /// </summary>
-    [ObservableProperty] private string stationAddress;
+    [ObservableProperty] private string stationAddress="1";
     /// <summary>
     /// 起始地址
     /// </summary>
-    [ObservableProperty] private string startAddress;
+    [ObservableProperty] private string startAddress="0";
 
     /// <summary>
     /// 触发发送Http的消息内容
     /// </summary>
-    [ObservableProperty] private string triggerMessage;
+    [ObservableProperty] private string triggerMessage="1";
 
     /// <summary>
     /// 触发后:成功返回消息
     /// </summary>
-    [ObservableProperty] private string successResponseMessage;
+    [ObservableProperty] private string successResponseMessage="2";
 
     /// <summary>
     /// 触发后:失败返回消息
     /// </summary>
-    [ObservableProperty] private string failResponseMessage;
+    [ObservableProperty] private string failResponseMessage="3";
 
     /// <summary>
     /// 是否需要本地保存
@@ -113,7 +108,7 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// <summary>
     /// 用于绑定显示,已启动的通讯
     /// </summary>
-     [ObservableProperty] private ObservableCollectionExtended<NetWork> netWorkList;
+    [JsonIgnore] [ObservableProperty] private ObservableCollectionExtended<NetWork> netWorkList;
 
     /// <summary>
     /// 当前绑定的触发形的通讯名称

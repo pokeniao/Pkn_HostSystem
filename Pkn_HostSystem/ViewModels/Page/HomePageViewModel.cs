@@ -295,7 +295,7 @@ public partial class HomePageViewModel : ObservableRecipient
             }
             else
             {
-                log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
+                log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  正在尝试重连");
             }
         }
     }

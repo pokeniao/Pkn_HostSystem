@@ -58,7 +58,7 @@
                                 <TextBlock Text="Pkn上位机" />
                                 <TextBlock
                                     Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="© 2025 潘智高;Pkn上位机（All rights reserved）" />
+                                    Text="© 2025 ZhiGao Pan;Pkn上位机（All rights reserved）" />
                             </StackPanel>
                         </Grid>
                     </ui:CardExpander.Header>

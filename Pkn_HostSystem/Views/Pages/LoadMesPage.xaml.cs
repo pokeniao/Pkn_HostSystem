@@ -1,8 +1,10 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Base.Log;
+using Pkn_HostSystem.Static;
 using LoadMesPageViewModel = Pkn_HostSystem.ViewModels.Page.LoadMesPageViewModel;
 
 namespace Pkn_HostSystem.Views.Pages
@@ -63,6 +65,13 @@ namespace Pkn_HostSystem.Views.Pages
                 return;
             }
             HttpLogListBox.ScrollIntoView(HttpLogListBox.Items[^1]);
+        }
+
+        private void ClearLog(object sender, RoutedEventArgs e)
+        {
+            GlobalMannager.GlobalDictionary.TryGetValue("MesLogListBox", out var obj);
+            ObservableCollection<string> list = (ObservableCollection<string>)obj;
+            list.Clear();
         }
     }
 }

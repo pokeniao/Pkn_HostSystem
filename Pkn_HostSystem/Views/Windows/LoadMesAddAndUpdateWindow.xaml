@@ -253,16 +253,11 @@
             <StackPanel>
                 <WrapPanel>
                     <TextBlock Text="触发对象" Margin="5" TextAlignment="Center" />
-                    <ComboBox Width="120"
+                    <ComboBox Width="200"
                               ItemsSource="{Binding LoadMesAddAndUpdateWindowModel.NetWorkList}"
                               DisplayMemberPath="NetworkDetailed.Name"
                               SelectedValuePath="NetworkDetailed.Name"
                               SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.TriggerConnectName,UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Text="触发通讯模式" Margin="5" TextAlignment="Center" />
-                    <ComboBox
-                        Width="120"
-                        ItemsSource="{Binding NetTrigger}"
-                        SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.NetTrigger}" />
                 </WrapPanel>
 
 
