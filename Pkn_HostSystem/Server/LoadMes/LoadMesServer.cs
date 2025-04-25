@@ -66,12 +66,12 @@ public class LoadMesServer
     /// <summary>
     /// 触发单个请求
     /// </summary>
-    public async Task<bool> RunOne(string Name)
+    public async Task<bool> RunOne(string Name,CancellationTokenSource cts)
     {
         //获取当前Name的行数据
         LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
         //得到消息体
-        return await SendHttp(item);
+        return await SendHttp(item,cts);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public class LoadMesServer
     {
         foreach (var item in mesPojoList)
         {
-            await SendHttp(item);
+            await SendHttp(item,new CancellationTokenSource());
         }
 
         return true;
@@ -92,7 +92,7 @@ public class LoadMesServer
 
     #region 发送Http任务
 
-    public async Task<bool> SendHttp(LoadMesAddAndUpdateWindowModel item)
+    public async Task<bool> SendHttp(LoadMesAddAndUpdateWindowModel item,CancellationTokenSource cts)
     {
         //得到消息体
         var request = await PackRequest(item.Name);
@@ -146,9 +146,8 @@ public class LoadMesServer
                     requestBody.AddStringBody(request, DataFormat.None);
                     break;
             }
-
             //发送请求
-            RestResponse response = await client.ExecuteAsync(requestBody);
+            RestResponse response = await client.ExecuteAsync(requestBody,cts.Token);
             //判断
             if (response.IsSuccessStatusCode)
             {

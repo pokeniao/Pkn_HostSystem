@@ -94,6 +94,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -222,21 +230,21 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Pkn_HostSystem_Setup"
-        "ProductCode" = "8:{0C72BC71-D03E-487B-B671-3AA2558D4414}"
-        "PackageCode" = "8:{B309F0DF-E446-432C-8638-E84C406269DB}"
+        "ProductCode" = "8:{8960113A-E800-4FB2-98FA-C04A9B91B3AB}"
+        "PackageCode" = "8:{81A6FD95-6EF7-4ADE-865A-4C559CDABC62}"
         "UpgradeCode" = "8:{1CB31F93-E555-419A-914D-52825393F66C}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:1625229957@qq.com"
+        "ProductVersion" = "8:1.0.1"
+        "Manufacturer" = "8:Pokeniao"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:Pkn_HostSystem_Setup"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:1625229957@qq.com"
+        "ARPCONTACT" = "8:潘智高"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
@@ -360,7 +368,7 @@
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_4330BA5D7388481C9D874F75373417B4"
             {
             "Name" = "8:Pkn卸载程序"
-            "Arguments" = "8:/X {0C72BC71-D03E-487B-B671-3AA2558D4414}"
+            "Arguments" = "8:/X {8960113A-E800-4FB2-98FA-C04A9B91B3AB}"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
@@ -388,7 +396,7 @@
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E28D7596B36C4A6DAAC1C9A7EF6416A4"
             {
             "Name" = "8:PKn卸载程序"
-            "Arguments" = "8:/X {0C72BC71-D03E-487B-B671-3AA2558D4414}"
+            "Arguments" = "8:/X {8960113A-E800-4FB2-98FA-C04A9B91B3AB}"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"

@@ -1,9 +1,11 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Pojo.Page.HomePage;
+using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
@@ -138,5 +140,12 @@ namespace Pkn_HostSystem.Views.Pages
         }
 
         #endregion
+
+        private void ClearLog(object sender, RoutedEventArgs e)
+        {
+            GlobalMannager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
+            ObservableCollection<string> list = (ObservableCollection<string>)obj;
+            list.Clear();
+        }
     }
 }

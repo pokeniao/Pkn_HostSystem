@@ -80,7 +80,11 @@
                         >
                         <ListBox Name="HttpLogListBox"  ItemsSource="{Binding LoadMesPageModel.ReturnMessageList}"/>
                     </Border>
-                    <Button Content="滑动到底部" Click="ButtonBase_OnClick"/>
+                    <WrapPanel HorizontalAlignment="Right">
+                        <Button Content="清空日志" Margin="10,0" Click="ClearLog"/>
+                        <Button Content="滑动到底部" Click="ButtonBase_OnClick"/>
+                    </WrapPanel>
+                   
                 </StackPanel>
             </Grid>
         </Grid>

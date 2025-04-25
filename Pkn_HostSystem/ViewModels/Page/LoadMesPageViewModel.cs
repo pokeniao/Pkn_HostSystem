@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using DynamicData.Kernel;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Message;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
+using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Server.LoadMes;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
@@ -185,12 +188,11 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     {
         while (!model.cts.Token.IsCancellationRequested)
         {
-
             //判断一下是否需要发送Http
             if (model.HttpNeed)
             {
                 //发送Http请求
-                bool succeed = await loadMesServer.RunOne(model.Name);
+                bool succeed = await loadMesServer.RunOne(model.Name, model.cts);
             }
             //进行一次数据组装
             //从MesServer中取出绑定好的item
@@ -206,10 +208,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             //判断一下是否需要转发
             if (model.TranspondNeed)
             {
-                
             }
-
-
             await Task.Delay(model.CycTime * 1000, model.cts.Token);
         }
     }
@@ -236,85 +235,109 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         while (!model.cts.Token.IsCancellationRequested)
         {
             //2. 判读更具什么进行的通讯
-            switch (model.NetTrigger)
-            {
-                case "ModbusTcp":
-                    //获取触发位
-                    string currentMessage1 = await ModbusTcpTrigger(model);
-                    //判断是否触发
-                    if (IsTrigger(model.TriggerMessage, currentMessage1))
-                    {
-                        bool succeed =false;
-                        LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name); ;
-                        string request = await loadMesServer.PackRequest(item.Name); ;
+            string modelTriggerConnectName = model.TriggerConnectName;
+            HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
+            ObservableCollection<NetworkDetailed> networkDetaileds = homePageViewModel.HomePageModel.SetConnectDg;
 
-                        if (model.HttpNeed)
+            NetWork netWork =null;
+            foreach (var detailed in networkDetaileds)
+            {
+                if (detailed.Name == modelTriggerConnectName)
+                {
+                    var lookup = GlobalMannager.NetWorkDictionary.Lookup(detailed.Id);
+                    if (lookup.HasValue == false)
+                    {
+                        Log.Info($"{nameof(LoadMesPageViewModel)}--{model.Name}--没有触发的通讯对象,请检查通讯对象是否打开");
+                    }
+                    else
+                    {
+                        netWork = lookup.Value;
+                    }
+                }
+            }
+            if (netWork!=null)
+            {
+                switch (netWork.NetworkDetailed.NetMethod)
+                {
+                    case "ModbusTcp":
+                        //获取触发位
+                        string currentMessage1 = await ModbusTcpTrigger(model);
+                        //判断是否触发
+                        if (IsTrigger(model.TriggerMessage, currentMessage1))
+                        {
+                            bool succeed = false;
+                            LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+                            ;
+                            string request = await loadMesServer.PackRequest(item.Name);
+                            ;
+
+                            if (model.HttpNeed)
+                            {
+                                //手动发送Http请求
+                                succeed = await loadMesServer.RunOne(model.Name, model.cts);
+                            }
+                            else
+                            {
+                                Log.Info($"{model.Name}: {request}");
+                                //触发停止需求
+                                succeed = true;
+                            }
+
+                            //判断是否需要本地保存
+                            if (model.LocalSave)
+                            {
+                                //打包后本地保存
+                                LocalSave(model, request);
+                            }
+
+                            //完成后给触发位停止
+                            if (succeed)
+                            {
+                                await ModbusTcpTriggerWrite(model, true);
+                            }
+                            else
+                            {
+                                await ModbusTcpTriggerWrite(model, false);
+                            }
+                        }
+
+                        break;
+                    case "ModbusRtu":
+                        //获取触发位
+                        string currentMessage2 = await ModbusTcpTrigger(model);
+                        //判断是否触发
+                        if (IsTrigger(model.TriggerMessage, currentMessage2))
                         {
                             //手动发送Http请求
-                             succeed = await loadMesServer.RunOne(model.Name);
-                        }
-                        else
-                        {
-                            Log.Info($"{model.Name}: {request}" );
-                            //触发停止需求
-                            succeed = true;
-                        }
-                            
-                        //判断是否需要本地保存
-                        if (model.LocalSave)
-                        {
-                            //打包后本地保存
-                            LocalSave(model, request);
+                            bool succeed = await loadMesServer.RunOne(model.Name, model.cts);
+                            //判断是否需要本地保存
+                            if (model.LocalSave)
+                            {
+                                //从MesServer中取出绑定好的item
+                                LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+                                //消息体打包
+                                var request = await loadMesServer.PackRequest(item.Name);
+                                //打包后本地保存
+                                LocalSave(model, request);
+                            }
+
+                            //完成后给触发位停止
+                            if (succeed)
+                            {
+                                await ModbusTcpTriggerWrite(model, true);
+                            }
+                            else
+                            {
+                                await ModbusTcpTriggerWrite(model, false);
+                            }
                         }
 
-                        //完成后给触发位停止
-                        if (succeed)
-                        {
-                            await ModbusTcpTriggerWrite(model, true);
-                        }
-                        else
-                        {
-                            await ModbusTcpTriggerWrite(model, false);
-                        }
-                    }
-
-                    break;
-                case "ModbusRtu":
-                    //获取触发位
-                    string currentMessage2 = await ModbusTcpTrigger(model);
-                    //判断是否触发
-                    if (IsTrigger(model.TriggerMessage, currentMessage2))
-                    {
-                        //手动发送Http请求
-                        bool succeed = await loadMesServer.RunOne(model.Name);
-                        //判断是否需要本地保存
-                        if (model.LocalSave)
-                        {
-                            //从MesServer中取出绑定好的item
-                            LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
-                            //消息体打包
-                            var request = await loadMesServer.PackRequest(item.Name);
-                            //打包后本地保存
-                            LocalSave(model, request);
-                        }
-
-                        //完成后给触发位停止
-                        if (succeed)
-                        {
-                            await ModbusTcpTriggerWrite(model, true);
-                        }
-                        else
-                        {
-                            await ModbusTcpTriggerWrite(model, false);
-                        }
-                    }
-
-                    break;
-                case "Socket":
-
-                    break;
+                        break;
+                    case "Socket":
+                        break;
+                }
             }
-
+          
             await Task.Delay(model.CycTime, model.cts.Token);
         }
     }
@@ -329,7 +352,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         ModbusBase modbusBase = netWork.ModbusBase;
 
         //读取寄存器
-        ushort[] readHoldingRegisters03=null;
+        ushort[] readHoldingRegisters03 = null;
         try
         {
             readHoldingRegisters03 = await modbusBase.ReadHoldingRegisters_03(
@@ -339,6 +362,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         catch (Exception e)
         {
             Log.Error($"{model.Name}在试图启动读取Modbus寄存器时失败,启动未成功");
+            return string.Empty;
         }
 
         return readHoldingRegisters03[0].ToString();
