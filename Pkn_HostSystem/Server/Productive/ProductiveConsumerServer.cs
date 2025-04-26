@@ -30,16 +30,28 @@ namespace Pkn_HostSystem.Server.Productive
         /// </summary>
         public NetWork ConsumeNetWork { get; set; }
 
+        /// <summary>
+        /// 消费者名
+        /// </summary>
+        public string ProductiveName { get; set; }
+
+        /// <summary>
+        /// 消费者名
+        /// </summary>
+        public string ConsumeName { get; set; }
+
         public LogBase<ProductiveConsumerServer> Log = new LogBase<ProductiveConsumerServer>();
 
 
         public ProductiveConsumerServer(BlockingCollection<List<ushort>> _Queue,
-            ObservableCollection<ProductiveDetailed> _MessageList, NetWork _ProductiveNetWork, NetWork _ConsumeNetWork)
+            ObservableCollection<ProductiveDetailed> _MessageList, NetWork _ProductiveNetWork, NetWork _ConsumeNetWork, string _ConsumeName,string _ProductiveName)
         {
             Queue = _Queue;
             MessageList = _MessageList;
             ProductiveNetWork = _ProductiveNetWork;
             ConsumeNetWork = _ConsumeNetWork;
+            ProductiveName = _ProductiveName;
+            ConsumeName = _ConsumeName;
         }
 
         public async Task<bool> Production()
@@ -61,6 +73,7 @@ namespace Pkn_HostSystem.Server.Productive
                         }
 
                         Queue.Add(ushorts);
+                        Log.Info($"{nameof(ProductiveConsumerServer)}--{ProductiveName}--向队列添加东西");
                         break;
                     case "ModbusRcp":
                         break;
@@ -74,7 +87,7 @@ namespace Pkn_HostSystem.Server.Productive
             return true;
         }
 
-        public async Task<bool> Consume()
+        public async Task<bool> Consume(CancellationTokenSource cts)
         {
             //消费
             //判断当前的通讯模式
@@ -85,31 +98,36 @@ namespace Pkn_HostSystem.Server.Productive
                     case "ModbusTcp":
                         ModbusBase modbusBase = ConsumeNetWork.ModbusBase;
 
-                        if (Queue.TryTake(out List<ushort> ushorts))
+                        while (!cts.Token.IsCancellationRequested)
                         {
-                            int num = 0;
-                            int curPos = 0;
-                            int endPos = 0;
-                            foreach (ProductiveDetailed detailed in MessageList)
+                            if (Queue.TryTake(out List<ushort> ushorts))
                             {
-                                //需要读取出来的长度
-                                num = int.Parse(detailed.ProducterLength);
-                                endPos = num + curPos;
-                                List<ushort> loadUshorts = new List<ushort>();
-                                for (; curPos < endPos; curPos++)
+                                int num = 0;
+                                int curPos = 0;
+                                int endPos = 0;
+                                foreach (ProductiveDetailed detailed in MessageList)
                                 {
-                                    loadUshorts.Add(ushorts[curPos]);
+                                    //需要读取出来的长度
+                                    num = int.Parse(detailed.ProducterLength);
+                                    endPos = num + curPos;
+                                    List<ushort> loadUshorts = new List<ushort>();
+                                    for (; curPos < endPos; curPos++)
+                                    {
+                                        loadUshorts.Add(ushorts[curPos]);
+                                    }
+
+                                    //发送
+                                    await modbusBase.WriteRegisters_10(byte.Parse(detailed.ConsumerStationAddress),
+                                        ushort.Parse(detailed.ConsumerStartAddress), loadUshorts.ToArray());
                                 }
 
-                                //发送
-                                await modbusBase.WriteRegisters_10(byte.Parse(detailed.ConsumerStationAddress),
-                                    ushort.Parse(detailed.ConsumerStartAddress), loadUshorts.ToArray());
+                                Log.Info($"{nameof(ProductiveConsumerServer)}--{ConsumeName}--消费一条消息");
+                                break;
                             }
+
+                            await Task.Delay(100,cts.Token);
                         }
-                        else
-                        {
-                            Log.Error("队列中无数据");
-                        }
+
 
                         break;
                     case "ModbusRcp":
@@ -117,7 +135,7 @@ namespace Pkn_HostSystem.Server.Productive
                 }
             }
             catch (Exception e)
-            {
+            {   
                 return false;
             }
 

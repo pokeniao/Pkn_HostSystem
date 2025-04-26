@@ -18,12 +18,12 @@ public class LoadMesServer
 {
     private ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
 
-    private MesLogBase<LoadMesServer> log;
+    private MesLogBase<LoadMesServer> Log;
 
     public LoadMesServer(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList)
     {
         this.mesPojoList = mesPojoList;
-        log = new MesLogBase<LoadMesServer>();
+        Log = new MesLogBase<LoadMesServer>();
     }
 
 
@@ -35,6 +35,7 @@ public class LoadMesServer
     /// <returns></returns>
     public LoadMesAddAndUpdateWindowModel SelectByName(string Name)
     {
+       // Log.Info($"SelectByName执行,Name:{Name}");
         //判断是否有当前key 
         foreach (var item in mesPojoList)
             if (Name == item.Name)
@@ -49,6 +50,7 @@ public class LoadMesServer
     /// <returns></returns>
     public string getNetKey(string ConnectName)
     {
+        //Log.Info($"getNetKey执行,ConnectName:{ConnectName}");
         var netWorkPoJoes = GlobalMannager.NetWorkDictionary.Items.ToList();
         foreach (var netWorkPoJo in netWorkPoJoes)
             if (netWorkPoJo.NetworkDetailed.Name == ConnectName)
@@ -68,6 +70,7 @@ public class LoadMesServer
     /// </summary>
     public async Task<bool> RunOne(string Name,CancellationTokenSource cts)
     {
+        Log.Info($"RunOne执行,Name:{Name}");
         //获取当前Name的行数据
         LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
         //得到消息体
@@ -80,6 +83,7 @@ public class LoadMesServer
     /// <returns></returns>
     public async Task<bool> RunAll()
     {
+        Log.Info($"RunAll执行");
         foreach (var item in mesPojoList)
         {
             await SendHttp(item,new CancellationTokenSource());
@@ -97,7 +101,7 @@ public class LoadMesServer
         //得到消息体
         var request = await PackRequest(item.Name);
         //日志显示发送内容
-        log.Info($"{item.Name}--发送内容: {request}");
+        Log.Info($"{nameof(LoadMesServer)}--SendHttp--{item.Name}--发送内容: \n\r{request}");
         if (request != null)
         {
             //创建连接
@@ -152,13 +156,13 @@ public class LoadMesServer
             if (response.IsSuccessStatusCode)
             {
                 item.Response = response.Content;
-                log.Info($"{item.Name}--发送请求返回: {item.Response}");
+                Log.Info($"{item.Name}--发送请求返回: {item.Response}");
                 return true;
             }
             else
             {
                 item.Response = response.ErrorMessage;
-                log.Info($"{item.Name}--发送请求返回: {item.Response}");
+                Log.Info($"{item.Name}--发送请求返回: {item.Response}");
                 return false;
             }
         }
@@ -196,6 +200,7 @@ public class LoadMesServer
             {
                 case "动态获取":
                     //获取动态的值
+                    Log.Info("正在动态嵌入内容");
                     var value = await DynMessage(request, itemValue);
                     request = StaticMessage(request, itemKey, value);
                     break;
@@ -248,15 +253,22 @@ public class LoadMesServer
     {
         if (DynName == null)
         {
+            Log.Info($"{nameof(LoadMesServer)}--正在动态嵌入内容的时候,动态获取名未设置(DynName) ");
             return null;
         }
-
         var lookup = GlobalMannager.DynDictionary.Lookup(DynName);
-        if (!lookup.HasValue) return string.Empty;
+        if (!lookup.HasValue)
+        {
+            Log.Info($"{nameof(LoadMesServer)}--正在动态嵌入内容的时候,--{DynName}--从动态字典DynDictionary找不到,返回空字符串");
+            return string.Empty;
+        }
         var mesTcpPojo = lookup.Value;
         var message = mesTcpPojo.Message;
-        if (message == null) return string.Empty;
-
+        if (message == null)
+        {
+            Log.Info($"{nameof(LoadMesServer)} 从动态字典DynDictionary找到的消息内容Message为Null");
+            return string.Empty;
+        }
         var result = "";
         // 1. 循环获取动态条件
         foreach (var item in mesTcpPojo.DynCondition)
@@ -268,41 +280,49 @@ public class LoadMesServer
             switch (methodName)
             {
                 case "读寄存器":
+                    Log.Info("动态嵌入内容:执行读寄存器中");
                     string readReg = await ReadReg(item);
                     if (isSwitch)
                     {
+                        Log.Info("动态嵌入内容读寄存器需要进行消息转换Switch映射");
                         readReg = SwitchGetMessage(readReg, item);
                     }
 
                     message = StaticMessage(message, itemKey, readReg);
                     break;
                 case "读线圈":
+                    Log.Info("动态嵌入内容:执行读线圈中");
                     string readCoid = await ReadCoid(item);
                     if (isSwitch)
                     {
+                        Log.Info("动态嵌入内容读线圈需要进行消息转换Switch映射");
                         readCoid = SwitchGetMessage(readCoid, item);
                     }
 
                     message = StaticMessage(message, itemKey, readCoid);
                     break;
                 case "Socket返回":
-
+                    Log.Info("动态嵌入内容:执行Socket消息发送");
                     string tcp = await ReadTcpMessageAsync(item);
                     if (isSwitch)
                     {
+                        Log.Info("动态嵌入内容Socket需要进行消息转换Switch映射");
                         tcp = SwitchGetMessage(tcp, item);
                     }
                     message = StaticMessage(message, itemKey, tcp);
                     break;
                 case "读DM寄存器":
+                    Log.Info("动态嵌入内容:执行读DM寄存器");
                     string readDm = await KeyenceReadDM(item);
                     if (isSwitch)
                     {
+                        Log.Info("动态嵌入内容读DM寄存器需要进行消息转换Switch映射");
                         readDm = SwitchGetMessage(readDm, item);
                     }
                     message = StaticMessage(message, itemKey, readDm);
                     break;
                 case "读R线圈状态":
+                    Log.Info("动态嵌入内容:执行读R线圈状态");
                     break;
             }
         }
@@ -399,6 +419,7 @@ public class LoadMesServer
         switch (netMethod)
         {
             case "Tcp客户端":
+                Log.Info("执行Tcp客户端消息发送,并等待消息返回");
                 response = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage);
                 break;
 
@@ -548,7 +569,7 @@ public class LoadMesServer
         }
         catch (Exception e)
         {
-            log.Error("执行失败,TCP或RTU未连接上");
+            Log.Error("执行失败,TCP或RTU未连接上");
         }
 
         return result;
@@ -616,7 +637,7 @@ public class LoadMesServer
         }
         catch (Exception e)
         {
-            log.Error("读取失败");
+            Log.Error("读取失败");
         }
 
         return result;

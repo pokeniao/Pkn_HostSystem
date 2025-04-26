@@ -40,7 +40,6 @@
 		<PackageReference Include="TouchSocket" Version="3.0.25" />
 		<PackageReference Include="TouchSocket.Core" Version="3.0.25" />
 		<PackageReference Include="TouchSocket.Rpc" Version="3.0.25" />
-		<PackageReference Include="WatsonTcp" Version="6.0.9" />
 		<PackageReference Include="WPF-UI" Version="4.0.2" />
 	</ItemGroup>
 

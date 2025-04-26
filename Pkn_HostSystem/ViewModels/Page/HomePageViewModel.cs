@@ -64,7 +64,16 @@ public partial class HomePageViewModel : ObservableRecipient
             ModbusRtu_stopBits = Enum.GetValues(typeof(StopBits)).Cast<StopBits>().ToList(),
             ModbusRtu_parity = Enum.GetValues(typeof(Parity)).Cast<Parity>().ToList(),
             FuntionCode = new List<string>()
-                { "01读线圈", "02读输入状态", "03读保持寄存器", "04读输入寄存器", "05写单线圈", "06写单寄存器", "0F写多线圈", "10写多寄存器" },
+            {
+                "01读线圈",
+                "02读输入状态",
+                "03读保持寄存器",
+                "04读输入寄存器",
+                "05写单线圈",
+                "06写单寄存器",
+                "0F写多线圈",
+                "10写多寄存器"
+            },
             SlaveAddress = 1,
             StartAddress = 0,
             ReadCount = 1
@@ -73,13 +82,16 @@ public partial class HomePageViewModel : ObservableRecipient
     }
 
     #region 弹窗SnackbarService
+
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
     {
         SnackbarService.SetSnackbarPresenter(snackbarPresenter);
     }
+
     #endregion
 
     #region 滚动到底部
+
     [RelayCommand]
     public void ScrollToBottom(ListBox LogListBox)
     {
@@ -87,9 +99,11 @@ public partial class HomePageViewModel : ObservableRecipient
 
         LogListBox.ScrollIntoView(LogListBox.Items[^1]);
     }
+
     #endregion
 
     #region 连接网络
+
     [RelayCommand]
     public void ConnectModbus(HomePage page)
     {
@@ -123,7 +137,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 netWorkPoJo.TcpTool = new TcpTool();
                 netWorkPoJo.KeyenceHostLinkTool = new KeyenceHostLinkTool();
 
-                netWorkPoJo.Task = new Lazy<Task>(() => RunAndReconnection(cts.Token, netWorkPoJo));
+                netWorkPoJo.Task = new Lazy<Task>(() => RunAndReconnection(cts, netWorkPoJo));
                 //测试的
                 GlobalMannager.NetWorkDictionary.AddOrUpdate(netWorkPoJo);
             }
@@ -146,13 +160,14 @@ public partial class HomePageViewModel : ObservableRecipient
                 NetworkDetailed = networkDetailed,
                 KeyenceHostLinkTool = keyenceHostLinkTool
             };
-            var lazy = new Lazy<Task>(() => RunAndReconnection(cts.Token, workPoJo));
+            var lazy = new Lazy<Task>(() => RunAndReconnection(cts, workPoJo));
             //创建网络连接
             workPoJo.Task = lazy;
             GlobalMannager.NetWorkDictionary.AddOrUpdate(workPoJo);
             await workPoJo.Task.Value;
         }
     }
+
     public void StopConnectModbus(NetworkDetailed networkDetailed)
     {
         var key = networkDetailed.Id;
@@ -176,7 +191,7 @@ public partial class HomePageViewModel : ObservableRecipient
 
         //更新网络连接
         netWork.CancellationTokenSource = cts;
-        netWork.Task = new Lazy<Task>(() => Task.Run(() => RunAndReconnection(cts.Token, netWork)));
+        netWork.Task = new Lazy<Task>(() => Task.Run(() => RunAndReconnection(cts, netWork)));
 
         //更新网络体
         GlobalMannager.NetWorkDictionary.AddOrUpdate(netWork);
@@ -193,6 +208,7 @@ public partial class HomePageViewModel : ObservableRecipient
             netWork.ModbusBase.CloseRTU();
             log.SuccessAndShowTask($"ModbusRTU:{name}---连接断开");
         }
+
         //停止Tcp服务器或者Tcp客户端
         if (netWork.TcpTool.IsClientConnected)
         {
@@ -205,23 +221,24 @@ public partial class HomePageViewModel : ObservableRecipient
             netWork.TcpTool.StopServer();
             log.SuccessAndShowTask($"TcpServer:{name}---连接断开");
         }
+
         //停止
         if (netWork.KeyenceHostLinkTool.IsConnected)
         {
             netWork.KeyenceHostLinkTool.Disconnect();
             log.SuccessAndShowTask($"上位链路通讯:{name}---连接断开");
         }
+
         //从全局变量中移除
         GlobalMannager.NetWorkDictionary.Remove(netWork);
-
     }
 
-    public async Task RunAndReconnection(CancellationToken token, NetWork netWork)
+    public async Task RunAndReconnection(CancellationTokenSource cts, NetWork netWork)
     {
         //连接方式
         string netMethod = netWork.NetworkDetailed.NetMethod;
         var whileTime = 5000;
-        while (!token.IsCancellationRequested)
+        while (!cts.Token.IsCancellationRequested)
         {
             switch (netMethod)
             {
@@ -242,21 +259,24 @@ public partial class HomePageViewModel : ObservableRecipient
                     break;
             }
             //五秒检查一次
+
             try
             {
-                await Task.Delay(whileTime, token);
+                await Task.Delay(whileTime, cts.Token);
             }
-            catch (OperationCanceledException e)
+            catch (Exception e)
             {
-                break;
+                
             }
         }
     }
+
     public async Task KeyneceHostLinkConnect(NetWork netWork)
     {
         if (!netWork.KeyenceHostLinkTool.IsConnected)
         {
-            bool connect = netWork.KeyenceHostLinkTool.Connect(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port);
+            bool connect =
+                netWork.KeyenceHostLinkTool.Connect(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port);
             if (connect)
             {
                 if (netWork.KeyenceHostLinkTool.IsConnected)
@@ -289,6 +309,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 log.ErrorAndShowTask($"{netWork.NetworkDetailed.Name}:  网络无配置,请配置好重新连接!");
                 return;
             }
+
             if (modbusBase.IsTCPConnect())
             {
                 log.SuccessAndShowTask($"{netWork.NetworkDetailed.Name}:  ModbusTCP连接成功");
@@ -354,8 +375,8 @@ public partial class HomePageViewModel : ObservableRecipient
                 log.WarningAndShowTask("Tcp服务器打开失败");
             }
         }
- 
     }
+
     #endregion
 
     #region 删除网络设置行
@@ -430,6 +451,7 @@ public partial class HomePageViewModel : ObservableRecipient
         item.StopBits = ModbusToolModel.ModbusRtu_stopBits_select;
         item.NetMethod = ModbusToolModel.NetMethod_select;
     }
+
     #endregion
 
     [RelayCommand]

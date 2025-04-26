@@ -229,7 +229,7 @@ namespace Pkn_HostSystem.Base
                 await _client.ConnectAsync(ip, port);
                 _clientStream = _client.GetStream();
                 ClientResponceCTS = new CancellationTokenSource();
-        //        _ = Task.Run(() => ReceiveFromServer(_clientStream));
+                //        _ = Task.Run(() => ReceiveFromServer(_clientStream));
                 Log.Info($"[Client] 连接服务器成功: {ip}:{port}");
                 return true;
             }
@@ -253,6 +253,7 @@ namespace Pkn_HostSystem.Base
         #region 客户端接受消息事件
 
         private CancellationTokenSource ClientResponceCTS;
+
         private async Task ReceiveFromServer(NetworkStream stream)
         {
             var buffer = new byte[1024];
@@ -263,7 +264,6 @@ namespace Pkn_HostSystem.Base
                     try
                     {
                         int count = await stream.ReadAsync(buffer, 0, buffer.Length);
-
                         if (count == 0) break;
 
                         string msg = Encoding.UTF8.GetString(buffer, 0, count);
@@ -275,6 +275,7 @@ namespace Pkn_HostSystem.Base
                     }
                 }
             }
+
             Log.Info($"[Client] 与服务器断开连接");
         }
 
@@ -282,23 +283,67 @@ namespace Pkn_HostSystem.Base
 
         #region 客户端发送消息
 
-
         public async Task<string> SendAndWaitClientAsync(string message, int timeout = 3000)
         {
             if (_client == null || !_client.Connected || _clientStream == null)
-                throw new InvalidOperationException("客户端未连接服务器");
+            {
+                Log.Info("在客户端执行发送消息时, 客户端未连接服务器");
+            }
+
             ClientResponceCTS.Cancel();
             // 发送消息
-            var data = Encoding.UTF8.GetBytes(message);
-            await _clientStream.WriteAsync(data, 0, data.Length);
+            try
+            {
+                var data = Encoding.UTF8.GetBytes(message);
+                
+                await _clientStream.WriteAsync(data, 0, data.Length);
+            }
+            catch (Exception e)
+            {
+                Log.Info($"在客户端执行发送消息时,出现异常{e}");
+            }
             //等待返回消息
-            var buffer = new byte[1024];
-            var stream = _client.GetStream();
-            int count = await stream.ReadAsync(buffer, 0, buffer.Length);
 
-            string msg = Encoding.UTF8.GetString(buffer, 0, count);
-            ClientResponceCTS = new CancellationTokenSource();
-         //   _ = Task.Run(() => ReceiveFromServer(_clientStream));
+            string msg = null;
+            CancellationTokenSource cts = new CancellationTokenSource(timeout);
+            try
+            {
+                Log.Info("在客户端执行发送消息后,等待消息返回");
+                var buffer = new byte[1024];
+                var stream = _client.GetStream();
+                var startTime = Environment.TickCount; // 记录开始时间
+                while (true)
+                {
+                    // 检查超时
+                    int elapsed = Environment.TickCount - startTime;
+                    if (elapsed >= timeout)
+                    {
+                        Log.Info("在客户端执行发送消息后,等待消息超时！");
+                        break;
+                    }
+
+                    // 检查是否有数据可读  stream.DataAvailable 可以读取流中是否有数据
+                    if (stream.DataAvailable)
+                    {
+                        int count = await stream.ReadAsync(buffer, 0, buffer.Length);
+                        msg = Encoding.UTF8.GetString(buffer, 0, count);
+                        Log.Info($"在客户端执行发送消息后,收到服务器返回消息: {msg}");
+                        break;
+                    }
+
+                    // 没数据，休息一下再看
+                    await Task.Delay(100);
+                }
+
+                Log.Info($"在客户端执行发送消息后等待消息返回,返回超时");
+            }
+            catch (Exception e)
+            {
+                cts.Cancel();
+                Log.Info($"在客户端执行发送消息后等待消息返回,出现异常{e}");
+            }
+
+            ClientResponceCTS = cts;
             return msg;
         }
 
