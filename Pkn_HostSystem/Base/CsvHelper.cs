@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using Pkn_HostSystem.Base.Log;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,7 @@ public class CsvHelper
     private readonly List<List<string>> _rows = new();
     private readonly string _filePath;
     private readonly Encoding _encoding;
-
+    private LogBase<CsvHelper> Log =new LogBase<CsvHelper>();
     public CsvHelper(string filePath, Encoding encoding = null)
     {
         _filePath = filePath;
@@ -105,8 +106,16 @@ public class CsvHelper
     public void AddRowFromJson(string json)
     {
         if (string.IsNullOrWhiteSpace(json)) return;
-
-        var dict = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+        Dictionary<string, object>? dict;
+        try
+        {
+             dict = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+        }
+        catch (Exception e)
+        {
+            Log.Error($"{nameof(CsvHelper)}--本地保存失败,Json格式不正确:{e.Message}");
+            return;
+        }
         if (dict == null || dict.Count == 0) return;
 
         // 如果表头为空（CSV 没有 Load 或新建），就加表头

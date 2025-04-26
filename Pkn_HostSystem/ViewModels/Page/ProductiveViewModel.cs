@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
+using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
@@ -12,6 +13,7 @@ using Pkn_HostSystem.Server.Productive;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Xml.Linq;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
@@ -68,10 +70,13 @@ namespace Pkn_HostSystem.ViewModels.Page
                 //停止
                 item.ctsProductive.Cancel();
                 item.ctsConsumer.Cancel();
+                item.ReConnectionCts.Cancel();
                 item.ctsProductive = new CancellationTokenSource();
                 item.ctsConsumer = new CancellationTokenSource();
+                item.ReConnectionCts = new CancellationTokenSource();
                 item.TaskProductive = null;
                 item.TaskConsumer = null;
+                Log.SuccessAndShow("关闭成功", $"{nameof(ProductiveViewModel)}--{item.Name}--生产者消费者模式关闭成功");
             }
         }
 
@@ -87,7 +92,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             //1. 创建令牌
             item.ctsProductive = new CancellationTokenSource();
             item.ctsConsumer = new CancellationTokenSource();
-
+            item.ReConnectionCts = new CancellationTokenSource();
             //2. 读取当前的通讯模式
             HomePageViewModel viewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
             //2.1获得所有通讯
@@ -120,20 +125,21 @@ namespace Pkn_HostSystem.ViewModels.Page
             {
                 try
                 {
-                    Log.ErrorAndShowTask("启动失败,网络未开启",$"{item.Name}:启动失败,网络未开启");
+                    Log.ErrorAndShowTask("启动失败,网络未开启", $"{nameof(ProductiveViewModel)}--{item.Name}--:启动失败,网络未开启");
                 }
                 catch (Exception exception)
                 {
-                    Log.Error($"{item.Name}:启动失败,网络未开启");
+                    Log.Error($"{nameof(ProductiveViewModel)}--{item.Name}--启动失败,网络未开启");
                 }
-          
+
                 item.Run = false;
                 return;
             }
 
             //4.创建生产者消费者服务
             ProductiveConsumerServer productiveConsumerServer =
-                new ProductiveConsumerServer(item.Queue, item.MessageList, netWorkProducer, netWorkConsumer);
+                new ProductiveConsumerServer(item.Queue, item.MessageList, netWorkProducer, netWorkConsumer,
+                    item.ConsumerName, item.ProducerName);
             //5. 创建单利任务
             item.TaskProductive = new Lazy<Task>(() => RunTrigger(item.ctsProductive, netWorkProducer,
                 item.ProductiveStationAddress, item.ProductiveStartAddress, item.ProductiveTriggerValue,
@@ -141,10 +147,91 @@ namespace Pkn_HostSystem.ViewModels.Page
             item.TaskConsumer = new Lazy<Task>(() => RunTrigger(item.ctsConsumer, netWorkConsumer,
                 item.ConsumerStationAddress, item.ConsumerStartAddress, item.ConsumerTriggerValue,
                 item.ConsumerTriggerCyc, false, productiveConsumerServer));
+            item.ReConnectionTask = new Lazy<Task>(() => ReConnection(item.ReConnectionCts, item, productiveConsumerServer));
             //6. 运行
             Task task = item.TaskProductive.Value;
             Task task2 = item.TaskConsumer.Value;
-            Log.SuccessAndShowTask("启动成功",$"生产者消费者模式启动成功{item.Name}");
+            Task value = item.ReConnectionTask.Value;
+            Log.SuccessAndShow("启动成功", $"{nameof(ProductiveViewModel)}--{item.Name}--生产者消费者模式启动成功");
+        }
+
+
+        public async Task ReConnection(CancellationTokenSource cts, Productive item, ProductiveConsumerServer productiveConsumerServer)
+        {
+            bool netWorkProducerReConnection = false;
+            bool netWorkConsumerReConnection = false;
+            //循环判断是否断线
+            while (!cts.Token.IsCancellationRequested)
+            {
+                HomePageViewModel viewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
+                //2.1获得所有通讯
+                ObservableCollection<NetworkDetailed> networkDetaileds = viewModel.HomePageModel.SetConnectDg;
+                //生产者与消费者详细信息
+                NetworkDetailed producerNetworkDetailed = null;
+                NetworkDetailed consumerNetworkDetailed = null;
+                foreach (var detailed in networkDetaileds)
+                {
+                    if (item.ProducerName == detailed.Name)
+                    {
+                        producerNetworkDetailed = detailed;
+                    }
+
+                    if (item.ConsumerName == detailed.Name)
+                    {
+                        consumerNetworkDetailed = detailed;
+                    }
+                }
+                //3. 获取网络
+                NetWork netWorkProducer =null;
+                NetWork netWorkConsumer = null;
+                
+                try
+                {
+                    netWorkProducer = GlobalMannager.NetWorkDictionary.Lookup(producerNetworkDetailed?.Id).Value;
+                   
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"{nameof(ProductiveViewModel)}--{item.Name}--生产者对象连接失败,请开启或检查连接");
+                    netWorkProducerReConnection = true;
+                    item.ctsProductive.Cancel();
+                    item.ctsProductive = new CancellationTokenSource();
+                }
+                try
+                {
+                    netWorkConsumer = GlobalMannager.NetWorkDictionary.Lookup(consumerNetworkDetailed?.Id).Value;
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"{nameof(ProductiveViewModel)}--{item.Name}--消费者对象连接失败,请开启或检查连接");
+                    netWorkConsumerReConnection = true;
+                    item.ctsConsumer.Cancel();
+                    item.ctsConsumer = new CancellationTokenSource();
+                }
+
+                if (netWorkProducerReConnection ==true && netWorkProducer !=null)
+                {
+                    productiveConsumerServer.ProductiveNetWork = netWorkProducer;
+
+                    item.TaskProductive = new Lazy<Task>(() => RunTrigger(item.ctsProductive, netWorkProducer,
+                        item.ProductiveStationAddress, item.ProductiveStartAddress, item.ProductiveTriggerValue,
+                        item.ProductiveTriggerCyc, true, productiveConsumerServer));
+                    _=item.TaskProductive.Value;
+                    netWorkProducerReConnection = false;
+                }
+
+                if (netWorkConsumerReConnection == true && netWorkConsumer!=null)
+                {
+                    productiveConsumerServer.ConsumeNetWork = netWorkConsumer;
+                    item.TaskConsumer = new Lazy<Task>(() => RunTrigger(item.ctsConsumer, netWorkConsumer,
+                        item.ConsumerStationAddress, item.ConsumerStartAddress, item.ConsumerTriggerValue,
+                        item.ConsumerTriggerCyc, false, productiveConsumerServer));
+                    _ = item.TaskConsumer.Value;
+                    netWorkConsumerReConnection = false;
+                }
+                
+                await Task.Delay(100);
+            }
         }
 
         public async Task RunTrigger(CancellationTokenSource cts, NetWork netWork, string stationAddress,
@@ -154,8 +241,10 @@ namespace Pkn_HostSystem.ViewModels.Page
             //1.启动后消息触发循环
             while (!cts.Token.IsCancellationRequested)
             {
-                //2. 判读更具什么进行的通讯
+                //尝试判断是否连接,是否需要从连
 
+
+                //2. 判读更具什么进行的通讯
                 switch (netWork.NetworkDetailed.NetMethod)
                 {
                     case "ModbusTcp":
@@ -173,7 +262,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                             }
                             else
                             {
-                                success = await productiveConsumerServer.Consume();
+                                success = await productiveConsumerServer.Consume(cts);
                             }
 
                             //完成后给触发位停止

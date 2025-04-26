@@ -145,6 +145,17 @@ namespace Pkn_HostSystem.Models.Core
         [JsonIgnore] public Lazy<Task> TaskConsumer { get; set; }
 
         /// <summary>
+        /// 令牌 循环进程任务
+        /// </summary>
+        [JsonIgnore] public CancellationTokenSource ReConnectionCts { get; set; }
+
+        /// <summary>
+        /// 当前Http进程任务
+        /// </summary>
+        [JsonIgnore] public Lazy<Task> ReConnectionTask { get; set; }
+
+
+        /// <summary>
         /// 当前消息队列
         /// </summary>
         [JsonIgnore]public BlockingCollection<List<ushort>> Queue { get; set; } = new BlockingCollection<List<ushort>>(30);
