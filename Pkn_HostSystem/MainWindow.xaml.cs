@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Models.Core;
@@ -36,7 +37,7 @@ namespace Pkn_HostSystem
             //记录日志
             log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("Config\\log4net.config"));
             PreLoad();
-            Starting();
+            _ = Starting();
         }
 
         private void PreLoad()
@@ -46,22 +47,28 @@ namespace Pkn_HostSystem
             _ = Ioc.Default.GetRequiredService<MesTcpPage>();
         }
 
-        private void Starting()
+        private async Task Starting()
         {
             //判断软件开启,启动的连接,自动进行连接
             HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
             ObservableCollection<NetworkDetailed> ConnectPojos = homePageViewModel.HomePageModel.SetConnectDg;
+            List<Task> connectTasks = new List<Task>();
             foreach (var connectPojo in ConnectPojos)
             {
                 if (connectPojo.Open == true)
                 {
-                    homePageViewModel.StartConnectModbus(connectPojo);
+                    Task startConnectModbusTask = homePageViewModel.StartConnectModbus(connectPojo);
+                    connectTasks.Add(startConnectModbusTask);
                 }
             }
 
+            //await Task.WhenAll(connectTasks.ToArray()); // 等待所有连接完成！
+
+
             //判断 Http请求是否开启的,自动进行连接
             LoadMesPageViewModel loadMesPageViewModel = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
-            ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList = loadMesPageViewModel.LoadMesPageModel.MesPojoList;
+            ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList =
+                loadMesPageViewModel.LoadMesPageModel.MesPojoList;
 
             foreach (var mesPojo in mesPojoList)
             {
@@ -73,7 +80,8 @@ namespace Pkn_HostSystem
 
             //判断消费者和生产者模式是否开启,自动连接
             ProductiveViewModel productiveViewModel = Ioc.Default.GetRequiredService<ProductiveViewModel>();
-            ObservableCollection<Productive> productiveModelProductives = productiveViewModel.ProductiveModel.Productives;
+            ObservableCollection<Productive> productiveModelProductives =
+                productiveViewModel.ProductiveModel.Productives;
 
             foreach (var productive in productiveModelProductives)
             {
@@ -83,6 +91,7 @@ namespace Pkn_HostSystem
                 }
             }
         }
+
         #region 自动伸缩的Navigation
 
         //起到互锁的作用,用户在操作和当页面缩放,不能同时

@@ -153,6 +153,10 @@ public class DynCondition : ObservableObject
 
 
     public ObservableCollection<DynSwitch> SwitchList { get; set; } = new ObservableCollection<DynSwitch>();
+    /// <summary>
+    /// 当动态获取失败直接返回失败
+    /// </summary>
+    public bool DynFailReturnFail { get; set; }
 
 
     /// <summary>

@@ -17,6 +17,7 @@
 
     <Page.Resources>
         <converter:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
+        <converter:NewRowAllowButtonConverter x:Key="NewRowAllowButtonConverter" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -247,6 +248,26 @@
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Width="0.6*" Header="失败退出">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                    <CheckBox IsChecked="{Binding DynFailReturnFail,UpdateSourceTrigger=PropertyChanged}">
+                                        <CheckBox.IsEnabled>
+                                            <MultiBinding
+                                                Converter="{StaticResource NewRowAllowButtonConverter}">
+                                                <Binding
+                                                    RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                    Path="IsNewItem" />
+                                                <Binding Path="DynFailReturnFail" />
+                                            </MultiBinding>
+                                        </CheckBox.IsEnabled>
+                                    </CheckBox>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>

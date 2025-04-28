@@ -197,6 +197,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 //发送Http请求
                 bool succeed = await loadMesServer.RunOne(model.Name, model.cts);
             }
+
             //进行一次数据组装
             //从MesServer中取出绑定好的item
             LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
@@ -208,10 +209,12 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 //打包后本地保存
                 LocalSave(model, request);
             }
+
             //判断一下是否需要转发
             if (model.TranspondNeed)
             {
             }
+
             await Task.Delay(model.CycTime * 1000, model.cts.Token);
         }
     }
@@ -246,7 +249,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
                 ObservableCollection<NetworkDetailed> networkDetaileds = homePageViewModel.HomePageModel.SetConnectDg;
 
-                NetWork netWork =null;
+                NetWork netWork = null;
                 foreach (var detailed in networkDetaileds)
                 {
                     if (detailed.Name == modelTriggerConnectName)
@@ -262,7 +265,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                         }
                     }
                 }
-                if (netWork!=null)
+
+                if (netWork != null)
                 {
                     switch (netWork.NetworkDetailed.NetMethod)
                     {
@@ -277,18 +281,24 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                 LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
                                 Log.Info($"{model.Name}:触发型modbusTcp,正在组装数据");
                                 string request = await loadMesServer.PackRequest(item.Name);
-                                Log.Info($"{model.Name}: 触发型modbusTcp内容组装完成");
-                                if (model.HttpNeed)
+                                if (request == null)
                                 {
-                                    Log.Info($"{model.Name} 触发型modbusTcp,发送Http请求中");
-                                    //手动发送Http请求
-                                    succeed = await loadMesServer.RunOne(model.Name, model.cts);
+                                    succeed = false;
                                 }
                                 else
                                 {
-                                    Log.Info($"{model.Name}: 触发型modbusTcp组装内容 \n\r{request}");
-                                    //触发停止需求
                                     succeed = true;
+                                    Log.Info($"{model.Name}: 触发型modbusTcp内容组装完成");
+                                    if (model.HttpNeed)
+                                    {
+                                        Log.Info($"{model.Name} 触发型modbusTcp,发送Http请求中");
+                                        //手动发送Http请求
+                                        succeed = await loadMesServer.RunOne(model.Name, model.cts);
+                                    }
+                                    else
+                                    {
+                                        Log.Info($"{model.Name}: 触发型modbusTcp组装内容 \n\r{request}");
+                                    }
                                 }
 
                                 //完成后给触发位停止
@@ -328,6 +338,11 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                     LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
                                     //消息体打包
                                     var request = await loadMesServer.PackRequest(item.Name);
+                                    if (request == null)
+                                    {
+                                        succeed = false;
+                                    }
+
                                     //打包后本地保存
                                     LocalSave(model, request);
                                 }
@@ -348,6 +363,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                             break;
                     }
                 }
+
                 await Task.Delay(model.CycTime, model.cts.Token);
             }
         }
@@ -357,7 +373,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         }
         catch (Exception ex)
         {
-            Log.Error( $"{nameof(LoadMesPageViewModel)}--{model.Name} -- 触发任务出现异常: {ex}");
+            Log.Error($"{nameof(LoadMesPageViewModel)}--{model.Name} -- 触发任务出现异常: {ex}");
         }
         finally
         {
