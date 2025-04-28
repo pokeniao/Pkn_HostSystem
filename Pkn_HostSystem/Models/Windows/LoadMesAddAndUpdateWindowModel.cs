@@ -33,7 +33,7 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// <summary>
     /// 请求体方式:JSON,XML等
     /// </summary>
-    [ObservableProperty] private string requestMethod;
+    [ObservableProperty] private string requestMethod ="JSON";
     /// <summary>
     /// 请求内容
     /// </summary>

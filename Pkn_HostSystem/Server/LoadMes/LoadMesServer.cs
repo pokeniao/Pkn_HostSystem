@@ -8,8 +8,11 @@ using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.Static;
 using RestSharp;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
+using System.Reactive.Joins;
 using System.Text;
+using System.Text.RegularExpressions;
 using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
 
 namespace Pkn_HostSystem.Server.LoadMes;
@@ -159,6 +162,8 @@ public class LoadMesServer
             else
             {
                 item.Response = response.ErrorMessage;
+                if (item.Response == null)
+                    item.Response = response.Content;
                 Log.Info($"{item.Name}--发送请求返回: {item.Response}");
                 return false;
             }
@@ -277,6 +282,7 @@ public class LoadMesServer
             var itemKey = item.Name;
             var methodName = item.MethodName;
             bool isSwitch = item.OpenSwitch;
+            bool isVerify = item.OpenVerify;
             //2. 判断需要通过什么获取动态内容
             switch (methodName)
             {
@@ -315,6 +321,20 @@ public class LoadMesServer
                         Log.Info("动态嵌入内容Socket需要进行消息转换Switch映射");
                         tcp = SwitchGetMessage(tcp, item);
                     }
+
+                    if (isVerify)
+                    {
+                        Log.Info("动态嵌入内容Socket需要进行消息校验");
+                        foreach (var dynVerify in item.VerifyList)
+                        {
+                            if (!VerityMessage(tcp, dynVerify))
+                            {
+                                Log.Info("校验到不匹配,撤回发送");
+                                return null;
+                            }
+                        }
+                    }
+
                     message = StaticMessage(message, itemKey, tcp);
                     break;
                 case "读DM寄存器":
@@ -334,6 +354,140 @@ public class LoadMesServer
         }
 
         return message;
+    }
+
+    #endregion
+
+    #region Verity校验方法
+
+    public bool VerityMessage(string message,DynVerify verify)
+    {
+        switch (verify.Type)
+        {
+            case "字符长度检测=":
+                bool tryParse1 = int.TryParse(verify.Value, out int len1);
+                if (!tryParse1)
+                {
+                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    return false;
+                }
+                if (message.Length == len1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            case "字符长度检测!=":
+                bool tryParse2 = int.TryParse(verify.Value, out int len2);
+                if (!tryParse2)
+                {
+                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    return false;
+                }
+                if (message.Length != len2)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+              
+            case "字符长度检测>":
+                bool tryParse3 = int.TryParse(verify.Value, out int len3);
+                if (!tryParse3)
+                {
+                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    return false;
+                }
+                if (message.Length > len3)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            case "字符长度检测<":
+                bool tryParse4 = int.TryParse(verify.Value, out int len4);
+                if (!tryParse4)
+                {
+                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    return false;
+                }
+                if (message.Length < len4)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            case "字符长度检测>=":
+                bool tryParse5 = int.TryParse(verify.Value, out int len5);
+                if (!tryParse5)
+                {
+                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    return false;
+                }
+                if (message.Length >= len5)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            case "字符长度检测=<":
+                bool tryParse6 = int.TryParse(verify.Value, out int len6);
+                if (!tryParse6)
+                {
+                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    return false;
+                }
+                if (message.Length <= len6)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            case "字符=":
+                if (message == verify.Value)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            case "字符!=":
+                if (message != verify.Value)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            case "正则表达式检测":
+                
+                if (Regex.IsMatch(message, verify.Type))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+        }
+
+        return false;
     }
 
     #endregion

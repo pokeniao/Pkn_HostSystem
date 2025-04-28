@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Pkn_HostSystem.Models.Core;
 using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.Pojo.Page.MESTcp;
@@ -151,12 +152,22 @@ public class DynCondition : ObservableObject
     /// </summary>
     public bool OpenSwitch { get; set; }
 
+    /// <summary>
+    /// 打开校验
+    /// </summary>
+    public bool OpenVerify { get; set; }
+
 
     public ObservableCollection<DynSwitch> SwitchList { get; set; } = new ObservableCollection<DynSwitch>();
     /// <summary>
     /// 当动态获取失败直接返回失败
     /// </summary>
     public bool DynFailReturnFail { get; set; }
+
+    /// <summary>
+    /// 用于显示连接
+    /// </summary>
+    public ObservableCollection<DynVerify> VerifyList { get; set; } = new ObservableCollection<DynVerify>();
 
 
     /// <summary>

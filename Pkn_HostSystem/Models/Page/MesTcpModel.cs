@@ -4,6 +4,7 @@ using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
+using Pkn_HostSystem.Models.Core;
 
 
 namespace Pkn_HostSystem.Models.Page;
@@ -44,5 +45,13 @@ public partial class MesTcpModel : ObservableObject
     /// 用于显示当前选中的Switch属性
     /// </summary>
     [ObservableProperty] private ObservableCollection<DynSwitch> switchList;
+    /// <summary>
+    /// 用于显示设置的页面
+    /// </summary>
+    [ObservableProperty] private bool veritySet;
+    /// <summary>
+    /// 用于显示校验的配置列表
+    /// </summary>
+    [ObservableProperty] private ObservableCollection<DynVerify> verifyList;
 
 }

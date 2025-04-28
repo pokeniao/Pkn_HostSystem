@@ -196,15 +196,39 @@
                                                         Width="150" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch OffContent="关闭校验" OnContent="启动校验" Margin="5"
+                                                                     IsChecked="{Binding OpenVerify}" />
+                                                    <Button Content="校验" Click="SetVerify" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                                     <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
                                                                      IsChecked="{Binding OpenSwitch}" />
                                                     <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
                                                 </StackPanel>
+
                                             </WrapPanel>
                                         </Grid>
                                         <Grid
                                             Visibility="{Binding showSocket ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <TextBox Text="{Binding SocketSendMessage,UpdateSourceTrigger=PropertyChanged}"/>
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <TextBlock Margin="10" Text="发送内容" />
+                                                    <TextBox
+                                                        Text="{Binding SocketSendMessage,UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="120" Margin="5" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch OffContent="关闭校验" OnContent="启动校验" Margin="5"
+                                                                     IsChecked="{Binding OpenVerify}" />
+                                                    <Button Content="校验" Click="SetVerify" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
+                                                                     IsChecked="{Binding OpenSwitch}" />
+                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
+                                                </StackPanel>
+                                            </StackPanel>
+
                                         </Grid>
                                         <Grid
                                             Visibility="{Binding showHostLinkReadReg ,Converter={StaticResource BooleanVisibilityConverter}}">
@@ -254,17 +278,18 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                    <CheckBox IsChecked="{Binding DynFailReturnFail,UpdateSourceTrigger=PropertyChanged}">
-                                        <CheckBox.IsEnabled>
-                                            <MultiBinding
-                                                Converter="{StaticResource NewRowAllowButtonConverter}">
-                                                <Binding
-                                                    RelativeSource="{RelativeSource AncestorType=DataGridRow}"
-                                                    Path="IsNewItem" />
-                                                <Binding Path="DynFailReturnFail" />
-                                            </MultiBinding>
-                                        </CheckBox.IsEnabled>
-                                    </CheckBox>
+                                        <CheckBox
+                                            IsChecked="{Binding DynFailReturnFail,UpdateSourceTrigger=PropertyChanged}">
+                                            <CheckBox.IsEnabled>
+                                                <MultiBinding
+                                                    Converter="{StaticResource NewRowAllowButtonConverter}">
+                                                    <Binding
+                                                        RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                        Path="IsNewItem" />
+                                                    <Binding Path="DynFailReturnFail" />
+                                                </MultiBinding>
+                                            </CheckBox.IsEnabled>
+                                        </CheckBox>
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -279,28 +304,71 @@
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Grid.Column="1"
-              Visibility="{Binding MesTcpModel.ShowSwitchSet ,Converter={StaticResource BooleanVisibilityConverter}}">
-            <StackPanel>
-                <DataGrid
-                    Name="DynSwitchDataGrid"
-                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                    Height="150"
-                    Width="400"
-                    ItemsSource="{Binding MesTcpModel.SwitchList}"
-                    AutoGenerateColumns="False"
-                    Margin="30,10">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Case" Width="*"  Binding="{Binding Case}"/>
-                        <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+              HorizontalAlignment="Center">
+            <WrapPanel>
+                <StackPanel
+                    Visibility="{Binding MesTcpModel.ShowSwitchSet ,Converter={StaticResource BooleanVisibilityConverter}}">
+                    <DataGrid
+                        HorizontalAlignment="Center"
+                        Name="DynSwitchDataGrid"
+                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                        Height="150"
+                        Width="300"
+                        ItemsSource="{Binding MesTcpModel.SwitchList}"
+                        AutoGenerateColumns="False"
+                        Margin="30,10">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Case" Width="*" Binding="{Binding Case}" />
+                            <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <WrapPanel HorizontalAlignment="Right">
+                        <Button Content="删除" />
+                        <Button Content="关闭" Margin="20,0,30,0" Click="ButtonBase_OnClick2" />
+                    </WrapPanel>
+                </StackPanel>
+                <StackPanel
 
-                <WrapPanel HorizontalAlignment="Right">
-                    <Button Content="删除" />
-                    <Button Content="关闭" Margin="20,0,180,0" Click="ButtonBase_OnClick2" />
-                </WrapPanel>
-            </StackPanel>
+                    Visibility="{Binding MesTcpModel.VeritySet ,Converter={StaticResource BooleanVisibilityConverter}}">
+                    <DataGrid
+                        HorizontalAlignment="Center"
+                        Name="DynVerifyDataGrid"
+                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                        Height="150"
+                        Width="300"
+                        ItemsSource="{Binding MesTcpModel.VerifyList}"
+                        AutoGenerateColumns="False"
+                        Margin="30,10">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
+                            <DataGridTemplateColumn Header="Type" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock Text="{Binding Type}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellEditingTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <ComboBox ItemsSource="{Binding viewModel.VerifyType,RelativeSource={RelativeSource AncestorType=Page}}" 
+                                                      SelectedValue="{Binding Type}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellEditingTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <WrapPanel HorizontalAlignment="Right">
+                        <Button Content="删除" />
+                        <Button Content="关闭" Margin="20,0,30,0" Click="ButtonBase_OnClick3" />
+                    </WrapPanel>
+                </StackPanel>
+            </WrapPanel>
         </Grid>
         <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" Margin="0,-5,0,4" />
     </Grid>

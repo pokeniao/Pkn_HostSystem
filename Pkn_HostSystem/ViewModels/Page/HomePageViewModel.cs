@@ -241,7 +241,7 @@ public partial class HomePageViewModel : ObservableRecipient
     {
         //连接方式
         string netMethod = netWork.NetworkDetailed.NetMethod;
-        var whileTime = 5000;
+        var whileTime = 100;
         while (!cts.Token.IsCancellationRequested)
         {
             switch (netMethod)
@@ -320,7 +320,7 @@ public partial class HomePageViewModel : ObservableRecipient
             }
             else
             {
-                Log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,正在等待5s后尝试重连");
+                Log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,正在等待尝试重连");
             }
         }
     }

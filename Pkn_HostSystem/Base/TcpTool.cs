@@ -83,10 +83,12 @@ namespace Pkn_HostSystem.Base
             foreach (var kv in _clients)
             {
                 kv.Value.Close();
+                kv.Value.Dispose();
             }
 
             _clients.Clear();
             _server?.Stop();
+            _server?.Dispose();
             _server = null;
             Log.Info($"[Server] 已停止监听");
         }
@@ -244,6 +246,7 @@ namespace Pkn_HostSystem.Base
         {
             _clientStream?.Close();
             _client?.Close();
+            _client?.Dispose();
             _client = null;
             _clientStream = null;
         }
@@ -290,7 +293,6 @@ namespace Pkn_HostSystem.Base
                 Log.Info("在客户端执行发送消息时, 客户端未连接服务器");
             }
 
-            ClientResponceCTS.Cancel();
             // 发送消息
             try
             {
@@ -330,12 +332,9 @@ namespace Pkn_HostSystem.Base
                         Log.Info($"在客户端执行发送消息后,收到服务器返回消息: {msg}");
                         break;
                     }
-
                     // 没数据，休息一下再看
                     await Task.Delay(100);
                 }
-
-                Log.Info($"在客户端执行发送消息后等待消息返回,返回超时");
             }
             catch (Exception e)
             {
@@ -343,7 +342,6 @@ namespace Pkn_HostSystem.Base
                 Log.Info($"在客户端执行发送消息后等待消息返回,出现异常{e}");
             }
 
-            ClientResponceCTS = cts;
             return msg;
         }
         public async Task<bool> SendClientAsync(string message)
