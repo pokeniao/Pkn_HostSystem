@@ -21,7 +21,7 @@ namespace Pkn_HostSystem.ViewModels.Page;
 
 public partial class HomePageViewModel : ObservableRecipient
 {
-    private LogBase<HomePageViewModel> log;
+    private LogBase<HomePageViewModel> Log;
 
     public HomePageModel HomePageModel { get; set; } = AppJsonStorage<HomePageModel>.Load();
 
@@ -55,7 +55,7 @@ public partial class HomePageViewModel : ObservableRecipient
             ModbusTcp_Ip = ModbusBase.getIpAddress().ToList(),
             ModbusTcp_Ip_select = ModbusBase.getIpAddress()[0],
             ModbusRtu_COM = ModbusBase.getCOM().ToList(),
-            ModbusRtu_COM_select = ModbusBase.getCOM()[0],
+            ModbusRtu_COM_select = ModbusBase.getCOM().Length>0? ModbusBase.getCOM()[0]:null,
             ModbusTcp_Port = int.Parse("502"),
             ModbusRtu_baudRate = new List<string>() { "9600", "14400", "19200" },
             ModbusRtu_baudRate_select = "9600",
@@ -78,7 +78,7 @@ public partial class HomePageViewModel : ObservableRecipient
             StartAddress = 0,
             ReadCount = 1
         };
-        log = new LogBase<HomePageViewModel>(SnackbarService);
+        Log = new LogBase<HomePageViewModel>(SnackbarService);
     }
 
     #region 弹窗SnackbarService
@@ -105,22 +105,24 @@ public partial class HomePageViewModel : ObservableRecipient
     #region 连接网络
 
     [RelayCommand]
-    public void ConnectModbus(HomePage page)
+    public async void ConnectModbus(HomePage page)
     {
         var selectedItem = page.setConnectDg.SelectedItem as NetworkDetailed;
         if (selectedItem.Open)
-            StartConnectModbus(selectedItem);
+           await StartConnectModbus(selectedItem);
         else
             StopConnectModbus(selectedItem);
     }
 
-    public async void StartConnectModbus(NetworkDetailed networkDetailed)
+    public async Task StartConnectModbus(NetworkDetailed networkDetailed)
     {
+       
         var key = networkDetailed.Id;
         var Name = networkDetailed.Name;
+        Log.Info($"{Name}--StartConnectModbus--启动Modbus连接");
         if (Name == null)
         {
-            log.ErrorAndShow("请先填写好连接名,并且回车确认");
+            Log.ErrorAndShow("请先填写好连接名,并且回车确认");
             return;
         }
 
@@ -138,7 +140,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 netWorkPoJo.KeyenceHostLinkTool = new KeyenceHostLinkTool();
 
                 netWorkPoJo.Task = new Lazy<Task>(() => RunAndReconnection(cts, netWorkPoJo));
-                //测试的
+
                 GlobalMannager.NetWorkDictionary.AddOrUpdate(netWorkPoJo);
             }
 
@@ -170,8 +172,10 @@ public partial class HomePageViewModel : ObservableRecipient
 
     public void StopConnectModbus(NetworkDetailed networkDetailed)
     {
+       
         var key = networkDetailed.Id;
         var name = networkDetailed.Name;
+        Log.Info($"{name}--StopConnectModbus--停止Modbus连接");
         if (name == null) return;
 
         var b = GlobalMannager.NetWorkDictionary.Lookup(key).HasValue;
@@ -200,33 +204,33 @@ public partial class HomePageViewModel : ObservableRecipient
         {
             //停止Modbus
             netWork.ModbusBase.CloseTCP();
-            log.SuccessAndShowTask($"ModbusTCP:{name}---连接断开");
+            Log.SuccessAndShowTask($"{name}--ModbusTCP--连接断开");
         }
 
         if (netWork.ModbusBase.IsRTUConnect())
         {
             netWork.ModbusBase.CloseRTU();
-            log.SuccessAndShowTask($"ModbusRTU:{name}---连接断开");
+            Log.SuccessAndShowTask($"{name}--ModbusRTU--连接断开");
         }
 
         //停止Tcp服务器或者Tcp客户端
         if (netWork.TcpTool.IsClientConnected)
         {
             netWork.TcpTool.DisconnectClient();
-            log.SuccessAndShowTask($"TcpClint:{name}---连接断开");
+            Log.SuccessAndShowTask($"{name}--TcpClint--连接断开");
         }
 
         if (netWork.TcpTool.IsServerRunning)
         {
             netWork.TcpTool.StopServer();
-            log.SuccessAndShowTask($"TcpServer:{name}---连接断开");
+            Log.SuccessAndShowTask($"{name}--TcpServer--连接断开");
         }
 
         //停止
         if (netWork.KeyenceHostLinkTool.IsConnected)
         {
             netWork.KeyenceHostLinkTool.Disconnect();
-            log.SuccessAndShowTask($"上位链路通讯:{name}---连接断开");
+            Log.SuccessAndShowTask($"{name}--上位链路通讯--连接断开");
         }
 
         //从全局变量中移除
@@ -281,16 +285,16 @@ public partial class HomePageViewModel : ObservableRecipient
             {
                 if (netWork.KeyenceHostLinkTool.IsConnected)
                 {
-                    log.SuccessAndShowTask($"{netWork.NetworkDetailed.Name}:  基恩士上位链路协议连接成功");
+                    Log.SuccessAndShowTask($"{netWork.NetworkDetailed.Name}:  基恩士上位链路协议连接成功");
                 }
                 else
                 {
-                    log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
+                    Log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
                 }
             }
             else
             {
-                log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
+                Log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
             }
         }
     }
@@ -306,17 +310,17 @@ public partial class HomePageViewModel : ObservableRecipient
             }
             catch (Exception e)
             {
-                log.ErrorAndShowTask($"{netWork.NetworkDetailed.Name}:  网络无配置,请配置好重新连接!");
+                Log.ErrorAndShowTask($"{netWork.NetworkDetailed.Name}:  网络无配置,请配置好重新连接!");
                 return;
             }
 
             if (modbusBase.IsTCPConnect())
             {
-                log.SuccessAndShowTask($"{netWork.NetworkDetailed.Name}:  ModbusTCP连接成功");
+                Log.SuccessAndShowTask($"{netWork.NetworkDetailed.Name}:  ModbusTCP连接成功");
             }
             else
             {
-                log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  正在尝试重连");
+                Log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,正在等待5s后尝试重连");
             }
         }
     }
@@ -336,14 +340,14 @@ public partial class HomePageViewModel : ObservableRecipient
             }
             catch (Exception e)
             {
-                log.ErrorAndShowTask($"{netWork.NetworkDetailed.Name}:  网络无配置,请配置好重新连接!");
+                Log.ErrorAndShowTask($"{netWork.NetworkDetailed.Name}:  网络无配置,请配置好重新连接!");
                 return;
             }
 
             if (modbusBase.IsRTUConnect())
-                log.SuccessAndShowTask($"{netWork.NetworkDetailed.Name}:  ModbusRtu连接成功");
+                Log.SuccessAndShowTask($"{netWork.NetworkDetailed.Name}:  ModbusRtu连接成功");
             else
-                log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
+                Log.WarningAndShowTask($"{netWork.NetworkDetailed.Name}:  连接失败,请检查设置");
         }
     }
 
@@ -353,11 +357,11 @@ public partial class HomePageViewModel : ObservableRecipient
         {
             if (await netWork.TcpTool.ConnectToServerAsync(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port))
             {
-                log.SuccessAndShowTask("Tcp客户端打开成功");
+                Log.SuccessAndShowTask("Tcp客户端打开成功");
             }
             else
             {
-                log.WarningAndShowTask("Tcp客户端打开失败");
+                Log.WarningAndShowTask("Tcp客户端打开失败");
             }
         }
     }
@@ -368,11 +372,11 @@ public partial class HomePageViewModel : ObservableRecipient
         {
             if (await netWork.TcpTool.StartServerAsync(netWork.NetworkDetailed.Port))
             {
-                log.SuccessAndShowTask("Tcp服务器打开成功");
+                Log.SuccessAndShowTask("Tcp服务器打开成功");
             }
             else
             {
-                log.WarningAndShowTask("Tcp服务器打开失败");
+                Log.WarningAndShowTask("Tcp服务器打开失败");
             }
         }
     }
@@ -393,11 +397,11 @@ public partial class HomePageViewModel : ObservableRecipient
                 {
                     HomePageModel.SetConnectDg.Remove(item);
                     GlobalMannager.NetWorkDictionary.Remove(item.Id);
-                    log.SuccessAndShow("删除成功!", $"{item.Name}->连接被删除");
+                    Log.SuccessAndShow("删除成功!", $"{item.Name}->连接被删除");
                 }
                 else
                 {
-                    log.WarningAndShow($"{item.Name}处于运行状态不能删除,请先停止");
+                    Log.WarningAndShow($"{item.Name}处于运行状态不能删除,请先停止");
                     return;
                 }
             }

@@ -58,9 +58,6 @@ public class LoadMesServer
 
         return null;
     }
-
-
-
     #endregion
 
     #region 触发Http请求
@@ -202,6 +199,10 @@ public class LoadMesServer
                     //获取动态的值
                     Log.Info("正在动态嵌入内容");
                     var value = await DynMessage(request, itemValue);
+                    if (value == null)
+                    {
+                        return null;
+                    }
                     request = StaticMessage(request, itemKey, value);
                     break;
                 case "常量":
@@ -304,6 +305,11 @@ public class LoadMesServer
                 case "Socket返回":
                     Log.Info("动态嵌入内容:执行Socket消息发送");
                     string tcp = await ReadTcpMessageAsync(item);
+                    //判断
+                    if (tcp ==null && item.DynFailReturnFail == true)
+                    {
+                        return null;
+                    }
                     if (isSwitch)
                     {
                         Log.Info("动态嵌入内容Socket需要进行消息转换Switch映射");
@@ -421,6 +427,10 @@ public class LoadMesServer
             case "Tcp客户端":
                 Log.Info("执行Tcp客户端消息发送,并等待消息返回");
                 response = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage);
+                if (response == null && item.DynFailReturnFail == true)
+                {
+                    return null;
+                }
                 break;
 
             case "Tcp服务器":

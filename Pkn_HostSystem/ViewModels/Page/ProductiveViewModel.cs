@@ -188,12 +188,11 @@ namespace Pkn_HostSystem.ViewModels.Page
                 try
                 {
                     netWorkProducer = GlobalMannager.NetWorkDictionary.Lookup(producerNetworkDetailed?.Id).Value;
-                   
                 }
                 catch (Exception e)
                 {
                     Log.Error($"{nameof(ProductiveViewModel)}--{item.Name}--生产者对象连接失败,请开启或检查连接");
-                    netWorkProducerReConnection = true;
+                    netWorkProducerReConnection = true;//获取不到的时候,需要进行重连
                     item.ctsProductive.Cancel();
                     item.ctsProductive = new CancellationTokenSource();
                 }
@@ -204,11 +203,12 @@ namespace Pkn_HostSystem.ViewModels.Page
                 catch (Exception e)
                 {
                     Log.Error($"{nameof(ProductiveViewModel)}--{item.Name}--消费者对象连接失败,请开启或检查连接");
-                    netWorkConsumerReConnection = true;
+                    netWorkConsumerReConnection = true;//获取不到的时候,需要进行重连
                     item.ctsConsumer.Cancel();
                     item.ctsConsumer = new CancellationTokenSource();
                 }
 
+                //需要进行重连
                 if (netWorkProducerReConnection ==true && netWorkProducer !=null)
                 {
                     productiveConsumerServer.ProductiveNetWork = netWorkProducer;
@@ -251,6 +251,11 @@ namespace Pkn_HostSystem.ViewModels.Page
                         //获取触发位
                         string currentMessage1 = await ModbusTcpTrigger(netWork.ModbusBase, byte.Parse(stationAddress),
                             ushort.Parse(startAddress));
+
+                        if (currentMessage1 == null)
+                        {
+                        }
+
                         //判断是否触发
                         if (IsTrigger(triggerValue, currentMessage1))
                         {
@@ -312,9 +317,18 @@ namespace Pkn_HostSystem.ViewModels.Page
         private async Task<string> ModbusTcpTrigger(ModbusBase modbusBase, byte staionAddress, ushort startAddress)
         {
             //读取寄存器
-            ushort[] readHoldingRegisters03 = await modbusBase.ReadHoldingRegisters_03(
-                staionAddress, startAddress,
-                1);
+            ushort[] readHoldingRegisters03;
+            try
+            {
+                readHoldingRegisters03 = await modbusBase.ReadHoldingRegisters_03(
+                    staionAddress, startAddress,
+                    1);
+            }
+            catch (Exception e)
+            {
+                Log.Error("ModbusTcpTrigger--readHoldingRegisters03--modbus执行失败,TCP或RTU未连接上");
+                return null;
+            }
             return readHoldingRegisters03[0].ToString();
         }
 

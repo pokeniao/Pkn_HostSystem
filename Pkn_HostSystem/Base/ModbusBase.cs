@@ -31,6 +31,9 @@ namespace Pkn_HostSystem.Base
 
         private readonly object _lock = new object();
 
+        private TaskCompletionSource<bool> _connectTcs = new TaskCompletionSource<bool>();
+
+
         #region 判断是否连接上
 
         public bool IsTCPConnect()
@@ -75,15 +78,19 @@ namespace Pkn_HostSystem.Base
             try
             {
                 //要在 lock 中使用 await，否则可能造成死锁
+                tcpClient = new TcpClient();
+                await tcpClient.ConnectAsync(ip, port);
                 lock (_lock)
                 {
-                    tcpClient = new TcpClient();
-                    tcpClient.ConnectAsync(ip, port);
                     var factory = new ModbusFactory();
                     modbusMaster = factory.CreateMaster(tcpClient);
                     modbusMaster.Transport.ReadTimeout = ReadTimeout;
                     modbusMaster.Transport.Retries = Retries;
                 }
+                // 连接成功，通知所有等待者
+                _connectTcs.TrySetResult(true);
+
+
                 return true;
             }
             catch (Exception e)
@@ -326,6 +333,9 @@ namespace Pkn_HostSystem.Base
         /// <returns></returns>
         public async Task<ushort[]> ReadHoldingRegisters_03(byte slaveAddress, ushort startAddress, ushort ReadCount)
         {
+            // 等待连接真正建立好
+            await _connectTcs.Task;
+
             if (!IsTCPConnect() && !IsRTUConnect())
             {
                 throw new Exception("03读保存寄存器:执行失败,TCP或RTU未连接上");

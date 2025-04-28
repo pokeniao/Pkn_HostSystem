@@ -346,8 +346,6 @@ namespace Pkn_HostSystem.Base
             ClientResponceCTS = cts;
             return msg;
         }
-
-
         public async Task<bool> SendClientAsync(string message)
         {
             if (_client == null || !_client.Connected || _clientStream == null) return false;
