@@ -60,7 +60,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
 
     #region 添加一行,删除一行,修改一行Http
-
     [RelayCommand]
     public void AddHttpButton()
     {
@@ -71,7 +70,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             Log.SuccessAndShow("添加MES成功");
         }
     }
-
     [RelayCommand]
     public void UpdateHttpButton(LoadMesPage page)
     {
@@ -90,7 +88,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             Log.SuccessAndShow($"更新MES成功 name:{item.Name}");
         }
     }
-
     [RelayCommand]
     public void DeleteHttpButton(LoadMesPage page)
     {
@@ -117,11 +114,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             Log.SuccessAndShow($"删除HTTP成功 name:{name}");
         }
     }
-
     #endregion
 
     #region 手动触发发送 与 开启Http
-
     [RelayCommand]
     public async Task JogHttpButton(LoadMesPage page)
     {
@@ -168,7 +163,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             Log.Info($"{nameof(LoadMesPageViewModel)}--{item.Name}--任意类型,任务已关闭");
         }
     }
-
     #endregion
 
     #region 循环触发
@@ -197,7 +191,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 //发送Http请求
                 bool succeed = await loadMesServer.RunOne(model.Name, model.cts);
             }
-
             //进行一次数据组装
             //从MesServer中取出绑定好的item
             LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
@@ -222,7 +215,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     #endregion
 
     #region 消息触发
-
     /// <summary>
     /// 触发型
     /// </summary>
@@ -235,7 +227,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         Task task = item.Task.Value;
         Log.Info($"{nameof(LoadMesPageViewModel)}--{item.Name}--触发型,任务启动成功");
     }
-
     public async Task RunTrigger(LoadMesAddAndUpdateWindowModel model)
     {
         Log.Info($"{nameof(LoadMesPageViewModel)}--{model.Name} -- 进入循环触发");

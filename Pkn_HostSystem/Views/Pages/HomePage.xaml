@@ -157,8 +157,6 @@
                                                 </Grid>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
-
-
                                     </DataGridTemplateColumn>
 
                                     <DataGridTemplateColumn Header="删除" Width="0.9*">

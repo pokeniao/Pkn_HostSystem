@@ -139,7 +139,18 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            viewModel.MesTcpModel.ShowSwitchSet =true;
+            bool showSwitch = viewModel.MesTcpModel.ShowSwitchSet = true;
+            bool showVerify = viewModel.MesTcpModel.VeritySet;
+            if (showSwitch == true && showVerify == false)
+            {
+                DynVerifyDataGrid.Width = 300;
+                DynSwitchDataGrid.Width = 500;
+            }
+            else
+            {
+                DynVerifyDataGrid.Width = 300;
+                DynSwitchDataGrid.Width = 300;
+            }
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
 
             viewModel.MesTcpModel.SwitchList = item.SwitchList;
@@ -151,7 +162,63 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void ButtonBase_OnClick2(object sender, RoutedEventArgs e)
         {
-            viewModel.MesTcpModel.ShowSwitchSet = false;
+           bool showSwitch = viewModel.MesTcpModel.ShowSwitchSet = false;
+           bool showVerify = viewModel.MesTcpModel.VeritySet;
+            if (showSwitch == false && showVerify ==true)
+            {
+                DynVerifyDataGrid.Width = 500;
+                DynSwitchDataGrid.Width = 300;
+            }
+            else
+            {
+                DynVerifyDataGrid.Width = 300;
+                DynSwitchDataGrid.Width = 300;
+            }
+        }
+        /// <summary>
+        /// 点击编辑Switch按钮关闭
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonBase_OnClick3(object sender, RoutedEventArgs e)
+        {
+            bool showVerify = viewModel.MesTcpModel.VeritySet = false;
+            bool showSwitch = viewModel.MesTcpModel.ShowSwitchSet;
+            if (showSwitch == true && showVerify == false)
+            {
+                DynVerifyDataGrid.Width = 300;
+                DynSwitchDataGrid.Width = 500;
+            }
+            else
+            {
+                DynVerifyDataGrid.Width = 300;
+                DynSwitchDataGrid.Width = 300;
+            }
+        }
+
+        /// <summary>
+        /// 套接字的校验
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SetVerify(object sender, RoutedEventArgs e)
+        {
+
+            bool showSwitch = viewModel.MesTcpModel.ShowSwitchSet = false;
+            bool showVerify = viewModel.MesTcpModel.VeritySet = true;
+            if (showSwitch == false && showVerify == true)
+            {
+                DynVerifyDataGrid.Width = 500;
+                DynSwitchDataGrid.Width = 300;
+            }
+            else
+            {
+                DynVerifyDataGrid.Width = 300;
+                DynSwitchDataGrid.Width = 300;
+            }
+            DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
+
+            viewModel.MesTcpModel.VerifyList = item.VerifyList;
         }
     }
 }

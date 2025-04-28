@@ -47,9 +47,16 @@ namespace Pkn_HostSystem.Base
             if (tcpClient.Client.Poll(0, SelectMode.SelectRead))
             {
                 byte[] buffer = new byte[1];
-                if (tcpClient.Client.Receive(buffer, SocketFlags.Peek) == 0)
+                try
                 {
-                    // 连接已关闭
+                    if (tcpClient.Client.Receive(buffer, SocketFlags.Peek) == 0)
+                    {
+                        // 连接已关闭
+                        return false;
+                    }
+                }
+                catch (Exception e)
+                {
                     return false;
                 }
             }
@@ -87,10 +94,9 @@ namespace Pkn_HostSystem.Base
                     modbusMaster.Transport.ReadTimeout = ReadTimeout;
                     modbusMaster.Transport.Retries = Retries;
                 }
+
                 // 连接成功，通知所有等待者
                 _connectTcs.TrySetResult(true);
-
-
                 return true;
             }
             catch (Exception e)
@@ -191,7 +197,8 @@ namespace Pkn_HostSystem.Base
                 modbusMaster = factory.CreateRtuMaster(serialPort);
                 modbusMaster.Transport.ReadTimeout = ReadTimeout;
                 modbusMaster.Transport.Retries = Retries;
-
+                // 连接成功，通知所有等待者
+                _connectTcs.TrySetResult(true);
                 return true;
             }
             catch (Exception)
@@ -242,15 +249,23 @@ namespace Pkn_HostSystem.Base
             //第一步:判断是否打开串口
             if (serialPort == null) return;
             //第二步:判断是否打开串口
-            if (serialPort.IsOpen) serialPort.Close();
+            if (serialPort.IsOpen)
+            {
+                serialPort.Close();
+                serialPort.Dispose();
+            }
         }
 
+        /// <summary>
+        /// 关闭Tcp客户端
+        /// </summary>
         public void CloseTCP()
         {
             if (tcpClient != null)
                 if (tcpClient.Connected)
                 {
                     tcpClient.Close();
+                    tcpClient.Dispose();
                     tcpClient = null;
                 }
         }
@@ -305,6 +320,9 @@ namespace Pkn_HostSystem.Base
         /// <returns></returns>
         public async Task<bool[]> ReadInputs_02(byte slaveAddress, ushort startAddress, ushort ReadCount)
         {
+            // 等待连接真正建立好
+            await _connectTcs.Task;
+
             if (!IsTCPConnect() && !IsRTUConnect())
             {
                 throw new Exception("02读输入状态:执行失败,TCP或RTU未连接上");
@@ -364,6 +382,9 @@ namespace Pkn_HostSystem.Base
         /// <returns></returns>
         public async Task<ushort[]> ReadInputRegisters_04(byte slaveAddress, ushort startAddress, ushort ReadCount)
         {
+            // 等待连接真正建立好
+            await _connectTcs.Task;
+
             if (!IsTCPConnect() && !IsRTUConnect())
             {
                 throw new Exception("04读取输入寄存器:执行失败,TCP或RTU未连接上");
@@ -392,6 +413,9 @@ namespace Pkn_HostSystem.Base
         /// <returns></returns>
         public async Task WriteCoil_05(byte slaveAddress, ushort coilAddress, bool value)
         {
+            // 等待连接真正建立好
+            await _connectTcs.Task;
+
             if (!IsTCPConnect() && !IsRTUConnect())
             {
                 throw new Exception("05写单线圈:执行失败,TCP或RTU未连接上");
@@ -420,6 +444,9 @@ namespace Pkn_HostSystem.Base
         /// <returns></returns>
         public async Task WriteRegister_06(byte slaveAddress, ushort registerAddress, ushort value)
         {
+            // 等待连接真正建立好
+            await _connectTcs.Task;
+
             if (!IsTCPConnect() && !IsRTUConnect())
             {
                 throw new Exception("06写单寄存器:执行失败,TCP或RTU未连接上");
@@ -448,6 +475,9 @@ namespace Pkn_HostSystem.Base
         /// <returns></returns>
         public async Task WriteCoils_0F(byte slaveAddress, ushort startAddress, bool[] values)
         {
+            // 等待连接真正建立好
+            await _connectTcs.Task;
+
             if (!IsTCPConnect() && !IsRTUConnect())
             {
                 throw new Exception("0F写多线圈:执行失败,TCP或RTU未连接上");
@@ -476,6 +506,9 @@ namespace Pkn_HostSystem.Base
         /// <returns></returns>
         public async Task WriteRegisters_10(byte slaveAddress, ushort startAddress, ushort[] values)
         {
+            // 等待连接真正建立好
+            await _connectTcs.Task;
+
             if (!IsTCPConnect() && !IsRTUConnect())
             {
                 throw new Exception("10写多寄存器:执行失败,TCP或RTU未连接上");
