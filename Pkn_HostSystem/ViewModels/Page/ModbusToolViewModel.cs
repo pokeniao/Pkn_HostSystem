@@ -1,12 +1,12 @@
-﻿using System.IO.Ports;
-using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Pojo.Page.ModbusTool;
 using Pkn_HostSystem.Views.Pages;
+using System.IO.Ports;
+using System.Windows;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 

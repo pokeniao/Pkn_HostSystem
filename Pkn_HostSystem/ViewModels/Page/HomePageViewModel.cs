@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
+using KeyenceTool;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
@@ -12,8 +13,6 @@ using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
-using KeyenceTool;
-using Newtonsoft.Json.Serialization;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -55,7 +54,7 @@ public partial class HomePageViewModel : ObservableRecipient
             ModbusTcp_Ip = ModbusBase.getIpAddress().ToList(),
             ModbusTcp_Ip_select = ModbusBase.getIpAddress()[0],
             ModbusRtu_COM = ModbusBase.getCOM().ToList(),
-            ModbusRtu_COM_select = ModbusBase.getCOM().Length>0? ModbusBase.getCOM()[0]:null,
+            ModbusRtu_COM_select = ModbusBase.getCOM().Length > 0 ? ModbusBase.getCOM()[0] : null,
             ModbusTcp_Port = int.Parse("502"),
             ModbusRtu_baudRate = new List<string>() { "9600", "14400", "19200" },
             ModbusRtu_baudRate_select = "9600",
@@ -109,14 +108,14 @@ public partial class HomePageViewModel : ObservableRecipient
     {
         var selectedItem = page.setConnectDg.SelectedItem as NetworkDetailed;
         if (selectedItem.Open)
-           await StartConnectModbus(selectedItem);
+            await StartConnectModbus(selectedItem);
         else
             StopConnectModbus(selectedItem);
     }
 
     public async Task StartConnectModbus(NetworkDetailed networkDetailed)
     {
-       
+
         var key = networkDetailed.Id;
         var Name = networkDetailed.Name;
         Log.Info($"{Name}--StartConnectModbus--启动Modbus连接");
@@ -172,7 +171,7 @@ public partial class HomePageViewModel : ObservableRecipient
 
     public void StopConnectModbus(NetworkDetailed networkDetailed)
     {
-       
+
         var key = networkDetailed.Id;
         var name = networkDetailed.Name;
         Log.Info($"{name}--StopConnectModbus--停止Modbus连接");
@@ -270,7 +269,7 @@ public partial class HomePageViewModel : ObservableRecipient
             }
             catch (Exception e)
             {
-                
+
             }
         }
     }

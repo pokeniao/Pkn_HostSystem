@@ -1,10 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Controls;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
-using Wpf.Ui.Controls;
+using System.Windows;
+using System.Windows.Controls;
 using MesTcpViewModel = Pkn_HostSystem.ViewModels.Page.MesTcpViewModel;
 
 namespace Pkn_HostSystem.Views.Pages
@@ -90,6 +89,7 @@ namespace Pkn_HostSystem.Views.Pages
                     netMethod = netWorkPoJo.NetworkDetailed.NetMethod;
                 }
             }
+
             ChangeParam(netMethod);
         }
 
@@ -130,6 +130,7 @@ namespace Pkn_HostSystem.Views.Pages
                     break;
             }
         }
+
         #endregion
 
         /// <summary>
@@ -139,61 +140,26 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            bool showSwitch = viewModel.MesTcpModel.ShowSwitchSet = true;
-            bool showVerify = viewModel.MesTcpModel.VeritySet;
-            if (showSwitch == true && showVerify == false)
-            {
-                DynVerifyDataGrid.Width = 300;
-                DynSwitchDataGrid.Width = 500;
-            }
-            else
-            {
-                DynVerifyDataGrid.Width = 300;
-                DynSwitchDataGrid.Width = 300;
-            }
+            viewModel.MesTcpModel.ShowSwitchSet = true;
+            showSetPage();
+
+       
+
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
 
             viewModel.MesTcpModel.SwitchList = item.SwitchList;
+            viewModel.MesTcpModel.SetSwitchSetName = $"Switch :{item.Name}";
         }
+
         /// <summary>
-        /// 点击编辑Switch按钮关闭
+        /// Switch按钮关闭
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ButtonBase_OnClick2(object sender, RoutedEventArgs e)
         {
-           bool showSwitch = viewModel.MesTcpModel.ShowSwitchSet = false;
-           bool showVerify = viewModel.MesTcpModel.VeritySet;
-            if (showSwitch == false && showVerify ==true)
-            {
-                DynVerifyDataGrid.Width = 500;
-                DynSwitchDataGrid.Width = 300;
-            }
-            else
-            {
-                DynVerifyDataGrid.Width = 300;
-                DynSwitchDataGrid.Width = 300;
-            }
-        }
-        /// <summary>
-        /// 点击编辑Switch按钮关闭
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ButtonBase_OnClick3(object sender, RoutedEventArgs e)
-        {
-            bool showVerify = viewModel.MesTcpModel.VeritySet = false;
-            bool showSwitch = viewModel.MesTcpModel.ShowSwitchSet;
-            if (showSwitch == true && showVerify == false)
-            {
-                DynVerifyDataGrid.Width = 300;
-                DynSwitchDataGrid.Width = 500;
-            }
-            else
-            {
-                DynVerifyDataGrid.Width = 300;
-                DynSwitchDataGrid.Width = 300;
-            }
+            viewModel.MesTcpModel.ShowSwitchSet = false;
+            showSetPage();
         }
 
         /// <summary>
@@ -203,22 +169,108 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void SetVerify(object sender, RoutedEventArgs e)
         {
+            viewModel.MesTcpModel.VeritySet = true;
+            showSetPage();
 
-            bool showSwitch = viewModel.MesTcpModel.ShowSwitchSet = false;
-            bool showVerify = viewModel.MesTcpModel.VeritySet = true;
-            if (showSwitch == false && showVerify == true)
-            {
-                DynVerifyDataGrid.Width = 500;
-                DynSwitchDataGrid.Width = 300;
-            }
-            else
-            {
-                DynVerifyDataGrid.Width = 300;
-                DynSwitchDataGrid.Width = 300;
-            }
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
 
             viewModel.MesTcpModel.VerifyList = item.VerifyList;
+
+            viewModel.MesTcpModel.SetVeritySetName = $"校验 :{item.Name}";
+        }
+
+        /// <summary>
+        /// VeritySet按钮关闭
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonBase_OnClick3(object sender, RoutedEventArgs e)
+        {
+            viewModel.MesTcpModel.VeritySet = false;
+            showSetPage();
+        }
+
+        /// <summary>
+        /// 点击设置HttpGetObject页面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SetHttpGetObject(object sender, RoutedEventArgs e)
+        {
+            viewModel.MesTcpModel.HttpSet = true;
+            showSetPage();
+            DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
+            viewModel.MesTcpModel.HttpObjects = item.HttpObjects;
+
+            viewModel.MesTcpModel.SetHttpObjectName = $"Json映射 :{item.Name}";
+        }
+
+        /// <summary>
+        /// 点击关闭Http设置页面
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ButtonBase_OnClick4(object sender, RoutedEventArgs e)
+        {
+            viewModel.MesTcpModel.HttpSet = false;
+            showSetPage();
+        }
+
+        public void showSetPage()
+        {
+            int num = 0;
+            _ = viewModel.MesTcpModel.HttpSet ? num++ : num;
+            _ = viewModel.MesTcpModel.VeritySet ? num++ : num;
+            _ = viewModel.MesTcpModel.ShowSwitchSet ? num++ : num;
+
+            switch (num)
+            {
+                case 1:
+                    viewModel.MesTcpModel.SetRows = 1;
+                    viewModel.MesTcpModel.SetColumns = 1;
+                    break;
+                case 2:
+                    viewModel.MesTcpModel.SetRows = 1;
+                    viewModel.MesTcpModel.SetColumns = 2;
+                    break;
+                case 3:
+                    viewModel.MesTcpModel.SetRows = 2;
+                    viewModel.MesTcpModel.SetColumns = 2;
+                    break;
+                case 4:
+                    viewModel.MesTcpModel.SetRows = 2;
+                    viewModel.MesTcpModel.SetColumns = 2;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 当Http选择对象发生改变时
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HttpSelectChange(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox? comboBox = sender as ComboBox;
+            if (comboBox != null)
+            {
+                var selectedItem = comboBox.SelectedItem as LoadMesAddAndUpdateWindowModel;
+            }
+        }
+        private void GetMessageChange(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox? comboBox = sender as ComboBox;
+            string selectedValue = comboBox.SelectedValue as string;
+            DynCondition? selectedItem = DynConditionDataGrid.SelectedItem as DynCondition;
+
+            if (selectedValue == "HTTP")
+            {
+                selectedItem.MethodName = "Http方式";
+            }
+            else
+            {
+                selectedItem.MethodName = "";
+            }
         }
     }
 }

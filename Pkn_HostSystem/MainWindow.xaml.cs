@@ -1,13 +1,12 @@
-﻿using System.Collections.ObjectModel;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
@@ -90,6 +89,14 @@ namespace Pkn_HostSystem
                     productiveViewModel.TriggerCyc(productive);
                 }
             }
+
+            //执行每隔5分钟进行一次自动保存
+            Task.Run(async () =>
+            {
+                await Task.Delay(300 * 1000);
+                var settingsPageViewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
+                settingsPageViewModel.Save();
+            });
         }
 
         #region 自动伸缩的Navigation

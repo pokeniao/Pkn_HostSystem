@@ -86,9 +86,10 @@
                                                 <ComboBoxItem Content="UPDATE" />
                                                 <ComboBoxItem Content="DELETE" />
                                             </ComboBox>
-                                            <TextBlock Text="格式" Margin="5"/>
-                                            <ComboBox Width="100" SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.RequestMethod}"
-                                                      ItemsSource="{Binding RequestMethods }"/>
+                                            <TextBlock Text="格式" Margin="5" />
+                                            <ComboBox Width="100"
+                                                      SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.RequestMethod}"
+                                                      ItemsSource="{Binding RequestMethods }" />
                                         </WrapPanel>
                                         <WrapPanel Margin="0,10,0,0">
                                             <TextBlock Text="HTTP路径" Margin="5" />
@@ -138,9 +139,9 @@
                                                      BorderThickness="0"
                                                      FontSize="15"
                                                      Text="{Binding LoadMesAddAndUpdateWindowModel.SuccessResponseMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
-                                          
+
                                             <CheckBox />
-                                            <TextBlock Text="自定义" Margin="5" TextAlignment="Center"/>
+                                            <TextBlock Text="自定义" Margin="5" TextAlignment="Center" />
                                         </WrapPanel>
                                         <WrapPanel Margin="0,10,0,0">
                                             <TextBlock Text="失败返回消息" Margin="5" />
@@ -152,8 +153,8 @@
                                                      BorderThickness="0"
                                                      FontSize="15"
                                                      Text="{Binding LoadMesAddAndUpdateWindowModel.FailResponseMessage ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
-                                            <TextBlock Text="自定义" Margin="5" TextAlignment="Center"/>
-                                            <CheckBox/>
+                                            <TextBlock Text="自定义" Margin="5" TextAlignment="Center" />
+                                            <CheckBox />
                                         </WrapPanel>
                                         <TabControl Margin="0,10,0,0">
                                             <TabItem Header="Modbus设置">
@@ -308,10 +309,17 @@
                                                 <TextBox
                                                     Visibility="{Binding show_para_static ,Converter={StaticResource BooleanVisibilityConverter}}"
                                                     Text="{Binding Static_Value}" />
-                                                <ComboBox
-                                                    ItemsSource="{Binding DataContext. MethodCollection,  RelativeSource={RelativeSource AncestorType=Window}}"
-                                                    Visibility="{Binding show_method ,Converter={StaticResource BooleanVisibilityConverter}}"
-                                                    Text="{Binding Method_value}" />
+
+                                                <Grid
+                                                    Visibility="{Binding show_method ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                                    <StackPanel>
+                                                        <ComboBox
+                                                            ItemsSource="{Binding DataContext. MethodCollection,  RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            Text="{Binding Method_value}" />
+                                                        <TextBlock Text="其他参数" />
+                                                        <TextBox Text="{Binding Method_OtherValue}" />
+                                                    </StackPanel>
+                                                </Grid>
                                             </Grid>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellEditingTemplate>

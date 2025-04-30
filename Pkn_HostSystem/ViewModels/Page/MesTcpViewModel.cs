@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Static;
@@ -23,8 +25,9 @@ public partial class MesTcpViewModel : ObservableRecipient
 
     public MesTcpModel MesTcpModel { get; set; }
 
-    public List<string> VerifyType { get; set; } = ["字符长度检测=", "字符长度检测!=", "字符长度检测>", "字符长度检测<", "字符长度检测>=", "字符长度检测=<", "字符=","字符!=", "正则表达式检测"];
+    public List<string> VerifyType { get; set; } = ["字符长度检测=", "字符长度检测!=", "字符长度检测>", "字符长度检测<", "字符长度检测>=", "字符长度检测=<", "字符=", "字符!=", "正则表达式检测"];
 
+    public List<string> GetMessageType { get; set; } = ["HTTP", "通讯"];
     public MesTcpViewModel()
     {
         SnackbarService = new SnackbarService();
@@ -37,16 +40,19 @@ public partial class MesTcpViewModel : ObservableRecipient
             MesTcpModel = new MesTcpModel()
             {
                 NetWorkList = new ObservableCollectionExtended<NetWork>(),
+                HttpList = new ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel>(),
                 DynNetList = new ObservableCollectionExtended<LoadMesDynContent>(),
             };
             GlobalMannager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe();
             GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
+            MesTcpModel.HttpList = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
         }
         else
         {
             GlobalMannager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe(); //绑定
             GlobalMannager.DynDictionary.AddOrUpdate(MesTcpModel.DynNetList); //存入到缓存,后面在绑定
-            GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe(); 
+            GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
+            MesTcpModel.HttpList = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
         }
         log = new LogBase<MesTcpViewModel>(SnackbarService);
     }

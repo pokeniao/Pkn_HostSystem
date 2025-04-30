@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
-using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
@@ -13,8 +12,6 @@ using Pkn_HostSystem.Server.Productive;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using System.Collections.ObjectModel;
-using System.Windows;
-using System.Xml.Linq;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -182,9 +179,9 @@ namespace Pkn_HostSystem.ViewModels.Page
                     }
                 }
                 //3. 获取网络
-                NetWork netWorkProducer =null;
+                NetWork netWorkProducer = null;
                 NetWork netWorkConsumer = null;
-                
+
                 try
                 {
                     netWorkProducer = GlobalMannager.NetWorkDictionary.Lookup(producerNetworkDetailed?.Id).Value;
@@ -209,18 +206,18 @@ namespace Pkn_HostSystem.ViewModels.Page
                 }
 
                 //需要进行重连
-                if (netWorkProducerReConnection ==true && netWorkProducer !=null)
+                if (netWorkProducerReConnection == true && netWorkProducer != null)
                 {
                     productiveConsumerServer.ProductiveNetWork = netWorkProducer;
 
                     item.TaskProductive = new Lazy<Task>(() => RunTrigger(item.ctsProductive, netWorkProducer,
                         item.ProductiveStationAddress, item.ProductiveStartAddress, item.ProductiveTriggerValue,
                         item.ProductiveTriggerCyc, true, productiveConsumerServer));
-                    _=item.TaskProductive.Value;
+                    _ = item.TaskProductive.Value;
                     netWorkProducerReConnection = false;
                 }
 
-                if (netWorkConsumerReConnection == true && netWorkConsumer!=null)
+                if (netWorkConsumerReConnection == true && netWorkConsumer != null)
                 {
                     productiveConsumerServer.ConsumeNetWork = netWorkConsumer;
                     item.TaskConsumer = new Lazy<Task>(() => RunTrigger(item.ctsConsumer, netWorkConsumer,
@@ -229,7 +226,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                     _ = item.TaskConsumer.Value;
                     netWorkConsumerReConnection = false;
                 }
-                
+
                 await Task.Delay(100);
             }
         }
