@@ -79,6 +79,12 @@ public class LoadMesCondition : ObservableObject
     }
 
     /// <summary>
+    /// 方法集其他参数
+    /// </summary>
+
+    public string Method_OtherValue { get; set; }
+
+    /// <summary>
     /// 显示参数值
     /// </summary>
     public string Value

@@ -31,6 +31,12 @@ public class DynCondition : ObservableObject
     /// 当前连接的名称
     /// </summary>
     public string ConnectName { get; set; }
+
+    /// <summary>
+    /// 当前连接Http的名称
+    /// </summary>
+    public string HttpName { get; set; }
+
     /// <summary>
     /// 当前方法的名称(请求方式) :读线圈,读寄存器
     /// </summary>
@@ -48,6 +54,9 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(ShowValue));
             OnPropertyChanged(nameof(showHostLinkReadReg));
             OnPropertyChanged(nameof(showHostLinkReadCoid));
+            OnPropertyChanged(nameof(showConnectName));
+            OnPropertyChanged(nameof(showHttpName));
+            OnPropertyChanged(nameof(showHttp));
         }
     }
     /// <summary>
@@ -138,13 +147,42 @@ public class DynCondition : ObservableObject
                 case "读R线圈状态":
                     value = $"起始地址:{StartAddress}";
                     break;
+                case "Http方式":
+                    value = "双击设置解析的Json";
+                    break;
+
             }
 
             return value;
         }
+
     }
 
+
     public string SocketSendMessage { get; set; }
+
+
+
+    private string getMessageType;
+
+    public string GetMessageType
+    {
+        get => getMessageType;
+        set
+        {
+            SetProperty(ref getMessageType, value);
+            OnPropertyChanged(nameof(showReadReg));
+            OnPropertyChanged(nameof(showReadCoil));
+            OnPropertyChanged(nameof(showSocket));
+            OnPropertyChanged(nameof(ShowValue));
+            OnPropertyChanged(nameof(showHostLinkReadReg));
+            OnPropertyChanged(nameof(showHostLinkReadCoid));
+            OnPropertyChanged(nameof(showConnectName));
+            OnPropertyChanged(nameof(showHttpName));
+            OnPropertyChanged(nameof(showHttp));
+        }
+
+    }
 
 
     /// <summary>
@@ -170,6 +208,8 @@ public class DynCondition : ObservableObject
     public ObservableCollection<DynVerify> VerifyList { get; set; } = new ObservableCollection<DynVerify>();
 
 
+    public ObservableCollection<GetHttpObject> HttpObjects { get; set; } = new ObservableCollection<GetHttpObject>();
+
     /// <summary>
     /// 用于控制参数在编辑时候的显示
     /// </summary>
@@ -182,9 +222,19 @@ public class DynCondition : ObservableObject
     public bool showHostLinkReadReg => MethodName == "读DM寄存器";
     public bool showHostLinkReadCoid => MethodName == "读R线圈状态";
 
+    public bool showHttp => MethodName == "Http方式";
+    /// <summary>
+    /// 用于控制连接名显示
+    /// </summary>
+    public bool showConnectName => GetMessageType == "通讯";
+
+    public bool showHttpName => GetMessageType == "HTTP";
+
 }
-public class DynSwitch{
+public class DynSwitch
+{
 
     public string Case { get; set; }
     public string Value { get; set; }
+
 }

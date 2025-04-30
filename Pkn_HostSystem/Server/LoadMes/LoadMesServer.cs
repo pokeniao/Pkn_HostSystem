@@ -1,4 +1,7 @@
-﻿using KeyenceTool;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using KeyenceTool;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
@@ -6,11 +9,10 @@ using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.Static;
+using Pkn_HostSystem.Views.Pages;
 using RestSharp;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Globalization;
-using System.Reactive.Joins;
 using System.Text;
 using System.Text.RegularExpressions;
 using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
@@ -31,6 +33,7 @@ public class LoadMesServer
 
 
     #region 获取当前行 与获取网络Id方法
+
     /// <summary>
     /// 循环查找当前行是否存在
     /// </summary>
@@ -38,7 +41,7 @@ public class LoadMesServer
     /// <returns></returns>
     public LoadMesAddAndUpdateWindowModel SelectByName(string Name)
     {
-       // Log.Info($"SelectByName执行,Name:{Name}");
+        // Log.Info($"SelectByName执行,Name:{Name}");
         //判断是否有当前key 
         foreach (var item in mesPojoList)
             if (Name == item.Name)
@@ -47,6 +50,7 @@ public class LoadMesServer
 
         return null;
     }
+
     /// <summary>
     /// 循环遍历获取网络ID
     /// </summary>
@@ -61,6 +65,7 @@ public class LoadMesServer
 
         return null;
     }
+
     #endregion
 
     #region 触发Http请求
@@ -68,13 +73,13 @@ public class LoadMesServer
     /// <summary>
     /// 触发单个请求
     /// </summary>
-    public async Task<bool> RunOne(string Name,CancellationTokenSource cts)
+    public async Task<string> RunOne(string Name, CancellationTokenSource cts)
     {
         Log.Info($"RunOne执行,Name:{Name}");
         //获取当前Name的行数据
         LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
         //得到消息体
-        return await SendHttp(item,cts);
+        return await SendHttp(item, cts);
     }
 
     /// <summary>
@@ -86,7 +91,7 @@ public class LoadMesServer
         Log.Info($"RunAll执行");
         foreach (var item in mesPojoList)
         {
-            await SendHttp(item,new CancellationTokenSource());
+            await SendHttp(item, new CancellationTokenSource());
         }
 
         return true;
@@ -96,12 +101,12 @@ public class LoadMesServer
 
     #region 发送Http任务
 
-    public async Task<bool> SendHttp(LoadMesAddAndUpdateWindowModel item,CancellationTokenSource cts)
+    public async Task<string> SendHttp(LoadMesAddAndUpdateWindowModel item, CancellationTokenSource cts)
     {
         //得到消息体
-        var request = await PackRequest(item.Name);
+        var request = await PackRequest(item.Name, cts);
         //日志显示发送内容
-        Log.Info($"{nameof(LoadMesServer)}--SendHttp--{item.Name}--发送内容: \n\r{request}");
+        Log.Info($"{nameof(LoadMesServer)}--SendHttp--{item.Name}--发送内容: \r\n {request}");
         if (request != null)
         {
             //创建连接
@@ -126,11 +131,13 @@ public class LoadMesServer
                     requestBody = new RestRequest();
                     break;
             }
+
             //添加请求头
             foreach (var header in item.HttpHeaders)
             {
                 requestBody.AddHeader(header.Key, header.Value);
             }
+
             //添加请求体
             switch (item.RequestMethod)
             {
@@ -150,37 +157,69 @@ public class LoadMesServer
                     requestBody.AddStringBody(request, DataFormat.None);
                     break;
             }
+
             //发送请求
-            RestResponse response = await client.ExecuteAsync(requestBody,cts.Token);
+            RestResponse response = await client.ExecuteAsync(requestBody, cts.Token);
             //判断
             if (response.IsSuccessStatusCode)
             {
                 item.Response = response.Content;
-                Log.Info($"{item.Name}--发送请求返回: {item.Response}");
-                return true;
+
+                item.Response = TryFormatJson(item.Response);
+                Log.Info($"返回消息response结果为成功,状态码:{response.StatusCode}");
+                Log.Info($"{item.Name}--发送请求返回:\r\n {item.Response}");
+                return item.Response;
             }
             else
             {
                 item.Response = response.ErrorMessage;
                 if (item.Response == null)
+                {
                     item.Response = response.Content;
-                Log.Info($"{item.Name}--发送请求返回: {item.Response}");
-                return false;
+                }
+                item.Response = TryFormatJson(item.Response);
+
+                Log.Info($"返回消息response结果为失败,状态码:{response.StatusCode}");
+                Log.Info($"{item.Name}--发送请求返回:\r\n {item.Response}");
+                return item.Response;
             }
         }
 
-        return false;
+        return null;
+    }
 
+    public static string TryFormatJson(string response)
+    {
+        if (string.IsNullOrWhiteSpace(response))
+            return response;
+
+        try
+        {
+            var trimmed = response.Trim();
+            if ((trimmed.StartsWith("{") && trimmed.EndsWith("}")) ||
+                (trimmed.StartsWith("[") && trimmed.EndsWith("]")))
+            {
+                var obj = JsonConvert.DeserializeObject<object>(trimmed);
+                return JsonConvert.SerializeObject(obj, Formatting.Indented);
+            }
+        }
+        catch
+        {
+            // 非合法 JSON，忽略
+        }
+
+        return response;
     }
 
     #endregion
 
     #region 封装消息请求体方法
+
     /// <summary>
     /// 包装Request请求
     /// </summary>
     /// <param name="name"></param>
-    public async Task<string> PackRequest(string name)
+    public async Task<string> PackRequest(string name, CancellationTokenSource cts)
     {
         //获得当前行的数据
         var loadMesAddAndUpdateWindowModel = SelectByName(name);
@@ -198,16 +237,19 @@ public class LoadMesServer
         {
             var itemKey = item.Key;
             var itemValue = item.Value;
+            var itemMethodOtherValue = item.Method_OtherValue;
+
             switch (item.Method)
             {
                 case "动态获取":
                     //获取动态的值
                     Log.Info("正在动态嵌入内容");
-                    var value = await DynMessage(request, itemValue);
+                    var value = await DynMessage(request, itemValue, cts);
                     if (value == null)
                     {
                         return null;
                     }
+
                     request = StaticMessage(request, itemKey, value);
                     break;
                 case "常量":
@@ -215,19 +257,16 @@ public class LoadMesServer
                     request = StaticMessage(request, itemKey, itemValue);
                     break;
                 case "方法集":
-                    var value2 = await MethodMessage(request, itemValue);
+                    var value2 = await MethodMessage(request, itemValue, itemMethodOtherValue);
                     request = StaticMessage(request, itemKey, value2);
                     break;
             }
         }
         return request;
     }
-
-
     #endregion
 
     #region 静态嵌入和动态嵌入内容
-
     /// <summary>
     /// 嵌入静态内容
     /// </summary>
@@ -250,24 +289,51 @@ public class LoadMesServer
     }
 
     /// <summary>
+    /// 嵌入静态子内容
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="itemKey"></param>
+    /// <param name="itemKeySon"></param>
+    /// <param name="itemValue"></param>
+    /// <returns></returns>
+    public string StaticMessageSon(string request, string itemKey, string itemKeySon, string itemValue)
+    {
+        var i = request.IndexOf($"[{itemKey}.{itemKeySon}]");
+        if (i != -1)
+        {
+            var keyLen = itemKey.Length;
+            var keysonLen = itemKeySon.Length;
+
+            var sumLen = keyLen + keysonLen;
+            var requestA = request.Substring(0, i);
+            var requestB = request.Substring(i + sumLen + 3);
+            request = requestA + itemValue + requestB;
+        }
+
+        return request;
+    }
+
+    /// <summary>
     /// 动态嵌入内容
     /// </summary>
     /// <param name="request">整个消息体</param>
     /// <param name="DynName">嵌入名</param>
     /// <returns></returns>
-    public async Task<string> DynMessage(string request, string DynName)
+    public async Task<string> DynMessage(string request, string DynName, CancellationTokenSource cts)
     {
         if (DynName == null)
         {
             Log.Info($"{nameof(LoadMesServer)}--正在动态嵌入内容的时候,动态获取名未设置(DynName) ");
             return null;
         }
+
         var lookup = GlobalMannager.DynDictionary.Lookup(DynName);
         if (!lookup.HasValue)
         {
             Log.Info($"{nameof(LoadMesServer)}--正在动态嵌入内容的时候,--{DynName}--从动态字典DynDictionary找不到,返回空字符串");
             return string.Empty;
         }
+
         var mesTcpPojo = lookup.Value;
         var message = mesTcpPojo.Message;
         if (message == null)
@@ -275,6 +341,7 @@ public class LoadMesServer
             Log.Info($"{nameof(LoadMesServer)} 从动态字典DynDictionary找到的消息内容Message为Null");
             return string.Empty;
         }
+
         var result = "";
         // 1. 循环获取动态条件
         foreach (var item in mesTcpPojo.DynCondition)
@@ -283,76 +350,99 @@ public class LoadMesServer
             var methodName = item.MethodName;
             bool isSwitch = item.OpenSwitch;
             bool isVerify = item.OpenVerify;
-            //2. 判断需要通过什么获取动态内容
-            switch (methodName)
+            //2. 判断走什么形式的方法进行请求
+            if (item.GetMessageType == "通讯")
             {
-                case "读寄存器":
-                    Log.Info("动态嵌入内容:执行读寄存器中");
-                    string readReg = await ReadReg(item);
-                    if (isSwitch)
-                    {
-                        Log.Info("动态嵌入内容读寄存器需要进行消息转换Switch映射");
-                        readReg = SwitchGetMessage(readReg, item);
-                    }
-
-                    message = StaticMessage(message, itemKey, readReg);
-                    break;
-                case "读线圈":
-                    Log.Info("动态嵌入内容:执行读线圈中");
-                    string readCoid = await ReadCoid(item);
-                    if (isSwitch)
-                    {
-                        Log.Info("动态嵌入内容读线圈需要进行消息转换Switch映射");
-                        readCoid = SwitchGetMessage(readCoid, item);
-                    }
-
-                    message = StaticMessage(message, itemKey, readCoid);
-                    break;
-                case "Socket返回":
-                    Log.Info("动态嵌入内容:执行Socket消息发送");
-                    string tcp = await ReadTcpMessageAsync(item);
-                    //判断
-                    if (tcp ==null && item.DynFailReturnFail == true)
-                    {
-                        return null;
-                    }
-                    if (isSwitch)
-                    {
-                        Log.Info("动态嵌入内容Socket需要进行消息转换Switch映射");
-                        tcp = SwitchGetMessage(tcp, item);
-                    }
-
-                    if (isVerify)
-                    {
-                        Log.Info("动态嵌入内容Socket需要进行消息校验");
-                        foreach (var dynVerify in item.VerifyList)
+                //3. 判断需要通过什么获取动态内容
+                switch (methodName)
+                {
+                    case "读寄存器":
+                        Log.Info("动态嵌入内容:执行读寄存器中");
+                        string readReg = await ReadReg(item);
+                        if (isSwitch)
                         {
-                            if (!VerityMessage(tcp, dynVerify))
+                            Log.Info("动态嵌入内容读寄存器需要进行消息转换Switch映射");
+                            readReg = SwitchGetMessage(readReg, item);
+                        }
+
+                        message = StaticMessage(message, itemKey, readReg);
+                        break;
+                    case "读线圈":
+                        Log.Info("动态嵌入内容:执行读线圈中");
+                        string readCoid = await ReadCoid(item);
+                        if (isSwitch)
+                        {
+                            Log.Info("动态嵌入内容读线圈需要进行消息转换Switch映射");
+                            readCoid = SwitchGetMessage(readCoid, item);
+                        }
+
+                        message = StaticMessage(message, itemKey, readCoid);
+                        break;
+                    case "Socket返回":
+                        Log.Info("动态嵌入内容:执行Socket消息发送");
+                        string tcp = await ReadTcpMessageAsync(item);
+                        //判断
+                        if (tcp == null && item.DynFailReturnFail == true)
+                        {
+                            return null;
+                        }
+
+                        if (isSwitch)
+                        {
+                            Log.Info("动态嵌入内容Socket需要进行消息转换Switch映射");
+                            tcp = SwitchGetMessage(tcp, item);
+                        }
+
+                        if (isVerify)
+                        {
+                            Log.Info("动态嵌入内容Socket需要进行消息校验");
+                            foreach (var dynVerify in item.VerifyList)
                             {
-                                Log.Info("校验到不匹配,撤回发送");
-                                return null;
+                                if (!VerityMessage(tcp, dynVerify))
+                                {
+                                    Log.Info("校验到不匹配,撤回发送");
+                                    return null;
+                                }
                             }
                         }
-                    }
 
-                    message = StaticMessage(message, itemKey, tcp);
-                    break;
-                case "读DM寄存器":
-                    Log.Info("动态嵌入内容:执行读DM寄存器");
-                    string readDm = await KeyenceReadDM(item);
-                    if (isSwitch)
-                    {
-                        Log.Info("动态嵌入内容读DM寄存器需要进行消息转换Switch映射");
-                        readDm = SwitchGetMessage(readDm, item);
-                    }
-                    message = StaticMessage(message, itemKey, readDm);
-                    break;
-                case "读R线圈状态":
-                    Log.Info("动态嵌入内容:执行读R线圈状态");
-                    break;
+                        message = StaticMessage(message, itemKey, tcp);
+                        break;
+                    case "读DM寄存器":
+                        Log.Info("动态嵌入内容:执行读DM寄存器");
+                        string readDm = await KeyenceReadDM(item);
+                        if (isSwitch)
+                        {
+                            Log.Info("动态嵌入内容读DM寄存器需要进行消息转换Switch映射");
+                            readDm = SwitchGetMessage(readDm, item);
+                        }
+
+                        message = StaticMessage(message, itemKey, readDm);
+                        break;
+                    case "读R线圈状态":
+                        Log.Info("动态嵌入内容:执行读R线圈状态");
+                        break;
+                }
+            }
+            else if (item.GetMessageType == "HTTP")
+            {
+                var loadMesPage = Ioc.Default.GetRequiredService<LoadMesPage>();
+
+                LoadMesServer loadMesServer =
+                    new LoadMesServer(loadMesPage.LoadMesPageViewModel.LoadMesPageModel.MesPojoList);
+
+                string response = await loadMesServer.RunOne(item.HttpName, cts);
+                JObject jObject = JObject.Parse(response);
+                //获取内容
+                foreach (var httpObject in item.HttpObjects)
+                {
+                    string JsonKey = httpObject.JsonKey;
+                    var jToken = jObject.SelectToken(JsonKey);
+                    Log.Info($"解析 {httpObject.JsonKey}:\r\n {jToken}");
+                    message = StaticMessageSon(message, itemKey, httpObject.Name, jToken.ToString());
+                }
             }
         }
-
         return message;
     }
 
@@ -360,7 +450,7 @@ public class LoadMesServer
 
     #region Verity校验方法
 
-    public bool VerityMessage(string message,DynVerify verify)
+    public bool VerityMessage(string message, DynVerify verify)
     {
         switch (verify.Type)
         {
@@ -371,6 +461,7 @@ public class LoadMesServer
                     Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
+
                 if (message.Length == len1)
                 {
                     return true;
@@ -386,6 +477,7 @@ public class LoadMesServer
                     Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
+
                 if (message.Length != len2)
                 {
                     return true;
@@ -394,7 +486,7 @@ public class LoadMesServer
                 {
                     return false;
                 }
-              
+
             case "字符长度检测>":
                 bool tryParse3 = int.TryParse(verify.Value, out int len3);
                 if (!tryParse3)
@@ -402,6 +494,7 @@ public class LoadMesServer
                     Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
+
                 if (message.Length > len3)
                 {
                     return true;
@@ -417,6 +510,7 @@ public class LoadMesServer
                     Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
+
                 if (message.Length < len4)
                 {
                     return true;
@@ -432,6 +526,7 @@ public class LoadMesServer
                     Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
+
                 if (message.Length >= len5)
                 {
                     return true;
@@ -447,6 +542,7 @@ public class LoadMesServer
                     Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
+
                 if (message.Length <= len6)
                 {
                     return true;
@@ -475,7 +571,7 @@ public class LoadMesServer
                     return false;
                 }
             case "正则表达式检测":
-                
+
                 if (Regex.IsMatch(message, verify.Type))
                 {
                     return true;
@@ -484,7 +580,6 @@ public class LoadMesServer
                 {
                     return false;
                 }
-
         }
 
         return false;
@@ -494,30 +589,130 @@ public class LoadMesServer
 
     #region 方法集内容嵌入
 
-    private async Task<string> MethodMessage(string request, string itemValue)
+    private async Task<string> MethodMessage(string request, string itemValue, string itemMethodOtherValue)
     {
         if (itemValue == null)
         {
             return null;
         }
 
+        DateTime dateTime = DateTimeDispose(itemMethodOtherValue);
         switch (itemValue)
         {
             case "当前时间(yyyy-MM-dd HH:mm:ss)":
-                return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                break;
+                //判断时间是否需要处理
+
+                return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
             case "当前时间(yyyy/MM/dd HH:mm:ss)":
-                return DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
-                break;
+                return dateTime.ToString("yyyy/MM/dd HH:mm:ss");
             case "当前时间(yyyy-MM-dd)":
-                return DateTime.Now.ToString("yyyy-MM-dd");
-                break;
+                return dateTime.ToString("yyyy-MM-dd");
             case "当前时间(yyyy/MM/dd)":
-                return DateTime.Now.ToString("yyyy/MM/dd");
-                break;
+                return dateTime.ToString("yyyy/MM/dd");
             default:
                 return string.Empty;
         }
+    }
+
+    //规则-,5M,5D,5H,5m,5s
+    public DateTime DateTimeDispose(string itemMethodOtherValue)
+    {
+        if (itemMethodOtherValue == null)
+        {
+            return DateTime.Now;
+        }
+
+        //分割字符串
+        string[] strings = itemMethodOtherValue.Split(",");
+
+        //判断是-,还是+
+        //1.1 获取字符的长度
+        int length = itemMethodOtherValue.Length;
+        //1.2 获取到减号的位置
+        int subIndex = itemMethodOtherValue.IndexOf("-");
+        //1.3 获取到加号的位置
+        int addIndex = itemMethodOtherValue.IndexOf("+");
+
+        DateTime time = DateTime.Now;
+
+
+        foreach (var s in strings)
+        {
+            int Mindex = s.IndexOf("M");
+            int Dindex = s.IndexOf("D");
+            int Hindex = s.IndexOf("H");
+            int mindex = s.IndexOf("m");
+            int sindex = s.IndexOf("s");
+
+            if (subIndex == 0)
+            {
+                if (Mindex != -1)
+                {
+                    string substring = s.Substring(0, Mindex);
+                    int.TryParse(substring, out int mResult);
+                    time.AddMonths(-mResult);
+                }
+                else if (Dindex != -1)
+                {
+                    string substring = s.Substring(0, Dindex);
+                    int.TryParse(substring, out int mResult);
+                    time = time - TimeSpan.FromDays(mResult);
+                }
+                else if (Hindex != -1)
+                {
+                    string substring = s.Substring(0, Hindex);
+                    int.TryParse(substring, out int mResult);
+                    time = time - TimeSpan.FromHours(mResult);
+                }
+                else if (mindex != -1)
+                {
+                    string substring = s.Substring(0, mindex);
+                    int.TryParse(substring, out int mResult);
+                    time = time - TimeSpan.FromMinutes(mResult);
+                }
+                else if (sindex != -1)
+                {
+                    string substring = s.Substring(0, sindex);
+                    int.TryParse(substring, out int mResult);
+                    time = time - TimeSpan.FromSeconds(mResult);
+                }
+            }
+            else if (addIndex == 0)
+            {
+                if (Mindex != -1)
+                {
+                    string substring = s.Substring(0, Mindex);
+                    int.TryParse(substring, out int mResult);
+                    time.AddMonths(mResult);
+                }
+                else if (Dindex != -1)
+                {
+                    string substring = s.Substring(0, Dindex);
+                    int.TryParse(substring, out int mResult);
+                    time = time + TimeSpan.FromDays(mResult);
+                }
+                else if (Hindex != -1)
+                {
+                    string substring = s.Substring(0, Hindex);
+                    int.TryParse(substring, out int mResult);
+                    time = time + TimeSpan.FromHours(mResult);
+                }
+                else if (mindex != -1)
+                {
+                    string substring = s.Substring(0, mindex);
+                    int.TryParse(substring, out int mResult);
+                    time = time + TimeSpan.FromMinutes(mResult);
+                }
+                else if (sindex != -1)
+                {
+                    string substring = s.Substring(0, sindex);
+                    int.TryParse(substring, out int mResult);
+                    time = time + TimeSpan.FromSeconds(mResult);
+                }
+            }
+        }
+
+        return time;
     }
 
     #endregion
@@ -585,6 +780,7 @@ public class LoadMesServer
                 {
                     return null;
                 }
+
                 break;
 
             case "Tcp服务器":

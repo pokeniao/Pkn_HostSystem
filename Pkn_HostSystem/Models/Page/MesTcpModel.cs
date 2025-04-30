@@ -5,6 +5,7 @@ using Pkn_HostSystem.Pojo.Page.MESTcp;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Windows;
 
 
 namespace Pkn_HostSystem.Models.Page;
@@ -15,6 +16,10 @@ public partial class MesTcpModel : ObservableObject
     /// 用于操作当前连接
     /// </summary>
     [ObservableProperty] private ObservableCollectionExtended<NetWork> netWorkList;
+    /// <summary>
+    /// 用于操作Http连接
+    /// </summary>
+    [ObservableProperty] private ObservableCollection<LoadMesAddAndUpdateWindowModel> httpList;
     /// <summary>
     /// 动态嵌入内容数据,列表
     /// </summary>
@@ -41,6 +46,12 @@ public partial class MesTcpModel : ObservableObject
     /// 用于显示当前设置的页面
     /// </summary>
     [ObservableProperty] private bool showSwitchSet;
+
+
+    /// <summary>
+    /// 当前在设置的名称
+    /// </summary>
+    [ObservableProperty] private string setSwitchSetName;
     /// <summary>
     /// 用于显示当前选中的Switch属性
     /// </summary>
@@ -49,9 +60,34 @@ public partial class MesTcpModel : ObservableObject
     /// 用于显示设置的页面
     /// </summary>
     [ObservableProperty] private bool veritySet;
+
+ 
+
+    /// <summary>
+    /// 当前在设置的名称
+    /// </summary>
+    [ObservableProperty] private string setVeritySetName;
     /// <summary>
     /// 用于显示校验的配置列表
     /// </summary>
     [ObservableProperty] private ObservableCollection<DynVerify> verifyList;
+    /// <summary>
+    /// 用于显示设置的页面
+    /// </summary>
+    [ObservableProperty] private bool httpSet;
+ 
 
+    /// <summary>
+    /// 用于显示Http映射的值的配置
+    /// </summary>
+    [ObservableProperty] private ObservableCollection<GetHttpObject> httpObjects;
+    /// <summary>
+    /// 当前在设置的名称
+    /// </summary>
+    [ObservableProperty] private string setHttpObjectName;
+    /// <summary>
+    /// 用于设置UniformGrid的行列
+    /// </summary>
+    [ObservableProperty] private int setRows =1;
+    [ObservableProperty] private int setColumns =1;
 }
