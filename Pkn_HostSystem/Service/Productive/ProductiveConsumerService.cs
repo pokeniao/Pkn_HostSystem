@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.Server.Productive
 {
-    public class ProductiveConsumerServer
+    public class ProductiveConsumerService
     {
         /// <summary>
         /// 消费队列
@@ -40,10 +40,10 @@ namespace Pkn_HostSystem.Server.Productive
         /// </summary>
         public string ConsumeName { get; set; }
 
-        public LogBase<ProductiveConsumerServer> Log = new LogBase<ProductiveConsumerServer>();
+        public LogBase<ProductiveConsumerService> Log = new LogBase<ProductiveConsumerService>();
 
 
-        public ProductiveConsumerServer(BlockingCollection<List<ushort>> _Queue,
+        public ProductiveConsumerService(BlockingCollection<List<ushort>> _Queue,
             ObservableCollection<ProductiveDetailed> _MessageList, NetWork _ProductiveNetWork, NetWork _ConsumeNetWork, string _ConsumeName,string _ProductiveName)
         {
             Queue = _Queue;
@@ -73,7 +73,7 @@ namespace Pkn_HostSystem.Server.Productive
                         }
 
                         Queue.Add(ushorts);
-                        Log.Info($"{nameof(ProductiveConsumerServer)}--{ProductiveName}--向队列添加东西");
+                        Log.Info($"{nameof(ProductiveConsumerService)}--{ProductiveName}--向队列添加东西");
                         break;
                     case "ModbusRcp":
                         break;
@@ -121,7 +121,7 @@ namespace Pkn_HostSystem.Server.Productive
                                         ushort.Parse(detailed.ConsumerStartAddress), loadUshorts.ToArray());
                                 }
 
-                                Log.Info($"{nameof(ProductiveConsumerServer)}--{ConsumeName}--消费一条消息");
+                                Log.Info($"{nameof(ProductiveConsumerService)}--{ConsumeName}--消费一条消息");
                                 break;
                             }
 

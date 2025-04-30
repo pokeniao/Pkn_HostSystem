@@ -61,7 +61,4 @@
 
 		</Compile>
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Server\Productive\" />
-	</ItemGroup>
 </Project>

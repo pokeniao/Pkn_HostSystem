@@ -134,17 +134,17 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
 
             //4.创建生产者消费者服务
-            ProductiveConsumerServer productiveConsumerServer =
-                new ProductiveConsumerServer(item.Queue, item.MessageList, netWorkProducer, netWorkConsumer,
+            ProductiveConsumerService productiveConsumerService =
+                new ProductiveConsumerService(item.Queue, item.MessageList, netWorkProducer, netWorkConsumer,
                     item.ConsumerName, item.ProducerName);
             //5. 创建单利任务
             item.TaskProductive = new Lazy<Task>(() => RunTrigger(item.ctsProductive, netWorkProducer,
                 item.ProductiveStationAddress, item.ProductiveStartAddress, item.ProductiveTriggerValue,
-                item.ProductiveTriggerCyc, true, productiveConsumerServer));
+                item.ProductiveTriggerCyc, true, productiveConsumerService));
             item.TaskConsumer = new Lazy<Task>(() => RunTrigger(item.ctsConsumer, netWorkConsumer,
                 item.ConsumerStationAddress, item.ConsumerStartAddress, item.ConsumerTriggerValue,
-                item.ConsumerTriggerCyc, false, productiveConsumerServer));
-            item.ReConnectionTask = new Lazy<Task>(() => ReConnection(item.ReConnectionCts, item, productiveConsumerServer));
+                item.ConsumerTriggerCyc, false, productiveConsumerService));
+            item.ReConnectionTask = new Lazy<Task>(() => ReConnection(item.ReConnectionCts, item, productiveConsumerService));
             //6. 运行
             Task task = item.TaskProductive.Value;
             Task task2 = item.TaskConsumer.Value;
@@ -153,7 +153,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         }
 
 
-        public async Task ReConnection(CancellationTokenSource cts, Productive item, ProductiveConsumerServer productiveConsumerServer)
+        public async Task ReConnection(CancellationTokenSource cts, Productive item, ProductiveConsumerService productiveConsumerService)
         {
             bool netWorkProducerReConnection = false;
             bool netWorkConsumerReConnection = false;
@@ -208,21 +208,21 @@ namespace Pkn_HostSystem.ViewModels.Page
                 //需要进行重连
                 if (netWorkProducerReConnection == true && netWorkProducer != null)
                 {
-                    productiveConsumerServer.ProductiveNetWork = netWorkProducer;
+                    productiveConsumerService.ProductiveNetWork = netWorkProducer;
 
                     item.TaskProductive = new Lazy<Task>(() => RunTrigger(item.ctsProductive, netWorkProducer,
                         item.ProductiveStationAddress, item.ProductiveStartAddress, item.ProductiveTriggerValue,
-                        item.ProductiveTriggerCyc, true, productiveConsumerServer));
+                        item.ProductiveTriggerCyc, true, productiveConsumerService));
                     _ = item.TaskProductive.Value;
                     netWorkProducerReConnection = false;
                 }
 
                 if (netWorkConsumerReConnection == true && netWorkConsumer != null)
                 {
-                    productiveConsumerServer.ConsumeNetWork = netWorkConsumer;
+                    productiveConsumerService.ConsumeNetWork = netWorkConsumer;
                     item.TaskConsumer = new Lazy<Task>(() => RunTrigger(item.ctsConsumer, netWorkConsumer,
                         item.ConsumerStationAddress, item.ConsumerStartAddress, item.ConsumerTriggerValue,
-                        item.ConsumerTriggerCyc, false, productiveConsumerServer));
+                        item.ConsumerTriggerCyc, false, productiveConsumerService));
                     _ = item.TaskConsumer.Value;
                     netWorkConsumerReConnection = false;
                 }
@@ -233,7 +233,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         public async Task RunTrigger(CancellationTokenSource cts, NetWork netWork, string stationAddress,
             string startAddress, string triggerValue, string triggerCyc, bool isProductive,
-            ProductiveConsumerServer productiveConsumerServer)
+            ProductiveConsumerService productiveConsumerService)
         {
             //1.启动后消息触发循环
             while (!cts.Token.IsCancellationRequested)
@@ -260,11 +260,11 @@ namespace Pkn_HostSystem.ViewModels.Page
                             //发送消息队列
                             if (isProductive)
                             {
-                                success = await productiveConsumerServer.Production();
+                                success = await productiveConsumerService.Production();
                             }
                             else
                             {
-                                success = await productiveConsumerServer.Consume(cts);
+                                success = await productiveConsumerService.Consume(cts);
                             }
 
                             //完成后给触发位停止

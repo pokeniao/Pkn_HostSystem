@@ -24,14 +24,14 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 {
     public LoadMesPageModel LoadMesPageModel { get; set; }
 
-    public LoadMesServer LoadMesServer { get; set; }
+    public LoadMesService LoadMesService { get; set; }
     public SnackbarService SnackbarService { get; set; }
 
 
     public LogBase<LoadMesPageViewModel> Log;
 
     //手动发送Http请求
-    private LoadMesServer loadMesServer;
+    private LoadMesService _loadMesService;
 
     public LoadMesPageViewModel()
     {
@@ -51,7 +51,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         SnackbarService = new SnackbarService();
         Log = new LogBase<LoadMesPageViewModel>(SnackbarService);
-        loadMesServer = new LoadMesServer(LoadMesPageModel.MesPojoList);
+        _loadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
         // 启用监听
         IsActive = true;
     }
@@ -123,7 +123,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     [RelayCommand]
     public async Task JogHttpButton(LoadMesPage page)
     {
-        bool succeed = await loadMesServer.RunAll();
+        bool succeed = await _loadMesService.RunAll();
 
         if (succeed)
         {
@@ -191,14 +191,14 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             //进行一次数据组装
             //从MesServer中取出绑定好的item
-            LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+            LoadMesAddAndUpdateWindowModel item = _loadMesService.SelectByName(model.Name);
             //消息体打包
-            var request = await loadMesServer.PackRequest(item.Name, model.cts);
+            var request = await _loadMesService.PackRequest(item.Name, model.cts);
             //判断一下是否需要发送Http
             if (model.HttpNeed)
             {
                 //发送Http请求
-                await loadMesServer.RunOne(model.Name, model.cts);
+                await _loadMesService.RunOne(model.Name, model.cts);
             }
             else
             {
@@ -283,9 +283,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                             {
                                 Log.Info($"{model.Name} 触发型modbusTcp,已被触发");
                                 bool succeed = false;
-                                LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+                                LoadMesAddAndUpdateWindowModel item = _loadMesService.SelectByName(model.Name);
                                 Log.Info($"{model.Name}:触发型modbusTcp,正在组装数据");
-                                string request = await loadMesServer.PackRequest(item.Name, model.cts);
+                                string request = await _loadMesService.PackRequest(item.Name, model.cts);
                                 if (request == null)
                                 {
                                     succeed = false;
@@ -298,7 +298,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                     {
                                         Log.Info($"{model.Name} 触发型modbusTcp,发送Http请求中");
                                         //手动发送Http请求
-                                        string response = await loadMesServer.RunOne(model.Name, model.cts);
+                                        string response = await _loadMesService.RunOne(model.Name, model.cts);
                                         if (response == null)
                                         {
                                             succeed = false;
@@ -343,7 +343,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                             if (IsTrigger(model.TriggerMessage, currentMessage2))
                             {
                                 //手动发送Http请求
-                                string response = await loadMesServer.RunOne(model.Name, model.cts);
+                                string response = await _loadMesService.RunOne(model.Name, model.cts);
                                 bool succeed = false;
 
                                 if (response == null)
@@ -359,9 +359,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                 if (model.LocalSave)
                                 {
                                     //从MesServer中取出绑定好的item
-                                    LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
+                                    LoadMesAddAndUpdateWindowModel item = _loadMesService.SelectByName(model.Name);
                                     //消息体打包
-                                    var request = await loadMesServer.PackRequest(item.Name, model.cts);
+                                    var request = await _loadMesService.PackRequest(item.Name, model.cts);
                                     if (request == null)
                                     {
                                         succeed = false;
@@ -406,8 +406,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     private async Task<string> ModbusTcpTrigger(LoadMesAddAndUpdateWindowModel model)
     {
         //获取当前通讯对象
-        LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
-        string key = loadMesServer.getNetKey(item.TriggerConnectName);
+        LoadMesAddAndUpdateWindowModel item = _loadMesService.SelectByName(model.Name);
+        string key = _loadMesService.getNetKey(item.TriggerConnectName);
         var netWork = GlobalMannager.NetWorkDictionary.Lookup(key).Value;
         //获得ModBase对象
         ModbusBase modbusBase = netWork.ModbusBase;
@@ -434,8 +434,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         try
         {
             //获取当前通讯对象
-            LoadMesAddAndUpdateWindowModel item = loadMesServer.SelectByName(model.Name);
-            string key = loadMesServer.getNetKey(item.TriggerConnectName);
+            LoadMesAddAndUpdateWindowModel item = _loadMesService.SelectByName(model.Name);
+            string key = _loadMesService.getNetKey(item.TriggerConnectName);
             var netWork = GlobalMannager.NetWorkDictionary.Lookup(key).Value;
             //获得ModBase对象
             ModbusBase modbusBase = netWork.ModbusBase;
