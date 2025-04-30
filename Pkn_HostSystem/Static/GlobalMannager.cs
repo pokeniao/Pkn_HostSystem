@@ -1,6 +1,7 @@
 ﻿using DynamicData;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
+using Pkn_HostSystem.Service.UserDefined;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Reflection;
@@ -46,4 +47,5 @@ public static class GlobalMannager
 
         DynDictionary = new SourceCache<LoadMesDynContent, string>(n => n.Name);
     }
+
 }

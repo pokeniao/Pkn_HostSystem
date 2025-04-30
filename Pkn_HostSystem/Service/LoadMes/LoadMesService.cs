@@ -11,24 +11,26 @@ using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using RestSharp;
+using System.CodeDom;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
 
 namespace Pkn_HostSystem.Server.LoadMes;
 
-public class LoadMesServer
+public class LoadMesService
 {
     private ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
 
-    private MesLogBase<LoadMesServer> Log;
+    private MesLogBase<LoadMesService> Log;
 
-    public LoadMesServer(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList)
+    public LoadMesService(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList)
     {
         this.mesPojoList = mesPojoList;
-        Log = new MesLogBase<LoadMesServer>();
+        Log = new MesLogBase<LoadMesService>();
     }
 
 
@@ -106,7 +108,7 @@ public class LoadMesServer
         //得到消息体
         var request = await PackRequest(item.Name, cts);
         //日志显示发送内容
-        Log.Info($"{nameof(LoadMesServer)}--SendHttp--{item.Name}--发送内容: \r\n {request}");
+        Log.Info($"{nameof(LoadMesService)}--SendHttp--{item.Name}--发送内容: \r\n {request}");
         if (request != null)
         {
             //创建连接
@@ -323,14 +325,14 @@ public class LoadMesServer
     {
         if (DynName == null)
         {
-            Log.Info($"{nameof(LoadMesServer)}--正在动态嵌入内容的时候,动态获取名未设置(DynName) ");
+            Log.Info($"{nameof(LoadMesService)}--正在动态嵌入内容的时候,动态获取名未设置(DynName) ");
             return null;
         }
 
         var lookup = GlobalMannager.DynDictionary.Lookup(DynName);
         if (!lookup.HasValue)
         {
-            Log.Info($"{nameof(LoadMesServer)}--正在动态嵌入内容的时候,--{DynName}--从动态字典DynDictionary找不到,返回空字符串");
+            Log.Info($"{nameof(LoadMesService)}--正在动态嵌入内容的时候,--{DynName}--从动态字典DynDictionary找不到,返回空字符串");
             return string.Empty;
         }
 
@@ -338,7 +340,7 @@ public class LoadMesServer
         var message = mesTcpPojo.Message;
         if (message == null)
         {
-            Log.Info($"{nameof(LoadMesServer)} 从动态字典DynDictionary找到的消息内容Message为Null");
+            Log.Info($"{nameof(LoadMesService)} 从动态字典DynDictionary找到的消息内容Message为Null");
             return string.Empty;
         }
 
@@ -428,15 +430,17 @@ public class LoadMesServer
             {
                 var loadMesPage = Ioc.Default.GetRequiredService<LoadMesPage>();
 
-                LoadMesServer loadMesServer =
-                    new LoadMesServer(loadMesPage.LoadMesPageViewModel.LoadMesPageModel.MesPojoList);
+                LoadMesService loadMesService =
+                    new LoadMesService(loadMesPage.LoadMesPageViewModel.LoadMesPageModel.MesPojoList);
 
-                string response = await loadMesServer.RunOne(item.HttpName, cts);
+                string response = await loadMesService.RunOne(item.HttpName, cts);
                 JObject jObject = JObject.Parse(response);
                 //获取内容
                 foreach (var httpObject in item.HttpObjects)
                 {
                     string JsonKey = httpObject.JsonKey;
+                    bool  RunUserDefined = false;
+                    //判断是否是自定义的JsonKey
                     var jToken = jObject.SelectToken(JsonKey);
                     Log.Info($"解析 {httpObject.JsonKey}:\r\n {jToken}");
                     message = StaticMessageSon(message, itemKey, httpObject.Name, jToken.ToString());
@@ -458,7 +462,7 @@ public class LoadMesServer
                 bool tryParse1 = int.TryParse(verify.Value, out int len1);
                 if (!tryParse1)
                 {
-                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -474,7 +478,7 @@ public class LoadMesServer
                 bool tryParse2 = int.TryParse(verify.Value, out int len2);
                 if (!tryParse2)
                 {
-                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -491,7 +495,7 @@ public class LoadMesServer
                 bool tryParse3 = int.TryParse(verify.Value, out int len3);
                 if (!tryParse3)
                 {
-                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -507,7 +511,7 @@ public class LoadMesServer
                 bool tryParse4 = int.TryParse(verify.Value, out int len4);
                 if (!tryParse4)
                 {
-                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -523,7 +527,7 @@ public class LoadMesServer
                 bool tryParse5 = int.TryParse(verify.Value, out int len5);
                 if (!tryParse5)
                 {
-                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -539,7 +543,7 @@ public class LoadMesServer
                 bool tryParse6 = int.TryParse(verify.Value, out int len6);
                 if (!tryParse6)
                 {
-                    Log.Info($"{nameof(LoadMesServer)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
