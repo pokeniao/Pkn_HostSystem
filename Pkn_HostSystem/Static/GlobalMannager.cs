@@ -13,6 +13,7 @@ namespace Pkn_HostSystem.Static;
 /// </summary>
 public static class GlobalMannager
 {
+
     /// <summary>
     /// 当前全局字典
     /// </summary>

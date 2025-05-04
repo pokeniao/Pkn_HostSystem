@@ -52,8 +52,13 @@ namespace Pkn_HostSystem.Views.Pages
 
         private void CA_ConnectPLC_Click(object sender, System.Windows.RoutedEventArgs e)
         {
+            //所有卡片消失
             CA_ConnectPLC.Visibility = Visibility.Collapsed;
+            CA_bydOrderSelect.Visibility= Visibility.Collapsed;
+
+            //展示一个页面,其他消失
             border.Visibility = Visibility.Visible;
+            OrderBorder.Visibility= Visibility.Collapsed;
             Storyboard? storyboard = FindResource("OPENcontentPLC") as Storyboard;
 
             storyboard?.Begin();
@@ -68,8 +73,49 @@ namespace Pkn_HostSystem.Views.Pages
                     await Task.Delay(300);
                     Dispatcher.Invoke(new Action(() =>
                     {
+
                         border.Visibility = Visibility.Collapsed;
+
+                        //显示所有卡片
                         CA_ConnectPLC.Visibility = Visibility.Visible;
+                        CA_bydOrderSelect.Visibility = Visibility.Visible;
+
+                    }));
+                }
+            );
+        }
+
+        #endregion
+
+        #region 比亚迪工单连接卡片的播放动画
+        private void CA_bydOrderSelect_OnClick(object sender, RoutedEventArgs e)
+        {
+            //所有卡片消失
+            CA_ConnectPLC.Visibility = Visibility.Hidden;
+            CA_bydOrderSelect.Visibility = Visibility.Collapsed;
+
+            //展示一个页面,其他消失
+            OrderBorder.Visibility = Visibility.Visible;
+            border.Visibility = Visibility.Collapsed;
+            Storyboard? storyboard = FindResource("OpenBydOrder") as Storyboard;
+            storyboard?.Begin();
+        }
+        private void ButtonBase_OnClick2(object sender, RoutedEventArgs e)
+        {
+            Storyboard? storyboard = FindResource("CloseBydOrder") as Storyboard;
+            storyboard?.Begin();
+            Task.Run(async () =>
+                {
+                    await Task.Delay(300);
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+
+                        OrderBorder.Visibility = Visibility.Collapsed;
+
+                        //显示所有卡片
+                        CA_ConnectPLC.Visibility = Visibility.Visible;
+                        CA_bydOrderSelect.Visibility = Visibility.Visible;
+
                     }));
                 }
             );
@@ -147,5 +193,7 @@ namespace Pkn_HostSystem.Views.Pages
             ObservableCollection<string> list = (ObservableCollection<string>)obj;
             list.Clear();
         }
+
+
     }
 }

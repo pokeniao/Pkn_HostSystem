@@ -1,4 +1,4 @@
-﻿<Page x:Class="Pkn_HostSystem.Views.Pages.HomePage"
+﻿<Page x:Name="page" x:Class="Pkn_HostSystem.Views.Pages.HomePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -46,7 +46,74 @@
         </Storyboard>
 
         <converter:NewRowAllowButtonConverter x:Key="HomePageRunButtonConverter" />
-
+        <!-- 展开动画 -->
+        <!-- 收缩动画 -->
+        <Storyboard x:Key="OpenBydOrder">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.197"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.52"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-71.75"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="230.5"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3,3,3,3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0,0,0,0"/>
+            </ThicknessAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid" Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame  KeyTime="00:00:00" Value="0.455166"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid" Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.181159"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="CloseBydOrder">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3,3,3,3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0,0,0,0"/>
+            </ThicknessAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid" Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame  KeyTime="00:00:00" Value="0.455166"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid" Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.181159"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </Page.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -77,13 +144,32 @@
                         <ui:TextBlock Grid.Column="1" Text="连接PLC" VerticalAlignment="Center" />
                     </Grid>
                 </ui:CardAction>
+                <ui:CardAction
+                    Name="CA_bydOrderSelect"
+                    Width="180"
+                    Height="102"
+                    Margin="20,0"
+                    IsChevronVisible="False"
+                    VerticalAlignment="Stretch" Click="CA_bydOrderSelect_OnClick">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Image
+                            Width="40"
+                            Margin="0"
+                            Source="../../Assets/工单.png" />
+                        <ui:TextBlock Grid.Column="1" Text="工单选择" VerticalAlignment="Center" />
+                    </Grid>
+                </ui:CardAction>
                 <Border x:Name="border" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                         Width="180"
                         CornerRadius="10"
                         Opacity="0"
                         Visibility="Collapsed"
-                        Height="102" BorderThickness="1" RenderTransformOrigin="0.5,0.5">
+                        Height="102" BorderThickness="1">
                     <Border.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform />
@@ -225,7 +311,9 @@
                                                                    VerticalAlignment="Center" />
                                                     </Border>
 
-                                                    <TextBox  Width="250"     Text="{Binding ModbusToolModel.ModbusTcp_Ip_select ,UpdateSourceTrigger=PropertyChanged}" ></TextBox>
+                                                    <TextBox Width="250"
+                                                             Text="{Binding ModbusToolModel.ModbusTcp_Ip_select ,UpdateSourceTrigger=PropertyChanged}">
+                                                    </TextBox>
                                                     <!-- <ComboBox Name="cbb_modbus_tpc_ip" Width="250" -->
                                                     <!--           ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}" -->
                                                     <!--           SelectedIndex="0" -->
@@ -345,30 +433,107 @@
                         </Grid>
                     </Grid>
                 </Border>
+                <Border
+                    x:Name="OrderBorder" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                    Width="180"
+                    CornerRadius="10"
+                    Visibility="Collapsed"
+                    Opacity="0"
+                    Height="102" BorderThickness="1" RenderTransformOrigin="0.5,0.5" >
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Border.RenderTransform>
+
+                    <Grid x:Name="grid"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Grid.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Grid.LayoutTransform>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="0.3*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel >
+                            <WrapPanel>
+                                <TextBlock Text="当前工单" />
+                                <ComboBox Width="100" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBlock Text="产线名称" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBlock Text="产线名称" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBlock Text="产线名称" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBlock Text="产线名称" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBlock Text="产线名称" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBlock Text="产线名称" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBlock Text="产线名称" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBlock Text="产线名称" />
+                            </WrapPanel>
+                        </StackPanel>
+                        <Grid Grid.Row="1">
+                            <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
+                                <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick2" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Border>
             </WrapPanel>
         </Grid>
         <Grid Grid.Column="1" Cursor="Arrow">
             <StackPanel>
                 <ui:TextBlock FontTypography="Subtitle" Text="日志" Margin="30 10" />
-                <Border Margin="30 0"
+                <Border x:Name="border1" Margin="30 0"
                         Height="550"
                         BorderThickness="2"
                         CornerRadius="10"
                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
-                    <ListBox Name="LogListBox"
+                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}" RenderTransformOrigin="0.5,0.5">
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                    <ListBox x:Name="LogListBox"
 
-                             ItemsSource="{Binding HomePageModel.LogListBox ,UpdateSourceTrigger=PropertyChanged}" />
+                             ItemsSource="{Binding HomePageModel.LogListBox, UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
 
                 <StackPanel>
                     <WrapPanel HorizontalAlignment="Right">
-                        <Button Content="清空日志" Click="ClearLog"/>
+                        <Button Content="清空日志" Click="ClearLog" />
                         <Button Content="滚动到底部" Command="{Binding ScrollToBottomCommand}"
-                                CommandParameter="{Binding  ElementName=LogListBox}" 
+                                CommandParameter="{Binding ElementName=LogListBox}"
                                 Margin="30 0" />
                     </WrapPanel>
-                  
+
                 </StackPanel>
             </StackPanel>
 

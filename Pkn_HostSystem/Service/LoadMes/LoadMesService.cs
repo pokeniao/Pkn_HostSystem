@@ -179,6 +179,7 @@ public class LoadMesService
                 {
                     item.Response = response.Content;
                 }
+
                 item.Response = TryFormatJson(item.Response);
 
                 Log.Info($"返回消息response结果为失败,状态码:{response.StatusCode}");
@@ -264,11 +265,14 @@ public class LoadMesService
                     break;
             }
         }
+
         return request;
     }
+
     #endregion
 
     #region 静态嵌入和动态嵌入内容
+
     /// <summary>
     /// 嵌入静态内容
     /// </summary>
@@ -439,15 +443,49 @@ public class LoadMesService
                 foreach (var httpObject in item.HttpObjects)
                 {
                     string JsonKey = httpObject.JsonKey;
-                    bool  RunUserDefined = false;
+                    
                     //判断是否是自定义的JsonKey
-                    var jToken = jObject.SelectToken(JsonKey);
+                    var userDefined = RunUserDefined(JsonKey);
+
+                    string jToken = null;
+                    if (userDefined != null)
+                    {
+                        jToken = userDefined;
+                    }
+                    else
+                    {
+                         jToken = jObject.SelectToken(JsonKey).ToString();
+                    }
+
+               
                     Log.Info($"解析 {httpObject.JsonKey}:\r\n {jToken}");
-                    message = StaticMessageSon(message, itemKey, httpObject.Name, jToken.ToString());
+                    message = StaticMessageSon(message, itemKey, httpObject.Name, jToken);
                 }
             }
         }
+
         return message;
+    }
+    /// <summary>
+    /// 用户自定义的
+    /// </summary>
+    /// <param name="JsonKey"></param>
+    /// <returns></returns>
+    public string RunUserDefined(string JsonKey)
+    {
+        switch (JsonKey)
+        {
+            case "byd:Base003_OrderList:scheduleCode":
+
+                return null;
+            case "byd:Base003_OrderList:orderCode":
+
+
+                return null;
+            default:
+                return null;
+
+        }
     }
 
     #endregion
