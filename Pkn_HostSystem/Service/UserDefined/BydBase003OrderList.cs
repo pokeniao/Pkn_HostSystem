@@ -1,22 +1,28 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
+using Pkn_HostSystem.Models.Pojo;
 
 namespace Pkn_HostSystem.Service.UserDefined
 {
     public class PppBase003OrderList
     {
-        public string Run(JObject jObject)
+        public PppOrderList PppOrderList { get; set; }
+
+
+        public PppBase003OrderList()
         {
-            var items = jObject.SelectToken("data") as JArray;
-
-            if (items != null)
+            //从IOC容器中获取
+            PppOrderList = Ioc.Default.GetRequiredService<PppOrderList>();
+            //获取不到在Ioc容器中创建
+            if (PppOrderList == null)
             {
-                foreach (var item in items)
-                {
-       
-
-                }
+                Ioc.Default.ConfigureServices(
+                    new ServiceCollection().AddSingleton<PppOrderList>().BuildServiceProvider()
+                );
+                PppOrderList = Ioc.Default.GetRequiredService<PppOrderList>();
             }
-            return null;
         }
+
     }
 }

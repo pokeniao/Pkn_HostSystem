@@ -21,6 +21,7 @@
 
 	<ItemGroup>
 		<None Remove="Assets\plc2.ico" />
+		<None Remove="Assets\工单.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -45,6 +46,7 @@
 
 	<ItemGroup>
 		<Resource Include="Assets\plc2.ico" />
+		<Resource Include="Assets\工单.png" />
 	</ItemGroup>
 
 	<ItemGroup>
