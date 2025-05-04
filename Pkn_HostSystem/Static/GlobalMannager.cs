@@ -40,12 +40,8 @@ public static class GlobalMannager
         GlobalDictionary = new ConcurrentDictionary<string, object>();
         GlobalDictionary.TryAdd("LogListBox", new ObservableCollection<string>());
         GlobalDictionary.TryAdd("MesLogListBox", new ObservableCollection<string>());
-
-
         NetWorkDictionary =
             new SourceCache<NetWork, string>(n => n.NetWorkId);
-
-
         DynDictionary = new SourceCache<LoadMesDynContent, string>(n => n.Name);
     }
 

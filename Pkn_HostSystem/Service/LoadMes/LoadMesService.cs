@@ -8,6 +8,7 @@ using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
+using Pkn_HostSystem.Service.UserDefined;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using RestSharp;
@@ -73,8 +74,11 @@ public class LoadMesService
     #region 触发Http请求
 
     /// <summary>
-    /// 触发单个请求
+    ///  触发单个请求
     /// </summary>
+    /// <param name="Name">HTTP请求名称</param>
+    /// <param name="cts"></param>
+    /// <returns></returns>
     public async Task<string> RunOne(string Name, CancellationTokenSource cts)
     {
         Log.Info($"RunOne执行,Name:{Name}");
@@ -434,18 +438,19 @@ public class LoadMesService
             {
                 var loadMesPage = Ioc.Default.GetRequiredService<LoadMesPage>();
 
-                LoadMesService loadMesService =
-                    new LoadMesService(loadMesPage.LoadMesPageViewModel.LoadMesPageModel.MesPojoList);
-
-                string response = await loadMesService.RunOne(item.HttpName, cts);
+                string response = await RunOne(item.HttpName, cts);
                 JObject jObject = JObject.Parse(response);
                 //获取内容
                 foreach (var httpObject in item.HttpObjects)
                 {
                     string JsonKey = httpObject.JsonKey;
-                    
                     //判断是否是自定义的JsonKey
-                    var userDefined = RunUserDefined(JsonKey);
+                    var userDefined = RunUserDefined(JsonKey,out bool isReturn);
+                    if (isReturn == true)
+                    {
+                        Log.Info("未选择工单!请选择工单后操作");
+                        return null;
+                    }
 
                     string jToken = null;
                     if (userDefined != null)
@@ -456,14 +461,11 @@ public class LoadMesService
                     {
                          jToken = jObject.SelectToken(JsonKey).ToString();
                     }
-
-               
                     Log.Info($"解析 {httpObject.JsonKey}:\r\n {jToken}");
                     message = StaticMessageSon(message, itemKey, httpObject.Name, jToken);
                 }
             }
         }
-
         return message;
     }
     /// <summary>
@@ -471,20 +473,36 @@ public class LoadMesService
     /// </summary>
     /// <param name="JsonKey"></param>
     /// <returns></returns>
-    public string RunUserDefined(string JsonKey)
+    public string RunUserDefined(string JsonKey ,out bool noReturn)
     {
         switch (JsonKey)
         {
             case "byd:Base003_OrderList:scheduleCode":
+                string scheduleCode = new BydBase003OrderList().DynCurrentOrder("scheduleCode");
+                if (scheduleCode == null)
+                {
+                    noReturn = true;
+                }
+                else
+                {
+                    noReturn = false;
 
-                return null;
+                }
+                return scheduleCode;
             case "byd:Base003_OrderList:orderCode":
-
-
-                return null;
+                string orderCode = new BydBase003OrderList().DynCurrentOrder("orderCode");
+                if (orderCode == null)
+                {
+                    noReturn = true;
+                }
+                else
+                {
+                    noReturn = false;
+                }
+                return orderCode;
             default:
+                noReturn = false;
                 return null;
-
         }
     }
 

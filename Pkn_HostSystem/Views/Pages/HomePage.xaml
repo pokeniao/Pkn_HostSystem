@@ -465,34 +465,52 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="0.3*" />
                         </Grid.RowDefinitions>
-                        <StackPanel >
-                            <WrapPanel>
-                                <TextBlock Text="当前工单" />
-                                <ComboBox Width="100" />
+                        <StackPanel Margin="50,10">
+                            <WrapPanel Margin="0,10,0,0">
+                                <TextBlock Text="当前工单" Margin="10"/>
+                                <ComboBox Width="150"
+                                          SelectedValue="{Binding HomePageModel.CurrentSelectBydOrder}"
+                                          SelectionChanged="SelectedBydOrder"
+                                          DropDownOpened="SelectBydOrderDown"
+                                          ItemsSource="{Binding HomePageModel.BydOrderLists}"
+                                          DisplayMemberPath="scheduleCode"/>
                             </WrapPanel>
-                            <WrapPanel>
-                                <TextBlock Text="产线名称" />
+                            <WrapPanel Margin="0,10,0,0">
+                                <TextBlock Text="HTTP请求:" Margin="10"/>
+                                <ComboBox Width="150"
+                                          SelectedValue="{Binding HomePageModel.HttpName}"
+                                          ItemsSource="{Binding HomePageModel.HttpLists}"
+                                          DisplayMemberPath="Name"
+                                          SelectedValuePath="Name"
+                                          />
                             </WrapPanel>
-                            <WrapPanel>
-                                <TextBlock Text="产线名称" />
+                            <WrapPanel  Margin="10">
+                                <TextBlock Text="产线名称: "/>
+                                <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.lineName}"/>
                             </WrapPanel>
-                            <WrapPanel>
-                                <TextBlock Text="产线名称" />
+                            <WrapPanel Margin="10">
+                                <TextBlock Text="产品名称: " />
+                                <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.productName}"/>
                             </WrapPanel>
-                            <WrapPanel>
-                                <TextBlock Text="产线名称" />
+                            <WrapPanel Margin="10">
+                                <TextBlock Text="工单编码: "  />
+                                <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.orderCode}"/>
                             </WrapPanel>
-                            <WrapPanel>
-                                <TextBlock Text="产线名称" />
+                            <WrapPanel Margin="10">
+                                <TextBlock Text="排程编码: "  />
+                                <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.scheduleCode}"/>
                             </WrapPanel>
-                            <WrapPanel>
-                                <TextBlock Text="产线名称" />
+                            <WrapPanel Margin="10">
+                                <TextBlock Text="排程状态编码: "  />
+                                <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.scheduleStatus}"/>
                             </WrapPanel>
-                            <WrapPanel>
-                                <TextBlock Text="产线名称" />
+                            <WrapPanel Margin="10">
+                                <TextBlock Text="计划开始时间: "  />
+                                <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.startTime}"/>
                             </WrapPanel>
-                            <WrapPanel>
-                                <TextBlock Text="产线名称" />
+                            <WrapPanel Margin="10">
+                                <TextBlock Text="计划结束时间: "  />
+                                <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.endTime}"/>
                             </WrapPanel>
                         </StackPanel>
                         <Grid Grid.Row="1">
@@ -522,7 +540,6 @@
                         </TransformGroup>
                     </Border.RenderTransform>
                     <ListBox x:Name="LogListBox"
-
                              ItemsSource="{Binding HomePageModel.LogListBox, UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
 

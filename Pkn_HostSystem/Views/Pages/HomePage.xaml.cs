@@ -4,7 +4,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Pojo.Page.HomePage;
+using Pkn_HostSystem.Service.UserDefined;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
@@ -123,7 +125,7 @@ namespace Pkn_HostSystem.Views.Pages
 
         #endregion
 
-        #region 下拉Combobox
+        #region 连接PLC下拉Combobox
 
         private void ComboBox_DropDownOpened(object sender, EventArgs e)
         {
@@ -187,6 +189,7 @@ namespace Pkn_HostSystem.Views.Pages
 
         #endregion
 
+        #region 清除日志
         private void ClearLog(object sender, RoutedEventArgs e)
         {
             GlobalMannager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
@@ -194,6 +197,37 @@ namespace Pkn_HostSystem.Views.Pages
             list.Clear();
         }
 
+
+
+        #endregion
+
+        #region 比亚迪工单Combobox
+        /// <summary>
+        /// 下拉Combobox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void SelectBydOrderDown(object? sender, EventArgs e)
+        {
+            //进行一次查询
+            string httpName = HomePageViewModel.HomePageModel.HttpName;
+
+            var bydBase003OrderList = new BydBase003OrderList();
+            var bydOrderLists = await bydBase003OrderList.GetBydOrderLists(httpName,new CancellationTokenSource());
+            //返回结果,显示到页面Combobox提供选择
+            HomePageViewModel.HomePageModel.BydOrderLists = bydOrderLists;
+        }
+
+        private void SelectedBydOrder(object sender, SelectionChangedEventArgs e)
+        {
+            //选中结果赋值到显示区域
+            ComboBox? comboBox = sender as ComboBox;
+            var orderList = comboBox.SelectedValue as BydOrderList;
+            HomePageViewModel.HomePageModel.CurrentSelectBydOrder = orderList;
+        }
+
+
+        #endregion
 
     }
 }
