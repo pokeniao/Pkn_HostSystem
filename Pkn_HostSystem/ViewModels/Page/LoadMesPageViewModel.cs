@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Message;
@@ -41,7 +42,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             GlobalMannager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
             LoadMesPageModel = new LoadMesPageModel()
             {
-                MesPojoList = [], ReturnMessageList = (ObservableCollection<string>)value
+                MesPojoList = [], 
+                ReturnMessageList = (ObservableCollection<string>)value
             };
         }
         else
@@ -51,7 +53,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         SnackbarService = new SnackbarService();
         Log = new LogBase<LoadMesPageViewModel>(SnackbarService);
-        _loadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
+        
+         _loadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
         // 启用监听
         IsActive = true;
     }
