@@ -542,7 +542,6 @@
                     <ListBox x:Name="LogListBox"
                              ItemsSource="{Binding HomePageModel.LogListBox, UpdateSourceTrigger=PropertyChanged}" />
                 </Border>
-
                 <StackPanel>
                     <WrapPanel HorizontalAlignment="Right">
                         <Button Content="清空日志" Click="ClearLog" />
@@ -550,7 +549,6 @@
                                 CommandParameter="{Binding ElementName=LogListBox}"
                                 Margin="30 0" />
                     </WrapPanel>
-
                 </StackPanel>
             </StackPanel>
 

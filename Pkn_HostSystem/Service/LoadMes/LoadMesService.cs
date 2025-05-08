@@ -79,9 +79,9 @@ public class LoadMesService
     /// <param name="Name">HTTP请求名称</param>
     /// <param name="cts"></param>
     /// <returns></returns>
-    public async Task<string> RunOne(string Name, CancellationTokenSource cts)
+    public async Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts)
     {
-        Log.Info($"RunOne执行,Name:{Name}");
+        Log.Info($"RunOne执行发送一次ttp请求--Name:{Name}");
         //获取当前Name的行数据
         LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
         //得到消息体
@@ -107,10 +107,17 @@ public class LoadMesService
 
     #region 发送Http任务
 
-    public async Task<string> SendHttp(LoadMesAddAndUpdateWindowModel item, CancellationTokenSource cts)
+    public async Task<(bool succeed, string? response)> SendHttp(LoadMesAddAndUpdateWindowModel item,
+        CancellationTokenSource cts)
     {
         //得到消息体
-        var request = await PackRequest(item.Name, cts);
+        var (succeed, request) = await PackRequest(item.Name, cts);
+        if (!succeed)
+        {
+            Log.Info("--SendHttp--PackRequest消息体组装失败");
+            return (false, null);
+        }
+
         //日志显示发送内容
         Log.Info($"{nameof(LoadMesService)}--SendHttp--{item.Name}--发送内容: \r\n {request}");
         if (request != null)
@@ -170,52 +177,29 @@ public class LoadMesService
             if (response.IsSuccessStatusCode)
             {
                 item.Response = response.Content;
-
-                item.Response = TryFormatJson(item.Response);
-                Log.Info($"返回消息response结果为成功,状态码:{response.StatusCode}");
-                Log.Info($"{item.Name}--发送请求返回:\r\n {item.Response}");
-                return item.Response;
+                //判断是否是JSON格式,如果是转成输出
+                item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
+                Log.Info($"{item.Name}--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+                return (true, item.Response);
             }
             else
             {
+                //尝试从错误消息中获取,获取不到就从消息内容中获取
                 item.Response = response.ErrorMessage;
                 if (item.Response == null)
                 {
                     item.Response = response.Content;
                 }
 
-                item.Response = TryFormatJson(item.Response);
+                //判断是否是JSON格式,如果是转成输出
+                item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
 
-                Log.Info($"返回消息response结果为失败,状态码:{response.StatusCode}");
-                Log.Info($"{item.Name}--发送请求返回:\r\n {item.Response}");
-                return item.Response;
+                Log.Info($"{item.Name}--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+                return (false, item.Response);
             }
         }
 
-        return null;
-    }
-
-    public static string TryFormatJson(string response)
-    {
-        if (string.IsNullOrWhiteSpace(response))
-            return response;
-
-        try
-        {
-            var trimmed = response.Trim();
-            if ((trimmed.StartsWith("{") && trimmed.EndsWith("}")) ||
-                (trimmed.StartsWith("[") && trimmed.EndsWith("]")))
-            {
-                var obj = JsonConvert.DeserializeObject<object>(trimmed);
-                return JsonConvert.SerializeObject(obj, Formatting.Indented);
-            }
-        }
-        catch
-        {
-            // 非合法 JSON，忽略
-        }
-
-        return response;
+        return (false, null);
     }
 
     #endregion
@@ -226,11 +210,11 @@ public class LoadMesService
     /// 包装Request请求
     /// </summary>
     /// <param name="name"></param>
-    public async Task<string> PackRequest(string name, CancellationTokenSource cts)
+    public async Task<(bool succeed, string? value)> PackRequest(string name, CancellationTokenSource cts)
     {
         //获得当前行的数据
         var loadMesAddAndUpdateWindowModel = SelectByName(name);
-        if (loadMesAddAndUpdateWindowModel == null) return null;
+        if (loadMesAddAndUpdateWindowModel == null) return (false, null);
 
         //获得当前行的条件  将   ObservableCollection<> 转成List
         var conditionItems = Enumerable.ToList<LoadMesCondition>(loadMesAddAndUpdateWindowModel.Condition);
@@ -251,12 +235,13 @@ public class LoadMesService
                 case "动态获取":
                     //获取动态的值
                     Log.Info("正在动态嵌入内容");
-                    var value = await DynMessage(request, itemValue, cts);
-                    if (value == null)
+                    var (succeed, value) = await DynMessage(request, itemValue, cts);
+                    if (!succeed)
                     {
-                        return null;
+                        return (false, null);
                     }
 
+                    Log.Info($"嵌入内容: \r\n{value}");
                     request = StaticMessage(request, itemKey, value);
                     break;
                 case "常量":
@@ -270,7 +255,7 @@ public class LoadMesService
             }
         }
 
-        return request;
+        return (true, request);
     }
 
     #endregion
@@ -329,19 +314,20 @@ public class LoadMesService
     /// <param name="request">整个消息体</param>
     /// <param name="DynName">嵌入名</param>
     /// <returns></returns>
-    public async Task<string> DynMessage(string request, string DynName, CancellationTokenSource cts)
+    public async Task<(bool sueeced, string? result)> DynMessage(string request, string DynName,
+        CancellationTokenSource cts)
     {
         if (DynName == null)
         {
             Log.Info($"{nameof(LoadMesService)}--正在动态嵌入内容的时候,动态获取名未设置(DynName) ");
-            return null;
+            return (false, null);
         }
 
         var lookup = GlobalMannager.DynDictionary.Lookup(DynName);
         if (!lookup.HasValue)
         {
             Log.Info($"{nameof(LoadMesService)}--正在动态嵌入内容的时候,--{DynName}--从动态字典DynDictionary找不到,返回空字符串");
-            return string.Empty;
+            return (false, null);
         }
 
         var mesTcpPojo = lookup.Value;
@@ -349,7 +335,7 @@ public class LoadMesService
         if (message == null)
         {
             Log.Info($"{nameof(LoadMesService)} 从动态字典DynDictionary找到的消息内容Message为Null");
-            return string.Empty;
+            return (false, null);
         }
 
         var result = "";
@@ -360,6 +346,7 @@ public class LoadMesService
             var methodName = item.MethodName;
             bool isSwitch = item.OpenSwitch;
             bool isVerify = item.OpenVerify;
+            bool ResultTranspond = item.ResultTranspond;
             //2. 判断走什么形式的方法进行请求
             if (item.GetMessageType == "通讯")
             {
@@ -368,7 +355,13 @@ public class LoadMesService
                 {
                     case "读寄存器":
                         Log.Info("动态嵌入内容:执行读寄存器中");
-                        string readReg = await ReadReg(item);
+                        (bool succeed1, string readReg) = await ReadReg(item);
+                        if (!succeed1)
+                        {
+                            Log.Info($"动态嵌入--{item.Name}--读寄存器地址{item.StartAddress}失败");
+                            return (false, null);
+                        }
+
                         if (isSwitch)
                         {
                             Log.Info("动态嵌入内容读寄存器需要进行消息转换Switch映射");
@@ -379,7 +372,13 @@ public class LoadMesService
                         break;
                     case "读线圈":
                         Log.Info("动态嵌入内容:执行读线圈中");
-                        string readCoid = await ReadCoid(item);
+                        (bool succeed2, string readCoid) = await ReadCoid(item);
+                        if (!succeed2)
+                        {
+                            Log.Info($"动态嵌入--{item.Name}--读读线圈地址{item.StartAddress}失败");
+                            return (false, null);
+                        }
+
                         if (isSwitch)
                         {
                             Log.Info("动态嵌入内容读线圈需要进行消息转换Switch映射");
@@ -390,40 +389,53 @@ public class LoadMesService
                         break;
                     case "Socket返回":
                         Log.Info("动态嵌入内容:执行Socket消息发送");
-                        string tcp = await ReadTcpMessageAsync(item);
+                        (bool succeed, string tcp) = await ReadTcpMessageAsync(item);
                         //判断
-                        if (tcp == null && item.DynFailReturnFail == true)
+                        if (!succeed)
                         {
-                            return null;
+                            return (false, null);
                         }
 
+                        //进行switch替换
                         if (isSwitch)
                         {
-                            Log.Info("动态嵌入内容Socket需要进行消息转换Switch映射");
+                            Log.Info("动态嵌入--Socket需要进行消息转换Switch映射");
                             tcp = SwitchGetMessage(tcp, item);
                         }
 
+                        //进行校验
                         if (isVerify)
                         {
-                            Log.Info("动态嵌入内容Socket需要进行消息校验");
+                            Log.Info("动态嵌入--Socket需要进行消息校验");
                             foreach (var dynVerify in item.VerifyList)
                             {
                                 if (!VerityMessage(tcp, dynVerify))
                                 {
                                     Log.Info("校验到不匹配,撤回发送");
-                                    return null;
+                                    return (false, null);
                                 }
+                            }
+                        }
+
+                        if (ResultTranspond)
+                        {
+                            Log.Info("需要对当前结果进行转发");
+                            (bool succeed3, string message1) = await Transpond(item, tcp);
+                            if (!succeed3)
+                            {
+                                Log.Info("转发失败");
+                                return (false, null);
                             }
                         }
 
                         message = StaticMessage(message, itemKey, tcp);
                         break;
                     case "读DM寄存器":
-                        Log.Info("动态嵌入内容:执行读DM寄存器");
+                        Log.Info("动态嵌入--执行读DM寄存器");
                         string readDm = await KeyenceReadDM(item);
                         if (isSwitch)
                         {
-                            Log.Info("动态嵌入内容读DM寄存器需要进行消息转换Switch映射");
+                            Log.Info("动态嵌入--读DM寄存器需要进行消息转换Switch映射");
                             readDm = SwitchGetMessage(readDm, item);
                         }
 
@@ -436,44 +448,111 @@ public class LoadMesService
             }
             else if (item.GetMessageType == "HTTP")
             {
-                var loadMesPage = Ioc.Default.GetRequiredService<LoadMesPage>();
+                //执行发送HTTP
+                (bool succeed, string? response) = await RunOne(item.HttpName, cts);
+                //需要判断返回结果一下是否是Json格式
+                AppJsonTool<Object>.TryFormatJson(response, out bool isJson);
+                JObject jObject;
+                if (!isJson)
+                {
+                    //如果不是JSON对象直接退出
+                    return (false, null);
+                }
 
-                string response = await RunOne(item.HttpName, cts);
-                JObject jObject = JObject.Parse(response);
+                //将Json转成对象
+                jObject = JObject.Parse(response);
                 //获取内容
                 foreach (var httpObject in item.HttpObjects)
                 {
                     string JsonKey = httpObject.JsonKey;
                     //判断是否是自定义的JsonKey
-                    var userDefined = RunUserDefined(JsonKey,out bool isReturn);
-                    if (isReturn == true)
+                    var userDefined = RunUserDefined(JsonKey, out bool isReturn, out string errorMessage);
+                    if (isReturn)
                     {
-                        Log.Info("未选择工单!请选择工单后操作");
-                        return null;
+                        Log.Info(errorMessage);
+                        //已经执行完自定义的,需要退出
+                        return (false, null);
                     }
 
-                    string jToken = null;
+                    //常规执行
+                    string jToken;
                     if (userDefined != null)
                     {
                         jToken = userDefined;
                     }
                     else
                     {
-                         jToken = jObject.SelectToken(JsonKey).ToString();
+                        jToken = jObject.SelectToken(JsonKey).ToString();
                     }
+
                     Log.Info($"解析 {httpObject.JsonKey}:\r\n {jToken}");
                     message = StaticMessageSon(message, itemKey, httpObject.Name, jToken);
                 }
             }
         }
-        return message;
+
+        return (true, message);
     }
+
+
+    #region 消息转发
+
+    /// <summary>
+    /// 转发
+    /// </summary>
+    /// <param name="model"></param>
+    /// <param name="response"></param>
+    /// <returns></returns>
+    public async Task<(bool succeed, string message)> Transpond(DynCondition model, string response)
+    {
+        //通过名字搜索id
+        string forwardingName = model.TranspondObject;
+        //获得网络名
+        string netKey = getNetKey(forwardingName);
+        //获得网络
+        var netWork = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
+
+        //判断当前转发的通讯是什么类型的
+        string networkDetailedNetMethod = netWork.NetworkDetailed.NetMethod;
+        switch (networkDetailedNetMethod)
+        {
+            case "ModbusTcp":
+                ModbusBase modbusBase = netWork.ModbusBase;
+                List<ushort> list = new List<ushort>();
+                try
+                {
+                    for (int i = 0; i < response.Length; i += 2)
+                    {
+                        char high = response[i];
+                        char low = (i + 1 < response.Length) ? response[i + 1] : '\0'; // 补0
+                        ushort packed = (ushort)((high << 8) | low);
+                        list.Add(packed);
+                    }
+
+                    ushort[] result = list.ToArray();
+
+                    await modbusBase.WriteRegisters_10(byte.Parse(model.TranspondStationAddress),
+                        ushort.Parse(model.TranspondStartAddress), result);
+                }
+                catch (Exception e)
+                {
+                    return (false, null);
+                }
+
+                break;
+        }
+
+        return (true, null);
+    }
+
+    #endregion
+
     /// <summary>
     /// 用户自定义的
     /// </summary>
     /// <param name="JsonKey"></param>
     /// <returns></returns>
-    public string RunUserDefined(string JsonKey ,out bool noReturn)
+    public string RunUserDefined(string JsonKey, out bool noReturn, out string ErrorMessage)
     {
         switch (JsonKey)
         {
@@ -481,27 +560,33 @@ public class LoadMesService
                 string scheduleCode = new BydBase003OrderList().DynCurrentOrder("scheduleCode");
                 if (scheduleCode == null)
                 {
+                    ErrorMessage = "未选择工单!请选择工单后操作";
                     noReturn = true;
                 }
                 else
                 {
+                    ErrorMessage = String.Empty;
                     noReturn = false;
-
                 }
+
                 return scheduleCode;
             case "byd:Base003_OrderList:orderCode":
                 string orderCode = new BydBase003OrderList().DynCurrentOrder("orderCode");
                 if (orderCode == null)
                 {
+                    ErrorMessage = "未选择工单!请选择工单后操作";
                     noReturn = true;
                 }
                 else
                 {
+                    ErrorMessage = String.Empty;
                     noReturn = false;
                 }
+
                 return orderCode;
             default:
                 noReturn = false;
+                ErrorMessage = String.Empty;
                 return null;
         }
     }
@@ -810,7 +895,7 @@ public class LoadMesService
     /// <param name="item"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    public async Task<string> ReadTcpMessageAsync(DynCondition item)
+    public async Task<(bool succeed, string response)> ReadTcpMessageAsync(DynCondition item)
     {
         //判断是走客户端发送,还是走服务器发送
         string itemConnectName = item.ConnectName;
@@ -835,10 +920,10 @@ public class LoadMesService
         {
             case "Tcp客户端":
                 Log.Info("执行Tcp客户端消息发送,并等待消息返回");
-                response = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage);
-                if (response == null && item.DynFailReturnFail == true)
+                (bool succeed, response) = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage);
+                if (!succeed)
                 {
-                    return null;
+                    return (false, null);
                 }
 
                 break;
@@ -848,7 +933,7 @@ public class LoadMesService
                 break;
         }
 
-        return response;
+        return (true, response);
     }
 
     #endregion
@@ -860,14 +945,14 @@ public class LoadMesService
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public async Task<string> ReadCoid(DynCondition item)
+    public async Task<(bool succeed, string? result)> ReadCoid(DynCondition item)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;
         var methodName = item.MethodName;
         //获得网络,遍历获取对应的网络
         var netKey = getNetKey(itemConnectName);
-        if (netKey == null) return null;
+        if (netKey == null) return (false, null);
         var netWorkPoJo = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
         //获得modbus
         var modbusBase = netWorkPoJo.ModbusBase;
@@ -876,11 +961,11 @@ public class LoadMesService
             var bools = await modbusBase.ReadCoils_01((byte)item.StationAddress, (ushort)item.StartAddress,
                 (ushort)item.EndAddress);
 
-            return string.Join(",", Array.ConvertAll(bools, b => $"{b}"));
+            return (true, string.Join(",", Array.ConvertAll(bools, b => $"{b}")));
         }
         catch (Exception e)
         {
-            throw;
+            return (false, null);
         }
     }
 
@@ -889,14 +974,14 @@ public class LoadMesService
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public async Task<string> ReadReg(DynCondition item)
+    public async Task<(bool succeed, string? result)> ReadReg(DynCondition item)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;
         var methodName = item.MethodName;
         //获得网络,遍历获取对应的网络
         var netKey = getNetKey(itemConnectName);
-        if (netKey == null) return null;
+        if (netKey == null) return (false, null);
         var netWorkPoJo = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
         //获得modbus
         var modbusBase = netWorkPoJo.ModbusBase;
@@ -912,60 +997,60 @@ public class LoadMesService
                 case "单寄存器(无符号)":
                     //用逗号分割
                     result = string.Join(",", Array.ConvertAll(holdingRegisters03, p => $"{p}"));
-                    return result;
+                    return (true, result);
                 case "单寄存器(有符号)":
                     result = string.Join(",",
                         Array.ConvertAll(holdingRegisters03,
                             p => $"{ModbusDataConverter.ConvertFromResponse<short>(p.ToString())}"));
-                    return result;
+                    return (true, result);
                 case "双寄存器;无符号;BigEndian":
                     List<uint> uInt32List1 =
                         ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.BigEndian);
-                    return string.Join(",", Array.ConvertAll(uInt32List1.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(uInt32List1.ToArray(), p => $"{p}")));
                 case "双寄存器;无符号;LittleEndian":
                     List<uint> uInt32List2 =
                         ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.LittleEndian);
-                    return string.Join(",", Array.ConvertAll(uInt32List2.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(uInt32List2.ToArray(), p => $"{p}")));
                 case "双寄存器;无符号;WordSwap":
                     List<uint> uInt32List3 =
                         ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.WordSwap);
-                    return string.Join(",", Array.ConvertAll(uInt32List3.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(uInt32List3.ToArray(), p => $"{p}")));
                 case "双寄存器;无符号;ByteSwap":
                     List<uint> uInt32List4 =
                         ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.ByteSwap);
-                    return string.Join(",", Array.ConvertAll(uInt32List4.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(uInt32List4.ToArray(), p => $"{p}")));
                 case "双寄存器;有符号;BigEndian":
                     List<int> int32List1 =
                         ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.BigEndian);
-                    return string.Join(",", Array.ConvertAll(int32List1.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(int32List1.ToArray(), p => $"{p}")));
                 case "双寄存器;有符号;LittleEndian":
                     List<int> int32List2 =
                         ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.LittleEndian);
-                    return string.Join(",", Array.ConvertAll(int32List2.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(int32List2.ToArray(), p => $"{p}")));
                 case "双寄存器;有符号;WordSwap":
                     List<int> int32List3 =
                         ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.WordSwap);
-                    return string.Join(",", Array.ConvertAll(int32List3.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(int32List3.ToArray(), p => $"{p}")));
                 case "双寄存器;有符号;ByteSwap":
                     List<int> int32List4 =
                         ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.ByteSwap);
-                    return string.Join(",", Array.ConvertAll(int32List4.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(int32List4.ToArray(), p => $"{p}")));
                 case "32位浮点数;BigEndian":
                     List<float> floatList1 =
                         ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.BigEndian);
-                    return string.Join(",", Array.ConvertAll(floatList1.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(floatList1.ToArray(), p => $"{p}")));
                 case "32位浮点数;LittleEndian":
                     List<float> floatList2 =
                         ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.LittleEndian);
-                    return string.Join(",", Array.ConvertAll(floatList2.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(floatList2.ToArray(), p => $"{p}")));
                 case "32位浮点数;WordSwap":
                     List<float> floatList3 =
                         ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.WordSwap);
-                    return string.Join(",", Array.ConvertAll(floatList3.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(floatList3.ToArray(), p => $"{p}")));
                 case "32位浮点数;ByteSwap":
                     List<float> floatList4 =
                         ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.ByteSwap);
-                    return string.Join(",", Array.ConvertAll(floatList4.ToArray(), p => $"{p}"));
+                    return (true, string.Join(",", Array.ConvertAll(floatList4.ToArray(), p => $"{p}")));
                 case "ASCII字符串":
                     var result_3 = new List<byte>();
                     foreach (var itemUshort in holdingRegisters03)
@@ -984,15 +1069,16 @@ public class LoadMesService
                     }
 
                     //输出ASCII码转换后的结果
-                    return Encoding.ASCII.GetString(result_3.ToArray());
+                    return (true, Encoding.ASCII.GetString(result_3.ToArray()));
             }
         }
         catch (Exception e)
         {
             Log.Error("执行失败,TCP或RTU未连接上");
+            return (false, null);
         }
 
-        return result;
+        return (false, result);
     }
 
     #endregion

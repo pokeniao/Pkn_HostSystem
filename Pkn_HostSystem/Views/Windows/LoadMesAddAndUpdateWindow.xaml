@@ -176,11 +176,58 @@
                                                 </StackPanel>
                                             </TabItem>
                                         </TabControl>
-
                                     </StackPanel>
                                 </Grid>
                             </TabItem>
+                            <TabItem >
+                                <TabItem.Header>
+                                    <TextBlock Text="转发设置"/>
+                                </TabItem.Header>
+                                <Grid>
+                                    <StackPanel>
+                                        <WrapPanel Margin="0,10,0,0">
+                                            <TextBlock Text="转发方式" Margin="5" VerticalAlignment="Center"/>
+                                            <ComboBox ItemsSource="{Binding ForwardingMethod}"/>
+                                        </WrapPanel>
+                                        <TabControl Margin="0,10,0,0">
+                                            <TabItem>
+                                                <TabItem.Header>
+                                                    <TextBlock Text="通讯方式"/>
+                                                </TabItem.Header>
+                                                <Grid>
+                                                    <StackPanel>
+                                                        <WrapPanel  Margin="0,10,0,0">
+                                                            <TextBlock Text="通讯对象" Margin="5" VerticalAlignment="Center"/>
+                                                            <ComboBox ItemsSource="{Binding LoadMesAddAndUpdateWindowModel.NetWorkList}"
+                                                                      SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.ForwardingName}"
+                                                                      DisplayMemberPath="NetworkDetailed.Name"
+                                                                      SelectedValuePath="NetworkDetailed.Name"/>
+                                                        </WrapPanel>
+                                                        <WrapPanel  Margin="0,10,0,0">
+                                                            <TextBlock Text="站地址" Margin="5" VerticalAlignment="Center"/>
+                                                            <ui:NumberBox Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingStationAddress}"/>
+                                                        </WrapPanel>
+                                                        <WrapPanel  Margin="0,10,0,0">
+                                                            <TextBlock Text="起始地址" Margin="5" VerticalAlignment="Center"/>
+                                                            <ui:NumberBox Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingStartAddress}"/>
+                                                        </WrapPanel>
+                                                        <WrapPanel  Margin="0,10,0,0">
+                                                            <TextBlock Text="长度" Margin="5" VerticalAlignment="Center"/>
+                                                            <ui:NumberBox Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingLen}"/>
+                                                        </WrapPanel>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </TabItem>
+                                            <TabItem>
+                                                <TabItem.Header>
+                                                    <TextBlock Text="队列"></TextBlock>
+                                                </TabItem.Header>
+                                            </TabItem>
 
+                                        </TabControl>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
                         </TabControl>
                     </StackPanel>
                 </Grid>

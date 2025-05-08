@@ -120,6 +120,24 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// </summary>
     [ObservableProperty] private ObservableCollection<HttpHeader> httpHeaders = new ObservableCollection<HttpHeader>();
 
+
+    /// <summary>
+    /// 转发ModbusTcp站地址
+    /// </summary>
+    [ObservableProperty] private string forWardingStationAddress = "1";
+    /// <summary>
+    /// 转发ModbusTcp起始地址
+    /// </summary>
+    [ObservableProperty] private string forWardingStartAddress = "0";
+    /// <summary>
+    /// 转发ModbusTcp长度
+    /// </summary>
+    [ObservableProperty] private string forWardingLen = "1";
+    /// <summary>
+    /// 转发对象名
+    /// </summary>
+    [ObservableProperty] private string forwardingName;
+
     public override string ToString()
     {
         return string.Join(',',

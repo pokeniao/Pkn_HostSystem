@@ -4,6 +4,8 @@ using DynamicData.Binding;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Pkn_HostSystem.Base;
+using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Server.LoadMes;
@@ -15,7 +17,7 @@ namespace Pkn_HostSystem.Service.UserDefined
     public class BydBase003OrderList
     {
         public BydOrderList BydOrderList { get; set; }
-
+        public LogBase<BydBase003OrderList> Log = new LogBase<BydBase003OrderList>();
 
         public BydBase003OrderList()
         {
@@ -29,12 +31,28 @@ namespace Pkn_HostSystem.Service.UserDefined
         /// </summary>
         /// <param name="Name">HTTP请求名称</param>
         /// <returns></returns>
-        public async Task<ObservableCollection<BydOrderList>> GetBydOrderLists(string Name, CancellationTokenSource cts)
+        public async Task<(bool succeed,ObservableCollection<BydOrderList>)> GetBydOrderLists(string Name, CancellationTokenSource cts)
         {
             LoadMesPageViewModel loadMesPageViewModel = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
 
             LoadMesService loadMesService = new LoadMesService(loadMesPageViewModel.LoadMesPageModel.MesPojoList);
-            string response = await loadMesService.RunOne(Name, cts);
+           (bool sueeced, string? response) = await loadMesService.RunOne(Name, cts);
+
+            //判断返回的是否是JSON
+            if (sueeced)
+            {
+                AppJsonTool<object>.TryFormatJson(response, out bool isJson);
+                if (!isJson)
+                {
+                    Log.Info("BydBase003OrderList--请求HTTP返回Json格式错误");
+                    return (false,null);
+                }
+            }
+            else
+            {
+                Log.Info("BydBase003OrderList--执行发送Http请求返回结果失败");
+                return (false, null);
+            } 
             //解析response
             JObject jObject = JObject.Parse(response);
             var items = jObject["data"] as JArray;
@@ -57,7 +75,7 @@ namespace Pkn_HostSystem.Service.UserDefined
             }
 
             //返回筛选后的结果
-            return bydOrderLists;
+            return (true,bydOrderLists);
         }
 
         /// <summary>

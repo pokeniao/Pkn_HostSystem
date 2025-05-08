@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Service.UserDefined;
@@ -22,6 +23,8 @@ namespace Pkn_HostSystem.Views.Pages
     {
         public HomePageViewModel HomePageViewModel { get; set; }
 
+        public LogBase<HomePage> Log { get; set; } = new LogBase<HomePage>();
+
         public HomePage()
         {
             InitializeComponent();
@@ -33,11 +36,13 @@ namespace Pkn_HostSystem.Views.Pages
             //添加LogListBox监听
             HomePageViewModel.HomePageModel.LogListBox.CollectionChanged += Item_CollectionChanged;
 
+            
+
         }
 
         private void Item_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.InvokeAsync(() =>
             {
                 //不在聚焦,自动下滑
                 if (!LogListBox.IsKeyboardFocusWithin)
@@ -213,9 +218,19 @@ namespace Pkn_HostSystem.Views.Pages
             string httpName = HomePageViewModel.HomePageModel.HttpName;
 
             var bydBase003OrderList = new BydBase003OrderList();
-            var bydOrderLists = await bydBase003OrderList.GetBydOrderLists(httpName,new CancellationTokenSource());
-            //返回结果,显示到页面Combobox提供选择
-            HomePageViewModel.HomePageModel.BydOrderLists = bydOrderLists;
+            var (succeed,bydOrderLists) = await bydBase003OrderList.GetBydOrderLists(httpName,new CancellationTokenSource());
+
+            if (succeed)
+            {
+                //返回结果,显示到页面Combobox提供选择
+                HomePageViewModel.HomePageModel.BydOrderLists = bydOrderLists;
+                Log.Info("获取工单成功");
+            }
+            else
+            {
+                Log.Info("获取工单失败--bydBase003OrderList.GetBydOrderLists返回false");
+            }
+            
         }
 
         private void SelectedBydOrder(object sender, SelectionChangedEventArgs e)
@@ -225,8 +240,6 @@ namespace Pkn_HostSystem.Views.Pages
             var orderList = comboBox.SelectedValue as BydOrderList;
             HomePageViewModel.HomePageModel.CurrentSelectBydOrder = orderList;
         }
-
-
         #endregion
 
     }

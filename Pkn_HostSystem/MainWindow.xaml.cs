@@ -7,16 +7,22 @@ using Pkn_HostSystem.Views.Pages;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
 namespace Pkn_HostSystem
 {
+
+    
+
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow
+    public partial class MainWindow 
     {
+
         //预加载
         public MainWindow()
         {
@@ -29,14 +35,25 @@ namespace Pkn_HostSystem
             //启动先自适应电脑主题
             ApplicationThemeManager.ApplySystemTheme();
             InitializeComponent();
-
-            // Loaded:当元素被布局、呈现并准备好进行交互时，将触发此事件
-            //设置页面打开根目录
-            Loaded += (_, _) => RootNavigation.Navigate(typeof(HomePage));
+          
+        
             //记录日志
             log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("Config\\log4net.config"));
-            PreLoad();
-            _ = Starting();
+            // Loaded:当元素被布局、呈现并准备好进行交互时，将触发此事件
+            //设置页面打开根目录
+            // // Loaded += (_, _) => RootNavigation.Navigate(typeof(HomePage));
+            Loaded += (_, _) =>
+            {
+                var navigation = Ioc.Default.GetRequiredService<INavigationService>();
+                navigation.SetNavigationControl(RootNavigation);
+
+                // 默认导航页面
+                navigation.Navigate(typeof(HomePage));
+
+                PreLoad();
+                _ = Starting();
+            };
+       
         }
 
         private void PreLoad()

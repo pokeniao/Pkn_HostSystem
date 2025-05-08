@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using Pkn_HostSystem.Base;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
-
+using System.Windows;
+using Wpf.Ui;
+using Wpf.Ui.DependencyInjection;
 namespace Pkn_HostSystem
 {
     /// <summary>
@@ -18,26 +18,34 @@ namespace Pkn_HostSystem
         /// <param name="e"></param>
         protected override void OnStartup(StartupEventArgs e)
         {
+
+
             // IOC 容器
             Ioc.Default.ConfigureServices(
                 new ServiceCollection()
+                    .AddNavigationViewPageProvider()
+                    .AddSingleton<INavigationService, NavigationService>()
                     .AddSingleton<HomePageViewModel>()
                     .AddSingleton<LoadMesPageViewModel>()
                     .AddSingleton<MesTcpViewModel>()
                     .AddSingleton<ModbusToolViewModel>()
                     .AddSingleton<SettingsPageViewModel>()
                     .AddSingleton<ProductiveViewModel>()
+                    .AddSingleton<MainWindow>()
 
                     //页面单例 ,预加载
                     .AddSingleton<MesTcpPage>()
                     .AddSingleton<LoadMesPage>()
                     .AddSingleton<HomePage>()
                     .AddSingleton<ProductivePage>()
-
+                    .AddSingleton<SettingsPage>()
+                    .AddSingleton<ModbusToolPage>()
                     .BuildServiceProvider()
                 );
             base.OnStartup(e);
         }
+
+
         /// <summary>
         /// 程序结束的时候
         /// </summary>

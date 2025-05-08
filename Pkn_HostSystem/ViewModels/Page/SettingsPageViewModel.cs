@@ -41,10 +41,10 @@ public partial class SettingsPageViewModel : ObservableRecipient
     [RelayCommand]
     public void ReSetProgram()
     {
-        AppJsonStorage<HomePageModel>.Reset();
-        AppJsonStorage<LoadMesPageModel>.Reset();
-        AppJsonStorage<MesTcpModel>.Reset();
-        AppJsonStorage<ProductiveModel>.Reset();
+        AppJsonTool<HomePageModel>.Reset();
+        AppJsonTool<LoadMesPageModel>.Reset();
+        AppJsonTool<MesTcpModel>.Reset();
+        AppJsonTool<ProductiveModel>.Reset();
         log.Info("重置成功");
     }
 

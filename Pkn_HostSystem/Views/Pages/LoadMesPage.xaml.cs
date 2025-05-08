@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Static;
-using LoadMesPageViewModel = Pkn_HostSystem.ViewModels.Page.LoadMesPageViewModel;
+using Pkn_HostSystem.ViewModels.Page;
 
 namespace Pkn_HostSystem.Views.Pages
 {
@@ -50,9 +50,6 @@ namespace Pkn_HostSystem.Views.Pages
                 }
             });
         }
-
-
-
         /// <summary>
         /// 滑动到底部
         /// </summary>
