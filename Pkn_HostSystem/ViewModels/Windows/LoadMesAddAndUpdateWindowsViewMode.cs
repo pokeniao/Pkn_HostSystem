@@ -5,7 +5,6 @@ using DynamicData;
 using DynamicData.Binding;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Message;
-using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
@@ -40,6 +39,8 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
     public ObservableCollection<string> MethodCollection { get; set; } = ["当前时间(yyyy-MM-dd HH:mm:ss)", "当前时间(yyyy/MM/dd HH:mm:ss)", "当前时间(yyyy-MM-dd)", "当前时间(yyyy/MM/dd)"];
 
     public ObservableCollection<string> RequestMethods { get; set; } = ["JSON", "XML", "TEXT"];
+
+    public ObservableCollection<string> ForwardingMethod { get; set; } = ["ModbusTcp","队列"];
     public ObservableCollectionExtended<LoadMesDynContent> Para_dyn { get; set; } = new ObservableCollectionExtended<LoadMesDynContent>();
     //添加
     public LoadMesAddAndUpdateWindowsViewModel()

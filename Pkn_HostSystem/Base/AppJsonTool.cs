@@ -4,7 +4,7 @@ using Pkn_HostSystem.Base.Log;
 
 namespace Pkn_HostSystem.Base;
 
-public class AppJsonStorage<T> where T : class, new()
+public class AppJsonTool<T> where T : class, new()
 {
     //1. Environment.SpecialFolder.ApplicationData 对应 C:\Users\你的用户名\AppData\Roaming
     //这是 Windows 推荐我们存放 用户级应用数据 的地方，比如配置文件、用户缓存、保存状态等。
@@ -24,8 +24,12 @@ public class AppJsonStorage<T> where T : class, new()
     private static readonly string SaveFile = Path.Combine(AppFolder, "程序缓存");
     private static readonly string FilePath = Path.Combine(SaveFile, typeof(T).Name + ".json");
 
-    private static LogBase<AppJsonStorage<T>> log = new();
-
+    private static LogBase<AppJsonTool<T>> log = new();
+    /// <summary>
+    /// 用json格式保存
+    /// </summary>
+    /// <param name="config"></param>
+    /// <returns></returns>
     public static bool Save(T config)
     {
         try
@@ -47,7 +51,10 @@ public class AppJsonStorage<T> where T : class, new()
             return false;
         }
     }
-
+    /// <summary>
+    /// 用Json格式加载
+    /// </summary>
+    /// <returns></returns>
     public static T Load()
     {
         try
@@ -80,4 +87,37 @@ public class AppJsonStorage<T> where T : class, new()
         //存在,删掉
         if (File.Exists(FilePath)) File.Delete(FilePath);
     }
+
+
+    public static string TryFormatJson(string response,out bool isJson)
+    {
+        if (string.IsNullOrWhiteSpace(response))
+        {
+            isJson = false;
+            return response;
+        }
+          
+
+        try
+        {
+            var trimmed = response.Trim();
+            if ((trimmed.StartsWith("{") && trimmed.EndsWith("}")) ||
+                (trimmed.StartsWith("[") && trimmed.EndsWith("]")))
+            {
+                var obj = JsonConvert.DeserializeObject<object>(trimmed);
+                isJson = true;
+                return JsonConvert.SerializeObject(obj, Formatting.Indented);
+            }
+        }
+        catch
+        {
+            isJson = false;
+            return response;
+            // 非合法 JSON，忽略
+        }
+
+        isJson = false;
+        return response;
+    }
+
 }

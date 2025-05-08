@@ -28,12 +28,14 @@ public partial class MesTcpViewModel : ObservableRecipient
     public List<string> VerifyType { get; set; } = ["字符长度检测=", "字符长度检测!=", "字符长度检测>", "字符长度检测<", "字符长度检测>=", "字符长度检测=<", "字符=", "字符!=", "正则表达式检测"];
 
     public List<string> GetMessageType { get; set; } = ["HTTP", "通讯"];
+
+    public ObservableCollection<string> ForwardingMethod { get; set; } = ["ModbusTcp", "队列"];
     public MesTcpViewModel()
     {
         SnackbarService = new SnackbarService();
 
 
-        MesTcpModel = AppJsonStorage<MesTcpModel>.Load();
+        MesTcpModel = AppJsonTool<MesTcpModel>.Load();
         if (MesTcpModel == null)
         {
             //Model初始化
@@ -137,6 +139,6 @@ public partial class MesTcpViewModel : ObservableRecipient
     [RelayCommand]
     public void Save()
     {
-        AppJsonStorage<MesTcpModel>.Save(MesTcpModel);
+        AppJsonTool<MesTcpModel>.Save(MesTcpModel);
     }
 }

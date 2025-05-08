@@ -286,28 +286,26 @@ namespace Pkn_HostSystem.Base
 
         #region 客户端发送消息
 
-        public async Task<string> SendAndWaitClientAsync(string message, int timeout = 3000)
+        public async Task<(bool succeed,string? response)> SendAndWaitClientAsync(string message, int timeout = 3000)
         {
             if (_client == null || !_client.Connected || _clientStream == null)
             {
                 Log.Info("在客户端执行发送消息时, 客户端未连接服务器");
+                return (false, null);
             }
-
             // 发送消息
             try
             {
                 var data = Encoding.UTF8.GetBytes(message);
-                
                 await _clientStream.WriteAsync(data, 0, data.Length);
             }
             catch (Exception e)
             {
                 Log.Info($"在客户端执行发送消息时,出现异常{e}");
+                return (false, null);
             }
             //等待返回消息
-
             string msg = null;
-            CancellationTokenSource cts = new CancellationTokenSource(timeout);
             try
             {
                 Log.Info("在客户端执行发送消息后,等待消息返回");
@@ -321,7 +319,7 @@ namespace Pkn_HostSystem.Base
                     if (elapsed >= timeout)
                     {
                         Log.Info("在客户端执行发送消息后,等待消息超时！");
-                        break;
+                        return (false,null);
                     }
 
                     // 检查是否有数据可读  stream.DataAvailable 可以读取流中是否有数据
@@ -338,11 +336,11 @@ namespace Pkn_HostSystem.Base
             }
             catch (Exception e)
             {
-                cts.Cancel();
                 Log.Info($"在客户端执行发送消息后等待消息返回,出现异常{e}");
+                return (false, null);
             }
 
-            return msg;
+            return (true,msg);
         }
         public async Task<bool> SendClientAsync(string message)
         {

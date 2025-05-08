@@ -96,7 +96,6 @@ public class DynCondition : ObservableObject
     /// </summary>
     private int endAddress = 1;
 
-
     public int EndAddress
     {
         get => endAddress;
@@ -194,6 +193,26 @@ public class DynCondition : ObservableObject
     /// 打开校验
     /// </summary>
     public bool OpenVerify { get; set; }
+
+    /// <summary>
+    /// 转发的站地址
+    /// </summary>
+    public string TranspondStationAddress { get; set; }
+
+    /// <summary>
+    /// 转发的起始地址
+    /// </summary>
+    public string TranspondStartAddress { get; set; }
+    /// <summary>
+    /// 转发的对象
+    /// </summary>
+    public string TranspondObject { get; set; }
+    /// <summary>
+    /// 转发的长度
+    /// </summary>
+    public string TranspondLen { get; set; }
+
+    public bool ResultTranspond { get; set; }
 
 
     public ObservableCollection<DynSwitch> SwitchList { get; set; } = new ObservableCollection<DynSwitch>();

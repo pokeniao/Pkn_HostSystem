@@ -38,10 +38,8 @@
 		<PackageReference Include="NModbus.Serial" Version="3.0.81" />
 		<PackageReference Include="RestSharp" Version="112.1.0" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-		<PackageReference Include="TouchSocket" Version="3.0.25" />
-		<PackageReference Include="TouchSocket.Core" Version="3.0.25" />
-		<PackageReference Include="TouchSocket.Rpc" Version="3.0.25" />
 		<PackageReference Include="WPF-UI" Version="4.0.2" />
+		<PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>

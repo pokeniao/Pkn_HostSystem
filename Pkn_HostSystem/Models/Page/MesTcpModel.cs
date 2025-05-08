@@ -75,7 +75,18 @@ public partial class MesTcpModel : ObservableObject
     /// 用于显示设置的页面
     /// </summary>
     [ObservableProperty] private bool httpSet;
- 
+
+    /// <summary>
+    /// 用于显示当前转发的页面名字
+    /// </summary>
+    [ObservableProperty] private string transpondSetName;
+
+    /// <summary>
+    /// 用于显示当前转发的页面
+    /// </summary>
+    [ObservableProperty] private bool transpondSet;
+
+
 
     /// <summary>
     /// 用于显示Http映射的值的配置

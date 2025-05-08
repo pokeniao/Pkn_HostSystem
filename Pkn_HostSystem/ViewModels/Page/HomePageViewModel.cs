@@ -22,7 +22,7 @@ public partial class HomePageViewModel : ObservableRecipient
 {
     private LogBase<HomePageViewModel> Log;
 
-    public HomePageModel HomePageModel { get; set; } = AppJsonStorage<HomePageModel>.Load();
+    public HomePageModel HomePageModel { get; set; } = AppJsonTool<HomePageModel>.Load();
 
     public ModbusToolModel ModbusToolModel { get; set; }
 
@@ -45,7 +45,7 @@ public partial class HomePageViewModel : ObservableRecipient
         }
         else
         {
-            GlobalMannager.GlobalDictionary["LogListBox"] = HomePageModel.LogListBox;
+            HomePageModel.LogListBox = (ObservableCollection<string>)GlobalMannager.GlobalDictionary["LogListBox"];
         }
 
         //初始化Model
@@ -460,6 +460,6 @@ public partial class HomePageViewModel : ObservableRecipient
     [RelayCommand]
     public void Save()
     {
-        AppJsonStorage<HomePageModel>.Save(HomePageModel);
+        AppJsonTool<HomePageModel>.Save(HomePageModel);
     }
 }

@@ -65,7 +65,7 @@
         </Grid>
         <Grid Grid.Row="0" Grid.Column="1">
             <StackPanel>
-                <GroupBox Header="内容" BorderThickness="0"   Margin="25,10">
+                <GroupBox Header="内容" BorderThickness="0" Margin="25,10">
                     <Border
                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
@@ -88,7 +88,7 @@
                             FontSize="16" />
                     </Border>
                 </GroupBox>
-               
+
                 <DataGrid
                     Name="DynConditionDataGrid"
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -274,6 +274,12 @@
                                                                      IsChecked="{Binding OpenSwitch}" />
                                                     <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
                                                 </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch OnContent="打开结果转发" OffContent="关闭结果转发"
+                                                                     IsChecked="{Binding ResultTranspond}" />
+                                                    <Button Content="编辑转发对象" Margin="10,0"
+                                                            Click="ResultTranspond_OnClick" />
+                                                </StackPanel>
                                             </StackPanel>
                                         </Grid>
                                         <Grid
@@ -445,6 +451,61 @@
                     <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick4" />
                 </WrapPanel>
             </StackPanel>
+            <StackPanel
+                Visibility="{Binding MesTcpModel.TranspondSet,Converter={StaticResource BooleanVisibilityConverter}}">
+                <GroupBox Header="{Binding MesTcpModel.TranspondSetName}" BorderThickness="0">
+                    <StackPanel>
+                        <WrapPanel Margin="0,10,0,0">
+                            <TextBlock Text="转发方式" Margin="5" VerticalAlignment="Center" />
+                            <ComboBox ItemsSource="{Binding ForwardingMethod}" />
+                        </WrapPanel>
+                        <TabControl Margin="0,10,0,0">
+                            <TabItem>
+                                <TabItem.Header>
+                                    <TextBlock Text="通讯方式" />
+                                </TabItem.Header>
+                                <Grid>
+                                    <StackPanel>
+                                        <WrapPanel Margin="0,10,0,0">
+                                            <TextBlock Text="通讯对象" Margin="5" VerticalAlignment="Center" />
+                                            <ComboBox ItemsSource="{Binding MesTcpModel.NetWorkList}"
+                                                      SelectionChanged="TranspondComoboxSelected"
+                                                      DisplayMemberPath="NetworkDetailed.Name"
+                                                      SelectedValuePath="NetworkDetailed.Name" />
+                                        </WrapPanel>
+                                        <WrapPanel Margin="0,10,0,0">
+                                            <TextBlock Text="站地址" Margin="5" VerticalAlignment="Center" />
+                                            <ui:NumberBox
+                                                ValueChanged="TranspondStationChange" />
+                                        </WrapPanel>
+                                        <WrapPanel Margin="0,10,0,0">
+                                            <TextBlock Text="起始地址" Margin="5" VerticalAlignment="Center" />
+                                            <ui:NumberBox
+                                                ValueChanged="TranspondStartChange" />
+                                        </WrapPanel>
+                                        <WrapPanel Margin="0,10,0,0">
+                                            <TextBlock Text="长度" Margin="5" VerticalAlignment="Center" />
+                                            <ui:NumberBox ValueChanged="TranspondLenChange" />
+                                        </WrapPanel>
+
+                                        <WrapPanel HorizontalAlignment="Right">
+                                            <Button Content="删除" />
+                                            <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick5" />
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </TabItem>
+                            <TabItem>
+                                <TabItem.Header>
+                                    <TextBlock Text="队列"></TextBlock>
+                                </TabItem.Header>
+                            </TabItem>
+
+                        </TabControl>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+
         </UniformGrid>
         <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" Margin="0,-5,0,4" />
     </Grid>
