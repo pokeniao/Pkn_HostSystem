@@ -38,11 +38,7 @@ namespace Pkn_HostSystem
             //启动先自适应电脑主题
             ApplicationThemeManager.ApplySystemTheme();
             InitializeComponent();
-           
-
-           XmlConfigurator.ConfigureAndWatch(new FileInfo("Config\\log4net.config"));
-
-
+            
             // Loaded:当元素被布局、呈现并准备好进行交互时，将触发此事件
             // // Loaded += (_, _) => RootNavigation.Navigate(typeof(HomePage));
             Loaded += (_, _) =>
