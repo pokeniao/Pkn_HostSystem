@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using log4net.Config;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Pojo.Page.HomePage;
@@ -23,6 +24,8 @@ namespace Pkn_HostSystem
     public partial class MainWindow 
     {
 
+
+
         //预加载
         public MainWindow()
         {
@@ -35,12 +38,12 @@ namespace Pkn_HostSystem
             //启动先自适应电脑主题
             ApplicationThemeManager.ApplySystemTheme();
             InitializeComponent();
-          
-        
-            //记录日志
-            log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo("Config\\log4net.config"));
+           
+
+           XmlConfigurator.ConfigureAndWatch(new FileInfo("Config\\log4net.config"));
+
+
             // Loaded:当元素被布局、呈现并准备好进行交互时，将触发此事件
-            //设置页面打开根目录
             // // Loaded += (_, _) => RootNavigation.Navigate(typeof(HomePage));
             Loaded += (_, _) =>
             {
@@ -61,6 +64,8 @@ namespace Pkn_HostSystem
             _ = Ioc.Default.GetRequiredService<HomePage>();
             _ = Ioc.Default.GetRequiredService<LoadMesPage>();
             _ = Ioc.Default.GetRequiredService<MesTcpPage>();
+
+        
         }
 
         private async Task Starting()
@@ -77,9 +82,6 @@ namespace Pkn_HostSystem
                     connectTasks.Add(startConnectModbusTask);
                 }
             }
-
-            //await Task.WhenAll(connectTasks.ToArray()); // 等待所有连接完成！
-
 
             //判断 Http请求是否开启的,自动进行连接
             LoadMesPageViewModel loadMesPageViewModel = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();

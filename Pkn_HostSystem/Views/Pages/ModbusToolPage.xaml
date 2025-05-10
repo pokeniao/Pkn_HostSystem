@@ -39,7 +39,7 @@
                     <RowDefinition Height="1.6*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <TabControl Margin="20 0" HorizontalAlignment="Center"
-                            
+
                             Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                             BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                     <TabItem>
@@ -53,11 +53,12 @@
                                                VerticalAlignment="Center">
                                     </TextBlock>
                                 </Border>
-                                <ComboBox Name="cbb_modbus_tpc_ip" Width="250"
-                                          ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}"
-                                          SelectedIndex="0" Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}"
-                                          DropDownOpened="ComboBox_DropDownOpened_1">
-                                </ComboBox>
+                                <TextBox  Width="250" Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}" />
+                                <!-- <ComboBox Name="cbb_modbus_tpc_ip" Width="250" -->
+                                <!--       ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}" -->
+                                <!--       SelectedIndex="0" Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}" -->
+                                <!--       DropDownOpened="ComboBox_DropDownOpened_1"> -->
+                                <!-- </ComboBox> -->
                             </WrapPanel>
                             <WrapPanel Margin="5">
                                 <Border Margin="5">
@@ -79,7 +80,7 @@
                                 </Button>
                             </WrapPanel>
                         </StackPanel>
-                    </TabItem >
+                    </TabItem>
                     <TabItem>
                         <TabItem.Header>
                             <TextBlock FontWeight="Bold" Text="ModbusRTU" Margin="30 0 0 0" />
@@ -221,12 +222,17 @@
                 </StackPanel>
 
             </Grid>
-            <StackPanel Grid.Column="1">
 
-                <ui:TextBlock Text="写入消息" Margin="30 5" FontSize="14" FontWeight="Black" HorizontalAlignment="Left"></ui:TextBlock>
+
+            <Grid  Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition  Height="Auto"/>
+                    <RowDefinition  Height="*"/>
+                </Grid.RowDefinitions>
+                <ui:TextBlock Grid.Row="0" Text="写入消息" Margin="30 5" FontSize="14" FontWeight="Black" HorizontalAlignment="Left"></ui:TextBlock>
                 <ui:DataGrid
-                    Height="600"
-                    Margin="10 0 15 0"
+                    Grid.Row="1"
+                    Margin="10 0 15 20"
                     ItemsSource="{Binding ModbusToolModel.WriteDvgList , Mode=TwoWay}"
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
@@ -235,7 +241,7 @@
                     AutoGenerateColumns="false"
                     CanUserAddRows="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn IsReadOnly="True" Header="地址(address)" Binding="{Binding address }"/>
+                        <DataGridTextColumn IsReadOnly="True" Header="地址(address)" Binding="{Binding address }" />
                         <DataGridTemplateColumn Header="值(value)">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -260,13 +266,16 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </ui:DataGrid>
-            </StackPanel>
-            <StackPanel Grid.Column="2">
-                <TextBlock Text="接受消息" Margin="30 5" FontSize="14" FontWeight="Black" HorizontalAlignment="Left"></TextBlock>
-
+            </Grid>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition  Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="接受消息" Margin="30 5" FontSize="14" FontWeight="Black" HorizontalAlignment="Left"></TextBlock>
                 <ui:DataGrid
-                    Height="600"
-                    Margin="5 0 20 0"
+                    Grid.Row="1"
+                    Margin="5 0 20  20"
                     ItemsSource="{Binding ModbusToolModel.ReadDvgList}"
                     BorderThickness="1"
                     ColumnWidth="*"
@@ -279,7 +288,7 @@
                         <DataGridTextColumn Header="值(value)" Binding="{Binding value }"></DataGridTextColumn>
                     </DataGrid.Columns>
                 </ui:DataGrid>
-            </StackPanel>
+            </Grid>
             <ui:SnackbarPresenter Grid.ColumnSpan="3" Name="SnackbarPresenter" VerticalAlignment="Bottom"></ui:SnackbarPresenter>
         </Grid>
     </Grid>
