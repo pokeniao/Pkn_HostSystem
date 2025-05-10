@@ -13,13 +13,14 @@
 
       d:DataContext="{d:DesignInstance page:ProductiveViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
-      Title="ProductivePage">
+      Title="ProductivePage"
+      SizeChanged="ProductivePage_OnSizeChanged">
     <Page.Resources>
         <converter:NewRowAllowButtonConverter x:Key="NewRowAllowButtonConverter" />
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -27,169 +28,151 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid>
-            <StackPanel>
-                <TextBlock Text="生产者消费者列表" Margin="15,10" FontSize="18" HorizontalAlignment="Left" />
-                <DataGrid
-                    Name="PruAndConsumerDataGrid"
-                    HorizontalAlignment="Left"
-                    Margin="5"
-                    MinWidth="500"
-                    Height="500"
-                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                    AutoGenerateColumns="False"
-                    ItemsSource="{Binding ProductiveModel.Productives}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="唯一ID" Width="0.5*" Binding="{Binding Name}" />
-                        <DataGridTemplateColumn Header="生产者" Width="0.6*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <TextBlock Text="{Binding ProducerName}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <ComboBox
-                                            ItemsSource="{Binding DataContext.ProductiveModel.ProducerList,RelativeSource={RelativeSource AncestorType=Page}}"
-                                            DisplayMemberPath="NetworkDetailed.Name"
-                                            SelectedValue="{Binding ProducerName}"
-                                            SelectedValuePath="NetworkDetailed.Name" />
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="消费者" Width="0.6*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <TextBlock Text="{Binding ConsumerName}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <ComboBox
-                                            ItemsSource="{Binding DataContext.ProductiveModel.ConsumerList,RelativeSource={RelativeSource AncestorType=Page}}"
-                                            DisplayMemberPath="NetworkDetailed.Name"
-                                            SelectedValue="{Binding ConsumerName}"
-                                            SelectedValuePath="NetworkDetailed.Name" />
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="生产者触发设定" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <TextBlock Text="{Binding ProductiveTriggerSettingShow}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="站地址" />
-                                                <ui:NumberBox Value="{Binding ProductiveStationAddress}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="起始地址" />
-                                                <ui:NumberBox Value="{Binding ProductiveStartAddress}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="触发循环(ms)" />
-                                                <ui:NumberBox Value="{Binding ProductiveTriggerCyc}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="触发字符" />
-                                                <ui:NumberBox Value="{Binding ProductiveTriggerValue}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="成功返回字符串" />
-                                                <ui:NumberBox Value="{Binding  ProductiveTriggerSucceed}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="失败返回字符串" />
-                                                <ui:NumberBox Value="{Binding  ProductiveTriggerFail}" />
-                                            </StackPanel>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="生产者消费者列表" Margin="15,10" FontSize="18" HorizontalAlignment="Left" />
+            <DataGrid
+                Grid.Row="1"
+                Name="PruAndConsumerDataGrid"
+                HorizontalAlignment="Left"
+                Margin="15"
+                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                AutoGenerateColumns="False"
+                ItemsSource="{Binding ProductiveModel.Productives}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="唯一ID" Width="0.5*" Binding="{Binding Name}" />
+                    <DataGridTemplateColumn Header="生产者" Width="0.6*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding ProducerName}" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ComboBox
+                                        ItemsSource="{Binding DataContext.ProductiveModel.ProducerList,RelativeSource={RelativeSource AncestorType=Page}}"
+                                        DisplayMemberPath="NetworkDetailed.Name"
+                                        SelectedValue="{Binding ProducerName}"
+                                        SelectedValuePath="NetworkDetailed.Name" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="消费者" Width="0.6*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding ConsumerName}" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ComboBox
+                                        ItemsSource="{Binding DataContext.ProductiveModel.ConsumerList,RelativeSource={RelativeSource AncestorType=Page}}"
+                                        DisplayMemberPath="NetworkDetailed.Name"
+                                        SelectedValue="{Binding ConsumerName}"
+                                        SelectedValuePath="NetworkDetailed.Name" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="生产者触发设定" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding ProductiveTriggerSettingShow}" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="站地址" />
+                                            <ui:NumberBox Value="{Binding ProductiveStationAddress}" />
                                         </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="消费者触发设定" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <TextBlock Text="{Binding ConsumerTriggerSettingShow}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="站地址" />
-                                                <ui:NumberBox Value="{Binding ConsumerStationAddress}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="起始地址" />
-                                                <ui:NumberBox Value="{Binding ConsumerStartAddress}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="触发循环(ms)" />
-                                                <ui:NumberBox Value="{Binding ConsumerTriggerCyc}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="触发字符" />
-                                                <ui:NumberBox Value="{Binding ConsumerTriggerValue}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="成功返回字符串" />
-                                                <ui:NumberBox Value="{Binding  ConsumerTriggerSucceed}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="失败返回字符串" />
-                                                <ui:NumberBox Value="{Binding  ConsumerTriggerFail}" />
-                                            </StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="起始地址" />
+                                            <ui:NumberBox Value="{Binding ProductiveStartAddress}" />
                                         </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="消息" Width="0.5*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Button Content="设置" Click="SettingOneMessage">
-                                            <Button.IsEnabled>
-                                                <MultiBinding
-                                                    Converter="{StaticResource NewRowAllowButtonConverter}">
-                                                    <Binding
-                                                        RelativeSource="{RelativeSource AncestorType=DataGridRow}"
-                                                        Path="IsNewItem" />
-                                                    <Binding Path="Run" />
-                                                </MultiBinding>
-                                            </Button.IsEnabled>
-                                        </Button>
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="启动" Width="0.4*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ui:ToggleSwitch
-                                        IsChecked="{Binding Run ,UpdateSourceTrigger=PropertyChanged}"
-                                        Command="{Binding DataContext.RunProductionAndConsumerCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
-                                        <ui:ToggleSwitch.IsEnabled>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="触发循环(ms)" />
+                                            <ui:NumberBox Value="{Binding ProductiveTriggerCyc}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="触发字符" />
+                                            <ui:NumberBox Value="{Binding ProductiveTriggerValue}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="成功返回字符串" />
+                                            <ui:NumberBox Value="{Binding  ProductiveTriggerSucceed}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="失败返回字符串" />
+                                            <ui:NumberBox Value="{Binding  ProductiveTriggerFail}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="消费者触发设定" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding ConsumerTriggerSettingShow}" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="站地址" />
+                                            <ui:NumberBox Value="{Binding ConsumerStationAddress}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="起始地址" />
+                                            <ui:NumberBox Value="{Binding ConsumerStartAddress}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="触发循环(ms)" />
+                                            <ui:NumberBox Value="{Binding ConsumerTriggerCyc}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="触发字符" />
+                                            <ui:NumberBox Value="{Binding ConsumerTriggerValue}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="成功返回字符串" />
+                                            <ui:NumberBox Value="{Binding  ConsumerTriggerSucceed}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="失败返回字符串" />
+                                            <ui:NumberBox Value="{Binding  ConsumerTriggerFail}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="消息" Width="0.5*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Button Content="设置" Click="SettingOneMessage">
+                                        <Button.IsEnabled>
                                             <MultiBinding
                                                 Converter="{StaticResource NewRowAllowButtonConverter}">
                                                 <Binding
@@ -197,28 +180,51 @@
                                                     Path="IsNewItem" />
                                                 <Binding Path="Run" />
                                             </MultiBinding>
-                                        </ui:ToggleSwitch.IsEnabled>
-                                    </ui:ToggleSwitch>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
+                                        </Button.IsEnabled>
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="启动" Width="0.4*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ui:ToggleSwitch
+                                    IsChecked="{Binding Run ,UpdateSourceTrigger=PropertyChanged}"
+                                    Command="{Binding DataContext.RunProductionAndConsumerCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
+                                    <ui:ToggleSwitch.IsEnabled>
+                                        <MultiBinding
+                                            Converter="{StaticResource NewRowAllowButtonConverter}">
+                                            <Binding
+                                                RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                Path="IsNewItem" />
+                                            <Binding Path="Run" />
+                                        </MultiBinding>
+                                    </ui:ToggleSwitch.IsEnabled>
+                                </ui:ToggleSwitch>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
 
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <WrapPanel HorizontalAlignment="Right">
-                    <Button Content="删除" Click="DeletePruAndConsumerDg" Width="80" Margin="0,0,5,0" />
-                </WrapPanel>
-            </StackPanel>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <WrapPanel Grid.Row="3" HorizontalAlignment="Right">
+                <Button Content="删除" Click="DeletePruAndConsumerDg" Width="80" Margin="0,0,15,10" />
+            </WrapPanel>
         </Grid>
         <Grid Column="1" Margin="5">
-            <StackPanel>
-                <TextBlock Text="消息绑定详细设置" Margin="15,10" />
+            <Grid.RowDefinitions>
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition  Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="消息绑定详细设置" Margin="15,10" />
                 <DataGrid
+                    Grid.Row="1"
                     Name="DetailedDg"
                     HorizontalAlignment="Left"
-                    Margin="5"
-                    MinWidth="350"
-                    Height="500"
+                    Margin="15"
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                     ItemsSource="{Binding ProductiveModel.ShowDgDetailed}"
@@ -237,16 +243,19 @@
                                     <Grid>
                                         <StackPanel>
                                             <StackPanel Margin="0,0,0,5">
-                                                <TextBlock Margin="5" Text="站地址"/>
-                                                <ui:NumberBox HorizontalAlignment="Left" Width="100" Value="{Binding ProducterStationAddress}"/>
+                                                <TextBlock Margin="5" Text="站地址" />
+                                                <ui:NumberBox HorizontalAlignment="Left" Width="100"
+                                                              Value="{Binding ProducterStationAddress}" />
                                             </StackPanel>
                                             <StackPanel Margin="0,0,0,5">
-                                                <TextBlock Margin="5" Text="起始地址"/>
-                                                <ui:NumberBox HorizontalAlignment="Left" Width="100" Value="{Binding ProducterStartAddress}"/>
+                                                <TextBlock Margin="5" Text="起始地址" />
+                                                <ui:NumberBox HorizontalAlignment="Left" Width="100"
+                                                              Value="{Binding ProducterStartAddress}" />
                                             </StackPanel>
                                             <StackPanel Margin="0,0,0,5">
-                                                <TextBlock Margin="5" Text="寄存器长度"/>
-                                                <ui:NumberBox HorizontalAlignment="Left" Width="100" Value="{Binding ProducterLength}"/>
+                                                <TextBlock Margin="5" Text="寄存器长度" />
+                                                <ui:NumberBox HorizontalAlignment="Left" Width="100"
+                                                              Value="{Binding ProducterLength}" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
@@ -266,16 +275,19 @@
                                     <Grid>
                                         <StackPanel>
                                             <StackPanel Margin="0,0,0,5">
-                                                <TextBlock Margin="5" Text="站地址"/>
-                                                <ui:NumberBox HorizontalAlignment="Left" Width="100" Value="{Binding ConsumerStationAddress}"/>
+                                                <TextBlock Margin="5" Text="站地址" />
+                                                <ui:NumberBox HorizontalAlignment="Left" Width="100"
+                                                              Value="{Binding ConsumerStationAddress}" />
                                             </StackPanel>
                                             <StackPanel Margin="0,0,0,5">
-                                                <TextBlock Margin="5" Text="起始地址"/>
-                                                <ui:NumberBox HorizontalAlignment="Left" Width="100" Value="{Binding ConsumerStartAddress}"/>
+                                                <TextBlock Margin="5" Text="起始地址" />
+                                                <ui:NumberBox HorizontalAlignment="Left" Width="100"
+                                                              Value="{Binding ConsumerStartAddress}" />
                                             </StackPanel>
                                             <StackPanel Margin="0,0,0,5">
-                                                <TextBlock Margin="5" Text="寄存器长度"/>
-                                                <ui:NumberBox HorizontalAlignment="Left" Width="100" Value="{Binding ConsumerLength}"/>
+                                                <TextBlock Margin="5" Text="寄存器长度" />
+                                                <ui:NumberBox HorizontalAlignment="Left" Width="100"
+                                                              Value="{Binding ConsumerLength}" />
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
@@ -284,10 +296,9 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <WrapPanel HorizontalAlignment="Right">
-                    <Button Content="删除" Width="80" Margin="0,0,5,0" Click="DetailedDgDelete"/>
+                <WrapPanel Grid.Row="2" HorizontalAlignment="Right">
+                    <Button Content="删除" Width="80" Margin="0,0,15,10" Click="DetailedDgDelete" />
                 </WrapPanel>
-            </StackPanel>
         </Grid>
         <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" />
     </Grid>

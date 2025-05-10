@@ -105,7 +105,7 @@ namespace Pkn_HostSystem.Views.Pages
                         "单寄存器(无符号)", "单寄存器(有符号)",
                         "双寄存器;无符号;BigEndian", "双寄存器;无符号;LittleEndian", "双寄存器;无符号;WordSwap", "双寄存器;无符号;ByteSwap",
                         "双寄存器;有符号;BigEndian", "双寄存器;有符号;LittleEndian", "双寄存器;有符号;WordSwap", "双寄存器;有符号;ByteSwap",
-                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;WordSwap", "32位浮点数;ByteSwap", "ASCII字符串"
+                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;WordSwap", "32位浮点数;ByteSwap", "ASCII字符串(高低位)","ASCII字符串(低高位)"
                     ];
                     break;
                 case "ModbusRtu":
@@ -115,7 +115,7 @@ namespace Pkn_HostSystem.Views.Pages
                         "单寄存器(无符号)", "单寄存器(有符号)",
                         "双寄存器;无符号;BigEndian", "双寄存器;无符号;LittleEndian", "双寄存器;无符号;WordSwap", "双寄存器;无符号;ByteSwap",
                         "双寄存器;有符号;BigEndian", "双寄存器;有符号;LittleEndian", "双寄存器;有符号;WordSwap", "双寄存器;有符号;ByteSwap",
-                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;WordSwap", "32位浮点数;ByteSwap", "ASCII字符串"
+                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;WordSwap", "32位浮点数;ByteSwap", "ASCII字符串(高低位)","ASCII字符串(低高位)"
                     ];
                     break;
                 case "Tcp客户端":
@@ -349,5 +349,26 @@ namespace Pkn_HostSystem.Views.Pages
             dynCondition.TranspondLen = numberBox.Value.ToString();
         }
 
+        /// <summary>
+        /// 窗口大小改变
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MesTcpPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DynGrid.MaxHeight = e.NewSize.Height;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void DeleteClick(object sender, RoutedEventArgs e)
+        {
+            DynSwitch? value = DynSwitchDataGrid.SelectedValue as DynSwitch;
+
+            viewModel.MesTcpModel.SwitchList?.Remove(value);
+        }
     }
 }

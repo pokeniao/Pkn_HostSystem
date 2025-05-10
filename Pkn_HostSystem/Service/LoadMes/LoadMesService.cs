@@ -1051,15 +1051,15 @@ public class LoadMesService
                     List<float> floatList4 =
                         ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.ByteSwap);
                     return (true, string.Join(",", Array.ConvertAll(floatList4.ToArray(), p => $"{p}")));
-                case "ASCII字符串":
+                case "ASCII字符串(低高位)":
                     var result_3 = new List<byte>();
                     foreach (var itemUshort in holdingRegisters03)
                     {
                         //转成16进制
                         var value = itemUshort.ToString("x4");
                         //从2索引截取到结尾
-                        var high = value.Substring(2);
-                        var low = value.Substring(0, 2);
+                        var low = value.Substring(2);
+                        var high = value.Substring(0, 2);
                         var ByteLow = byte.Parse(low, NumberStyles.HexNumber);
                         var ByteHigh = byte.Parse(high, NumberStyles.HexNumber);
 
@@ -1070,6 +1070,24 @@ public class LoadMesService
 
                     //输出ASCII码转换后的结果
                     return (true, Encoding.ASCII.GetString(result_3.ToArray()));
+                case "ASCII字符串(高低位)":
+                    var result_4 = new List<byte>();
+                    foreach (var itemUshort in holdingRegisters03)
+                    {
+                        //转成16进制
+                        var value = itemUshort.ToString("x4");
+                        //从2索引截取到结尾
+                        var high = value.Substring(2);
+                        var  low= value.Substring(0, 2);
+                        var ByteLow = byte.Parse(low, NumberStyles.HexNumber);
+                        var ByteHigh = byte.Parse(high, NumberStyles.HexNumber);
+
+                        //低位在前
+                        result_4.Add(ByteLow);
+                        result_4.Add(ByteHigh);
+                    }
+                    //输出ASCII码转换后的结果
+                    return (true, Encoding.ASCII.GetString(result_4.ToArray()));
             }
         }
         catch (Exception e)

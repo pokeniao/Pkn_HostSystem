@@ -13,7 +13,8 @@
       d:DesignHeight="714.5" d:DesignWidth="1000"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      SizeChanged="MesTcpPage_OnSizeChanged">
 
     <Page.Resources>
         <converter:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
@@ -39,7 +40,7 @@
                     <RowDefinition Height="Auto" />
                     <!-- 按钮 -->
                 </Grid.RowDefinitions>
-                <TextBlock Text="动态连接对象" FontSize="18" FontWeight="Black" Grid.Row="0" Margin="5,0" />
+                <TextBlock Text="动态连接对象" FontSize="17" FontWeight="Black" Grid.Row="0" Margin="5,0" />
                 <Border Margin="0,5"
                         Grid.Row="1"
 
@@ -63,37 +64,46 @@
             </Grid>
 
         </Grid>
-        <Grid Grid.Row="0" Grid.Column="1">
-            <StackPanel>
-                <GroupBox Header="内容" BorderThickness="0" Margin="25,10">
-                    <Border
-                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                        BorderThickness="1"
-                        Height="150"
-                        CornerRadius="10">
-                        <TextBox
-                            Margin="5"
-                            VerticalScrollBarVisibility="Auto"
-                            HorizontalScrollBarVisibility="Auto"
-                            TextWrapping="Wrap"
-                            AcceptsReturn="True"
-                            Background="{x:Null}"
-                            BorderBrush="{x:Null}"
-                            BorderThickness="0"
-                            Style="{x:Null}"
-                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                            Text="{Binding MesTcpModel.Message ,UpdateSourceTrigger= PropertyChanged }"
-                            TextChanged="TextBoxBase_OnTextChanged"
-                            FontSize="16" />
-                    </Border>
-                </GroupBox>
+
+        <Grid Grid.Row="0" Grid.Column="1" Name="DynGrid">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.3*" />
+                    <RowDefinition Height="0.7*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border
+                    Grid.Row="0"
+                    Margin="26,10"
+                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+
+                    BorderThickness="1"
+                    CornerRadius="10">
+                    <TextBox
+
+                        Margin="5"
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Auto"
+                        TextWrapping="Wrap"
+                        AcceptsReturn="True"
+                        Background="{x:Null}"
+                        BorderBrush="{x:Null}"
+                        BorderThickness="0"
+                        Style="{x:Null}"
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Text="{Binding MesTcpModel.Message ,UpdateSourceTrigger= PropertyChanged }"
+                        TextChanged="TextBoxBase_OnTextChanged"
+                        FontSize="16" />
+                </Border>
 
                 <DataGrid
+                    Grid.Row="1"
                     Name="DynConditionDataGrid"
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                    Height="300"
                     ItemsSource="{Binding MesTcpModel.DynConditionItemList}"
                     AutoGenerateColumns="False"
                     Margin="30, 0">
@@ -352,161 +362,161 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <WrapPanel Margin="20,3">
-                </WrapPanel>
-                <Button Content="删除" Width="100" HorizontalAlignment="Right" Margin="30,0"
-                        Command="{Binding DeleteDynConditionCommand}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType= Page}}" />
-            </StackPanel>
-        </Grid>
-        <UniformGrid Grid.Row="1" Grid.Column="1"
-                     Margin="30,10"
-                     Rows="{Binding MesTcpModel.SetRows}"
-                     Columns="{Binding MesTcpModel.SetColumns}"
-                     HorizontalAlignment="Center">
-            <StackPanel
-                Visibility="{Binding MesTcpModel.ShowSwitchSet ,Converter={StaticResource BooleanVisibilityConverter}}">
-                <GroupBox Header="{Binding MesTcpModel.SetSwitchSetName}" BorderThickness="0">
-                    <DataGrid
-                        HorizontalAlignment="Center"
-                        Name="DynSwitchDataGrid"
-                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                        Height="150"
-                        MinWidth="300"
-                        ItemsSource="{Binding MesTcpModel.SwitchList}"
-                        AutoGenerateColumns="False">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Case" Width="*" Binding="{Binding Case}" />
-                            <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </GroupBox>
-                <WrapPanel HorizontalAlignment="Right">
-                    <Button Content="删除" />
-                    <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick2" />
-                </WrapPanel>
-            </StackPanel>
-            <StackPanel
-                Visibility="{Binding MesTcpModel.VeritySet ,Converter={StaticResource BooleanVisibilityConverter}}">
-                <GroupBox Header="{Binding MesTcpModel.SetVeritySetName}" BorderThickness="0">
-                    <DataGrid
-                        HorizontalAlignment="Center"
-                        Name="DynVerifyDataGrid"
-                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                        Height="150"
-                        MinWidth="300"
-                        ItemsSource="{Binding MesTcpModel.VerifyList}"
-                        AutoGenerateColumns="False">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
-                            <DataGridTemplateColumn Header="Type" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <TextBlock Text="{Binding Type}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                                <DataGridTemplateColumn.CellEditingTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <ComboBox
-                                                ItemsSource="{Binding viewModel.VerifyType,RelativeSource={RelativeSource AncestorType=Page}}"
-                                                SelectedValue="{Binding Type}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellEditingTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </GroupBox>
-                <WrapPanel HorizontalAlignment="Right">
-                    <Button Content="删除" />
-                    <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick3" />
-                </WrapPanel>
-            </StackPanel>
-            <StackPanel
-                Visibility="{Binding MesTcpModel.HttpSet ,Converter={StaticResource BooleanVisibilityConverter}}">
-                <GroupBox Header="{Binding MesTcpModel.SetHttpObjectName}" BorderThickness="0">
-                    <DataGrid
-                        HorizontalAlignment="Center"
-                        Name="DynHttpDataGrid"
-                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                        Height="150"
-                        MinWidth="300"
-                        ItemsSource="{Binding MesTcpModel.HttpObjects}"
-                        AutoGenerateColumns="False">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
-                            <DataGridTextColumn Header="JsonKey" Width="*" Binding="{Binding JsonKey}" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </GroupBox>
-                <WrapPanel HorizontalAlignment="Right">
-                    <Button Content="删除" />
-                    <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick4" />
-                </WrapPanel>
-            </StackPanel>
-            <StackPanel
-                Visibility="{Binding MesTcpModel.TranspondSet,Converter={StaticResource BooleanVisibilityConverter}}">
-                <GroupBox Header="{Binding MesTcpModel.TranspondSetName}" BorderThickness="0">
-                    <StackPanel>
-                        <WrapPanel Margin="0,10,0,0">
-                            <TextBlock Text="转发方式" Margin="5" VerticalAlignment="Center" />
-                            <ComboBox ItemsSource="{Binding ForwardingMethod}" />
+                <Button
+                    Grid.Row="2"
+                    Content="删除" Width="100" HorizontalAlignment="Right" Margin="30 10 30 10"
+                    Command="{Binding DeleteDynConditionCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType= Page}}" />
+                <UniformGrid Grid.Row="3"
+                             Margin="30,0"
+                             Rows="{Binding MesTcpModel.SetRows}"
+                             Columns="{Binding MesTcpModel.SetColumns}"
+                             HorizontalAlignment="Center">
+                    <StackPanel
+                        Visibility="{Binding MesTcpModel.ShowSwitchSet ,Converter={StaticResource BooleanVisibilityConverter}}">
+                        <GroupBox Header="{Binding MesTcpModel.SetSwitchSetName}" BorderThickness="0">
+                            <DataGrid
+                                HorizontalAlignment="Center"
+                                Name="DynSwitchDataGrid"
+                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                Height="150"
+                                MinWidth="300"
+                                ItemsSource="{Binding MesTcpModel.SwitchList}"
+                                AutoGenerateColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Case" Width="*" Binding="{Binding Case}" />
+                                    <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                        <WrapPanel HorizontalAlignment="Right">
+                            <Button Content="删除" Click="DeleteClick" />
+                            <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick2" />
                         </WrapPanel>
-                        <TabControl Margin="0,10,0,0">
-                            <TabItem>
-                                <TabItem.Header>
-                                    <TextBlock Text="通讯方式" />
-                                </TabItem.Header>
-                                <Grid>
-                                    <StackPanel>
-                                        <WrapPanel Margin="0,10,0,0">
-                                            <TextBlock Text="通讯对象" Margin="5" VerticalAlignment="Center" />
-                                            <ComboBox ItemsSource="{Binding MesTcpModel.NetWorkList}"
-                                                      SelectionChanged="TranspondComoboxSelected"
-                                                      DisplayMemberPath="NetworkDetailed.Name"
-                                                      SelectedValuePath="NetworkDetailed.Name" />
-                                        </WrapPanel>
-                                        <WrapPanel Margin="0,10,0,0">
-                                            <TextBlock Text="站地址" Margin="5" VerticalAlignment="Center" />
-                                            <ui:NumberBox
-                                                ValueChanged="TranspondStationChange" />
-                                        </WrapPanel>
-                                        <WrapPanel Margin="0,10,0,0">
-                                            <TextBlock Text="起始地址" Margin="5" VerticalAlignment="Center" />
-                                            <ui:NumberBox
-                                                ValueChanged="TranspondStartChange" />
-                                        </WrapPanel>
-                                        <WrapPanel Margin="0,10,0,0">
-                                            <TextBlock Text="长度" Margin="5" VerticalAlignment="Center" />
-                                            <ui:NumberBox ValueChanged="TranspondLenChange" />
-                                        </WrapPanel>
-
-                                        <WrapPanel HorizontalAlignment="Right">
-                                            <Button Content="删除" />
-                                            <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick5" />
-                                        </WrapPanel>
-                                    </StackPanel>
-                                </Grid>
-                            </TabItem>
-                            <TabItem>
-                                <TabItem.Header>
-                                    <TextBlock Text="队列"></TextBlock>
-                                </TabItem.Header>
-                            </TabItem>
-
-                        </TabControl>
                     </StackPanel>
-                </GroupBox>
-            </StackPanel>
+                    <StackPanel
+                        Visibility="{Binding MesTcpModel.VeritySet ,Converter={StaticResource BooleanVisibilityConverter}}">
+                        <GroupBox Header="{Binding MesTcpModel.SetVeritySetName}" BorderThickness="0">
+                            <DataGrid
+                                HorizontalAlignment="Center"
+                                Name="DynVerifyDataGrid"
+                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                Height="150"
+                                MinWidth="300"
+                                ItemsSource="{Binding MesTcpModel.VerifyList}"
+                                AutoGenerateColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
+                                    <DataGridTemplateColumn Header="Type" Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <TextBlock Text="{Binding Type}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <ComboBox
+                                                        ItemsSource="{Binding viewModel.VerifyType,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                        SelectedValue="{Binding Type}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                        <WrapPanel HorizontalAlignment="Right">
+                            <Button Content="删除" />
+                            <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick3" />
+                        </WrapPanel>
+                    </StackPanel>
+                    <StackPanel
+                        Visibility="{Binding MesTcpModel.HttpSet ,Converter={StaticResource BooleanVisibilityConverter}}">
+                        <GroupBox Header="{Binding MesTcpModel.SetHttpObjectName}" BorderThickness="0">
+                            <DataGrid
+                                HorizontalAlignment="Center"
+                                Name="DynHttpDataGrid"
+                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                Height="150"
+                                MinWidth="300"
+                                ItemsSource="{Binding MesTcpModel.HttpObjects}"
+                                AutoGenerateColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
+                                    <DataGridTextColumn Header="JsonKey" Width="*" Binding="{Binding JsonKey}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                        <WrapPanel HorizontalAlignment="Right">
+                            <Button Content="删除" />
+                            <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick4" />
+                        </WrapPanel>
+                    </StackPanel>
+                    <StackPanel
+                        Visibility="{Binding MesTcpModel.TranspondSet,Converter={StaticResource BooleanVisibilityConverter}}">
+                        <GroupBox Header="{Binding MesTcpModel.TranspondSetName}" BorderThickness="0">
+                            <StackPanel>
+                                <WrapPanel Margin="0,10,0,0">
+                                    <TextBlock Text="转发方式" Margin="5" VerticalAlignment="Center" />
+                                    <ComboBox ItemsSource="{Binding ForwardingMethod}" />
+                                </WrapPanel>
+                                <TabControl Margin="0,10,0,0">
+                                    <TabItem>
+                                        <TabItem.Header>
+                                            <TextBlock Text="通讯方式" />
+                                        </TabItem.Header>
+                                        <Grid>
+                                            <StackPanel>
+                                                <WrapPanel Margin="0,10,0,0">
+                                                    <TextBlock Text="通讯对象" Margin="5" VerticalAlignment="Center" />
+                                                    <ComboBox ItemsSource="{Binding MesTcpModel.NetWorkList}"
+                                                              SelectionChanged="TranspondComoboxSelected"
+                                                              DisplayMemberPath="NetworkDetailed.Name"
+                                                              SelectedValuePath="NetworkDetailed.Name" />
+                                                </WrapPanel>
+                                                <WrapPanel Margin="0,10,0,0">
+                                                    <TextBlock Text="站地址" Margin="5" VerticalAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        ValueChanged="TranspondStationChange" />
+                                                </WrapPanel>
+                                                <WrapPanel Margin="0,10,0,0">
+                                                    <TextBlock Text="起始地址" Margin="5" VerticalAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        ValueChanged="TranspondStartChange" />
+                                                </WrapPanel>
+                                                <WrapPanel Margin="0,10,0,0">
+                                                    <TextBlock Text="长度" Margin="5" VerticalAlignment="Center" />
+                                                    <ui:NumberBox ValueChanged="TranspondLenChange" />
+                                                </WrapPanel>
 
-        </UniformGrid>
+                                                <WrapPanel HorizontalAlignment="Right">
+                                                    <Button Content="删除" />
+                                                    <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick5" />
+                                                </WrapPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                    </TabItem>
+                                    <TabItem>
+                                        <TabItem.Header>
+                                            <TextBlock Text="队列"/>
+                                        </TabItem.Header>
+                                    </TabItem>
+
+                                </TabControl>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+
+                </UniformGrid>
+            </Grid>
+        </Grid>
         <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" Margin="0,-5,0,4" />
     </Grid>
 </Page>

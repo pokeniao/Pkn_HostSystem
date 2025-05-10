@@ -242,5 +242,15 @@ namespace Pkn_HostSystem.Views.Pages
         }
         #endregion
 
+        /// <summary>
+        /// 页面尺寸修改
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void HomePage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            LogListBorder.MaxHeight = e.NewSize.Height - 100;
+        }
     }
 }
