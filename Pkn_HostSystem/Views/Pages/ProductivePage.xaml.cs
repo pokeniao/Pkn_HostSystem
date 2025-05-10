@@ -64,5 +64,14 @@ namespace Pkn_HostSystem.Views.Pages
             Productive? item = PruAndConsumerDataGrid.SelectedItem as Productive;
             ProductiveViewModel.ProductiveModel.ShowDgDetailed = item.MessageList;
         }
+        /// <summary>
+        /// 页面窗口改变
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ProductivePage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+           
+        }
     }
 }

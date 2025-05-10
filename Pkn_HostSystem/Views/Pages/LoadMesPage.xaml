@@ -13,6 +13,7 @@
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      SizeChanged="LoadMesPage_OnSizeChanged"
       Title="LoadMesPage">
 
 
@@ -27,64 +28,78 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid>
-                <StackPanel>
-                    <TextBlock Text="请求列表" FontSize="20" Margin="60,0" />
-                    <DataGrid
-                        Name="DataGrid"
-                        Height="600" Margin="30,0"
-                        BorderThickness="1"
-                        HorizontalAlignment="Center" VerticalAlignment="Center"
-                        ItemsSource="{Binding LoadMesPageModel.MesPojoList ,Mode=OneWay}"
-                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                        AutoGenerateColumns="False"
-                        CanUserAddRows="False"
-                        IsReadOnly="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="名称" Width="*" Binding="{Binding Name}" />
-                            <DataGridTextColumn Header="请求地址" Width="*" Binding="{Binding HttpPath}" />
-                            <DataGridTextColumn Header="请求类型" Width="*" Binding="{Binding Ajax}" />
-                            <DataGridTextColumn Header="循环时间(s)" Width="*" Binding="{Binding CycTime}"/>
-                            <DataGridTemplateColumn Header="启动" Width="0.6*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <ui:ToggleSwitch
-                                                OffContent="关闭" OnContent="启动"
-                                                IsChecked="{Binding RunCyc,UpdateSourceTrigger=PropertyChanged}"
-                                                Command="{Binding DataContext.RunHttpCycCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <Button Content="添加" Width="70" Margin="30,0,0,0" Command="{Binding AddHttpButtonCommand}" />
-                        <Button Content="修改" Width="70" Margin="30,0,0,0" Command="{Binding UpdateHttpButtonCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
-                        <Button Content="删除" Width="70" Margin="30,0,0,0" Command="{Binding DeleteHttpButtonCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"  />
-                        <Button Content="手动发送" Width="90" Margin="30,0,0,0" Command="{Binding JogHttpButtonCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
-                    </StackPanel>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="请求列表" FontSize="18" Margin="33,10" />
+                <DataGrid
+                    Grid.Row="1"
+                    Name="DataGrid"
+                    Margin="30,0"
+                    BorderThickness="1"
+                    ItemsSource="{Binding LoadMesPageModel.MesPojoList ,Mode=OneWay}"
+                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
+                    IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="名称" Width="*" Binding="{Binding Name}" />
+                        <DataGridTextColumn Header="请求地址" Width="*" Binding="{Binding HttpPath}" />
+                        <DataGridTextColumn Header="请求类型" Width="*" Binding="{Binding Ajax}" />
+                        <DataGridTextColumn Header="触发方式" Width="*" Binding="{Binding TriggerType}" />
+                        <DataGridTemplateColumn Header="启动" Width="0.6*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <ui:ToggleSwitch
+                                            OffContent="关闭" OnContent="启动"
+                                            IsChecked="{Binding RunCyc,UpdateSourceTrigger=PropertyChanged}"
+                                            Command="{Binding DataContext.RunHttpCycCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10">
+                    <Button Content="添加" Width="70" Margin="30,0,0,0" Command="{Binding AddHttpButtonCommand}" />
+                    <Button Content="修改" Width="70" Margin="30,0,0,0" Command="{Binding UpdateHttpButtonCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
+                    <Button Content="删除" Width="70" Margin="30,0,0,0" Command="{Binding DeleteHttpButtonCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
+                    <Button Content="手动发送" Width="90" Margin="30,0,0,0" Command="{Binding JogHttpButtonCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
                 </StackPanel>
+
             </Grid>
             <Grid Grid.Column="1">
-                <StackPanel HorizontalAlignment="Center">
-                    <TextBlock Text="返回内容" FontSize="17" Margin="20,3"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="返回内容" FontSize="17" Margin="5,10" />
                     <Border
+                        Grid.Row="1"
+                        x:Name="HttpLogListBoxBorder"
+                        Margin="0,0,20,0"
                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
-                        Width="370" Height="600"
-                        CornerRadius="10"
-                        >
-                        <ListBox Name="HttpLogListBox"  ItemsSource="{Binding LoadMesPageModel.ReturnMessageList}"/>
+                        CornerRadius="10">
+                        <ListBox Name="HttpLogListBox" ItemsSource="{Binding LoadMesPageModel.ReturnMessageList}" />
                     </Border>
-                    <WrapPanel HorizontalAlignment="Right">
-                        <Button Content="清空日志" Margin="10,0" Click="ClearLog"/>
-                        <Button Content="滑动到底部" Click="ButtonBase_OnClick"/>
+                    <WrapPanel 
+                        Grid.Row="2"
+                        Margin="20,10"
+                        HorizontalAlignment="Right">
+                        <Button Content="清空日志" Margin="10,0" Click="ClearLog" />
+                        <Button Content="滑动到底部" Click="ButtonBase_OnClick" />
                     </WrapPanel>
-                </StackPanel>
             </Grid>
         </Grid>
         <ui:SnackbarPresenter Grid.Row="0" Grid.ColumnSpan="2" Name="SnackbarPresenter"

@@ -91,7 +91,7 @@
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                    Content="生产与消费"
+                    Content="队列传递"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:ProductivePage}"
                     >

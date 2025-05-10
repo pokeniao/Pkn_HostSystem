@@ -121,7 +121,6 @@
                                         <WrapPanel Margin="0,10,0,0">
                                             <TextBlock Text="触发消息" Margin="5" TextAlignment="Center" />
                                             <TextBox Width="150"
-
                                                      Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                                      BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                                                      Foreground="{DynamicResource TextFillColorPrimaryBrush}"

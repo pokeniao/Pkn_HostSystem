@@ -70,5 +70,16 @@ namespace Pkn_HostSystem.Views.Pages
             ObservableCollection<string> list = (ObservableCollection<string>)obj;
             list.Clear();
         }
+        /// <summary>
+        /// 页面大小发生改变
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void LoadMesPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DataGrid.MaxHeight = e.NewSize.Height - 100;
+            HttpLogListBoxBorder.MaxHeight = e.NewSize.Height -100;
+        }
     }
 }
