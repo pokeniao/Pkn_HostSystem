@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
+using System.IO;
 using System.Windows;
 using Wpf.Ui;
 using Wpf.Ui.DependencyInjection;
@@ -18,7 +19,10 @@ namespace Pkn_HostSystem
         /// <param name="e"></param>
         protected override void OnStartup(StartupEventArgs e)
         {
-
+            // 设置 log4net 全局变量
+            log4net.GlobalContext.Properties["LOG_DIR"] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Pkn_HostSystem", "Logs");
+            // 开启 log4net 内部调试信息输出到控制台
+            log4net.Util.LogLog.InternalDebugging = true;
 
             // IOC 容器
             Ioc.Default.ConfigureServices(
