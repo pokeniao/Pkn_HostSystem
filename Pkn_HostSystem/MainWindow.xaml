@@ -6,7 +6,7 @@
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:pages="clr-namespace:Pkn_HostSystem.Views.Pages"
                  mc:Ignorable="d"
-                 Title="上位机系统"
+                 Title="Pkn_HostSystem"
                  Width="1220"
                  Height="762.5"
                  MinWidth="1000"
@@ -37,7 +37,7 @@
 
         <ui:TitleBar
 
-            Title="Pkn上位机"
+            Title="Pkn_HostSystem"
             FontSize="18"
             Grid.ColumnSpan="2" VerticalAlignment="Center">
             <ui:TitleBar.Icon>
