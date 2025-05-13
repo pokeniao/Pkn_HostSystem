@@ -7,6 +7,7 @@
       xmlns:viewModels="clr-namespace:Pkn_HostSystem.ViewModels"
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:page1="clr-namespace:Pkn_HostSystem.ViewModels.Page"
+      xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance page:SettingsPageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
@@ -14,6 +15,9 @@
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Title="SettingsPage">
+    <Page.Resources>
+        <converter:StringRadioButtonConverter x:Key="StringRadioButtonConverter"/>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -25,19 +29,26 @@
                 <RadioButton
                     x:Name="LightThemeRadioButton"
                     Margin="0,12,0,0"
-                    Checked="OnLightThemeRadioButtonChecked"
+                    Command="{Binding LightThemeRadioButtonCheckedCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
                     Content="亮主题"
-                    GroupName="themeSelect" />
+                    IsChecked="{Binding SettingsPageModel.CurrentTheme, Converter={StaticResource StringRadioButtonConverter}, ConverterParameter=亮主题, Mode=TwoWay}"
+                    GroupName="themeSelect" 
+                    />
                 <RadioButton
                     x:Name="DarkThemeRadioButton"
                     Margin="0,8,0,0"
-                    Checked="OnDarkThemeRadioButtonChecked"
+                    Command="{Binding DarkThemeRadioButtonCheckedCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
                     Content="暗主题"
+                    IsChecked="{Binding SettingsPageModel.CurrentTheme, Converter={StaticResource StringRadioButtonConverter}, ConverterParameter=暗主题, Mode=TwoWay}"
                     GroupName="themeSelect" />
                 <RadioButton
                     x:Name="AutoThemeRadioButton"
                     Margin="0,8,0,0"
-                    Checked="OnAutoThemeRadioButtonChecked"
+                    Command="{Binding AutoThemeRadioButtonCheckedCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
+                    IsChecked="{Binding SettingsPageModel.CurrentTheme, Converter={StaticResource StringRadioButtonConverter}, ConverterParameter=系统主题, Mode=TwoWay}"
                     Content="系统主题"
                     GroupName="themeSelect" />
                 <StackPanel Margin="0,12,0,0">
@@ -45,6 +56,7 @@
                     <WrapPanel>
                         <Button Content="保存" Margin="40,5,0,0" Command="{Binding SaveProgramCommand}"/>
                         <Button Content="重置" Margin="30,5,0,0" Command="{Binding ReSetProgramCommand}"/>
+                        <Button Content="打开目录" Margin="30,5,0,0" Click="ButtonBase_OnClick"></Button>
                     </WrapPanel>
                 </StackPanel>
                 <TextBlock Text="About" FontSize="18" FontWeight="Bold" Margin="0,24,0,8" />
@@ -58,7 +70,7 @@
                                 <TextBlock Text="Pkn上位机" />
                                 <TextBlock
                                     Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="© 2025 ZhiGao Pan;Pkn上位机（All rights reserved）" />
+                                    Text="© 2025 ZhiGao Pan;Pkn_HostSystem（All rights reserved）" />
                             </StackPanel>
                         </Grid>
                     </ui:CardExpander.Header>
@@ -101,6 +113,7 @@
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1">
+            <ui:SnackbarPresenter Name="SnackbarPresenter"/> 
         </Grid>
     </Grid>
 </Page>

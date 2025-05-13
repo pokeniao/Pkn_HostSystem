@@ -60,8 +60,8 @@ namespace Pkn_HostSystem
             _ = Ioc.Default.GetRequiredService<HomePage>();
             _ = Ioc.Default.GetRequiredService<LoadMesPage>();
             _ = Ioc.Default.GetRequiredService<MesTcpPage>();
+            _ = Ioc.Default.GetRequiredService<SettingsPage>();
 
-        
         }
 
         private async Task Starting()

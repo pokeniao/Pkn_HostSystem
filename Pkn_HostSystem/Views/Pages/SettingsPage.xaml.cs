@@ -1,8 +1,11 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
-using Wpf.Ui.Appearance;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls;
+using Wpf.Ui.Controls;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Pkn_HostSystem.Views.Pages
 {
@@ -11,32 +14,27 @@ namespace Pkn_HostSystem.Views.Pages
     /// </summary>
     public partial class SettingsPage : Page
     {
+        public SettingsPageViewModel ViewModel { get; set; }
         public SettingsPage()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
-            if (ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark)
+            ViewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
+            DataContext = ViewModel;
+            ViewModel.setSnackbarPresenter(SnackbarPresenter);
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+
+
+            if (System.IO.Directory.Exists(GlobalMannager.AppFolder))
             {
-                DarkThemeRadioButton.IsChecked = true;
+                Process.Start("explorer.exe", GlobalMannager.AppFolder);
             }
             else
             {
-                LightThemeRadioButton.IsChecked = true;
+                MessageBox.Show("文件夹不存在！");
             }
-        }
-        private void OnLightThemeRadioButtonChecked(object sender, RoutedEventArgs e)
-        {
-            ApplicationThemeManager.Apply(ApplicationTheme.Light);
-        }
-
-        private void OnDarkThemeRadioButtonChecked(object sender, RoutedEventArgs e)
-        {
-            ApplicationThemeManager.Apply(ApplicationTheme.Dark);
-        }
-
-        private void OnAutoThemeRadioButtonChecked(object sender, RoutedEventArgs e)
-        {
-            ApplicationThemeManager.ApplySystemTheme();
         }
     }
 }

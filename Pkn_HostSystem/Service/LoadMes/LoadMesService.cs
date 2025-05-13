@@ -111,7 +111,7 @@ public class LoadMesService
         CancellationTokenSource cts)
     {
         //得到消息体
-        var (succeed, request) = await PackRequest(item.Name, cts);
+        var (succeed, request) = await PackRequest(item?.Name, cts);
         if (!succeed)
         {
             Log.Info("--SendHttp--PackRequest消息体组装失败");

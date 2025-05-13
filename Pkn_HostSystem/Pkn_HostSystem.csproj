@@ -6,14 +6,14 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
-		<VersionPrefix>1.0.2</VersionPrefix>
+		<VersionPrefix>1.1.0</VersionPrefix>
 
 		<AssemblyName>Pkn_HostSystem</AssemblyName>
 		<UseWindowsForms>False</UseWindowsForms>
 		<RootNamespace>Pkn_HostSystem</RootNamespace>
 		<StartupObject>Pkn_HostSystem.App</StartupObject>
 		<ApplicationIcon>Assets\pokeniao_logo_圆角_128.ico</ApplicationIcon>
-		<PackageIcon>pokeniao_logo_圆角_128.png</PackageIcon>
+		<PackageIcon></PackageIcon>
 		<Company>深圳市欧盛自动化有限公司</Company>
 		<Authors>潘智高</Authors>
 		<Copyright>© 2025 潘智高;Pkn上位机(All rights reserved)</Copyright>
@@ -25,11 +25,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="Assets\pokeniao_logo_圆角_128.ico" />
+		<Resource Include="Assets\pokeniao_logo_圆角_128.ico">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="pokeniao_logo_圆角_128.ico">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="DeepCloner" Version="0.10.4" />
 		<PackageReference Include="DynamicData" Version="9.2.1" />
 		<PackageReference Include="log4net" Version="3.0.4" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
