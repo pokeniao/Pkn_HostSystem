@@ -1,6 +1,8 @@
 ﻿using System.IO;
+using System.Reflection;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Base.Log;
+using Pkn_HostSystem.Static;
 
 namespace Pkn_HostSystem.Base;
 
@@ -15,13 +17,13 @@ public class AppJsonTool<T> where T : class, new()
 
 
     //3.  Path.Combine(...) 是 .NET 提供的路径拼接方法：它会自动添加斜杠 \，防止你手动拼接时出错。
-    private static readonly string AppFolder =
-        Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Pkn_HostSystem" // 文件夹名
-        );
+    // private static readonly string AppFolder =
+    //     Path.Combine(
+    //         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+    //         GlobalMannager.AssemblyName // 文件夹名
+    //     );
 
-    private static readonly string SaveFile = Path.Combine(AppFolder, "程序缓存");
+    private static readonly string SaveFile = Path.Combine(GlobalMannager.AppFolder, "程序缓存");
     private static readonly string FilePath = Path.Combine(SaveFile, typeof(T).Name + ".json");
 
     private static LogBase<AppJsonTool<T>> log = new();
@@ -88,7 +90,12 @@ public class AppJsonTool<T> where T : class, new()
         if (File.Exists(FilePath)) File.Delete(FilePath);
     }
 
-
+    /// <summary>
+    /// 尝试转换成JSON
+    /// </summary>
+    /// <param name="response"></param>
+    /// <param name="isJson"></param>
+    /// <returns></returns>
     public static string TryFormatJson(string response,out bool isJson)
     {
         if (string.IsNullOrWhiteSpace(response))
@@ -120,4 +127,49 @@ public class AppJsonTool<T> where T : class, new()
         return response;
     }
 
+
+    /// <summary>
+    /// 利用JSON 实现深拷贝
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public static T DeepClone(T obj)
+    {
+        //转成json
+        var json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+        //反序列化
+        return JsonConvert.DeserializeObject<T>(json,
+            new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }) ?? null;
+    }
+
+    /// <summary>
+    /// JsonConvert.PopulateObject会将 JSON 中有的字段赋值到 targetObject 上；
+    /// 不会清空或影响 JSON 中没有的字段；
+    /// 不会创建新对象，只对已有对象赋值。
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public static void ApplyPartialJson(string partialJson, T target)
+    {
+
+        if (string.IsNullOrWhiteSpace(partialJson) || target == null)
+            return;
+        JsonConvert.PopulateObject(partialJson, target);
+    }
+
+    /// <summary>
+    /// JsonConvert.PopulateObject会将 JSON 中有的字段赋值到 targetObject 上；
+    /// 不会清空或影响 JSON 中没有的字段；
+    /// 不会创建新对象，只对已有对象赋值。
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public static void ApplyPartialJson(T alter, T target)
+    {
+        //转成json
+        var json = JsonConvert.SerializeObject(alter, Formatting.Indented);
+        if (string.IsNullOrWhiteSpace(json) || target == null)
+            return;
+        JsonConvert.PopulateObject(json, target);
+    }
 }

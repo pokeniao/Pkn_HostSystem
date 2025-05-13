@@ -1,30 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="Pkn_HostSystem_Wix" Language="1033" Version="1.0.0.0" Manufacturer="" UpgradeCode="e7ca6ab1-189b-4437-9238-f9a2163d2d3e">
+	<!-- Product 定义了安装包的基本信息
+         Id="*" 表示自动生成新的 ProductCode（每次构建都不同）
+         Name 是显示名称，Version 是版本号
+         Manufacturer 是公司名
+         UpgradeCode 是程序的“身份”，不同版本应保持相同，用于识别升级关系
+    -->
+	<Product Id="*" Name="Pkn_HostSystem" Language="1033" Version="1.1.0.0" Manufacturer="深圳市欧盛自动化有限公司"
+             UpgradeCode="e7ca6ab1-189b-4437-9238-f9a2163d2d3e">
+		<!-- 指定 MSI 打包方式
+         InstallerVersion=500 表示支持 Win10+
+         Compressed=yes 表示文件打包进 MSI
+         InstallScope=perMachine 表示为所有用户安装
+        -->
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+		<!-- 自动生成用于打包的 <Media> 节点，不需要手动维护磁盘分卷信息 -->
 		<MediaTemplate />
 
+		<!-- Feature 表示一个功能模块，必须包含至少一个组件组 -->
 		<Feature Id="ProductFeature" Title="Pkn_HostSystem_Wix" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
+			<!-- 引用我们稍后定义的组件组 -->
 		</Feature>
+
+		<!-- <Icon Id="pokeniao" SourceFile="Assets\pokeniao_logo_圆角_128.ico" /> -->
 	</Product>
 
+	<!-- Fragment 是一种片段结构，我们把目录和文件放这里 -->
 	<Fragment>
+		<!-- TARGETDIR 是根目录 -->
 		<Directory Id="TARGETDIR" Name="SourceDir">
+			<!-- ProgramFilesFolder 是“C:\Program Files”目录 -->
 			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLFOLDER" Name="Pkn_HostSystem_Wix" />
+				<!-- INSTALLFOLDER 是你的软件安装路径，可自定义文件夹名 -->
+				<Directory Id="INSTALLFOLDER" Name="Pkn_HostSystem_Wix">
+
+					<!-- 定义一个组件（安装单元），每个组件必须有唯一 GUID -->
+					<Component Id="MainExecutable" Guid="22f3e16b-924c-41fd-8d1e-e4f994b14371">
+						<!-- 安装主程序文件
+                             $(var.MyApp.TargetPath) 是 Visual Studio 自动注入的路径变量（链接你的主 exe）
+                             KeyPath="yes" 表示这是组件的关键文件 -->
+						<File Id="MainExe" Source="$(var.Pkn_HostSystem.TargetPath)" KeyPath="yes">
+							<!-- 定义桌面快捷方式
+                                 Directory="DesktopFolder" 表示放在桌面
+                                 Advertise="no" 避免广告快捷方式（不然右键“打开文件位置”会失效） -->
+							<Shortcut
+                                Id="DesktopShortcut"
+                                Directory="DesktopFolder"
+                                Name="Pkn_HostSystem"
+                                WorkingDirectory="INSTALLFOLDER"
+                                Advertise="no"
+                       
+                                IconIndex="0" />
+						</File>
+					</Component>
+				</Directory>
 			</Directory>
+			<!-- 定义桌面目录，用于创建快捷方式 -->
+			<Directory Id="DesktopFolder" Name="Desktop"/>
 		</Directory>
 	</Fragment>
 
 	<Fragment>
+		<!-- 定义一个组件组，让 Feature 引用 -->
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
-			<!-- <Component Id="ProductComponent"> -->
-				<!-- TODO: Insert files, registry keys, and other resources here. -->
-			<!-- </Component> -->
+			<ComponentRef Id="MainExecutable" />
 		</ComponentGroup>
 	</Fragment>
 </Wix>

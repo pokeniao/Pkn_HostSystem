@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using log4net.Config;
 using Microsoft.Extensions.DependencyInjection;
+using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
 using System.IO;
@@ -33,8 +34,8 @@ namespace Pkn_HostSystem
         /// 运行唯一App
         /// </summary>
         private static Mutex _mutex;
-        private const string MutexName = "Pokeniao_HostSystem"; // 应用唯一标识
-        private const string MainWindowTitle = "Pkn_HostSystem"; // 用你的窗口标题替换
+        private static readonly string MutexName = GlobalMannager.AssemblyName; // 应用唯一标识
+        private static readonly string MainWindowTitle = GlobalMannager.AssemblyName; // 用你的窗口标题替换
 
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -81,7 +82,7 @@ namespace Pkn_HostSystem
         private void LogConfig()
         {
             // 设置 log4net 全局变量
-            log4net.GlobalContext.Properties["LOG_DIR"] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Pkn_HostSystem", "Logs");
+            log4net.GlobalContext.Properties["LOG_DIR"] = Path.Combine(GlobalMannager.AppFolder, "Logs");
             // 开启 log4net 内部调试信息输出到控制台
             log4net.Util.LogLog.InternalDebugging = true;
             XmlConfigurator.ConfigureAndWatch(new FileInfo("Config\\log4net.config"));

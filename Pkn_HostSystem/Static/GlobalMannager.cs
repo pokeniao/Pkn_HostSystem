@@ -3,6 +3,7 @@ using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Reflection;
 
 namespace Pkn_HostSystem.Static;
@@ -23,6 +24,18 @@ public static class GlobalMannager
     /// </summary>
     public static string AssemblyVersion =
         Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
+
+
+    public static string? AssemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
+
+    /// <summary>
+    /// %AppData%路径
+    /// </summary>
+    public static readonly string AppFolder =
+        Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            AssemblyName // 文件夹名
+        );
 
     /// <summary>
     /// 管理 连接的线程池

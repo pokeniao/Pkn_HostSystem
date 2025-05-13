@@ -53,7 +53,7 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// <summary>
     /// 触发类型:循环,触发
     /// </summary>
-    [ObservableProperty] private string triggerType;
+    [ObservableProperty] private string triggerType ="循环触发";
     /// <summary>
     /// 站地址
     /// </summary>
