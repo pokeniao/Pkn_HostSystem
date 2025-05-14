@@ -267,30 +267,49 @@
                                         </Grid>
                                         <Grid
                                             Visibility="{Binding showSocket ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <TextBlock Margin="10" Text="发送内容" />
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition  Height="Auto"/> 
+                                                <RowDefinition  Height="Auto"/> 
+                                            </Grid.RowDefinitions>
+                                 
+                                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <TextBlock  Text="发送内容" VerticalAlignment="Center" />
                                                     <TextBox
                                                         Text="{Binding SocketSendMessage,UpdateSourceTrigger=PropertyChanged}"
-                                                        Width="120" Margin="5" />
+                                                        Width="150"
+                                                        Margin="5" />
                                                 </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch OffContent="关闭校验" OnContent="启动校验" Margin="5"
-                                                                     IsChecked="{Binding OpenVerify}" />
-                                                    <Button Content="校验" Click="SetVerify" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
-                                                                     IsChecked="{Binding OpenSwitch}" />
-                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch OnContent="打开结果转发" OffContent="关闭结果转发"
-                                                                     IsChecked="{Binding ResultTranspond}" />
-                                                    <Button Content="编辑转发对象" Margin="10,0"
-                                                            Click="ResultTranspond_OnClick" />
-                                                </StackPanel>
-                                            </StackPanel>
+
+                                                <UniformGrid Grid.Row="1"
+                                                    Rows="3"
+                                                    Columns="2">
+                                                    <ui:ToggleSwitch
+                                                        OffContent="关闭校验" OnContent="启动校验" 
+                                                        IsChecked="{Binding OpenVerify}" />
+                                                    <Button 
+                                                        Margin="5,5,0,0"
+                                                        Content="校验"  
+                                                        Click="SetVerify"
+                                                        Width="100"/>
+                                                    <ui:ToggleSwitch 
+                                                        OnContent="启用switch" OffContent="关闭switch" 
+                                                        IsChecked="{Binding OpenSwitch}" />
+                                                    <Button 
+                                                        Margin="5,5,0,0"
+                                                        Content="编辑switch"
+                                                        Click="ButtonBase_OnClick"
+                                                        Width="100"/>
+
+                                                    <ui:ToggleSwitch
+                                                        OnContent="打开结果转发" OffContent="关闭结果转发" 
+                                                        IsChecked="{Binding ResultTranspond}" />
+                                                    <Button 
+                                                        Margin="5,5,0,0"
+                                                        Content="编辑转发"
+                                                        Width="100"
+                                                        Click="ResultTranspond_OnClick" />
+                                                </UniformGrid>
+                                      
                                         </Grid>
                                         <Grid
                                             Visibility="{Binding showHostLinkReadReg ,Converter={StaticResource BooleanVisibilityConverter}}">
@@ -332,33 +351,13 @@
                                             </StackPanel>
                                         </Grid>
                                         <Grid
+                                            HorizontalAlignment="Center"
                                             Visibility="{Binding showHttpName ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <Button Content="设置需要解析的Json" Click="SetHttpGetObject" />
                                         </Grid>
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
-                        </DataGridTemplateColumn>
-
-                        <DataGridTemplateColumn Width="0.6*" Header="失败退出">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <CheckBox
-                                            IsChecked="{Binding DynFailReturnFail,UpdateSourceTrigger=PropertyChanged}">
-                                            <CheckBox.IsEnabled>
-                                                <MultiBinding
-                                                    Converter="{StaticResource NewRowAllowButtonConverter}">
-                                                    <Binding
-                                                        RelativeSource="{RelativeSource AncestorType=DataGridRow}"
-                                                        Path="IsNewItem" />
-                                                    <Binding Path="DynFailReturnFail" />
-                                                </MultiBinding>
-                                            </CheckBox.IsEnabled>
-                                        </CheckBox>
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
@@ -461,14 +460,16 @@
                     </StackPanel>
                     <StackPanel
                         Visibility="{Binding MesTcpModel.TranspondSet,Converter={StaticResource BooleanVisibilityConverter}}">
-                        <GroupBox Header="{Binding MesTcpModel.TranspondSetName}" BorderThickness="0">
+                        <GroupBox Header="{Binding MesTcpModel.TranspondSetName}" BorderThickness="1" 
+                                  Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <StackPanel>
                                 <WrapPanel Margin="0,10,0,0">
                                     <TextBlock Text="转发方式" Margin="5" VerticalAlignment="Center" />
-                                    <ComboBox ItemsSource="{Binding ForwardingMethod}" />
+                                    <ComboBox ItemsSource="{Binding ForwardingMethod}" SelectedValue="{Binding MesTcpModel.TranspondModbusDetailed.TranspondMethod}"/>
                                 </WrapPanel>
-                                <TabControl Margin="0,10,0,0">
-                                    <TabItem>
+                                <TabControl Margin="0,10,0,0" MinWidth="300">
+                                    <TabItem >
                                         <TabItem.Header>
                                             <TextBlock Text="通讯方式" />
                                         </TabItem.Header>
@@ -476,28 +477,33 @@
                                             <StackPanel>
                                                 <WrapPanel Margin="0,10,0,0">
                                                     <TextBlock Text="通讯对象" Margin="5" VerticalAlignment="Center" />
-                                                    <ComboBox ItemsSource="{Binding MesTcpModel.NetWorkList}"
-                                                              SelectionChanged="TranspondComoboxSelected"
+                                                    <ComboBox
+                                                        Width="100"
+                                                        ItemsSource="{Binding MesTcpModel.NetWorkList}"
                                                               DisplayMemberPath="NetworkDetailed.Name"
-                                                              SelectedValuePath="NetworkDetailed.Name" />
+                                                              SelectedValuePath="NetworkDetailed.Name" 
+                                                              SelectedValue="{Binding MesTcpModel.TranspondModbusDetailed.ConnectName}"/>
                                                 </WrapPanel>
                                                 <WrapPanel Margin="0,10,0,0">
                                                     <TextBlock Text="站地址" Margin="5" VerticalAlignment="Center" />
                                                     <ui:NumberBox
-                                                        ValueChanged="TranspondStationChange" />
+                                                        Width="100"
+                                                        Value="{Binding MesTcpModel.TranspondModbusDetailed.SlaveAddress,UpdateSourceTrigger=PropertyChanged}"/>
                                                 </WrapPanel>
                                                 <WrapPanel Margin="0,10,0,0">
                                                     <TextBlock Text="起始地址" Margin="5" VerticalAlignment="Center" />
                                                     <ui:NumberBox
-                                                        ValueChanged="TranspondStartChange" />
+                                                        Width="100"
+                                                        Value="{Binding MesTcpModel.TranspondModbusDetailed.StartAddress,UpdateSourceTrigger=PropertyChanged}"/>
                                                 </WrapPanel>
                                                 <WrapPanel Margin="0,10,0,0">
                                                     <TextBlock Text="长度" Margin="5" VerticalAlignment="Center" />
-                                                    <ui:NumberBox ValueChanged="TranspondLenChange" />
+                                                    <ui:NumberBox 
+                                                        Width="100"
+                                                        Value="{Binding MesTcpModel.TranspondModbusDetailed.Length,UpdateSourceTrigger=PropertyChanged}"/>
                                                 </WrapPanel>
 
                                                 <WrapPanel HorizontalAlignment="Right">
-                                                    <Button Content="删除" />
                                                     <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick5" />
                                                 </WrapPanel>
                                             </StackPanel>

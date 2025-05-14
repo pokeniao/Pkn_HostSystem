@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using KeyenceTool;
-using Newtonsoft.Json;
+﻿using KeyenceTool;
 using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
@@ -8,16 +6,14 @@ using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
-using Pkn_HostSystem.Service.UserDefined;
 using Pkn_HostSystem.Static;
-using Pkn_HostSystem.Views.Pages;
 using RestSharp;
-using System.CodeDom;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using DataFormat = RestSharp.DataFormat;
 using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
 
 namespace Pkn_HostSystem.Server.LoadMes;
@@ -114,12 +110,12 @@ public class LoadMesService
         var (succeed, request) = await PackRequest(item?.Name, cts);
         if (!succeed)
         {
-            Log.Info("--SendHttp--PackRequest消息体组装失败");
+            Log.Error("--执行发送HTTP任务--消息体组装失败");
             return (false, null);
         }
 
         //日志显示发送内容
-        Log.Info($"{nameof(LoadMesService)}--SendHttp--{item.Name}--发送内容: \r\n {request}");
+        Log.Info($"{nameof(LoadMesService)}--执行发送HTTP任务--{item.Name}--发送内容: \r\n {request}");
         if (request != null)
         {
             //创建连接
@@ -194,11 +190,11 @@ public class LoadMesService
                 //判断是否是JSON格式,如果是转成输出
                 item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
 
-                Log.Info($"{item.Name}--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+                Log.Error($"{item.Name}--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
                 return (false, item.Response);
             }
         }
-
+        Log.Error($"{nameof(LoadMesService)}--执行发送HTTP任务--{item.Name}--发送内容为空");
         return (false, null);
     }
 
@@ -238,6 +234,7 @@ public class LoadMesService
                     var (succeed, value) = await DynMessage(request, itemValue, cts);
                     if (!succeed)
                     {
+                        Log.Error("执行动态嵌入内容时发送错误");
                         return (false, null);
                     }
 
@@ -319,14 +316,14 @@ public class LoadMesService
     {
         if (DynName == null)
         {
-            Log.Info($"{nameof(LoadMesService)}--正在动态嵌入内容的时候,动态获取名未设置(DynName) ");
+            Log.Error($"{nameof(LoadMesService)}--正在动态嵌入内容的时候,动态获取名未设置(DynName),无法从GlobalMannager.DynDictionary进行查找 ");
             return (false, null);
         }
 
         var lookup = GlobalMannager.DynDictionary.Lookup(DynName);
         if (!lookup.HasValue)
         {
-            Log.Info($"{nameof(LoadMesService)}--正在动态嵌入内容的时候,--{DynName}--从动态字典DynDictionary找不到,返回空字符串");
+            Log.Error($"{nameof(LoadMesService)}--正在动态嵌入内容的时候,名为:{DynName},从动态字典GlobalMannager.DynDictionary找不到,返回空字符串");
             return (false, null);
         }
 
@@ -334,7 +331,7 @@ public class LoadMesService
         var message = mesTcpPojo.Message;
         if (message == null)
         {
-            Log.Info($"{nameof(LoadMesService)} 从动态字典DynDictionary找到的消息内容Message为Null");
+            Log.Error($"{nameof(LoadMesService)} 从动态字典GlobalMannager.DynDictionary找到的消息内容Message为Null");
             return (false, null);
         }
 
@@ -358,7 +355,7 @@ public class LoadMesService
                         (bool succeed1, string readReg) = await ReadReg(item);
                         if (!succeed1)
                         {
-                            Log.Info($"动态嵌入--{item.Name}--读寄存器地址{item.StartAddress}失败");
+                            Log.Error($"动态嵌入--{item.Name}--读寄存器地址{item.StartAddress}失败");
                             return (false, null);
                         }
 
@@ -375,7 +372,7 @@ public class LoadMesService
                         (bool succeed2, string readCoid) = await ReadCoid(item);
                         if (!succeed2)
                         {
-                            Log.Info($"动态嵌入--{item.Name}--读读线圈地址{item.StartAddress}失败");
+                            Log.Error($"动态嵌入--{item.Name}--读线圈地址{item.StartAddress}失败");
                             return (false, null);
                         }
 
@@ -393,6 +390,7 @@ public class LoadMesService
                         //判断
                         if (!succeed)
                         {
+                            Log.Error("Socket返回发送错误");
                             return (false, null);
                         }
 
@@ -411,7 +409,7 @@ public class LoadMesService
                             {
                                 if (!VerityMessage(tcp, dynVerify))
                                 {
-                                    Log.Info("校验到不匹配,撤回发送");
+                                    Log.Error("校验到不匹配,撤回发送");
                                     return (false, null);
                                 }
                             }
@@ -455,6 +453,7 @@ public class LoadMesService
                 JObject jObject;
                 if (!isJson)
                 {
+                    Log.Error("执行HTTP类型,返回的response 不是JSON格式");
                     //如果不是JSON对象直接退出
                     return (false, null);
                 }
@@ -466,19 +465,25 @@ public class LoadMesService
                 {
                     string JsonKey = httpObject.JsonKey;
                     //判断是否是自定义的JsonKey
-                    var userDefined = RunUserDefined(JsonKey, out bool isReturn, out string errorMessage);
-                    if (isReturn)
+                    string value = RunUserDefined(JsonKey, out bool error, out bool userDefind,
+                        out string errorMessage);
+
+                    if (userDefind)
                     {
-                        Log.Info(errorMessage);
-                        //已经执行完自定义的,需要退出
-                        return (false, null);
+                        if (error)
+                        {
+                            Log.Error(errorMessage);
+                            //已经执行完自定义的,需要退出
+                            return (false, null);
+                        }
                     }
+
 
                     //常规执行
                     string jToken;
-                    if (userDefined != null)
+                    if (userDefind)
                     {
-                        jToken = userDefined;
+                        jToken = value;
                     }
                     else
                     {
@@ -496,7 +501,6 @@ public class LoadMesService
 
 
     #region 消息转发
-
     /// <summary>
     /// 转发
     /// </summary>
@@ -505,43 +509,50 @@ public class LoadMesService
     /// <returns></returns>
     public async Task<(bool succeed, string message)> Transpond(DynCondition model, string response)
     {
-        //通过名字搜索id
-        string forwardingName = model.TranspondObject;
-        //获得网络名
-        string netKey = getNetKey(forwardingName);
-        //获得网络
-        var netWork = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
-
-        //判断当前转发的通讯是什么类型的
-        string networkDetailedNetMethod = netWork.NetworkDetailed.NetMethod;
-        switch (networkDetailedNetMethod)
+        switch (model.TranspondModbusDetailed.TranspondMethod)
         {
-            case "ModbusTcp":
-                ModbusBase modbusBase = netWork.ModbusBase;
-                List<ushort> list = new List<ushort>();
-                try
+            case "通讯":
+                //通过名字搜索id
+                string forwardingName = model.TranspondModbusDetailed.ConnectName;
+                //获得网络名
+                string netKey = getNetKey(forwardingName);
+                //获得网络
+                var netWork = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
+
+                //判断当前转发的通讯是什么类型的
+                string networkDetailedNetMethod = netWork.NetworkDetailed.NetMethod;
+                switch (networkDetailedNetMethod)
                 {
-                    for (int i = 0; i < response.Length; i += 2)
-                    {
-                        char high = response[i];
-                        char low = (i + 1 < response.Length) ? response[i + 1] : '\0'; // 补0
-                        ushort packed = (ushort)((high << 8) | low);
-                        list.Add(packed);
-                    }
+                    case "ModbusTcp":
+                        ModbusBase modbusBase = netWork.ModbusBase;
+                        List<ushort> list = new List<ushort>();
+                        try
+                        {
+                            for (int i = 0; i < response.Length; i += 2)
+                            {
+                                char high = response[i];
+                                char low = (i + 1 < response.Length) ? response[i + 1] : '\0'; // 补0
+                                ushort packed = (ushort)((high << 8) | low);
+                                list.Add(packed);
+                            }
 
-                    ushort[] result = list.ToArray();
+                            ushort[] result = list.ToArray();
 
-                    await modbusBase.WriteRegisters_10(byte.Parse(model.TranspondStationAddress),
-                        ushort.Parse(model.TranspondStartAddress), result);
+                            await modbusBase.WriteRegisters_10(byte.Parse(model.TranspondModbusDetailed.SlaveAddress),
+                                ushort.Parse(model.TranspondModbusDetailed.StartAddress), result);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error($"进行通讯转发时发送错误,:{e}");
+                            return (false, null);
+                        }
+
+                        break;
                 }
-                catch (Exception e)
-                {
-                    return (false, null);
-                }
-
+                break;
+            case "队列":
                 break;
         }
-
         return (true, null);
     }
 
@@ -552,43 +563,63 @@ public class LoadMesService
     /// </summary>
     /// <param name="JsonKey"></param>
     /// <returns></returns>
-    public string RunUserDefined(string JsonKey, out bool noReturn, out string ErrorMessage)
+    public string RunUserDefined(string JsonKey, out bool error, out bool userDefined, out string ErrorMessage)
     {
-        switch (JsonKey)
+        string returnMessage = null;
+        //格式  UserDefined:类名:属性
+        if (JsonKey.Contains("UserDefined"))
         {
-            case "byd:Base003_OrderList:scheduleCode":
-                string scheduleCode = new BydBase003OrderList().DynCurrentOrder("scheduleCode");
-                if (scheduleCode == null)
+            userDefined = true;
+            //1.去掉收尾空格
+            string trim = JsonKey.Trim();
+            //2.进行分割
+            string[] split = trim.Split(':');
+            //3.反射类
+            //3.1 拼接命名空间
+            string className = "Pkn_HostSystem.Service.UserDefined." + split[1];
+            //获得示例对象
+            Type? userObjectType = Type.GetType(className);
+            if (userObjectType != null)
+            {
+                //创建示例对象
+                object? userObject = Activator.CreateInstance(userObjectType);
+
+                //获得方法,并且调用
+                MethodInfo? methodInfo = userObjectType.GetMethod("GetPropertyValue");
+
+                //执行方法
+                object? invoke = methodInfo?.Invoke(userObject, [split[2]]);
+                if (invoke == null)
                 {
-                    ErrorMessage = "未选择工单!请选择工单后操作";
-                    noReturn = true;
+                    //返回错误
+                    error = true;
+                    MethodInfo? method = userObjectType.GetMethod("ErrorMessage");
+                    try
+                    {
+                        var message = method?.Invoke(userObject, []);
+                        ErrorMessage = message.ToString();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e.Message);
+                    }
                 }
                 else
                 {
+                    error = false;
                     ErrorMessage = String.Empty;
-                    noReturn = false;
+                    returnMessage = invoke.ToString();
                 }
-
-                return scheduleCode;
-            case "byd:Base003_OrderList:orderCode":
-                string orderCode = new BydBase003OrderList().DynCurrentOrder("orderCode");
-                if (orderCode == null)
-                {
-                    ErrorMessage = "未选择工单!请选择工单后操作";
-                    noReturn = true;
-                }
-                else
-                {
-                    ErrorMessage = String.Empty;
-                    noReturn = false;
-                }
-
-                return orderCode;
-            default:
-                noReturn = false;
-                ErrorMessage = String.Empty;
-                return null;
+            }
         }
+        else
+        {
+            userDefined = false;
+        }
+
+        error = false;
+        ErrorMessage = String.Empty;
+        return returnMessage;
     }
 
     #endregion
@@ -613,6 +644,7 @@ public class LoadMesService
                 }
                 else
                 {
+                    Log.Error($"校验失败,长度不等于{len1}");
                     return false;
                 }
             case "字符长度检测!=":
@@ -629,6 +661,7 @@ public class LoadMesService
                 }
                 else
                 {
+                    Log.Error($"校验失败,长度={len2}");
                     return false;
                 }
 
@@ -646,6 +679,7 @@ public class LoadMesService
                 }
                 else
                 {
+                    Log.Error($"校验失败,长度<={len3}");
                     return false;
                 }
             case "字符长度检测<":
@@ -662,6 +696,7 @@ public class LoadMesService
                 }
                 else
                 {
+                    Log.Error($"校验失败,长度>={len4}");
                     return false;
                 }
             case "字符长度检测>=":
@@ -678,6 +713,7 @@ public class LoadMesService
                 }
                 else
                 {
+                    Log.Error($"校验失败,长度<{len5}");
                     return false;
                 }
             case "字符长度检测=<":
@@ -694,6 +730,7 @@ public class LoadMesService
                 }
                 else
                 {
+                    Log.Error($"校验失败,长度>{len6}");
                     return false;
                 }
 
@@ -704,6 +741,7 @@ public class LoadMesService
                 }
                 else
                 {
+                    Log.Error($"校验失败,字符不等于 {verify.Value}");
                     return false;
                 }
             case "字符!=":
@@ -713,6 +751,7 @@ public class LoadMesService
                 }
                 else
                 {
+                    Log.Error($"校验失败,字符等于 {verify.Value}");
                     return false;
                 }
             case "正则表达式检测":
@@ -723,6 +762,7 @@ public class LoadMesService
                 }
                 else
                 {
+                    Log.Error($"校验失败,不符合正则表达式");
                     return false;
                 }
         }
@@ -746,7 +786,6 @@ public class LoadMesService
         {
             case "当前时间(yyyy-MM-dd HH:mm:ss)":
                 //判断时间是否需要处理
-
                 return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
             case "当前时间(yyyy/MM/dd HH:mm:ss)":
                 return dateTime.ToString("yyyy/MM/dd HH:mm:ss");
@@ -913,6 +952,12 @@ public class LoadMesService
             }
         }
 
+        if (curNetWork == null)
+        {
+            Log.Error("遍历获取网络时,未获取到 GlobalMannager.NetWorkDictionary中不存在");
+            return (false, null);
+        }
+
         string response = string.Empty;
         TcpTool tcpTool = curNetWork.TcpTool;
         //更具类型选择发送
@@ -923,6 +968,7 @@ public class LoadMesService
                 (bool succeed, response) = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage);
                 if (!succeed)
                 {
+                    Log.Error("执行Tcp客户端消息发送,等待消息返回时发生错误");
                     return (false, null);
                 }
 
@@ -965,6 +1011,7 @@ public class LoadMesService
         }
         catch (Exception e)
         {
+            Log.Error($"执行modbus读线圈失败,{e}");
             return (false, null);
         }
     }
@@ -1078,7 +1125,7 @@ public class LoadMesService
                         var value = itemUshort.ToString("x4");
                         //从2索引截取到结尾
                         var high = value.Substring(2);
-                        var  low= value.Substring(0, 2);
+                        var low = value.Substring(0, 2);
                         var ByteLow = byte.Parse(low, NumberStyles.HexNumber);
                         var ByteHigh = byte.Parse(high, NumberStyles.HexNumber);
 
@@ -1086,13 +1133,14 @@ public class LoadMesService
                         result_4.Add(ByteLow);
                         result_4.Add(ByteHigh);
                     }
+
                     //输出ASCII码转换后的结果
                     return (true, Encoding.ASCII.GetString(result_4.ToArray()));
             }
         }
         catch (Exception e)
         {
-            Log.Error("执行失败,TCP或RTU未连接上");
+            Log.Error($"执行Modbus读寄存器失败,错误:{e}");
             return (false, null);
         }
 
@@ -1161,7 +1209,7 @@ public class LoadMesService
         }
         catch (Exception e)
         {
-            Log.Error("读取失败");
+            Log.Error($"基恩士上链路读取DM失败 :{e}");
         }
 
         return result;

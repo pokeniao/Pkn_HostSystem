@@ -74,7 +74,6 @@
                     <Button Content="手动发送" Width="90" Margin="30,0,0,0" Command="{Binding JogHttpButtonCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
                 </StackPanel>
-
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>

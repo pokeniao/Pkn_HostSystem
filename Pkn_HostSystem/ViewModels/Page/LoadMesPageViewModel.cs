@@ -213,7 +213,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         if (!succeed)
         {
             //消息体组装失败
-            Log.Info($"{model.Name}消息体--组装完成--返回组装失败");
+            Log.Error($"{model.Name}消息体--组装完成--返回组装失败");
             return (succeed, request);
         }
 
@@ -228,7 +228,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             if (!succeed2)
             {
                 //消息体发送失败
-                Log.Info($"{model.Name}--Http请求发送,返回失败");
+                Log.Error($"{model.Name}--Http请求发送,返回失败");
                 return (succeed2, response);
             }
         }
@@ -390,7 +390,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                 {
                                     if (!await ModbusTcpTriggerWrite(model, true))
                                     {
-                                        Log.Info(
+                                        Log.Error(
                                             $"{model.Name} 触发型modbusRtu,写入成功触发消息:{model.SuccessResponseMessage}--时发生失败");
                                     }
                                 }
@@ -398,7 +398,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                 {
                                     if (!await ModbusTcpTriggerWrite(model, false))
                                     {
-                                        Log.Info(
+                                        Log.Error(
                                             $"{model.Name} 触发型modbusRtu,写入失败触发消息:{model.FailResponseMessage}--时发生失败");
                                     }
                                 }
@@ -472,7 +472,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             }
             else
             {
-                Log.Info($"{model.Name} : modbusTcp触发 返回失败触发消息:{model.FailResponseMessage}");
+                Log.Error($"{model.Name} : modbusTcp触发 返回失败触发消息:{model.FailResponseMessage}");
                 await modbusBase.WriteRegister_06(
                     byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
                     ushort.Parse(model.FailResponseMessage));

@@ -29,7 +29,7 @@ public partial class MesTcpViewModel : ObservableRecipient
 
     public List<string> GetMessageType { get; set; } = ["HTTP", "通讯"];
 
-    public ObservableCollection<string> ForwardingMethod { get; set; } = ["ModbusTcp", "队列"];
+    public ObservableCollection<string> ForwardingMethod { get; set; } = ["通讯", "队列"];
     public MesTcpViewModel()
     {
         SnackbarService = new SnackbarService();
