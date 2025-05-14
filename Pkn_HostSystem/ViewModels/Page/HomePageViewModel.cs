@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using KeyenceTool;
@@ -24,10 +25,9 @@ public partial class HomePageViewModel : ObservableRecipient
 
     public HomePageModel HomePageModel { get; set; } = AppJsonTool<HomePageModel>.Load();
 
-    public ModbusToolModel ModbusToolModel { get; set; }
+    public ModbusToolModel ModbusToolModel { get; set; } = new();
 
     public SnackbarService SnackbarService { get; set; } = new();
-    public ModbusBase ModbusBase { get; set; } = new();
 
     public List<string> NetMethod { get; set; } = ["ModbusTcp", "ModbusRtu", "Tcp客户端", "Tcp服务器", "基恩士上位链路通讯"];
 
@@ -48,35 +48,8 @@ public partial class HomePageViewModel : ObservableRecipient
             HomePageModel.LogListBox = (ObservableCollection<string>)GlobalMannager.GlobalDictionary["LogListBox"];
         }
 
-        //初始化Model
-        ModbusToolModel = new ModbusToolModel()
-        {
-            ModbusTcp_Ip = ModbusBase.getIpAddress().ToList(),
-            ModbusTcp_Ip_select = ModbusBase.getIpAddress()[0],
-            ModbusRtu_COM = ModbusBase.getCOM().ToList(),
-            ModbusRtu_COM_select = ModbusBase.getCOM().Length > 0 ? ModbusBase.getCOM()[0] : null,
-            ModbusTcp_Port = int.Parse("502"),
-            ModbusRtu_baudRate = new List<string>() { "9600", "14400", "19200" },
-            ModbusRtu_baudRate_select = "9600",
-            ModbusRtu_dataBits = new List<string>() { "8", "7" },
-            ModbusRtu_dataBits_select = "8",
-            ModbusRtu_stopBits = Enum.GetValues(typeof(StopBits)).Cast<StopBits>().ToList(),
-            ModbusRtu_parity = Enum.GetValues(typeof(Parity)).Cast<Parity>().ToList(),
-            FuntionCode = new List<string>()
-            {
-                "01读线圈",
-                "02读输入状态",
-                "03读保持寄存器",
-                "04读输入寄存器",
-                "05写单线圈",
-                "06写单寄存器",
-                "0F写多线圈",
-                "10写多寄存器"
-            },
-            SlaveAddress = 1,
-            StartAddress = 0,
-            ReadCount = 1
-        };
+
+        HomePageModel.HttpLists = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
         Log = new LogBase<HomePageViewModel>(SnackbarService);
     }
 

@@ -10,6 +10,7 @@ public class LoadMesDynContent
     /// 当前名称
     /// </summary>
     public string Name { get; set; }
+
     /// <summary>
     /// 当前动态连接的内容,详细行数据
     /// </summary>
@@ -27,6 +28,7 @@ public class DynCondition : ObservableObject
     /// 当前动态名
     /// </summary>
     public string Name { get; set; }
+
     /// <summary>
     /// 当前连接的名称
     /// </summary>
@@ -41,6 +43,7 @@ public class DynCondition : ObservableObject
     /// 当前方法的名称(请求方式) :读线圈,读寄存器
     /// </summary>
     private string methodName;
+
     public string MethodName
     {
         get => methodName;
@@ -59,10 +62,12 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showHttp));
         }
     }
+
     /// <summary>
     /// 站地址
     /// </summary>
     private int stationAddress = 1;
+
     public int StationAddress
     {
         get => stationAddress;
@@ -71,12 +76,13 @@ public class DynCondition : ObservableObject
             SetProperty(ref stationAddress, value);
             OnPropertyChanged(nameof(ShowValue));
         }
-
     }
+
     /// <summary>
     /// 存储当前连接服务器的端口号
     /// </summary>
     public int SelectPost { get; set; }
+
     /// <summary>
     /// 起始地址
     /// </summary>
@@ -91,6 +97,7 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(ShowValue));
         }
     }
+
     /// <summary>
     /// 结束地址
     /// </summary>
@@ -138,7 +145,7 @@ public class DynCondition : ObservableObject
                     value = $"站地址:{StationAddress} 起始地址:{StartAddress} 读取数量{EndAddress}";
                     break;
                 case "Socket返回":
-                    value = "暂无";
+                    value = $"发送内容: {SocketSendMessage}";
                     break;
                 case "读DM寄存器":
                     value = $"起始地址:{StartAddress} {bitNet}";
@@ -149,17 +156,14 @@ public class DynCondition : ObservableObject
                 case "Http方式":
                     value = "双击设置解析的Json";
                     break;
-
             }
 
             return value;
         }
-
     }
 
 
     public string SocketSendMessage { get; set; }
-
 
 
     private string getMessageType;
@@ -180,7 +184,6 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showHttpName));
             OnPropertyChanged(nameof(showHttp));
         }
-
     }
 
 
@@ -194,32 +197,18 @@ public class DynCondition : ObservableObject
     /// </summary>
     public bool OpenVerify { get; set; }
 
-    /// <summary>
-    /// 转发的站地址
-    /// </summary>
-    public string TranspondStationAddress { get; set; }
 
     /// <summary>
-    /// 转发的起始地址
+    /// 转发Modbus细节
     /// </summary>
-    public string TranspondStartAddress { get; set; }
-    /// <summary>
-    /// 转发的对象
-    /// </summary>
-    public string TranspondObject { get; set; }
-    /// <summary>
-    /// 转发的长度
-    /// </summary>
-    public string TranspondLen { get; set; }
+    public TranspondModbusDetailed TranspondModbusDetailed { get; set; } = new();
+
 
     public bool ResultTranspond { get; set; }
 
 
     public ObservableCollection<DynSwitch> SwitchList { get; set; } = new ObservableCollection<DynSwitch>();
-    /// <summary>
-    /// 当动态获取失败直接返回失败
-    /// </summary>
-    public bool DynFailReturnFail { get; set; }
+
 
     /// <summary>
     /// 用于显示连接
@@ -242,18 +231,17 @@ public class DynCondition : ObservableObject
     public bool showHostLinkReadCoid => MethodName == "读R线圈状态";
 
     public bool showHttp => MethodName == "Http方式";
+
     /// <summary>
     /// 用于控制连接名显示
     /// </summary>
     public bool showConnectName => GetMessageType == "通讯";
 
     public bool showHttpName => GetMessageType == "HTTP";
-
 }
+
 public class DynSwitch
 {
-
     public string Case { get; set; }
     public string Value { get; set; }
-
 }

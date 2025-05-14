@@ -170,6 +170,14 @@ public class AppJsonTool<T> where T : class, new()
         var json = JsonConvert.SerializeObject(alter, Formatting.Indented);
         if (string.IsNullOrWhiteSpace(json) || target == null)
             return;
-        JsonConvert.PopulateObject(json, target);
+
+        // new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }强制调用set方法 ,那么只要 get 不为 null，默认会走“就地填充”，不调用 set，即：
+        //如果在对象创建时就被初始化了（比如 constructor 或字段初始化），
+        //  Newtonsoft 会把 JSON 中的数组元素一个个 .Add() 到 Numbers 里，而不是重新创建一个新 List 并调用 set Numbers(...)。
+        var settings = new JsonSerializerSettings
+        {
+            ObjectCreationHandling = ObjectCreationHandling.Replace
+        };
+        JsonConvert.PopulateObject(json, target,settings);
     }
 }

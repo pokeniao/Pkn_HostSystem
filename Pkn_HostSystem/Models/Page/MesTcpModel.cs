@@ -82,6 +82,12 @@ public partial class MesTcpModel : ObservableObject
     [ObservableProperty] private string transpondSetName;
 
     /// <summary>
+    /// 用于显示当前转发的连接名
+    /// </summary>
+    [ObservableProperty] private TranspondModbusDetailed transpondModbusDetailed;
+
+
+    /// <summary>
     /// 用于显示当前转发的页面
     /// </summary>
     [ObservableProperty] private bool transpondSet;

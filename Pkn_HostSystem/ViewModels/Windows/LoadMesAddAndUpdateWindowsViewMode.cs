@@ -141,10 +141,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
                     return false;
                 }
             }
-       
         }
-
-        
 
         //如果需要发送HTTP请求进行校验
         if (verifyObject.HttpNeed)

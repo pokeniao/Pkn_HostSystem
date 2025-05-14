@@ -223,6 +223,7 @@ namespace Pkn_HostSystem.Views.Pages
             _ = viewModel.MesTcpModel.HttpSet ? num++ : num;
             _ = viewModel.MesTcpModel.VeritySet ? num++ : num;
             _ = viewModel.MesTcpModel.ShowSwitchSet ? num++ : num;
+            _ = viewModel.MesTcpModel.TranspondSet ? num++ : num;
 
             switch (num)
             {
@@ -280,10 +281,13 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void ResultTranspond_OnClick(object sender, RoutedEventArgs e)
         {
+            
             viewModel.MesTcpModel.TranspondSet = true;
             showSetPage();
  
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
+
+            viewModel.MesTcpModel.TranspondModbusDetailed = item.TranspondModbusDetailed;
             viewModel.MesTcpModel.TranspondSetName = $"转发设置 :{item.Name}";
         }
 
@@ -297,56 +301,6 @@ namespace Pkn_HostSystem.Views.Pages
         {
             viewModel.MesTcpModel.TranspondSet = false;
             showSetPage();
-        }
-        /// <summary>
-        /// 转发对象选中后
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TranspondComoboxSelected(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox? comboBox = sender as ComboBox;
-            string selectedValue = comboBox.SelectedValue as string;
-            DynCondition? dynCondition = DynConditionDataGrid.SelectedValue as DynCondition;
-
-            dynCondition.TranspondObject = selectedValue;
-        }
-        /// <summary>
-        /// 转发station改变后
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TranspondStationChange(object sender, NumberBoxValueChangedEventArgs args)
-        {
-            NumberBox? numberBox = sender as NumberBox;
-            DynCondition? dynCondition = DynConditionDataGrid.SelectedValue as DynCondition;
-            dynCondition.TranspondStationAddress =numberBox.Value.ToString();
-
-        }
-        /// <summary>
-        /// 转发start改变后
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-
-        private void TranspondStartChange(object sender, NumberBoxValueChangedEventArgs args)
-        {
-            NumberBox? numberBox = sender as NumberBox;
-            DynCondition? dynCondition = DynConditionDataGrid.SelectedValue as DynCondition;
-            dynCondition.TranspondStartAddress = numberBox.Value.ToString();
-        }
-        /// <summary>
-        /// 转发长度改变后
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        /// <exception cref="NotImplementedException"></exception>
-
-        private void TranspondLenChange(object sender, NumberBoxValueChangedEventArgs args)
-        {
-            NumberBox? numberBox = sender as NumberBox;
-            DynCondition? dynCondition = DynConditionDataGrid.SelectedValue as DynCondition;
-            dynCondition.TranspondLen = numberBox.Value.ToString();
         }
 
         /// <summary>

@@ -35,9 +35,7 @@ public partial class HomePageModel : ObservableObject
     /// <summary>
     /// Http请求的列表
     /// </summary>
-    [ObservableProperty]
-    private ObservableCollection<LoadMesAddAndUpdateWindowModel> httpLists =
-        Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
+    [ObservableProperty] private ObservableCollection<LoadMesAddAndUpdateWindowModel> httpLists;
 
     /// <summary>
     /// 当前选中的Http名

@@ -11,10 +11,11 @@ using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Server.LoadMes;
 using Pkn_HostSystem.ViewModels.Page;
 using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace Pkn_HostSystem.Service.UserDefined
 {
-    public class PppBase003OrderList
+    public class PppBase003OrderList : IUserDefined
     {
         public PppOrderList PppOrderList { get; set; }
         public LogBase<PppBase003OrderList> Log = new LogBase<PppBase003OrderList>();
@@ -79,26 +80,37 @@ namespace Pkn_HostSystem.Service.UserDefined
         }
 
         /// <summary>
-        /// 获取当前选中的
+        /// 获得属性值
         /// </summary>
-        public string DynCurrentOrder(string key)
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public object GetPropertyValue(string key)
         {
             HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
             PppOrderList currentSelectPppOrder = homePageViewModel.HomePageModel.CurrentSelectPppOrder;
+
+            //反射获得属性
+            Type type = currentSelectPppOrder.GetType();
             //获取当前选中的对象
             if (currentSelectPppOrder != null)
             {
-                if (key == "scheduleCode")
+                //获得当前选中对象
+                PropertyInfo? propertyInfo = type.GetProperty(key);
+                if (propertyInfo != null)
                 {
-                    return currentSelectPppOrder.scheduleCode;
-                }
-
-                if (key == "orderCode")
-                {
-                    return currentSelectPppOrder.orderCode;
+                    object? value = propertyInfo.GetValue(currentSelectPppOrder);
+                    if (value != null)
+                    {
+                        return value;
+                    }
                 }
             }
             return null;
+        }
+
+        public string ErrorMessage()
+        {
+            return "未选择工单!请选择工单后操作";
         }
     }
 }

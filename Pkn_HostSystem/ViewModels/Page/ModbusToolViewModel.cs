@@ -15,7 +15,7 @@ namespace Pkn_HostSystem.ViewModels.Page;
 public partial class ModbusToolViewModel : ObservableRecipient
 {
     public LogBase<ModbusToolViewModel> Log { get; set; }
-    public ModbusToolModel ModbusToolModel { get; set; }
+    public ModbusToolModel ModbusToolModel { get; set; } = new();
 
     public ModbusBase ModbusBase { get; set; }
 
@@ -26,22 +26,6 @@ public partial class ModbusToolViewModel : ObservableRecipient
         ModbusBase = new ModbusBase();
         SnackbarService = new SnackbarService();
         Log = new LogBase<ModbusToolViewModel>(SnackbarService);
-        //初始化Model
-        ModbusToolModel = new ModbusToolModel()
-        {
-            ModbusTcp_Ip = ModbusBase.getIpAddress().ToList(),
-            ModbusRtu_COM = ModbusBase.getCOM().ToList(),
-            ModbusTcp_Port = int.Parse("502"),
-            ModbusRtu_baudRate = new List<string>() { "9600", "14400", "19200" },
-            ModbusRtu_dataBits = new List<string>() { "8", "7" },
-            ModbusRtu_stopBits = Enum.GetValues(typeof(StopBits)).Cast<StopBits>().ToList(),
-            ModbusRtu_parity = Enum.GetValues(typeof(Parity)).Cast<Parity>().ToList(),
-            FuntionCode = new List<string>()
-                { "01读线圈", "02读输入状态", "03读保持寄存器", "04读输入寄存器", "05写单线圈", "06写单寄存器", "0F写多线圈", "10写多寄存器" },
-            SlaveAddress = 1,
-            StartAddress = 0,
-            ReadCount = 1,
-        };
     }
 
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
