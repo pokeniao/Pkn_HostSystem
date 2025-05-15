@@ -234,7 +234,7 @@
                                                         <ui:ToggleSwitch OffContent="关闭" OnContent="启动"
                                                                          IsChecked="{Binding Open ,UpdateSourceTrigger=PropertyChanged}"
 
-                                                                         Command="{Binding DataContext.ConnectModbusCommand ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                         Command="{Binding DataContext.ConnectCommand ,RelativeSource={RelativeSource AncestorType=Page}}"
                                                                          CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
 
                                                             <ui:ToggleSwitch.IsEnabled>

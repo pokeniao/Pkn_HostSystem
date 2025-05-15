@@ -138,6 +138,8 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// </summary>
     [ObservableProperty] private string forwardingName;
 
+    //维护一个集合,用于判断动态嵌入HTTP请求不会循环嵌套;
+    [JsonIgnore] public List<string> UseHttpList { get; set; } 
     public override string ToString()
     {
         return string.Join(',',

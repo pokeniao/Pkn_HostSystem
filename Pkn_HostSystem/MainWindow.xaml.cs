@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using log4net.Config;
+using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Pojo.Page.HomePage;
@@ -23,9 +24,6 @@ namespace Pkn_HostSystem
     /// </summary>
     public partial class MainWindow 
     {
-
-
-
         //预加载
         public MainWindow()
         {
@@ -74,8 +72,10 @@ namespace Pkn_HostSystem
             {
                 if (connectPojo.Open == true)
                 {
-                    Task startConnectModbusTask = homePageViewModel.StartConnectModbus(connectPojo);
+                    TraceContext.Name = connectPojo.Name;
+                    Task startConnectModbusTask = homePageViewModel.StartConnect(connectPojo);
                     connectTasks.Add(startConnectModbusTask);
+                    TraceContext.Name =null;
                 }
             }
 
@@ -88,7 +88,9 @@ namespace Pkn_HostSystem
             {
                 if (mesPojo.RunCyc)
                 {
+                    TraceContext.Name = mesPojo.Name;
                     loadMesPageViewModel.IsRun(mesPojo);
+                    TraceContext.Name = null;
                 }
             }
 
@@ -101,7 +103,9 @@ namespace Pkn_HostSystem
             {
                 if (productive.Run)
                 {
+                    TraceContext.Name = productive.Name;
                     productiveViewModel.TriggerCyc(productive);
+                    TraceContext.Name = null;
                 }
             }
 

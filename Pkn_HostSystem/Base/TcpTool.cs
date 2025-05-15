@@ -46,7 +46,7 @@ namespace Pkn_HostSystem.Base
             _cts = new CancellationTokenSource();
             _server = new TcpListener(IPAddress.Any, port);
             _server.Start();
-            Log.Info($"[Server] 启动监听端口 {port}");
+            Log.Info($"[{TraceContext.Name}]--[Server] 启动监听端口 {port}");
 
             _ = Task.Run(async () =>
             {
@@ -62,13 +62,13 @@ namespace Pkn_HostSystem.Base
                         _clients[ip] = client;
                         //调用客户端已执行委托
                         OnClientConnected?.Invoke(ip);
-                        Log.Info($"[Server] 客户端连接: {ip}");
+                        Log.Info($"[{TraceContext.Name}]--[Server] 客户端连接: {ip}");
                         //执行与客户端通讯
                         _ = HandleClientAsync(client, ip, _cts.Token);
                     }
                     catch (Exception ex)
                     {
-                        Log.Error($"[Server] Accept 失败: {ex.Message}");
+                        Log.Error($"[{TraceContext.Name}]--[Server] Accept 失败: {ex.Message}");
                         break;
                     }
                 }
@@ -90,7 +90,7 @@ namespace Pkn_HostSystem.Base
             _server?.Stop();
             _server?.Dispose();
             _server = null;
-            Log.Info($"[Server] 已停止监听");
+            Log.Info($"[{TraceContext.Name}]--[Server] 已停止监听");
         }
 
         #endregion
@@ -128,14 +128,14 @@ namespace Pkn_HostSystem.Base
             }
             catch (Exception ex)
             {
-                Log.Error($"[Server] 客户端 {ip} 异常: {ex.Message}");
+                Log.Error($"[{TraceContext.Name}]--[Server] 客户端 {ip} 异常: {ex.Message}");
             }
             finally
             {
                 _clients.TryRemove(ip, out _);
                 client.Close();
                 OnClientDisconnected?.Invoke(ip);
-                Log.Info($"[Server] 客户端断开: {ip}");
+                Log.Info($"[{TraceContext.Name}]--[Server] 客户端断开: {ip}");
             }
         }
 
@@ -232,12 +232,12 @@ namespace Pkn_HostSystem.Base
                 _clientStream = _client.GetStream();
                 ClientResponceCTS = new CancellationTokenSource();
                 //        _ = Task.Run(() => ReceiveFromServer(_clientStream));
-                Log.Info($"[Client] 连接服务器成功: {ip}:{port}");
+                Log.Info($"[{TraceContext.Name}]--[Client] 连接服务器成功: {ip}:{port}");
                 return true;
             }
             catch (Exception ex)
             {
-                Log.Error($"[Client] 连接失败: {ex.Message}");
+                Log.Error($"[{TraceContext.Name}]--[Client] 连接失败: {ex.Message}");
                 return false;
             }
         }
@@ -290,7 +290,7 @@ namespace Pkn_HostSystem.Base
         {
             if (_client == null || !_client.Connected || _clientStream == null)
             {
-                Log.Info("在客户端执行发送消息时, 客户端未连接服务器");
+                Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息时, 客户端未连接服务器");
                 return (false, null);
             }
             // 发送消息
@@ -301,14 +301,14 @@ namespace Pkn_HostSystem.Base
             }
             catch (Exception e)
             {
-                Log.Info($"在客户端执行发送消息时,出现异常{e}");
+                Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息时,出现异常{e}");
                 return (false, null);
             }
             //等待返回消息
             string msg = null;
             try
             {
-                Log.Info("在客户端执行发送消息后,等待消息返回");
+                Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息后,等待消息返回");
                 var buffer = new byte[1024];
                 var stream = _client.GetStream();
                 var startTime = Environment.TickCount; // 记录开始时间
@@ -318,7 +318,7 @@ namespace Pkn_HostSystem.Base
                     int elapsed = Environment.TickCount - startTime;
                     if (elapsed >= timeout)
                     {
-                        Log.Info("在客户端执行发送消息后,等待消息超时！");
+                        Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息后,等待消息超时！");
                         return (false,null);
                     }
 
@@ -327,7 +327,7 @@ namespace Pkn_HostSystem.Base
                     {
                         int count = await stream.ReadAsync(buffer, 0, buffer.Length);
                         msg = Encoding.UTF8.GetString(buffer, 0, count);
-                        Log.Info($"在客户端执行发送消息后,收到服务器返回消息: {msg}");
+                        Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息后,收到服务器返回消息: {msg}");
                         break;
                     }
                     // 没数据，休息一下再看
@@ -336,7 +336,7 @@ namespace Pkn_HostSystem.Base
             }
             catch (Exception e)
             {
-                Log.Info($"在客户端执行发送消息后等待消息返回,出现异常{e}");
+                Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息后等待消息返回,出现异常{e}");
                 return (false, null);
             }
 
