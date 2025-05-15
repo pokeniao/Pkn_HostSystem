@@ -178,41 +178,47 @@
                                     </StackPanel>
                                 </Grid>
                             </TabItem>
-                            <TabItem >
+                            <TabItem>
                                 <TabItem.Header>
-                                    <TextBlock Text="转发设置"/>
+                                    <TextBlock Text="转发设置" />
                                 </TabItem.Header>
                                 <Grid>
                                     <StackPanel>
                                         <WrapPanel Margin="0,10,0,0">
-                                            <TextBlock Text="转发方式" Margin="5" VerticalAlignment="Center"/>
-                                            <ComboBox ItemsSource="{Binding ForwardingMethod}"/>
+                                            <TextBlock Text="转发方式" Margin="5" VerticalAlignment="Center" />
+                                            <ComboBox ItemsSource="{Binding ForwardingMethod}" />
                                         </WrapPanel>
                                         <TabControl Margin="0,10,0,0">
                                             <TabItem>
                                                 <TabItem.Header>
-                                                    <TextBlock Text="通讯方式"/>
+                                                    <TextBlock Text="通讯方式" />
                                                 </TabItem.Header>
                                                 <Grid>
                                                     <StackPanel>
-                                                        <WrapPanel  Margin="0,10,0,0">
-                                                            <TextBlock Text="通讯对象" Margin="5" VerticalAlignment="Center"/>
-                                                            <ComboBox ItemsSource="{Binding LoadMesAddAndUpdateWindowModel.NetWorkList}"
-                                                                      SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.ForwardingName}"
-                                                                      DisplayMemberPath="NetworkDetailed.Name"
-                                                                      SelectedValuePath="NetworkDetailed.Name"/>
+                                                        <WrapPanel Margin="0,10,0,0">
+                                                            <TextBlock Text="通讯对象" Margin="5"
+                                                                       VerticalAlignment="Center" />
+                                                            <ComboBox
+                                                                ItemsSource="{Binding LoadMesAddAndUpdateWindowModel.NetWorkList}"
+                                                                SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.ForwardingName}"
+                                                                DisplayMemberPath="NetworkDetailed.Name"
+                                                                SelectedValuePath="NetworkDetailed.Name" />
                                                         </WrapPanel>
-                                                        <WrapPanel  Margin="0,10,0,0">
-                                                            <TextBlock Text="站地址" Margin="5" VerticalAlignment="Center"/>
-                                                            <ui:NumberBox Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingStationAddress}"/>
+                                                        <WrapPanel Margin="0,10,0,0">
+                                                            <TextBlock Text="站地址" Margin="5" VerticalAlignment="Center" />
+                                                            <ui:NumberBox
+                                                                Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingStationAddress}" />
                                                         </WrapPanel>
-                                                        <WrapPanel  Margin="0,10,0,0">
-                                                            <TextBlock Text="起始地址" Margin="5" VerticalAlignment="Center"/>
-                                                            <ui:NumberBox Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingStartAddress}"/>
+                                                        <WrapPanel Margin="0,10,0,0">
+                                                            <TextBlock Text="起始地址" Margin="5"
+                                                                       VerticalAlignment="Center" />
+                                                            <ui:NumberBox
+                                                                Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingStartAddress}" />
                                                         </WrapPanel>
-                                                        <WrapPanel  Margin="0,10,0,0">
-                                                            <TextBlock Text="长度" Margin="5" VerticalAlignment="Center"/>
-                                                            <ui:NumberBox Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingLen}"/>
+                                                        <WrapPanel Margin="0,10,0,0">
+                                                            <TextBlock Text="长度" Margin="5" VerticalAlignment="Center" />
+                                                            <ui:NumberBox
+                                                                Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingLen}" />
                                                         </WrapPanel>
                                                     </StackPanel>
                                                 </Grid>
@@ -283,7 +289,10 @@
                         </TabItem>
                         <TabItem>
                             <TabItem.Header>
-                                <TextBlock Text="请求体/消息体" />
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="请求体/消息体" Margin="5,0" />
+                                    <ui:SymbolIcon Symbol="ChatWarning20" ToolTip="利用:[键名称] , 可以向消息体中嵌入参数" />
+                                </StackPanel>
                             </TabItem.Header>
                             <GroupBox Header="内容"
                                       Width="400"

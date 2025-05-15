@@ -60,6 +60,7 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showConnectName));
             OnPropertyChanged(nameof(showHttpName));
             OnPropertyChanged(nameof(showHttp));
+            OnPropertyChanged(nameof(showUserDefined));
         }
     }
 
@@ -153,8 +154,11 @@ public class DynCondition : ObservableObject
                 case "读R线圈状态":
                     value = $"起始地址:{StartAddress}";
                     break;
-                case "Http方式":
+                case "Http":
                     value = "双击设置解析的Json";
+                    break;
+                case "自定义(无法填写)":
+                    value = "双击设置自定义";
                     break;
             }
 
@@ -183,6 +187,7 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showConnectName));
             OnPropertyChanged(nameof(showHttpName));
             OnPropertyChanged(nameof(showHttp));
+            OnPropertyChanged(nameof(showUserDefined));
         }
     }
 
@@ -219,7 +224,7 @@ public class DynCondition : ObservableObject
     public ObservableCollection<GetHttpObject> HttpObjects { get; set; } = new ObservableCollection<GetHttpObject>();
 
     /// <summary>
-    /// 用于控制参数在编辑时候的显示
+    /// 请求方式 :进行控制显示
     /// </summary>
     public bool showReadReg => MethodName == "读寄存器";
 
@@ -230,14 +235,17 @@ public class DynCondition : ObservableObject
     public bool showHostLinkReadReg => MethodName == "读DM寄存器";
     public bool showHostLinkReadCoid => MethodName == "读R线圈状态";
 
-    public bool showHttp => MethodName == "Http方式";
+    public bool showHttp => MethodName == "Http";
+
 
     /// <summary>
-    /// 用于控制连接名显示
+    /// 通讯名: 用于控制连接名显示
     /// </summary>
     public bool showConnectName => GetMessageType == "通讯";
 
     public bool showHttpName => GetMessageType == "HTTP";
+
+    public bool showUserDefined => GetMessageType == "自定义";
 }
 
 public class DynSwitch

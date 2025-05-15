@@ -259,19 +259,28 @@ namespace Pkn_HostSystem.Views.Pages
                 var selectedItem = comboBox.SelectedItem as LoadMesAddAndUpdateWindowModel;
             }
         }
+        /// <summary>
+        /// 当 请求类型进行选择时
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GetMessageChange(object sender, SelectionChangedEventArgs e)
         {
             ComboBox? comboBox = sender as ComboBox;
             string selectedValue = comboBox.SelectedValue as string;
             DynCondition? selectedItem = DynConditionDataGrid.SelectedItem as DynCondition;
 
-            if (selectedValue == "HTTP")
+            switch (selectedValue)
             {
-                selectedItem.MethodName = "Http方式";
-            }
-            else
-            {
-                selectedItem.MethodName = "";
+                case "HTTP":
+                    selectedItem.MethodName = "Http";
+                    break;
+                case "自定义":
+                    selectedItem.MethodName = "自定义(无法填写)";
+                    break;
+                default:
+                    selectedItem.MethodName = "";
+                    break;
             }
         }
         /// <summary>

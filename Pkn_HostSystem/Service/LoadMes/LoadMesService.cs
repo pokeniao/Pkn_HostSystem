@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
@@ -13,8 +14,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using DataFormat = RestSharp.DataFormat;
-using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
+
 
 namespace Pkn_HostSystem.Server.LoadMes;
 
@@ -77,26 +77,35 @@ public class LoadMesService
     /// <returns></returns>
     public async Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts)
     {
-        Log.Info($"RunOne执行发送一次ttp请求--Name:{Name}");
+        Log.Info($"[{TraceContext.Name}]--执行发送一次Http请求");
         //获取当前Name的行数据
         LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
         //得到消息体
-        return await SendHttp(item, cts);
+        var (succeed, request) = await PackRequest(item?.Name, cts);
+        if (!succeed)
+        {
+            Log.Error($"[{TraceContext.Name}]--执行发送HTTP任务,消息体组装失败");
+            return (false, null);
+        }
+
+        //得到消息体
+        return await SendHttp(item, request, cts);
     }
 
     /// <summary>
-    /// 全部触发
+    /// 触发单个请求
     /// </summary>
+    /// <param name="Name">HTTP请求名称</param>
+    /// <param name="request">请求体</param>
+    /// <param name="cts"></param>
     /// <returns></returns>
-    public async Task<bool> RunAll()
+    public async Task<(bool succeed, string? response)> RunOne(string Name, string request, CancellationTokenSource cts)
     {
-        Log.Info($"RunAll执行");
-        foreach (var item in mesPojoList)
-        {
-            await SendHttp(item, new CancellationTokenSource());
-        }
-
-        return true;
+        Log.Info($"[{TraceContext.Name}]--执行发送一次Http请求");
+        //获取当前Name的行数据
+        LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
+        //得到消息体
+        return await SendHttp(item, request, cts);
     }
 
     #endregion
@@ -104,98 +113,87 @@ public class LoadMesService
     #region 发送Http任务
 
     public async Task<(bool succeed, string? response)> SendHttp(LoadMesAddAndUpdateWindowModel item,
+        string request,
         CancellationTokenSource cts)
     {
-        //得到消息体
-        var (succeed, request) = await PackRequest(item?.Name, cts);
-        if (!succeed)
+        //日志显示发送内容
+        Log.InfoOverride($"[{TraceContext.Name}]--发送内容: \r\n {request}");
+
+        //创建连接
+        var client = new RestClient(item.HttpPath);
+        RestRequest requestBody;
+        //创建请求
+        switch (item.Ajax)
         {
-            Log.Error("--执行发送HTTP任务--消息体组装失败");
-            return (false, null);
+            case "POST":
+                requestBody = new RestRequest(item.Api, Method.Post);
+                break;
+            case "GET":
+                requestBody = new RestRequest(item.Api, Method.Get);
+                break;
+            case "DELETE":
+                requestBody = new RestRequest(item.Api, Method.Delete);
+                break;
+            case "PUT":
+                requestBody = new RestRequest(item.Api, Method.Put);
+                break;
+            default:
+                requestBody = new RestRequest();
+                break;
         }
 
-        //日志显示发送内容
-        Log.Info($"{nameof(LoadMesService)}--执行发送HTTP任务--{item.Name}--发送内容: \r\n {request}");
-        if (request != null)
+        //添加请求头
+        foreach (var header in item.HttpHeaders)
         {
-            //创建连接
-            var client = new RestClient(item.HttpPath);
-            RestRequest requestBody;
-            //创建请求
-            switch (item.Ajax)
-            {
-                case "POST":
-                    requestBody = new RestRequest(item.Api, Method.Post);
-                    break;
-                case "GET":
-                    requestBody = new RestRequest(item.Api, Method.Get);
-                    break;
-                case "DELETE":
-                    requestBody = new RestRequest(item.Api, Method.Delete);
-                    break;
-                case "PUT":
-                    requestBody = new RestRequest(item.Api, Method.Put);
-                    break;
-                default:
-                    requestBody = new RestRequest();
-                    break;
-            }
+            requestBody.AddHeader(header.Key, header.Value);
+        }
 
-            //添加请求头
-            foreach (var header in item.HttpHeaders)
-            {
-                requestBody.AddHeader(header.Key, header.Value);
-            }
+        //添加请求体
+        switch (item.RequestMethod)
+        {
+            case "JSON":
+                //会自动设置 Content-Type: application/json，并把内容当作 JSON 处理。
+                requestBody.AddStringBody(request, DataFormat.Json);
+                break;
+            case "XML":
+                //表示数据格式是 XML。
+                requestBody.AddStringBody(request, DataFormat.Xml);
+                break;
+            case "TEXT":
+                //一般用于你想自己完全控制请求内容或用于 GET 请求等不带 body 的请求。
+                requestBody.AddStringBody(request, DataFormat.None);
+                break;
+            default:
+                requestBody.AddStringBody(request, DataFormat.None);
+                break;
+        }
 
-            //添加请求体
-            switch (item.RequestMethod)
-            {
-                case "JSON":
-                    //会自动设置 Content-Type: application/json，并把内容当作 JSON 处理。
-                    requestBody.AddStringBody(request, DataFormat.Json);
-                    break;
-                case "XML":
-                    //表示数据格式是 XML。
-                    requestBody.AddStringBody(request, DataFormat.Xml);
-                    break;
-                case "TEXT":
-                    //一般用于你想自己完全控制请求内容或用于 GET 请求等不带 body 的请求。
-                    requestBody.AddStringBody(request, DataFormat.None);
-                    break;
-                default:
-                    requestBody.AddStringBody(request, DataFormat.None);
-                    break;
-            }
-
-            //发送请求
-            RestResponse response = await client.ExecuteAsync(requestBody, cts.Token);
-            //判断
-            if (response.IsSuccessStatusCode)
+        //发送请求
+        RestResponse response = await client.ExecuteAsync(requestBody, cts.Token);
+        //判断
+        if (response.IsSuccessStatusCode)
+        {
+            item.Response = response.Content;
+            //判断是否是JSON格式,如果是转成输出
+            item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
+            Log.InfoOverride($"[{TraceContext.Name}]--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+            return (true, item.Response);
+        }
+        else
+        {
+            //尝试从错误消息中获取,获取不到就从消息内容中获取
+            item.Response = response.ErrorMessage;
+            if (item.Response == null)
             {
                 item.Response = response.Content;
-                //判断是否是JSON格式,如果是转成输出
-                item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
-                Log.Info($"{item.Name}--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
-                return (true, item.Response);
             }
-            else
-            {
-                //尝试从错误消息中获取,获取不到就从消息内容中获取
-                item.Response = response.ErrorMessage;
-                if (item.Response == null)
-                {
-                    item.Response = response.Content;
-                }
 
-                //判断是否是JSON格式,如果是转成输出
-                item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
+            //判断是否是JSON格式,如果是转成输出
+            item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
 
-                Log.Error($"{item.Name}--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
-                return (false, item.Response);
-            }
+            Log.ErrorOverride($"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+            return (false, item.Response);
         }
-        Log.Error($"{nameof(LoadMesService)}--执行发送HTTP任务--{item.Name}--发送内容为空");
-        return (false, null);
     }
 
     #endregion
@@ -205,11 +203,11 @@ public class LoadMesService
     /// <summary>
     /// 包装Request请求
     /// </summary>
-    /// <param name="name"></param>
-    public async Task<(bool succeed, string? value)> PackRequest(string name, CancellationTokenSource cts)
+    /// <param httpName="httpName"></param>
+    public async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
     {
         //获得当前行的数据
-        var loadMesAddAndUpdateWindowModel = SelectByName(name);
+        var loadMesAddAndUpdateWindowModel = SelectByName(httpName);
         if (loadMesAddAndUpdateWindowModel == null) return (false, null);
 
         //获得当前行的条件  将   ObservableCollection<> 转成List
@@ -230,15 +228,15 @@ public class LoadMesService
             {
                 case "动态获取":
                     //获取动态的值
-                    Log.Info("正在动态嵌入内容");
+                    Log.Info($"[{TraceContext.Name}]--正在动态嵌入内容");
                     var (succeed, value) = await DynMessage(request, itemValue, cts);
                     if (!succeed)
                     {
-                        Log.Error("执行动态嵌入内容时发送错误");
+                        Log.Error($"[{TraceContext.Name}]--执行动态嵌入内容时发送错误");
                         return (false, null);
                     }
 
-                    Log.Info($"嵌入内容: \r\n{value}");
+                    Log.Info($"[{TraceContext.Name}]--嵌入内容: \r\n{value}");
                     request = StaticMessage(request, itemKey, value);
                     break;
                 case "常量":
@@ -306,24 +304,25 @@ public class LoadMesService
     }
 
     /// <summary>
-    /// 动态嵌入内容
+    /// 动态嵌入
     /// </summary>
-    /// <param name="request">整个消息体</param>
-    /// <param name="DynName">嵌入名</param>
+    /// <param name="request">请求体内容</param>
+    /// <param name="DynName">动态嵌入的名称</param>
+    /// <param name="cts"></param>
     /// <returns></returns>
     public async Task<(bool sueeced, string? result)> DynMessage(string request, string DynName,
         CancellationTokenSource cts)
     {
         if (DynName == null)
         {
-            Log.Error($"{nameof(LoadMesService)}--正在动态嵌入内容的时候,动态获取名未设置(DynName),无法从GlobalMannager.DynDictionary进行查找 ");
+            Log.Error($"[{TraceContext.Name}]--正在动态嵌入内容的时候,动态获取名未设置(DynName),无法从GlobalMannager.DynDictionary进行查找 ");
             return (false, null);
         }
 
         var lookup = GlobalMannager.DynDictionary.Lookup(DynName);
         if (!lookup.HasValue)
         {
-            Log.Error($"{nameof(LoadMesService)}--正在动态嵌入内容的时候,名为:{DynName},从动态字典GlobalMannager.DynDictionary找不到,返回空字符串");
+            Log.Error($"[{TraceContext.Name}]--正在动态嵌入内容的时候,名为:{DynName},从动态字典GlobalMannager.DynDictionary找不到,返回空字符串");
             return (false, null);
         }
 
@@ -331,7 +330,7 @@ public class LoadMesService
         var message = mesTcpPojo.Message;
         if (message == null)
         {
-            Log.Error($"{nameof(LoadMesService)} 从动态字典GlobalMannager.DynDictionary找到的消息内容Message为Null");
+            Log.Error($"[{TraceContext.Name}]--从动态字典GlobalMannager.DynDictionary找到的消息内容Message为Null");
             return (false, null);
         }
 
@@ -351,65 +350,65 @@ public class LoadMesService
                 switch (methodName)
                 {
                     case "读寄存器":
-                        Log.Info("动态嵌入内容:执行读寄存器中");
+                        Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读寄存器中");
                         (bool succeed1, string readReg) = await ReadReg(item);
                         if (!succeed1)
                         {
-                            Log.Error($"动态嵌入--{item.Name}--读寄存器地址{item.StartAddress}失败");
+                            Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--读寄存器地址{item.StartAddress}失败");
                             return (false, null);
                         }
 
                         if (isSwitch)
                         {
-                            Log.Info("动态嵌入内容读寄存器需要进行消息转换Switch映射");
+                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}--进行Switch映射");
                             readReg = SwitchGetMessage(readReg, item);
                         }
 
                         message = StaticMessage(message, itemKey, readReg);
                         break;
                     case "读线圈":
-                        Log.Info("动态嵌入内容:执行读线圈中");
+                        Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读线圈中");
                         (bool succeed2, string readCoid) = await ReadCoid(item);
                         if (!succeed2)
                         {
-                            Log.Error($"动态嵌入--{item.Name}--读线圈地址{item.StartAddress}失败");
+                            Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--读线圈地址{item.StartAddress}失败");
                             return (false, null);
                         }
 
                         if (isSwitch)
                         {
-                            Log.Info("动态嵌入内容读线圈需要进行消息转换Switch映射");
+                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}--进行Switch映射");
                             readCoid = SwitchGetMessage(readCoid, item);
                         }
 
                         message = StaticMessage(message, itemKey, readCoid);
                         break;
                     case "Socket返回":
-                        Log.Info("动态嵌入内容:执行Socket消息发送");
+                        Log.Info($"[{TraceContext.Name}]--动态嵌入内容:执行Socket消息发送");
                         (bool succeed, string tcp) = await ReadTcpMessageAsync(item);
                         //判断
                         if (!succeed)
                         {
-                            Log.Error("Socket返回发送错误");
+                            Log.Error($"[{TraceContext.Name}]--Socket返回发送错误");
                             return (false, null);
                         }
 
                         //进行switch替换
                         if (isSwitch)
                         {
-                            Log.Info("动态嵌入--Socket需要进行消息转换Switch映射");
+                            Log.Info($"[{TraceContext.Name}]--Socket需要进行消息转换Switch映射");
                             tcp = SwitchGetMessage(tcp, item);
                         }
 
                         //进行校验
                         if (isVerify)
                         {
-                            Log.Info("动态嵌入--Socket需要进行消息校验");
+                            Log.Info($"[{TraceContext.Name}]---Socket需要进行消息校验");
                             foreach (var dynVerify in item.VerifyList)
                             {
                                 if (!VerityMessage(tcp, dynVerify))
                                 {
-                                    Log.Error("校验到不匹配,撤回发送");
+                                    Log.Error($"[{TraceContext.Name}]--校验到不匹配,撤回发送");
                                     return (false, null);
                                 }
                             }
@@ -417,11 +416,11 @@ public class LoadMesService
 
                         if (ResultTranspond)
                         {
-                            Log.Info("需要对当前结果进行转发");
+                            Log.Info($"[{TraceContext.Name}]--需要对当前结果进行转发");
                             (bool succeed3, string message1) = await Transpond(item, tcp);
                             if (!succeed3)
                             {
-                                Log.Info("转发失败");
+                                Log.Info($"[{TraceContext.Name}]--转发失败");
                                 return (false, null);
                             }
                         }
@@ -429,23 +428,26 @@ public class LoadMesService
                         message = StaticMessage(message, itemKey, tcp);
                         break;
                     case "读DM寄存器":
-                        Log.Info("动态嵌入--执行读DM寄存器");
+                        Log.Info($"[{TraceContext.Name}]--执行读DM寄存器");
                         string readDm = await KeyenceReadDM(item);
                         if (isSwitch)
                         {
-                            Log.Info("动态嵌入--读DM寄存器需要进行消息转换Switch映射");
+                            Log.Info($"[{TraceContext.Name}]--读DM寄存器需要进行消息转换Switch映射");
                             readDm = SwitchGetMessage(readDm, item);
                         }
 
                         message = StaticMessage(message, itemKey, readDm);
                         break;
                     case "读R线圈状态":
-                        Log.Info("动态嵌入内容:执行读R线圈状态");
+                        Log.Info($"[{TraceContext.Name}]--执行读R线圈状态");
                         break;
                 }
             }
             else if (item.GetMessageType == "HTTP")
             {
+                //检查是否循环嵌套
+
+
                 //执行发送HTTP
                 (bool succeed, string? response) = await RunOne(item.HttpName, cts);
                 //需要判断返回结果一下是否是Json格式
@@ -453,7 +455,7 @@ public class LoadMesService
                 JObject jObject;
                 if (!isJson)
                 {
-                    Log.Error("执行HTTP类型,返回的response 不是JSON格式");
+                    Log.Error($"[{TraceContext.Name}]--返回的response 不是JSON格式");
                     //如果不是JSON对象直接退出
                     return (false, null);
                 }
@@ -472,7 +474,7 @@ public class LoadMesService
                     {
                         if (error)
                         {
-                            Log.Error(errorMessage);
+                            Log.Error($"[{TraceContext.Name}]--" + errorMessage);
                             //已经执行完自定义的,需要退出
                             return (false, null);
                         }
@@ -490,7 +492,7 @@ public class LoadMesService
                         jToken = jObject.SelectToken(JsonKey).ToString();
                     }
 
-                    Log.Info($"解析 {httpObject.JsonKey}:\r\n {jToken}");
+                    Log.Info($"[{TraceContext.Name}]--解析 {httpObject.JsonKey}:\r\n {jToken}");
                     message = StaticMessageSon(message, itemKey, httpObject.Name, jToken);
                 }
             }
@@ -501,6 +503,7 @@ public class LoadMesService
 
 
     #region 消息转发
+
     /// <summary>
     /// 转发
     /// </summary>
@@ -543,16 +546,18 @@ public class LoadMesService
                         }
                         catch (Exception e)
                         {
-                            Log.Error($"进行通讯转发时发送错误,:{e}");
+                            Log.Error($"[{TraceContext.Name}]--进行通讯转发时发送错误,:{e}");
                             return (false, null);
                         }
 
                         break;
                 }
+
                 break;
             case "队列":
                 break;
         }
+
         return (true, null);
     }
 
@@ -634,7 +639,7 @@ public class LoadMesService
                 bool tryParse1 = int.TryParse(verify.Value, out int len1);
                 if (!tryParse1)
                 {
-                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -644,14 +649,14 @@ public class LoadMesService
                 }
                 else
                 {
-                    Log.Error($"校验失败,长度不等于{len1}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度不等于{len1}");
                     return false;
                 }
             case "字符长度检测!=":
                 bool tryParse2 = int.TryParse(verify.Value, out int len2);
                 if (!tryParse2)
                 {
-                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -661,7 +666,7 @@ public class LoadMesService
                 }
                 else
                 {
-                    Log.Error($"校验失败,长度={len2}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度={len2}");
                     return false;
                 }
 
@@ -669,7 +674,7 @@ public class LoadMesService
                 bool tryParse3 = int.TryParse(verify.Value, out int len3);
                 if (!tryParse3)
                 {
-                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -679,14 +684,14 @@ public class LoadMesService
                 }
                 else
                 {
-                    Log.Error($"校验失败,长度<={len3}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度<={len3}");
                     return false;
                 }
             case "字符长度检测<":
                 bool tryParse4 = int.TryParse(verify.Value, out int len4);
                 if (!tryParse4)
                 {
-                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -696,14 +701,14 @@ public class LoadMesService
                 }
                 else
                 {
-                    Log.Error($"校验失败,长度>={len4}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度>={len4}");
                     return false;
                 }
             case "字符长度检测>=":
                 bool tryParse5 = int.TryParse(verify.Value, out int len5);
                 if (!tryParse5)
                 {
-                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -713,14 +718,14 @@ public class LoadMesService
                 }
                 else
                 {
-                    Log.Error($"校验失败,长度<{len5}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度<{len5}");
                     return false;
                 }
             case "字符长度检测=<":
                 bool tryParse6 = int.TryParse(verify.Value, out int len6);
                 if (!tryParse6)
                 {
-                    Log.Info($"{nameof(LoadMesService)}--VerityMessage--在检测字符串的时候转换Int失败,检测填入的内容");
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
@@ -730,7 +735,7 @@ public class LoadMesService
                 }
                 else
                 {
-                    Log.Error($"校验失败,长度>{len6}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度>{len6}");
                     return false;
                 }
 
@@ -741,7 +746,7 @@ public class LoadMesService
                 }
                 else
                 {
-                    Log.Error($"校验失败,字符不等于 {verify.Value}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,字符不等于 {verify.Value}");
                     return false;
                 }
             case "字符!=":
@@ -751,7 +756,7 @@ public class LoadMesService
                 }
                 else
                 {
-                    Log.Error($"校验失败,字符等于 {verify.Value}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,字符等于 {verify.Value}");
                     return false;
                 }
             case "正则表达式检测":
@@ -762,7 +767,7 @@ public class LoadMesService
                 }
                 else
                 {
-                    Log.Error($"校验失败,不符合正则表达式");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,不符合正则表达式");
                     return false;
                 }
         }
@@ -929,10 +934,10 @@ public class LoadMesService
     #region 套接字通讯获取内容
 
     /// <summary>
-    /// 读tcp消息
+    /// Socket套接字
     /// </summary>
-    /// <param name="item"></param>
-    /// <param name="message"></param>
+    /// <param name="item">动态</param>
+    /// <param name="parentName">调用的父类名称,用于日志显示</param>
     /// <returns></returns>
     public async Task<(bool succeed, string response)> ReadTcpMessageAsync(DynCondition item)
     {
@@ -954,7 +959,7 @@ public class LoadMesService
 
         if (curNetWork == null)
         {
-            Log.Error("遍历获取网络时,未获取到 GlobalMannager.NetWorkDictionary中不存在");
+            Log.Error($"[{TraceContext.Name}]--执行Socket时--遍历获取网络时,未获取到 GlobalMannager.NetWorkDictionary中不存在");
             return (false, null);
         }
 
@@ -964,11 +969,11 @@ public class LoadMesService
         switch (netMethod)
         {
             case "Tcp客户端":
-                Log.Info("执行Tcp客户端消息发送,并等待消息返回");
+                Log.Info($"[{TraceContext.Name}]--执行Tcp客户端消息发送,并等待消息返回");
                 (bool succeed, response) = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage);
                 if (!succeed)
                 {
-                    Log.Error("执行Tcp客户端消息发送,等待消息返回时发生错误");
+                    Log.Error($"[{TraceContext.Name}]--执行Tcp客户端消息发送,等待消息返回时发生错误");
                     return (false, null);
                 }
 
@@ -1011,7 +1016,7 @@ public class LoadMesService
         }
         catch (Exception e)
         {
-            Log.Error($"执行modbus读线圈失败,{e}");
+            Log.Error($"[{TraceContext.Name}]--执行modbus读线圈失败,{e}");
             return (false, null);
         }
     }
@@ -1047,56 +1052,55 @@ public class LoadMesService
                     return (true, result);
                 case "单寄存器(有符号)":
                     result = string.Join(",",
-                        Array.ConvertAll(holdingRegisters03,
-                            p => $"{ModbusDataConverter.ConvertFromResponse<short>(p.ToString())}"));
+                        Array.ConvertAll(holdingRegisters03, p => $"{(short)p}"));
                     return (true, result);
                 case "双寄存器;无符号;BigEndian":
                     List<uint> uInt32List1 =
-                        ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.BigEndian);
+                        ModbusDoubleRegisterTool.ToUInt32List(holdingRegisters03, ModbusEndian.BigEndian);
                     return (true, string.Join(",", Array.ConvertAll(uInt32List1.ToArray(), p => $"{p}")));
                 case "双寄存器;无符号;LittleEndian":
                     List<uint> uInt32List2 =
-                        ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.LittleEndian);
+                        ModbusDoubleRegisterTool.ToUInt32List(holdingRegisters03, ModbusEndian.LittleEndian);
                     return (true, string.Join(",", Array.ConvertAll(uInt32List2.ToArray(), p => $"{p}")));
                 case "双寄存器;无符号;WordSwap":
                     List<uint> uInt32List3 =
-                        ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.WordSwap);
+                        ModbusDoubleRegisterTool.ToUInt32List(holdingRegisters03, ModbusEndian.WordSwap);
                     return (true, string.Join(",", Array.ConvertAll(uInt32List3.ToArray(), p => $"{p}")));
                 case "双寄存器;无符号;ByteSwap":
                     List<uint> uInt32List4 =
-                        ModbusDoubleRegisterConverter.ToUInt32List(holdingRegisters03, ModbusEndian.ByteSwap);
+                        ModbusDoubleRegisterTool.ToUInt32List(holdingRegisters03, ModbusEndian.ByteSwap);
                     return (true, string.Join(",", Array.ConvertAll(uInt32List4.ToArray(), p => $"{p}")));
                 case "双寄存器;有符号;BigEndian":
                     List<int> int32List1 =
-                        ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.BigEndian);
+                        ModbusDoubleRegisterTool.ToInt32List(holdingRegisters03, ModbusEndian.BigEndian);
                     return (true, string.Join(",", Array.ConvertAll(int32List1.ToArray(), p => $"{p}")));
                 case "双寄存器;有符号;LittleEndian":
                     List<int> int32List2 =
-                        ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.LittleEndian);
+                        ModbusDoubleRegisterTool.ToInt32List(holdingRegisters03, ModbusEndian.LittleEndian);
                     return (true, string.Join(",", Array.ConvertAll(int32List2.ToArray(), p => $"{p}")));
                 case "双寄存器;有符号;WordSwap":
                     List<int> int32List3 =
-                        ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.WordSwap);
+                        ModbusDoubleRegisterTool.ToInt32List(holdingRegisters03, ModbusEndian.WordSwap);
                     return (true, string.Join(",", Array.ConvertAll(int32List3.ToArray(), p => $"{p}")));
                 case "双寄存器;有符号;ByteSwap":
                     List<int> int32List4 =
-                        ModbusDoubleRegisterConverter.ToInt32List(holdingRegisters03, ModbusEndian.ByteSwap);
+                        ModbusDoubleRegisterTool.ToInt32List(holdingRegisters03, ModbusEndian.ByteSwap);
                     return (true, string.Join(",", Array.ConvertAll(int32List4.ToArray(), p => $"{p}")));
                 case "32位浮点数;BigEndian":
                     List<float> floatList1 =
-                        ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.BigEndian);
+                        ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.BigEndian);
                     return (true, string.Join(",", Array.ConvertAll(floatList1.ToArray(), p => $"{p}")));
                 case "32位浮点数;LittleEndian":
                     List<float> floatList2 =
-                        ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.LittleEndian);
+                        ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.LittleEndian);
                     return (true, string.Join(",", Array.ConvertAll(floatList2.ToArray(), p => $"{p}")));
                 case "32位浮点数;WordSwap":
                     List<float> floatList3 =
-                        ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.WordSwap);
+                        ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.WordSwap);
                     return (true, string.Join(",", Array.ConvertAll(floatList3.ToArray(), p => $"{p}")));
                 case "32位浮点数;ByteSwap":
                     List<float> floatList4 =
-                        ModbusDoubleRegisterConverter.ToFloatList(holdingRegisters03, ModbusEndian.ByteSwap);
+                        ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.ByteSwap);
                     return (true, string.Join(",", Array.ConvertAll(floatList4.ToArray(), p => $"{p}")));
                 case "ASCII字符串(低高位)":
                     var result_3 = new List<byte>();
@@ -1140,7 +1144,7 @@ public class LoadMesService
         }
         catch (Exception e)
         {
-            Log.Error($"执行Modbus读寄存器失败,错误:{e}");
+            Log.Error($"[{TraceContext.Name}]--执行Modbus读寄存器失败,错误:{e}");
             return (false, null);
         }
 
@@ -1209,7 +1213,7 @@ public class LoadMesService
         }
         catch (Exception e)
         {
-            Log.Error($"基恩士上链路读取DM失败 :{e}");
+            Log.Error($"[{TraceContext.Name}]--基恩士上链路读取DM失败 :{e}");
         }
 
         return result;
