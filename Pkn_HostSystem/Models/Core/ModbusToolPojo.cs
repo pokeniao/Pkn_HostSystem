@@ -1,4 +1,4 @@
-﻿namespace Pkn_HostSystem.Pojo.Page.ModbusTool;
+﻿namespace Pkn_HostSystem.Models.Core;
 
 /// <summary>
 /// ModbusToolPojo

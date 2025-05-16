@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
-using Pkn_HostSystem.Pojo.Page.HomePage;
-using Pkn_HostSystem.Pojo.Page.MESTcp;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Models.Core;

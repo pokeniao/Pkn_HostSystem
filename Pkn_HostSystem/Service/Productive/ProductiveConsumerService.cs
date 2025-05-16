@@ -2,11 +2,10 @@
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.Pojo.Page.HomePage;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 
-namespace Pkn_HostSystem.Server.Productive
+namespace Pkn_HostSystem.Service.Productive
 {
     public class ProductiveConsumerService
     {

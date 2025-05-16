@@ -1,12 +1,8 @@
-﻿using KeyenceTool;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
-using Pkn_HostSystem.Pojo.Page.HomePage;
-using Pkn_HostSystem.Pojo.Page.MESTcp;
-using Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
 using Pkn_HostSystem.Static;
 using RestSharp;
 using System.Collections.ObjectModel;
@@ -15,8 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-
-namespace Pkn_HostSystem.Server.LoadMes;
+namespace Pkn_HostSystem.Service.LoadMes;
 
 public class LoadMesService
 {
@@ -495,7 +490,11 @@ public class LoadMesService
                     Log.Info($"[{TraceContext.Name}]--解析 {httpObject.JsonKey}:\r\n {jToken}");
                     message = StaticMessageSon(message, itemKey, httpObject.Name, jToken);
                 }
+            } else if (item.GetMessageType == "自定义")
+            {
+
             }
+
         }
 
         return (true, message);
@@ -921,6 +920,9 @@ public class LoadMesService
         foreach (DynSwitch dynSwitch in dynSwitches)
         {
             if (dynSwitch.Case == message)
+            {
+                return dynSwitch.Value;
+            } else if (dynSwitch.Case == "default")
             {
                 return dynSwitch.Value;
             }

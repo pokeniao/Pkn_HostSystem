@@ -1,11 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Models.Windows;
-using Pkn_HostSystem.Pojo.Page.HomePage;
-using Pkn_HostSystem.ViewModels.Page;
-using System.Runtime.CompilerServices;
+using System.Collections.ObjectModel;
+
 
 namespace Pkn_HostSystem.Models.Page;
 
@@ -14,7 +13,19 @@ public partial class HomePageModel : ObservableObject
     /// <summary>
     /// Log日志列表,用于显示日志
     /// </summary>
-    [ObservableProperty] private ObservableCollection<string> logListBox;
+    private ObservableCollection<string> logListBox =  new ();
+    [JsonIgnore]
+    public ObservableCollection<string> LogListBox
+    {
+        get => logListBox;
+        set
+        {
+            SetProperty(ref logListBox, value);
+        }
+
+    }
+
+
     /// <summary>
     /// 网络连接对象列表
     /// </summary>

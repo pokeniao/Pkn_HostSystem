@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 
-namespace KeyenceTool
+namespace Pkn_HostSystem.Base
 {
     public class KeyenceHostLinkTool
     {

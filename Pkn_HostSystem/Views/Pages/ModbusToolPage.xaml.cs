@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Pkn_HostSystem.Pojo.Page.ModbusTool;
+using Pkn_HostSystem.Models.Core;
 using ModbusToolViewModel = Pkn_HostSystem.ViewModels.Page.ModbusToolViewModel;
 
 namespace Pkn_HostSystem.Views.Pages

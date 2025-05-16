@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
-using Pkn_HostSystem.Pojo.Page.HomePage;
-using Pkn_HostSystem.Pojo.Page.MESTcp;
 using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
@@ -332,6 +331,15 @@ namespace Pkn_HostSystem.Views.Pages
             DynSwitch? value = DynSwitchDataGrid.SelectedValue as DynSwitch;
 
             viewModel.MesTcpModel.SwitchList?.Remove(value);
+        }
+        /// <summary>
+        /// 设置需要解析的JSON
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UserDefinedJsonSwitchButton(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }

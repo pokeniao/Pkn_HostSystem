@@ -1,8 +1,7 @@
-﻿using KeyenceTool;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Pkn_HostSystem.Base;
 
-namespace Pkn_HostSystem.Pojo.Page.HomePage;
+namespace Pkn_HostSystem.Models.Core;
 
 public class NetWork
 {

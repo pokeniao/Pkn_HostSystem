@@ -1,8 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Pkn_HostSystem.Models.Core;
 using System.Collections.ObjectModel;
 
-namespace Pkn_HostSystem.Pojo.Page.MESTcp;
+namespace Pkn_HostSystem.Models.Core;
 
 public class LoadMesDynContent
 {
@@ -38,6 +37,17 @@ public class DynCondition : ObservableObject
     /// 当前连接Http的名称
     /// </summary>
     public string HttpName { get; set; }
+
+
+    /// <summary>
+    /// 当前选中的用户自定义选项
+    /// </summary>
+    public Type UserDefined { get; set; }
+    /// <summary>
+    /// 打开用户自定义逻辑的JSON映射
+    /// </summary>
+
+    public bool OpenGetPropertyValue { get; set; }
 
     /// <summary>
     /// 当前方法的名称(请求方式) :读线圈,读寄存器

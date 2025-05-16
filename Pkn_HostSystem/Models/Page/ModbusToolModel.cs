@@ -2,7 +2,7 @@
 using System.IO.Ports;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Pkn_HostSystem.Base;
-using Pkn_HostSystem.Pojo.Page.ModbusTool;
+using Pkn_HostSystem.Models.Core;
 
 namespace Pkn_HostSystem.Models.Page
 {
