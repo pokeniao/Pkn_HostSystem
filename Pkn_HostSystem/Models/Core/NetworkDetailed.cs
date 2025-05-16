@@ -1,7 +1,7 @@
-﻿using System.IO.Ports;
-using Pkn_HostSystem.Base;
+﻿using Pkn_HostSystem.Base;
+using System.IO.Ports;
 
-namespace Pkn_HostSystem.Pojo.Page.HomePage;
+namespace Pkn_HostSystem.Models.Core;
 
 /// <summary>
 /// 网络的详细内容

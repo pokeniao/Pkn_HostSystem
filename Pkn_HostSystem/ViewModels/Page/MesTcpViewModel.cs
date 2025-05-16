@@ -5,10 +5,9 @@ using DynamicData;
 using DynamicData.Binding;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
-using Pkn_HostSystem.Pojo.Page.HomePage;
-using Pkn_HostSystem.Pojo.Page.MESTcp;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
@@ -30,6 +29,8 @@ public partial class MesTcpViewModel : ObservableRecipient
     public List<string> GetMessageType { get; set; } = ["HTTP", "通讯","自定义"];
 
     public ObservableCollection<string> ForwardingMethod { get; set; } = ["通讯", "队列"];
+
+    public List<Type> UserDefinedList { get; set; } = GlobalMannager.GetUserDefinedTypes();
     public MesTcpViewModel()
     {
         SnackbarService = new SnackbarService();

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Pkn_HostSystem.Pojo.Windows.LoadMesAddAndUpdateWindow;
+namespace Pkn_HostSystem.Models.Core;
 
 public class LoadMesCondition : ObservableObject
 {

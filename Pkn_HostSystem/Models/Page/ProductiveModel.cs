@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.Pojo.Page.HomePage;
 using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.Models.Page

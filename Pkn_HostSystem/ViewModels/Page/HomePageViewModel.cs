@@ -2,11 +2,10 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
-using KeyenceTool;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
-using Pkn_HostSystem.Pojo.Page.HomePage;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using System.Collections.ObjectModel;

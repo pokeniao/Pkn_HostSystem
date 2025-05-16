@@ -3,7 +3,7 @@ using log4net.Config;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
-using Pkn_HostSystem.Pojo.Page.HomePage;
+using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
 using System.Collections.ObjectModel;
@@ -59,7 +59,6 @@ namespace Pkn_HostSystem
             _ = Ioc.Default.GetRequiredService<LoadMesPage>();
             _ = Ioc.Default.GetRequiredService<MesTcpPage>();
             _ = Ioc.Default.GetRequiredService<SettingsPage>();
-
         }
 
         private async Task Starting()

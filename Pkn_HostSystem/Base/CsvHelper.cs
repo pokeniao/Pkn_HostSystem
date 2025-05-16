@@ -1,12 +1,10 @@
-﻿using DynamicData;
-using Pkn_HostSystem.Base.Log;
-using System;
-using System.Collections.Generic;
+﻿using Pkn_HostSystem.Base.Log;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+
+namespace Pkn_HostSystem.Base;
 
 public class CsvHelper
 {
@@ -109,7 +107,7 @@ public class CsvHelper
         Dictionary<string, object>? dict;
         try
         {
-             dict = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+            dict = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
         }
         catch (Exception e)
         {

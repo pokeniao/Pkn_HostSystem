@@ -78,7 +78,7 @@ namespace Pkn_HostSystem.Views.Pages
         /// <exception cref="NotImplementedException"></exception>
         private void LoadMesPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            DataGrid.MaxHeight = e.NewSize.Height - 100;
+            DataGrid.MaxHeight = e.NewSize.Height-100;
             HttpLogListBoxBorder.MaxHeight = e.NewSize.Height -100;
         }
     }

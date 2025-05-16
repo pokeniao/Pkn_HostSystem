@@ -1,7 +1,6 @@
-﻿using Wpf.Ui;
-using HomePageViewModel = Pkn_HostSystem.ViewModels.Page.HomePageViewModel;
+﻿using HomePageViewModel = Pkn_HostSystem.ViewModels.Page.HomePageViewModel;
 
-namespace Pkn_HostSystem.Server.Home;
+namespace Pkn_HostSystem.Service.Home;
 
 public class HomePageServer
 {

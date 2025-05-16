@@ -367,7 +367,17 @@
                                         <Grid
                                             HorizontalAlignment="Center"
                                             Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <Button Content="设置需要解析的Json" Click="SetHttpGetObject" />
+                                            <StackPanel>
+                                                <ComboBox ItemsSource="{Binding DataContext.UserDefinedList ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                          DisplayMemberPath ="Name"
+                                                          Width="200"
+                                                          SelectedValue="{Binding UserDefined}"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <ui:ToggleSwitch />
+                                                    <Button Content="设置需要解析的Json" Click="UserDefinedJsonSwitchButton"  Width="150"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            
                                         </Grid>
                                     </Grid>
                                 </DataTemplate>
@@ -391,7 +401,7 @@
                             <GroupBox.Header>
                                 <WrapPanel>
                                     <TextBlock Text="{Binding MesTcpModel.SetSwitchSetName}" Margin="5" />
-                                    <ui:SymbolIcon Symbol="ChatWarning20" ToolTip="Case:为返回原内容,Value:为替换后内容,替换后进行嵌入" />
+                                    <ui:SymbolIcon Symbol="ChatWarning20" ToolTip="Case:为返回原内容,Value:为替换后内容,替换后进行嵌入 , Case中写入default为默认值" />
                                 </WrapPanel>
                             </GroupBox.Header>
                             <DataGrid

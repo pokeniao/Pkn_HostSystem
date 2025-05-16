@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using log4net.Config;
 using Microsoft.Extensions.DependencyInjection;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
@@ -95,6 +96,7 @@ namespace Pkn_HostSystem
             // IOC 容器
             Ioc.Default.ConfigureServices(
                 new ServiceCollection()
+                   
                     .AddNavigationViewPageProvider()
                     .AddSingleton<INavigationService, NavigationService>()
                     .AddSingleton<HomePageViewModel>()
@@ -105,7 +107,7 @@ namespace Pkn_HostSystem
                     .AddSingleton<ProductiveViewModel>()
                     .AddSingleton<MainWindow>()
 
-                    //页面单例 ,预加载
+                  //页面单例 ,预加载
                     .AddSingleton<MesTcpPage>()
                     .AddSingleton<LoadMesPage>()
                     .AddSingleton<HomePage>()
