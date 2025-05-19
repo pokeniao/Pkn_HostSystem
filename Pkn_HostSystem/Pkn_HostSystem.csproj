@@ -41,6 +41,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="DeepCloner" Version="0.10.4" />
 		<PackageReference Include="DynamicData" Version="9.2.1" />
+		<PackageReference Include="HalconDotNet" Version="19.11.0" />
 		<PackageReference Include="log4net" Version="3.0.4" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -48,6 +49,7 @@
 		<PackageReference Include="NModbus.Serial" Version="3.0.81" />
 		<PackageReference Include="RestSharp" Version="112.1.0" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.5" />
 		<PackageReference Include="WPF-UI" Version="4.0.2" />
 		<PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.2" />
 	</ItemGroup>

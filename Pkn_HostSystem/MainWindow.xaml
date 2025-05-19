@@ -10,6 +10,7 @@
                  Width="1220"
                  Height="762.5"
                  MinWidth="1000"
+                 MinHeight="762.5"
                  WindowStartupLocation="CenterScreen"
                  ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
                  ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -99,7 +100,17 @@
                         <ui:SymbolIcon Symbol="ArrowRepeatAll24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                    <ui:NavigationViewItem
+
+                <ui:NavigationViewItem
+                    Content="视觉"
+                    NavigationCacheMode="Enabled"
+                    TargetPageType="{x:Type pages:VisionPage}"
+                >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Camera28" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem
                     NavigationCacheMode="Enabled" Content="工具">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Wrench16" />
