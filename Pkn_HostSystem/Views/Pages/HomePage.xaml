@@ -15,38 +15,105 @@
       SizeChanged="HomePage_OnSizeChanged"
       Title="HomePage">
     <Page.Resources>
+
+        <converter:NewRowAllowButtonConverter x:Key="HomePageRunButtonConverter" />
         <!-- 展开动画 -->
+        <!-- 收缩动画 -->
         <Storyboard x:Key="OPENcontentPLC">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
-                                           Storyboard.TargetProperty="(FrameworkElement.Width)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="400" />
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ConnectPLCBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
-                                           Storyboard.TargetProperty="(FrameworkElement.Height)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="600" />
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ConnectPLCBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid2"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.4347826" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid2"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.18181818" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ConnectPLCBorder"
                                            Storyboard.TargetProperty="(UIElement.Opacity)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
             </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="ConnectPLCBorder"
+                                              Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0.2,0.2,0.2,0.2" />
+            </ThicknessAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ConnectPLCBorder"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>5,5,5,5</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3,3,3,3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>2,2,2,2</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
         </Storyboard>
-        <!-- 收缩动画 -->
         <Storyboard x:Key="CLOSEcontentPLC">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
-                                           Storyboard.TargetProperty="(FrameworkElement.Width)">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ConnectPLCBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
-                                           Storyboard.TargetProperty="(FrameworkElement.Height)">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ConnectPLCBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="border"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid2"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid2"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ConnectPLCBorder"
                                            Storyboard.TargetProperty="(UIElement.Opacity)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="ConnectPLCBorder"
+                                              Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </ThicknessAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ConnectPLCBorder"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>0</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>0</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>0</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="grid2"
+                                           Storyboard.TargetProperty="(UIElement.Visibility)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000" Value="{x:Static Visibility.Visible}" />
+            </ObjectAnimationUsingKeyFrames>
         </Storyboard>
 
-        <converter:NewRowAllowButtonConverter x:Key="HomePageRunButtonConverter" />
         <!-- 展开动画 -->
         <!-- 收缩动画 -->
         <Storyboard x:Key="OpenBydOrder">
@@ -133,6 +200,137 @@
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.181159" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+        <!-- 展开动画 -->
+        <!-- 收缩动画 -->
+        <Storyboard x:Key="OpenCameraSelect">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1.639" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="2.15" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.161" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="2.412" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="4.549" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.833" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="57.5" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="103.5" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="104.5" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="23" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="73" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="138.5" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.3" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.7" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>10,10,10,10</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>5,5,5,5</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3,3,3,3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.462748" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.17143836" />
+            </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                              Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000" Value="0,0,0,0" />
+                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0,0,0,0" />
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0,0,0,0" />
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="CloseCameraSelect">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>10,10,10,10</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>5,5,5,5</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3,3,3,3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.462748" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.17143836" />
+            </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                              Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000" Value="0,0,0,0" />
+                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0,0,0,0" />
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0,0,0,0" />
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
     </Page.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -150,13 +348,12 @@
             </Grid.RowDefinitions>
             <Grid Margin="10">
             </Grid>
-            <WrapPanel Grid.Row="1" Margin="20">
-                <Grid Margin="20,10,0,0">
+            <UniformGrid Grid.Row="1" Columns="2" Margin="20">
+                <Grid Margin="20,30,20,0">
                     <ui:CardAction
                         Name="CA_ConnectPLC"
-                        Width="180"
-                        Height="102"
                         IsChevronVisible="False"
+
                         VerticalAlignment="Stretch" Click="CA_ConnectPLC_Click">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -170,12 +367,12 @@
                             <ui:TextBlock Grid.Column="1" Text="连接PLC" VerticalAlignment="Center" />
                         </Grid>
                     </ui:CardAction>
-                    <Border x:Name="border" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    <Border x:Name="ConnectPLCBorder"
+                            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                             BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                            Width="180"
                             CornerRadius="10"
-                            Opacity="0"
                             Visibility="Collapsed"
+                            Opacity="0"
                             Height="102" BorderThickness="1">
                         <Border.RenderTransform>
                             <TransformGroup>
@@ -185,23 +382,34 @@
                                 <TranslateTransform />
                             </TransformGroup>
                         </Border.RenderTransform>
-                        <Grid>
+                        <Grid x:Name="grid2">
+                            <Grid.LayoutTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </Grid.LayoutTransform>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
-                            <StackPanel Margin="15,0">
-                                <TextBlock Text="连接目标" Margin="0,15" />
+                            <Grid Margin="15,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="0.5*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="连接目标" Margin="0,15" />
                                 <DataGrid
+                                    Grid.Row="1"
                                     Name="setConnectDg"
                                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                                     ItemsSource="{Binding HomePageModel.SetConnectDg}"
-                                    Width="400"
-                                    Height="200"
                                     AutoGenerateColumns="False"
                                     CellEditEnding="SetConnectDg_OnCellEditEnding">
-
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="连接名" Width="*" Binding="{Binding Name  }" />
                                         <DataGridTemplateColumn Width="0.8*" Header="配置">
@@ -277,21 +485,27 @@
                                 </DataGrid>
 
                                 <Border
+                                    Grid.Row="2"
                                     Name="IpSet"
                                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                                     Margin="0, 15"
                                     CornerRadius="10"
-                                    MinWidth="370"
                                     Visibility="Collapsed">
-                                    <StackPanel>
-                                        <Border
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Border Grid.Row="0"
                                             BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                                             BorderThickness="0,1,0,1"
                                             Margin="4">
                                             <TextBlock Text="{Binding HomePageModel.CurrentSetName}" Margin="10" />
                                         </Border>
-                                        <Border
+                                        <Border Grid.Row="1"
                                             BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                                             BorderThickness="0,0,0,1"
                                             Margin="4">
@@ -305,29 +519,34 @@
                                             </WrapPanel>
                                         </Border>
 
-                                        <TabControl HorizontalAlignment="Left" Margin="0,0,0,15">
-                                            <TabItem Width="122">
+                                        <TabControl Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,15"
+                                                    >
+                            
+
+                                            <TabItem Width="150" >
+                                         
                                                 <TabItem.Header>
                                                     <TextBlock FontWeight="Bold" FontSize="13" Text="TCP通讯设置" />
                                                 </TabItem.Header>
-                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <WrapPanel Margin="5 ">
+                                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <WrapPanel Grid.Row="0" Margin="5 ">
                                                         <Border Margin="5">
                                                             <TextBlock Text="IP地址" FontSize="15"
                                                                        HorizontalAlignment="Center"
                                                                        VerticalAlignment="Center" />
                                                         </Border>
-
-                                                        <TextBox Width="250"
-                                                                 Text="{Binding ModbusToolModel.ModbusTcp_Ip_select ,UpdateSourceTrigger=PropertyChanged}">
-                                                        </TextBox>
-                                                        <!-- <ComboBox Name="cbb_modbus_tpc_ip" Width="250" -->
-                                                        <!--           ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}" -->
-                                                        <!--           SelectedIndex="0" -->
-                                                        <!--           Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}" -->
-                                                        <!--           DropDownOpened="ComboBox_DropDownOpened_1" /> -->
+                                                        <ComboBox Name="cbb_modbus_tpc_ip" Width="250"
+                                                                  IsEditable="True"
+                                                                  ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}"
+                                                                  SelectedIndex="0"
+                                                                  Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}"
+                                                                  DropDownOpened="ComboBox_DropDownOpened_1" />
                                                     </WrapPanel>
-                                                    <WrapPanel Margin="5">
+                                                    <WrapPanel Grid.Row="1" Margin="5">
                                                         <Border Margin="5">
                                                             <TextBlock Text="端口号" FontSize="15"
                                                                        HorizontalAlignment="Center"
@@ -337,9 +556,9 @@
                                                                       Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
                                                                       Minimum="0" Maximum="65535" />
                                                     </WrapPanel>
-                                                </StackPanel>
+                                                </Grid>
                                             </TabItem>
-                                            <TabItem Width="122">
+                                            <TabItem  Width="150" >
                                                 <TabItem.Header>
                                                     <TextBlock FontWeight="Bold" FontSize="13" Text="串口通讯设置" />
                                                 </TabItem.Header>
@@ -412,7 +631,7 @@
                                                     </WrapPanel>
                                                 </StackPanel>
                                             </TabItem>
-                                            <TabItem Width="122">
+                                            <TabItem Width="150"  >
                                                 <TabItem.Header>
                                                     <TextBlock FontWeight="Bold" FontSize="13" Text="TCP服务器" />
                                                 </TabItem.Header>
@@ -430,9 +649,9 @@
                                                 </StackPanel>
                                             </TabItem>
                                         </TabControl>
-                                    </StackPanel>
+                                    </Grid>
                                 </Border>
-                            </StackPanel>
+                            </Grid>
                             <Grid Grid.Row="1">
                                 <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
                                     <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick" />
@@ -441,12 +660,10 @@
                         </Grid>
                     </Border>
                 </Grid>
-                <Grid Margin="20,10,0,0">
+                <Grid Margin="20,30,20,0">
                     <ui:CardAction
+                        Visibility="Collapsed"
                         Name="CA_bydOrderSelect"
-                        Width="180"
-                        Height="102"
-  
                         IsChevronVisible="False"
                         VerticalAlignment="Stretch" Click="CA_bydOrderSelect_OnClick">
                         <Grid>
@@ -464,10 +681,9 @@
                     <Border
                         x:Name="OrderBorder" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                        Width="180"
                         CornerRadius="10"
-                        Visibility="Collapsed"
-                        Opacity="0"
+                        Visibility="Visible"
+                        Opacity="1"
                         Height="102" BorderThickness="1" RenderTransformOrigin="0.5,0.5">
                         <Border.RenderTransform>
                             <TransformGroup>
@@ -548,7 +764,58 @@
                         </Grid>
                     </Border>
                 </Grid>
-            </WrapPanel>
+                <Grid Margin="20,30,20,0">
+                    <ui:CardAction
+                        Name="CA_CameraSelect"
+                        Visibility="Collapsed"
+                        IsChevronVisible="False"
+                        VerticalAlignment="Stretch" Click="CA_CameraSelect_OnClick">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:SymbolIcon Symbol="CameraAdd20" FontSize="40" />
+                            <ui:TextBlock Grid.Column="1" Text="相机添加" VerticalAlignment="Center" />
+                        </Grid>
+                    </ui:CardAction>
+                    <Border
+                        x:Name="CameraBorder" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                        CornerRadius="10"
+                        Visibility="Visible"
+                        Opacity="1"
+                        Height="102" BorderThickness="0" RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <Grid x:Name="grid1">
+                            <Grid.LayoutTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </Grid.LayoutTransform>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="0.3*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="1">
+                                <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
+                                    <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick3" />
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </UniformGrid>
 
         </Grid>
         <Grid Grid.Column="1" Cursor="Arrow">

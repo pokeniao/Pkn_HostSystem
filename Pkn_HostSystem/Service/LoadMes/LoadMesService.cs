@@ -1122,7 +1122,7 @@ public class LoadMesService
                     }
 
                     //输出ASCII码转换后的结果
-                    return (true, Encoding.ASCII.GetString(result_3.ToArray()));
+                    return (true, Encoding.ASCII.GetString(result_3.ToArray()).Trim('\0'));
                 case "ASCII字符串(高低位)":
                     var result_4 = new List<byte>();
                     foreach (var itemUshort in holdingRegisters03)
@@ -1141,7 +1141,7 @@ public class LoadMesService
                     }
 
                     //输出ASCII码转换后的结果
-                    return (true, Encoding.ASCII.GetString(result_4.ToArray()));
+                    return (true, Encoding.ASCII.GetString(result_4.ToArray()).Trim('\0'));
             }
         }
         catch (Exception e)

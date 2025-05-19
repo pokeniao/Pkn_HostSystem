@@ -105,9 +105,10 @@ namespace Pkn_HostSystem
                     .AddSingleton<ModbusToolViewModel>()
                     .AddSingleton<SettingsPageViewModel>()
                     .AddSingleton<ProductiveViewModel>()
-                    .AddSingleton<MainWindow>()
+                    .AddSingleton<VisionPageViewModel>()
 
                   //页面单例 ,预加载
+                    .AddSingleton<VisionPage>()
                     .AddSingleton<MesTcpPage>()
                     .AddSingleton<LoadMesPage>()
                     .AddSingleton<HomePage>()
