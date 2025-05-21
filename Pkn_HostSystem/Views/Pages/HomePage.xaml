@@ -117,154 +117,182 @@
         <!-- 展开动画 -->
         <!-- 收缩动画 -->
         <Storyboard x:Key="OpenBydOrder">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.197" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.52" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-71.75" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="230.5" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
-            </DoubleAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(Border.CornerRadius)">
-                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
-                    <DiscreteObjectKeyFrame.Value>
-                        <CornerRadius>3,3,3,3</CornerRadius>
-                    </DiscreteObjectKeyFrame.Value>
-                </DiscreteObjectKeyFrame>
-            </ObjectAnimationUsingKeyFrames>
-            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                              Storyboard.TargetProperty="(Border.BorderThickness)">
-                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0,0,0,0" />
-            </ThicknessAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.455166" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.434782" />
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.181159" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
             </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Key="CloseBydOrder">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="3.265"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="4.794"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5"/>
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="115.5"/> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="193.5"/> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="238.875"/> -->
+            <!-- </DoubleAnimationUsingKeyFrames> -->
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1.711"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="2.149"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3"/>
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
-            </DoubleAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                           Storyboard.TargetProperty="(Border.CornerRadius)">
-                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
-                    <DiscreteObjectKeyFrame.Value>
-                        <CornerRadius>3,3,3,3</CornerRadius>
-                    </DiscreteObjectKeyFrame.Value>
-                </DiscreteObjectKeyFrame>
-            </ObjectAnimationUsingKeyFrames>
-            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
-                                              Storyboard.TargetProperty="(Border.BorderThickness)">
-                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0,0,0,0" />
+            <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="-67.5"/> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="-109.125"/> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-106.875"/> -->
+            <!-- </DoubleAnimationUsingKeyFrames> -->
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000" Value="0.2000031999952,0.2000015999992,0.2000023999976,0"/>
+                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0.2000023999976,0.2000008,0.2000015999992,0.2"/>
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0.2,0.2,0.2,0.2"/>
             </ThicknessAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid"
-                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.455166" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid"
-                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.181159" />
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <!-- 展开动画 -->
-        <!-- 收缩动画 -->
-        <Storyboard x:Key="OpenCameraSelect">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1.639" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="2.15" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.161" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="2.412" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="4.549" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.833" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="57.5" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="103.5" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="104.5" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
-                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="23" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="73" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="138.5" />
-            </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
-                                           Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.3" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.7" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
-            </DoubleAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
-                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.CornerRadius)">
                 <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
-                    <DiscreteObjectKeyFrame.Value>
-                        <CornerRadius>10,10,10,10</CornerRadius>
-                    </DiscreteObjectKeyFrame.Value>
-                </DiscreteObjectKeyFrame>
-                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
                     <DiscreteObjectKeyFrame.Value>
                         <CornerRadius>5,5,5,5</CornerRadius>
                     </DiscreteObjectKeyFrame.Value>
                 </DiscreteObjectKeyFrame>
-                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
                     <DiscreteObjectKeyFrame.Value>
                         <CornerRadius>3,3,3,3</CornerRadius>
                     </DiscreteObjectKeyFrame.Value>
                 </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>2,2,2,2</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
             </ObjectAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.3"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.6"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <Int32AnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Panel.ZIndex)">
+                <EasingInt32KeyFrame KeyTime="00:00:00.1000000" Value="-3"/>
+                <EasingInt32KeyFrame KeyTime="00:00:00.2000000" Value="0"/>
+            </Int32AnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="CloseBydOrder">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.462748" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.17143836" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
-                                              Storyboard.TargetProperty="(Border.BorderThickness)">
-                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000" Value="0,0,0,0" />
-                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0,0,0,0" />
-                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0,0,0,0" />
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000" Value="0.2"/>
+                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0.2"/>
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0.2"/>
             </ThicknessAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>2,2,2,2</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3,3,3,3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>5,5,5,5</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.6"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.3"/>
+            </DoubleAnimationUsingKeyFrames>
+            <Int32AnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Panel.ZIndex)">
+                <EasingInt32KeyFrame KeyTime="00:00:00.1000000" Value="-3"/>
+                <EasingInt32KeyFrame KeyTime="00:00:00.2000000" Value="0"/>
+            </Int32AnimationUsingKeyFrames>
+        </Storyboard>
+        <!-- 展开动画 -->
+        <!-- 收缩动画 -->
+        <Storyboard x:Key="OpenCameraSelect">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="3.474"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="4.496"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5"/>
+            </DoubleAnimationUsingKeyFrames>
+            <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="32.438"/> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="40.313"/> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="91.688"/> -->
+            <!-- </DoubleAnimationUsingKeyFrames> -->
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1.789"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="2.125"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3"/>
+            </DoubleAnimationUsingKeyFrames>
+            <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="75"/> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="106.875"/> -->
+            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="123.375"/> -->
+            <!-- </DoubleAnimationUsingKeyFrames> -->
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1" Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1" Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.434782"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000" Value="0.1999994000006,0.1999998,0.1999994000006,0.1999996000002"/>
+                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0.2,0.1999999999998,0.1999999999988,0.1999999999992"/>
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0.2,0.2,0.2,0.2"/>
+            </ThicknessAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>5,5,5,5</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3,3,3,3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>2,2,2,2</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.6"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
         <Storyboard x:Key="CloseCameraSelect">
@@ -519,12 +547,9 @@
                                             </WrapPanel>
                                         </Border>
 
-                                        <TabControl Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,15"
-                                                    >
-                            
+                                        <TabControl Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,15">
+                                            <TabItem Width="130" >
 
-                                            <TabItem Width="150" >
-                                         
                                                 <TabItem.Header>
                                                     <TextBlock FontWeight="Bold" FontSize="13" Text="TCP通讯设置" />
                                                 </TabItem.Header>
@@ -558,7 +583,7 @@
                                                     </WrapPanel>
                                                 </Grid>
                                             </TabItem>
-                                            <TabItem  Width="150" >
+                                            <TabItem  Width="130" >
                                                 <TabItem.Header>
                                                     <TextBlock FontWeight="Bold" FontSize="13" Text="串口通讯设置" />
                                                 </TabItem.Header>
@@ -631,7 +656,7 @@
                                                     </WrapPanel>
                                                 </StackPanel>
                                             </TabItem>
-                                            <TabItem Width="150"  >
+                                            <TabItem Width="130"  >
                                                 <TabItem.Header>
                                                     <TextBlock FontWeight="Bold" FontSize="13" Text="TCP服务器" />
                                                 </TabItem.Header>
@@ -662,7 +687,6 @@
                 </Grid>
                 <Grid Margin="20,30,20,0">
                     <ui:CardAction
-                        Visibility="Collapsed"
                         Name="CA_bydOrderSelect"
                         IsChevronVisible="False"
                         VerticalAlignment="Stretch" Click="CA_bydOrderSelect_OnClick">
@@ -682,9 +706,9 @@
                         x:Name="OrderBorder" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                         CornerRadius="10"
-                        Visibility="Visible"
-                        Opacity="1"
-                        Height="102" BorderThickness="1" RenderTransformOrigin="0.5,0.5">
+                        Visibility="Collapsed"
+                        Opacity="0"
+                        Height="102" BorderThickness="1" RenderTransformOrigin="0.93,0">
                         <Border.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform />
@@ -767,7 +791,7 @@
                 <Grid Margin="20,30,20,0">
                     <ui:CardAction
                         Name="CA_CameraSelect"
-                        Visibility="Collapsed"
+                        
                         IsChevronVisible="False"
                         VerticalAlignment="Stretch" Click="CA_CameraSelect_OnClick">
                         <Grid>
@@ -783,9 +807,9 @@
                         x:Name="CameraBorder" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                         CornerRadius="10"
-                        Visibility="Visible"
-                        Opacity="1"
-                        Height="102" BorderThickness="0" RenderTransformOrigin="0.5,0.5">
+                        Visibility="Collapsed"
+                        Opacity="0"
+                        Height="102" BorderThickness="0" RenderTransformOrigin="0,0.3">
                         <Border.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform />
