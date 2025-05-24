@@ -6,6 +6,8 @@ using Pkn_HostSystem.Models.Page;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using HalconDotNet;
+using Pkn_HostSystem.Models.Core;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -32,7 +34,10 @@ namespace Pkn_HostSystem.ViewModels.Page
             if (VisionPageModel == null)
             {
                 //Model初始化
-                VisionPageModel = new VisionPageModel();
+                VisionPageModel = new VisionPageModel()
+                {
+                    CameraList = new ObservableCollection<CameraDetailed>()
+                };
             }
             else
             {
@@ -54,7 +59,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             hv_AcqHandle.Dispose();
           
             // 启动相机
-            HOperatorSet.OpenFramegrabber("GenICamTL", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", VisionPageModel.CameraName, 0, -1, out hv_AcqHandle);
+            HOperatorSet.OpenFramegrabber("GenICamTL", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "", 0, -1, out hv_AcqHandle);
             HOperatorSet.GrabImageStart(hv_AcqHandle, -1);
             ho_Image.Dispose();
             HOperatorSet.GrabImageAsync(out ho_Image, hv_AcqHandle, -1);
@@ -87,7 +92,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 // 启动相机
                 // 启动笔记本自带摄像头
                 // HOperatorSet.OpenFramegrabber("DirectShow", 1, 1, 0, 0, 0, 0, "default", 8, "rgb", -1, "false", "default", "[0] ", 0, -1, out hv_AcqHandle);
-                HOperatorSet.OpenFramegrabber("GenICamTL", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", VisionPageModel.CameraName, 0, -1, out hv_AcqHandle);
+                HOperatorSet.OpenFramegrabber("GenICamTL", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "", 0, -1, out hv_AcqHandle);
                 HOperatorSet.GrabImageStart(hv_AcqHandle, -1);
                 VisionPageModel.RealTimeName = "停止";
                 // 实时采集线程

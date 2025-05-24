@@ -539,9 +539,10 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         string FilePath = Path.Combine(SaveFile, model.Name + lastName + ".csv");
         CsvHelper csvHelper = new CsvHelper(FilePath);
         csvHelper.Load();
+        json = AppJsonTool<object>.TryFormatJson(json,out bool isJson);
         csvHelper.AddRowFromJson(json);
-        csvHelper.Save();
-        Log.Info($"[{TraceContext.Name}] --本地保存{model.Name}+{lastName}.csv  成功");
+        csvHelper.Save(model.cts.Token);
+        Log.Info($"[{TraceContext.Name}] --本地保存{model.Name}{lastName}.csv  成功");
     }
 
     #endregion

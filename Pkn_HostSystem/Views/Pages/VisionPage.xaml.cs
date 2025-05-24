@@ -29,7 +29,7 @@ namespace Pkn_HostSystem.Views.Pages
             ViewModel = Ioc.Default.GetRequiredService<VisionPageViewModel>();
             DataContext = ViewModel;
             ViewModel.setSnackbarPresenter(SnackbarPresenter);
-            ViewModel.setHSmartWindowControl(HalconControl);
+            ViewModel.setHSmartWindowControl(HalconControl1);
         }
     }
 }

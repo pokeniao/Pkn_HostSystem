@@ -49,20 +49,18 @@ public partial class HomePageViewModel : ObservableRecipient
 
 
         HomePageModel.HttpLists = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
+        HomePageModel.CameraList = Ioc.Default.GetRequiredService<VisionPageViewModel>().VisionPageModel.CameraList;
         Log = new LogBase<HomePageViewModel>(SnackbarService);
     }
 
     #region 弹窗SnackbarService
-
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
     {
         SnackbarService.SetSnackbarPresenter(snackbarPresenter);
     }
-
     #endregion
 
     #region 滚动到底部
-
     [RelayCommand]
     public void ScrollToBottom(ListBox LogListBox)
     {
@@ -70,11 +68,9 @@ public partial class HomePageViewModel : ObservableRecipient
 
         LogListBox.ScrollIntoView(LogListBox.Items[^1]);
     }
-
     #endregion
 
     #region 连接网络
-
     [RelayCommand]
     public async void Connect(HomePage page)
     {

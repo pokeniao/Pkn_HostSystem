@@ -14,35 +14,83 @@
       d:DataContext="{d:DesignInstance page:VisionPageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       Title="VisionPageViewModel">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1.5*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1.5*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Row="0" Grid.Column="0">
-            <halcon:HSmartWindowControlWPF Name="HalconControl" />
-        </Grid>
-        <Grid Grid.Row="0" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <StackPanel>
-          
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="选择相机" TextAlignment="Center" Margin="5"/>
-                    <TextBox Text="{Binding VisionPageModel.CameraName,UpdateSourceTrigger=PropertyChanged}" Width="150" Margin="10,0"/>
+    <UniformGrid Rows="2" Columns="2">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/> 
+                    <RowDefinition Height="Auto"/> 
+                </Grid.RowDefinitions>
+                <halcon:HSmartWindowControlWPF Name="HalconControl1" />
+                <StackPanel Grid.Row="1">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="选择相机" TextAlignment="Center" Margin="15,5"/>
+                    <ComboBox Width="130" ItemsSource="{Binding VisionPageModel.CameraList}"
+                              DisplayMemberPath="CameraName"
+                              SelectedValuePath="GenICamTL"
+                              SelectedValue="{Binding VisionPageModel.ControlCameraGim1}"
+                              />
+                        <Button Content="触发" Command="{Binding VisionTriggerCommand}" Margin="15,0"/>
+                        <Button Content="{Binding VisionPageModel.RealTimeName }"  Command="{Binding VisionRealTimeCommand}"/>
+                    </StackPanel>
                 </StackPanel>
+            </Grid>
+
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <halcon:HSmartWindowControlWPF Name="HalconControl2" />
+            <StackPanel Grid.Row="1">
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="触发" Command="{Binding VisionTriggerCommand}"/>
+                    <TextBlock Text="选择相机" TextAlignment="Center" Margin="15,5"/>
+                    <ComboBox Width="130" ItemsSource="{Binding VisionPageModel.CameraList}" 
+                              SelectedValue="{Binding VisionPageModel.ControlCameraGim1}"
+                              DisplayMemberPath="CameraName"
+                              SelectedValuePath="GenICamTL"/>
+                    <Button Content="触发" Command="{Binding VisionTriggerCommand}" Margin="15,0"/>
+                    <Button Content="{Binding VisionPageModel.RealTimeName }"  Command="{Binding VisionRealTimeCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <halcon:HSmartWindowControlWPF Name="HalconControl3" />
+            <StackPanel Grid.Row="1">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="选择相机" TextAlignment="Center" Margin="15,5"/>
+                    <ComboBox Width="130" ItemsSource="{Binding VisionPageModel.CameraList}" 
+                              SelectedValue="{Binding VisionPageModel.ControlCameraGim1}"  
+                              DisplayMemberPath="CameraName"
+                              SelectedValuePath="GenICamTL"/>
+                    <Button Content="触发" Command="{Binding VisionTriggerCommand}" Margin="15,0"/>
+                    <Button Content="{Binding VisionPageModel.RealTimeName }"  Command="{Binding VisionRealTimeCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <halcon:HSmartWindowControlWPF Name="HalconControl4" />
+            <StackPanel Grid.Row="1">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="选择相机" TextAlignment="Center" Margin="15,5"/>
+                    <ComboBox Width="130" ItemsSource="{Binding VisionPageModel.CameraList}" 
+                              SelectedValue="{Binding VisionPageModel.ControlCameraGim1}" 
+                              DisplayMemberPath="CameraName"
+                              SelectedValuePath="GenICamTL"/>
+                    <Button Content="触发" Command="{Binding VisionTriggerCommand}" Margin="15,0"/>
                     <Button Content="{Binding VisionPageModel.RealTimeName }"  Command="{Binding VisionRealTimeCommand}"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
         <ui:SnackbarPresenter Grid.Row="1" Grid.ColumnSpan="2" Name="SnackbarPresenter" />
-    </Grid>
+    </UniformGrid>
 </Page>

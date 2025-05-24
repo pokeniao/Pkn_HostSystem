@@ -71,11 +71,12 @@ public class CsvHelper
     public List<List<string>> GetAllRows() => _rows;
 
     // 保存到文件
-    public void Save()
+    public void Save(CancellationToken token)
     {
         using var writer = new StreamWriter(_filePath, false, _encoding);
         foreach (var row in _rows)
         {
+            token.ThrowIfCancellationRequested(); // 检查取消,抛出异常
             writer.WriteLine(string.Join(",", row.Select(EscapeCsv)));
         }
     }

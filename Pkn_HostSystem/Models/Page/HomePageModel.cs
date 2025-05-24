@@ -53,4 +53,9 @@ public partial class HomePageModel : ObservableObject
     /// </summary>
     [ObservableProperty] private string httpName;
 
+    /// <summary>
+    /// 相机的连接集合
+    /// </summary>
+    [ObservableProperty] private ObservableCollection<CameraDetailed> cameraList;
+
 }
