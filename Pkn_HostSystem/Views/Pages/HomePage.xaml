@@ -831,7 +831,21 @@
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="0.3*" />
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="1">
+                            <Grid>
+                                <DataGrid 
+                                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    Margin="20"
+                                    ItemsSource="{Binding HomePageModel.CameraList}"
+                                    AutoGenerateColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="相机名" Width="*" Binding="{Binding CameraName}"/>
+                                        <DataGridTextColumn Header="相机GenICamTL"  Width="*" Binding="{Binding GenICamTL}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                                <Grid Grid.Row="1">
                                 <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
                                     <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick3" />
                                 </StackPanel>

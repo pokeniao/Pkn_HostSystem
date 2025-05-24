@@ -121,6 +121,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         AppJsonTool<MesTcpModel>.Reset();
         AppJsonTool<ProductiveModel>.Reset();
         AppJsonTool<SettingsPageModel>.Reset();
+        AppJsonTool<VisionPageModel>.Reset();
     }
 
     #region 保存程序
@@ -151,6 +152,10 @@ public partial class SettingsPageViewModel : ObservableRecipient
 
         SettingsPageViewModel settingsPageViewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
         settingsPageViewModel.SaveCommand.Execute(null);
+
+
+        VisionPageViewModel visionPageViewModel = Ioc.Default.GetRequiredService<VisionPageViewModel>();
+        visionPageViewModel.SaveCommand.Execute(null);
 
         return true;
     }
