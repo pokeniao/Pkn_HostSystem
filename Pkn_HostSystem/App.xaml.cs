@@ -106,8 +106,10 @@ namespace Pkn_HostSystem
                     .AddSingleton<SettingsPageViewModel>()
                     .AddSingleton<ProductiveViewModel>()
                     .AddSingleton<VisionPageViewModel>()
+                    .AddSingleton<StationViewModel>()
 
                   //页面单例 ,预加载
+                    .AddSingleton<StationPage>()
                     .AddSingleton<VisionPage>()
                     .AddSingleton<MesTcpPage>()
                     .AddSingleton<LoadMesPage>()

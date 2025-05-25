@@ -74,6 +74,14 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
+                    Content="工位"
+                    NavigationCacheMode="Enabled"
+                    TargetPageType="{x:Type pages:StationPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="SlideText16" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem
                     Content="上传mes"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:LoadMesPage}">
