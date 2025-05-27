@@ -10,7 +10,6 @@ namespace Pkn_HostSystem.Models.Page
 
         public ObservableCollection<object> Items { get; set; }  // DataGrid数据
 
-        [ObservableProperty] private FlowDocument logDocument;
-
+        [ObservableProperty] private FlowDocument logDocument; // 富文本的LogDocument
     }
 }
