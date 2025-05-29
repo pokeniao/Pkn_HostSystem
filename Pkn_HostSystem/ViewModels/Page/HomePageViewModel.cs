@@ -40,6 +40,7 @@ public partial class HomePageViewModel : ObservableRecipient
             {
                 LogListBox = (ObservableCollection<string>)obj,
                 SetConnectDg = new ObservableCollection<NetworkDetailed>()
+                
             };
         }
         else
@@ -49,6 +50,7 @@ public partial class HomePageViewModel : ObservableRecipient
 
 
         HomePageModel.HttpLists = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
+
         HomePageModel.CameraList = Ioc.Default.GetRequiredService<VisionPageViewModel>().VisionPageModel.CameraList;
         Log = new LogBase<HomePageViewModel>(SnackbarService);
     }

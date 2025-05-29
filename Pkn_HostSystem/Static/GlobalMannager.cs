@@ -1,5 +1,6 @@
 ﻿using DynamicData;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Stations;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -8,9 +9,6 @@ using System.Runtime.CompilerServices;
 
 namespace Pkn_HostSystem.Static;
 
-/// <summary>
-/// 旧版本写法 , 之后不用静态 ,改用 Ioc控制
-/// </summary>
 public static class GlobalMannager
 {
     /// <summary>
@@ -52,6 +50,11 @@ public static class GlobalMannager
     /// </summary>
     public static SourceCache<LoadMesDynContent, string> DynDictionary;
 
+    /// <summary>
+    /// 工站字典
+    /// </summary>
+    public static SourceCache<IEachStation, string> StationDictionary;
+         
     static GlobalMannager()
     {
         GlobalDictionary = new ConcurrentDictionary<string, object>();
@@ -60,6 +63,7 @@ public static class GlobalMannager
         NetWorkDictionary =
             new SourceCache<NetWork, string>(n => n.NetWorkId);
         DynDictionary = new SourceCache<LoadMesDynContent, string>(n => n.Name);
+        StationDictionary = new SourceCache<IEachStation, string>(n => n.Header);
     }
 
     /// <summary>

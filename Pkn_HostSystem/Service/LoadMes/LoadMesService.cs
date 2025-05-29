@@ -17,12 +17,13 @@ public class LoadMesService
 {
     private ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
 
-    private MesLogBase<LoadMesService> Log;
+    private LogControl<LoadMesService> Log;
 
     public LoadMesService(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList)
     {
         this.mesPojoList = mesPojoList;
-        Log = new MesLogBase<LoadMesService>();
+        GlobalMannager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
+        Log = new LogControl<LoadMesService>((ObservableCollection<string>)value);
     }
 
 
@@ -112,7 +113,7 @@ public class LoadMesService
         CancellationTokenSource cts)
     {
         //日志显示发送内容
-        Log.InfoOverride($"[{TraceContext.Name}]--发送内容: \r\n {request}");
+        Log.InfoToLogList($"[{TraceContext.Name}]--发送内容: \r\n {request}");
 
         //创建连接
         var client = new RestClient(item.HttpPath);
@@ -171,7 +172,7 @@ public class LoadMesService
             item.Response = response.Content;
             //判断是否是JSON格式,如果是转成输出
             item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
-            Log.InfoOverride($"[{TraceContext.Name}]--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+            Log.InfoToLogList($"[{TraceContext.Name}]--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
             return (true, item.Response);
         }
         else
@@ -186,7 +187,7 @@ public class LoadMesService
             //判断是否是JSON格式,如果是转成输出
             item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
 
-            Log.ErrorOverride($"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+            Log.ErrorToLogList($"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
             return (false, item.Response);
         }
     }
