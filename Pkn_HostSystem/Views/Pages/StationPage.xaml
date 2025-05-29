@@ -15,25 +15,67 @@
       Title="StationPage">
 
     <Grid>
-        <TabControl>
-            <TabItem Header="工位1">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="41*"/>
-                        <ColumnDefinition Width="959*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    
-                </Grid>
-            </TabItem>
-            <TabItem Header="工位2">
-            </TabItem>
-            <TabItem Header="工位3">
-            </TabItem>
+     <Grid.RowDefinitions>
+         <RowDefinition Height="*"/>
+         <RowDefinition Height="Auto"/>
+     </Grid.RowDefinitions>
+            <TabControl Name="LogTabControl" Grid.Row="0" ItemsSource="{Binding StationModel.Stations}" SelectionChanged="LogTabControl_OnSelectionChanged">
+            <TabControl.ItemTemplate>
+                <!-- Tab 页签标题 -->
+                <DataTemplate>
+                    <TextBlock Text="{Binding Header}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <!-- Tab 页签内容 -->
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <DataGrid Name="LogDataGrid"  Grid.Row="0" ItemsSource="{Binding Items}" ColumnWidth="*" AutoGenerateColumns="True" CanUserAddRows ="False" MaxHeight="300" IsReadOnly="True"/>
+
+                        <TabControl Grid.Row="1" MaxHeight="300">
+                            <TabItem Header="用户日志">
+                                <RichTextBox
+                                    Name="UserRichTextBox"
+                                    IsReadOnly="True"
+                                    VerticalScrollBarVisibility="Auto"
+                                    Loaded="UserLogRichTextBox_Loaded"
+                                    FontSize="12"
+                                    />
+                            </TabItem>
+                            <TabItem Header="错误日志">
+                                <RichTextBox
+                                    Name="ErrorRichTextBox"
+                                    Loaded="ErrorRichTextBox_OnLoaded"
+                                    IsReadOnly="True"
+                                    VerticalScrollBarVisibility="Auto"
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    BorderThickness="0"/>
+                            </TabItem>
+                            <TabItem Header="开发者日志">
+                                <RichTextBox
+                                    Name="DevRichTextBox"
+                                    Loaded="DevRichTextBox_OnLoaded"
+                                    IsReadOnly="True"
+                                    VerticalScrollBarVisibility="Auto"
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    BorderThickness="0"/>
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
         </TabControl>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button Content="工位一添加一行数据" Click="ButtonBase_OnClick"/>
+            <Button Content="工位二添加一行数据" Click="ButtonBase_OnClick2"/>
+        </StackPanel>
         <ui:SnackbarPresenter Name="SnackbarPresenter" />
     </Grid>
 </Page>
