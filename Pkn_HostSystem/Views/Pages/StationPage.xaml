@@ -14,8 +14,10 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Title="StationPage">
 
+
     <Grid>
      <Grid.RowDefinitions>
+         <RowDefinition Height="*"/>
          <RowDefinition Height="*"/>
          <RowDefinition Height="Auto"/>
      </Grid.RowDefinitions>
@@ -37,44 +39,46 @@
 
                         <DataGrid Name="LogDataGrid"  Grid.Row="0" ItemsSource="{Binding Items}" ColumnWidth="*" AutoGenerateColumns="True" CanUserAddRows ="False" MaxHeight="300" IsReadOnly="True"/>
 
-                        <TabControl Grid.Row="1" MaxHeight="300">
-                            <TabItem Header="用户日志">
-                                <RichTextBox
-                                    Name="UserRichTextBox"
-                                    IsReadOnly="True"
-                                    VerticalScrollBarVisibility="Auto"
-                                    Loaded="UserLogRichTextBox_Loaded"
-                                    FontSize="12"
-                                    />
-                            </TabItem>
-                            <TabItem Header="错误日志">
-                                <RichTextBox
-                                    Name="ErrorRichTextBox"
-                                    Loaded="ErrorRichTextBox_OnLoaded"
-                                    IsReadOnly="True"
-                                    VerticalScrollBarVisibility="Auto"
-                                    FontFamily="Consolas"
-                                    FontSize="12"
-                                    BorderThickness="0"/>
-                            </TabItem>
-                            <TabItem Header="开发者日志">
-                                <RichTextBox
-                                    Name="DevRichTextBox"
-                                    Loaded="DevRichTextBox_OnLoaded"
-                                    IsReadOnly="True"
-                                    VerticalScrollBarVisibility="Auto"
-                                    FontFamily="Consolas"
-                                    FontSize="12"
-                                    BorderThickness="0"/>
-                            </TabItem>
-                        </TabControl>
                     </Grid>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="工位一添加一行数据" Click="ButtonBase_OnClick"/>
-            <Button Content="工位二添加一行数据" Click="ButtonBase_OnClick2"/>
+
+        <TabControl Grid.Row="1" MaxHeight="300" Name="TabControl2">
+            <TabItem Header="用户日志">
+                <RichTextBox
+                    Name="UserRichTextBox"
+                    IsReadOnly="True"
+                    VerticalScrollBarVisibility="Auto"
+                    Loaded="UserLogRichTextBox_Loaded"
+                    FontSize="12"
+                />
+            </TabItem>
+            <TabItem Header="错误日志">
+                <RichTextBox
+                    Name="ErrorRichTextBox"
+                    Loaded="ErrorRichTextBox_OnLoaded"
+                    IsReadOnly="True"
+                    VerticalScrollBarVisibility="Auto"
+                    FontFamily="Consolas"
+                    FontSize="12"
+                    BorderThickness="0"/>
+            </TabItem>
+            <TabItem Header="开发者日志">
+                <RichTextBox
+                    Name="DevRichTextBox"
+                    Loaded="DevRichTextBox_OnLoaded"
+                    IsReadOnly="True"
+                    VerticalScrollBarVisibility="Auto"
+                    FontFamily="Consolas"
+                    FontSize="12"
+                    BorderThickness="0"/>
+            </TabItem>
+        </TabControl>
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Content ="滑动到底部" Click="ScrollDown_OnClick"/>
+            <Button Content ="清空日志" Click="ClearLog_OnClick"/>
+            <Button Content ="测试" Click="ClearLog_OnClick1"/>
         </StackPanel>
         <ui:SnackbarPresenter Name="SnackbarPresenter" />
     </Grid>

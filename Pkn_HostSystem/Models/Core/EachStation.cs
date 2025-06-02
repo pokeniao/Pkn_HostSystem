@@ -2,6 +2,8 @@
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Base.Log.Interface;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Windows.Documents;
 
 namespace Pkn_HostSystem.Models.Core
 {
@@ -10,11 +12,24 @@ namespace Pkn_HostSystem.Models.Core
     {
         public string Header { get; set; } //Tab标题
 
-        [ObservableProperty] private ObservableCollection<T> items;  // DataGrid数据
+        [ObservableProperty] private ObservableCollection<T> items =new();  // DataGrid数据
+        [ObservableProperty] private LogControl<T> userLog = new(new FlowDocument());// 富文本的LogDocument , 用户查看日志
+        [ObservableProperty] private LogControl<T> errorLog = new(new FlowDocument()); // 错误日志
+        [ObservableProperty] private LogControl<T> devLog = new(new FlowDocument()); // 开发者查看日志
 
-        [ObservableProperty] private LogControl<T> userLog; // 富文本的LogDocument , 用户查看日志
-        [ObservableProperty] private LogControl<T> errorLog; // 错误日志
-        [ObservableProperty] private LogControl<T> devLog; // 开发者查看日志
+        /// <summary>
+        /// DataGrid的添加方法
+        /// </summary>
+        /// <param name="item"></param>
+        public void AddItem(T item)
+        {
+            if (Items.Count >= 100)
+            {
+                Items.RemoveAt(0); // 删除最早的
+              
+            }
+            Items.Add(item);
+        }
 
 
         // 👇👇👇 显式实现接口成员 👇👇👇

@@ -36,19 +36,11 @@ namespace Pkn_HostSystem.ViewModels.Page
                 GlobalMannager.StationDictionary.AddOrUpdate(new EachStation<Station1>()
                 {
                     Header = "工位1",
-                    Items = new ObservableCollection<Station1>(),
-                    UserLog = new LogControl<Station1>(new FlowDocument()),
-                    ErrorLog = new LogControl<Station1>(new FlowDocument()),
-                    DevLog = new LogControl<Station1>(new FlowDocument())
                 });
 
                 GlobalMannager.StationDictionary.AddOrUpdate(new EachStation<Station2>()
                 {
                     Header = "工位2",
-                    Items = new ObservableCollection<Station2>(),
-                    UserLog = new LogControl<Station2>(new FlowDocument()),
-                    ErrorLog = new LogControl<Station2>(new FlowDocument()),
-                    DevLog = new LogControl<Station2>(new FlowDocument())
                 });
                 GlobalMannager.StationDictionary.Connect().Bind(StationModel.Stations).Subscribe();
             }

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using DynamicData.Kernel;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Stations;
@@ -22,29 +23,14 @@ namespace Pkn_HostSystem.Views.Pages
             DataContext = ViewModel;
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-        {
-            var station = GlobalMannager.StationDictionary.Lookup("工位1").Value as EachStation<Station1>;
-            station.Items.Add(new Station1() { CT = "1", ID = "1", 参数 = "1", 名字 = "1" });
-            station.DevLog.InfoToRichTextBox("点击添加一行数据");
-            station.UserLog.InfoToRichTextBox("添加一行数据");
-            station.ErrorLog.ErrorToRichTextBox("点击后错误测试");
-        }
-
-        private void ButtonBase_OnClick2(object sender, RoutedEventArgs e)
-        {
-            var station = GlobalMannager.StationDictionary.Lookup("工位2").Value as EachStation<Station2>;
-            station.Items.Add(new Station2() { CT = "2", ID = "2", 参数2 = "2", 名字2 = "2" });
-            station.DevLog.InfoToRichTextBox("点击添加一行数据2");
-            station.UserLog.InfoToRichTextBox("添加一行数据2");
-            station.ErrorLog.ErrorToRichTextBox("点击后错误测试2");
-        }
+        #region 富文本加载事件
         private void UserLogRichTextBox_Loaded(object sender, RoutedEventArgs e)
         {
             var rtb = sender as RichTextBox;
             if (rtb == null) return;
 
             IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
+            selectedItem.UserLog.richTextBox = rtb;
             rtb.Document = selectedItem.UserLog.flowDocument;
         }
         private void DevRichTextBox_OnLoaded(object sender, RoutedEventArgs e)
@@ -53,6 +39,7 @@ namespace Pkn_HostSystem.Views.Pages
             if (rtb == null) return;
 
             IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
+            selectedItem.DevLog.richTextBox = rtb;
             rtb.Document = selectedItem.DevLog.flowDocument;
         }
 
@@ -62,78 +49,67 @@ namespace Pkn_HostSystem.Views.Pages
             if (rtb == null) return;
 
             IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
+            selectedItem.ErrorLog.richTextBox = rtb;
             rtb.Document = selectedItem.ErrorLog.flowDocument;
         }
+        private void LogTabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UserLogRichTextBox_Loaded(UserRichTextBox, new RoutedEventArgs());
+            DevRichTextBox_OnLoaded(DevRichTextBox, new RoutedEventArgs());
+            ErrorRichTextBox_OnLoaded(ErrorRichTextBox, new RoutedEventArgs());
+        }
+        #endregion
         /// <summary>
-        /// 
+        /// 清除当前日志
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LogTabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ClearLog_OnClick(object sender, RoutedEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(() =>
+            IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
+            int selectedIndex = TabControl2.SelectedIndex;
+            switch (selectedIndex)
             {
-                // 获取当前选中的 TabItem 内容
-                var selectedItem = LogTabControl.SelectedItem;
-                if (selectedItem == null) return;
-
-                // 获取对应的 TabItem 容器（非 null 时表示已可视化）
-                var tabItem = LogTabControl.ItemContainerGenerator.ContainerFromItem(selectedItem) as TabItem;
-                if (tabItem == null) return;
-
-                // 查找 ContentPresenter
-                var contentPresenter = FindVisualChild<ContentPresenter>(tabItem);
-                if (contentPresenter == null) return;
-
-                // 强制应用模板
-                contentPresenter.ApplyTemplate();
-
-                // 尝试查找 RichTextBox 控件
-                var userRtb = FindNamedChild<RichTextBox>(contentPresenter, "UserRichTextBox");
-                var devRtb = FindNamedChild<RichTextBox>(contentPresenter, "DevRichTextBox");
-                var errorRtb = FindNamedChild<RichTextBox>(contentPresenter, "ErrorRichTextBox");
-
-                // 调用 Loaded 事件逻辑
-                if (userRtb != null)
-                    UserLogRichTextBox_Loaded(userRtb, new RoutedEventArgs());
-
-                if (devRtb != null)
-                    DevRichTextBox_OnLoaded(devRtb, new RoutedEventArgs());
-
-                if (errorRtb != null)
-                    ErrorRichTextBox_OnLoaded(errorRtb, new RoutedEventArgs());
-
-            }), System.Windows.Threading.DispatcherPriority.Loaded);
-        }
-        private T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
-        {
-            int count = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                if (child is T typedChild)
-                    return typedChild;
-
-                var result = FindVisualChild<T>(child);
-                if (result != null)
-                    return result;
+                case 0:
+                    selectedItem.UserLog.flowDocument.Blocks.Clear();
+                    break;
+                case 1:
+                    selectedItem.ErrorLog.flowDocument.Blocks.Clear();
+                    break;
+                case 2:
+                    selectedItem.DevLog.flowDocument.Blocks.Clear();
+                    break;
             }
-            return null;
+        }
+        /// <summary>
+        /// 滑动到底部
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ScrollDown_OnClick(object sender, RoutedEventArgs e)
+        {
+            IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
+            int selectedIndex = TabControl2.SelectedIndex;
+            switch (selectedIndex)
+            {
+                case 0:
+                    selectedItem.UserLog.richTextBox.ScrollToEnd();
+                    break;
+                case 1:
+                    selectedItem.ErrorLog.richTextBox.ScrollToEnd();
+                    break;
+                case 2:
+                    selectedItem.DevLog.richTextBox.ScrollToEnd();
+                    break;
+            }
         }
 
-        private T? FindNamedChild<T>(DependencyObject parent, string childName) where T : FrameworkElement
+        private void ClearLog_OnClick1(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                if (child is T typedChild && typedChild.Name == childName)
-                    return typedChild;
+            var value = GlobalMannager.StationDictionary.Lookup("工位1").Value as EachStation<Station1>;
 
-                var result = FindNamedChild<T>(child, childName);
-                if (result != null)
-                    return result;
-            }
-            return null;
+            value.AddItem(new Station1() { CT = "1", ID = "1", 参数 = "1", 名字 = "1" });
+            value.UserLog.InfoToRichTextBox("添加一行");
         }
     }
 }
