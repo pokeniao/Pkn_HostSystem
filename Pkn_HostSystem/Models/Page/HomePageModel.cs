@@ -24,8 +24,6 @@ public partial class HomePageModel : ObservableObject
         }
 
     }
-
-
     /// <summary>
     /// 网络连接对象列表
     /// </summary>
