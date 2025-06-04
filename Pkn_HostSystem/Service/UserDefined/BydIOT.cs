@@ -7,9 +7,9 @@
             return null;
         }
 
-        public bool Main()
+        public (bool Succeed, object Return) Main()
         {
-            return true;
+            return (true,"OK");
         }
 
         public string ErrorMessage()
