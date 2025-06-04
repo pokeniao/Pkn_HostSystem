@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,9 +34,7 @@ namespace Pkn_HostSystem.Base
         public bool IsServerRunning => _server != null;
         public bool IsClientConnected => _client?.Connected ?? false;
 
-
         private readonly ConcurrentDictionary<string, TaskCompletionSource<string>> _responseTasks = new();
-
 
         #region 服务器连接和断开
 
@@ -64,7 +63,7 @@ namespace Pkn_HostSystem.Base
                         OnClientConnected?.Invoke(ip);
                         Log.Info($"[{TraceContext.Name}]--[Server] 客户端连接: {ip}");
                         //执行与客户端通讯
-                        _ = HandleClientAsync(client, ip, _cts.Token);
+                        //  _ = HandleClientAsync(client, ip, _cts.Token);
                     }
                     catch (Exception ex)
                     {
@@ -178,6 +177,126 @@ namespace Pkn_HostSystem.Base
             }
         }
 
+        /// <summary>
+        /// 通过广播形式,不过是一对一通讯
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public async Task<(bool succeed, string? response)> ServerSendWaitResponseOneToOne(string message,
+            int timeout = 3000)
+        {
+            bool NoError = true;
+            //等待返回消息
+            string msg = null;
+            if (_clients.Count == 0)
+            {
+                Log.Error($"[{TraceContext.Name}]--服务器没有任何连接对象");
+                return (false, null);
+            }
+            var clinetList = _clients.ToArray();
+
+            string ip = clinetList[0].Key;
+            TcpClient client = clinetList[0].Value;
+            msg = null;
+            try
+            {
+                if (client == null || !client.Connected)
+                {
+                    Log.Error($"[{TraceContext.Name}]--在服务器执行发送消息时, 客户端未连接服务器");
+                    NoError = false;
+                }
+
+                if (_server == null || !IsServerRunning)
+                {
+                    Log.Error($"[{TraceContext.Name}]--在服务器执行发送消息时, 服务器为null");
+                    NoError = false;
+                }
+                // 发送消息
+                try
+                {
+                    await SendServerAsync(ip, message);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    //对方掉线,移除
+                    _clients.TryRemove(clinetList[0]);
+                    //递归
+                    (bool succeed, string? response)  = await ServerSendWaitResponseOneToOne(message);
+                    if (succeed)
+                    {
+                        return (true, response);
+                    }
+
+                    return (false, null);
+                }
+                catch (IOException ex1)
+                {
+                    //对方掉线,移除
+                    _clients.TryRemove(clinetList[0]);
+                    (bool succeed, string? response) = await ServerSendWaitResponseOneToOne(message);
+                    if (succeed)
+                    {
+                        return (true, response);
+                    }
+
+                    return (false, null);
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"[{TraceContext.Name}]--在服务器执行发送消息时,出现异常{e}");
+                    NoError = false;
+                }
+
+                try
+                {
+                    Log.Info($"[{TraceContext.Name}]--在服务器执行发送消息后,[{ip}]等待消息返回中");
+                    var buffer = new byte[1024];
+                    var stream = client.GetStream();
+                    var startTime = Environment.TickCount; // 记录开始时间
+                    while (true)
+                    {
+                        // 检查超时
+                        int elapsed = Environment.TickCount - startTime;
+                        if (elapsed >= timeout)
+                        {
+                            Log.Info($"[{TraceContext.Name}]--在服务器执行发送消息后,[{ip}]等待消息超时！");
+                            NoError = false;
+                            break;
+                        }
+
+                        // 检查是否有数据可读  stream.DataAvailable 可以读取流中是否有数据
+                        if (stream.DataAvailable)
+                        {
+                            int count = await stream.ReadAsync(buffer, 0, buffer.Length);
+                            msg = Encoding.UTF8.GetString(buffer, 0, count);
+                            Log.Info($"[{TraceContext.Name}]--在服务器执行发送消息后,收到[{ip}]返回消息: {msg}");
+                            break;
+                        }
+
+                        // 没数据，休息一下再看
+                        await Task.Delay(100);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Info($"[{TraceContext.Name}]--在服务器执行发送客户端[{ip}]消息后等待消息返回,出现异常{e}");
+                    NoError = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Server] 广播到 {ip} 失败: {ex.Message}");
+                NoError = false;
+            }
+            if (NoError)
+            {
+                return (true, msg);
+            }
+
+            return (false, null);
+        }
+
         private readonly SemaphoreSlim _readServerLock = new SemaphoreSlim(1, 1);
 
         /// <summary>
@@ -286,13 +405,14 @@ namespace Pkn_HostSystem.Base
 
         #region 客户端发送消息
 
-        public async Task<(bool succeed,string? response)> SendAndWaitClientAsync(string message, int timeout = 3000)
+        public async Task<(bool succeed, string? response)> SendAndWaitClientAsync(string message, int timeout = 3000)
         {
             if (_client == null || !_client.Connected || _clientStream == null)
             {
                 Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息时, 客户端未连接服务器");
                 return (false, null);
             }
+
             // 发送消息
             try
             {
@@ -304,6 +424,7 @@ namespace Pkn_HostSystem.Base
                 Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息时,出现异常{e}");
                 return (false, null);
             }
+
             //等待返回消息
             string msg = null;
             try
@@ -319,7 +440,7 @@ namespace Pkn_HostSystem.Base
                     if (elapsed >= timeout)
                     {
                         Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息后,等待消息超时！");
-                        return (false,null);
+                        return (false, null);
                     }
 
                     // 检查是否有数据可读  stream.DataAvailable 可以读取流中是否有数据
@@ -330,6 +451,7 @@ namespace Pkn_HostSystem.Base
                         Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息后,收到服务器返回消息: {msg}");
                         break;
                     }
+
                     // 没数据，休息一下再看
                     await Task.Delay(100);
                 }
@@ -340,8 +462,9 @@ namespace Pkn_HostSystem.Base
                 return (false, null);
             }
 
-            return (true,msg);
+            return (true, msg);
         }
+
         public async Task<bool> SendClientAsync(string message)
         {
             if (_client == null || !_client.Connected || _clientStream == null) return false;

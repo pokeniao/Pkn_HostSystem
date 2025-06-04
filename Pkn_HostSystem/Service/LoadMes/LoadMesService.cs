@@ -983,7 +983,14 @@ public class LoadMesService
                 break;
 
             case "Tcp服务器":
-                await tcpTool.BroadcastAsync(item.SocketSendMessage);
+                Log.Info($"[{TraceContext.Name}]--执行Tcp服务器消息发送,并等待消息返回");
+                (bool succeed2, response) = await tcpTool.ServerSendWaitResponseOneToOne(item.SocketSendMessage);
+
+                if (!succeed2)
+                {
+                    Log.Error($"[{TraceContext.Name}]--执行Tcp服务器消息发送,等待消息返回时发生错误");
+                    return (false, null);
+                }
                 break;
         }
 
