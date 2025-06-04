@@ -62,10 +62,10 @@ namespace Pkn_HostSystem.Service.UserDefined
         /// 主入口
         /// </summary>
         /// <returns></returns>
-        public bool Main()
+        public (bool Succeed, object Return) Main()
         {
             
-            return true;
+            return (true,null);
         }
 
         /// <summary>

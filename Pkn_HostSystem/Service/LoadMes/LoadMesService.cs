@@ -231,7 +231,6 @@ public class LoadMesService
                         Log.Error($"[{TraceContext.Name}]--执行动态嵌入内容时发送错误");
                         return (false, null);
                     }
-
                     Log.Info($"[{TraceContext.Name}]--嵌入内容: \r\n{value}");
                     request = StaticMessage(request, itemKey, value);
                     break;
@@ -295,7 +294,6 @@ public class LoadMesService
             var requestB = request.Substring(i + sumLen + 3);
             request = requestA + itemValue + requestB;
         }
-
         return request;
     }
 
@@ -475,8 +473,6 @@ public class LoadMesService
                             return (false, null);
                         }
                     }
-
-
                     //常规执行
                     string jToken;
                     if (userDefind)
@@ -491,9 +487,30 @@ public class LoadMesService
                     Log.Info($"[{TraceContext.Name}]--解析 {httpObject.JsonKey}:\r\n {jToken}");
                     message = StaticMessageSon(message, itemKey, httpObject.Name, jToken);
                 }
-            } else if (item.GetMessageType == "自定义")
+            } 
+            else if (item.GetMessageType == "自定义")
             {
+                Type userDefined = item.UserDefined;
+                //实例化
+                var objInstance = Activator.CreateInstance(userDefined);
+                //获取方法
+                var method = userDefined.GetMethod("Main");
+             
+                //执行方法
+                var invoke = method.Invoke(objInstance, new object[]{});
 
+                // 转换为具体元组类型
+                var (succeed, returnValue) = ((bool Succeed, object Return))invoke;
+
+                if (succeed)
+                {
+                    //静态嵌入
+                    message = StaticMessage(message, itemKey, returnValue.ToString());
+                }
+                else
+                {
+                    return (false, returnValue.ToString());
+                }
             }
 
         }
