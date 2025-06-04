@@ -33,6 +33,8 @@ public class DynCondition : ObservableObject
     /// </summary>
     public string ConnectName { get; set; }
 
+
+    public NetWork NetWork { get; set; }
     /// <summary>
     /// 当前连接Http的名称
     /// </summary>
@@ -43,16 +45,22 @@ public class DynCondition : ObservableObject
     /// 当前选中的用户自定义选项
     /// </summary>
     public Type UserDefined { get; set; }
+
+
     /// <summary>
     /// 打开用户自定义逻辑的JSON映射
     /// </summary>
 
     public bool OpenGetPropertyValue { get; set; }
 
+
+
+    public Dictionary<string, string> MethodNameMemory = new Dictionary<string, string>();
     /// <summary>
     /// 当前方法的名称(请求方式) :读线圈,读寄存器
     /// </summary>
     private string methodName;
+
 
     public string MethodName
     {
@@ -71,6 +79,22 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showHttpName));
             OnPropertyChanged(nameof(showHttp));
             OnPropertyChanged(nameof(showUserDefined));
+            // switch (value)
+            // {
+            //     case "读寄存器":
+            //         MethodNameMemory.Add($"{NetWork.NetworkDetailed.NetMethod}", value);
+            //         break;
+            //     case "读线圈":
+            //         MethodNameMemory.Add($"{NetWork.NetworkDetailed.NetMethod}", value);
+            //         break;
+            //     case "Socket返回":
+            //         break;
+            //     case "读DM寄存器":
+            //         break;
+            //
+            //
+            // }
+   
         }
     }
 
@@ -168,18 +192,19 @@ public class DynCondition : ObservableObject
                     value = "双击设置解析的Json";
                     break;
                 case "自定义(无法填写)":
-                    value = "双击设置自定义";
+                    value = $"{UserDefined?.Name}";
                     break;
             }
 
             return value;
         }
     }
-
-
     public string SocketSendMessage { get; set; }
 
 
+    /// <summary>
+    /// 用于显示[请求类型]
+    /// </summary>
     private string getMessageType;
 
     public string GetMessageType

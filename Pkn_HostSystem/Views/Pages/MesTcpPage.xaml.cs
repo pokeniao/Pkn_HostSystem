@@ -55,24 +55,70 @@ namespace Pkn_HostSystem.Views.Pages
             }
         }
 
-        #region 请求方式Col 的更新
-
-        //当连接对象发生改变
-        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        #region 请求类型
+        /// <summary>
+        /// 当 请求类型进行选择时
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GetMessageChange(object sender, SelectionChangedEventArgs e)
         {
             ComboBox? comboBox = sender as ComboBox;
-            if (comboBox != null)
+            string selectedValue = comboBox.SelectedValue as string;
+            DynCondition? selectedItem = DynConditionDataGrid.SelectedItem as DynCondition;
+            //更具不同的请求方式,修改方法名
+            switch (selectedValue)
             {
-                var selectedItem = comboBox.SelectedItem as NetWork;
-
-                string netMethod = selectedItem.NetworkDetailed.NetMethod;
-
-                ChangeParam(netMethod);
+                case "HTTP":
+                    selectedItem.MethodName = "Http";
+                    break;
+                case "自定义":
+                    selectedItem.MethodName = "自定义(无法填写)";
+                    break;
+                case "通讯":
+                    //得到当前通讯方式
+                    string netMethod = selectedItem.NetWork.NetworkDetailed.NetMethod;
+                    //切换选项
+                    ChangeParam(selectedItem);
+                    SetDefault(selectedItem);
+                    break;
+                default:
+                    selectedItem.MethodName = "";
+                    break;
             }
+        }
+        #endregion
+
+        #region 通讯名
+
+        /// <summary>
+        /// 通讯名下拉修改 - 通讯模式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
+            ChangeParam(item);
+            SetDefault(item);
         }
 
         /// <summary>
-        /// 当 请求方式 的下拉栏打开
+        /// 通讯名下拉修改 - HTTP模式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HttpSelectChange(object sender, SelectionChangedEventArgs e)
+        {
+            DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
+            item.MethodName = "Http";
+        }
+
+        #endregion
+
+        #region 请求方式
+        /// <summary>
+        /// 请求方式下拉修改
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -80,21 +126,19 @@ namespace Pkn_HostSystem.Views.Pages
         private void ComboBox_OnDropDownOpened(object? sender, EventArgs e)
         {
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
-            string connectName = item.ConnectName;
-            string netMethod = null;
-            foreach (NetWork netWorkPoJo in viewModel.MesTcpModel.NetWorkList)
-            {
-                if (netWorkPoJo.NetworkDetailed.Name == connectName)
-                {
-                    netMethod = netWorkPoJo.NetworkDetailed.NetMethod;
-                }
-            }
-
-            ChangeParam(netMethod);
+            ChangeParam(item);
         }
 
-        public void ChangeParam(string netMethod)
+        #endregion
+
+        /// <summary>
+        /// 用于判断当前通讯对象是什么类型
+        /// </summary>
+        /// <param name="netMethod"></param>
+        private void ChangeParam(DynCondition dynCondition)
         {
+            //得到当前通讯方式
+            string netMethod = dynCondition.NetWork.NetworkDetailed.NetMethod;
             switch (netMethod)
             {
                 case "ModbusTcp":
@@ -131,8 +175,29 @@ namespace Pkn_HostSystem.Views.Pages
             }
         }
 
-        #endregion
-
+        private void SetDefault(DynCondition dynCondition)
+        {
+            //得到当前通讯方式
+            string netMethod = dynCondition.NetWork.NetworkDetailed.NetMethod;
+            switch (netMethod)
+            {
+                case "ModbusTcp":
+                    dynCondition.MethodName = "读寄存器";
+                    break;
+                case "ModbusRtu":
+                    dynCondition.MethodName = "读寄存器";
+                    break;
+                case "Tcp客户端":
+                    dynCondition.MethodName = "Socket返回";
+                    break;
+                case "Tcp服务器":
+                    dynCondition.MethodName = "Socket返回";
+                    break;
+                case "基恩士上位链路通讯":
+                    dynCondition.MethodName = "读DM寄存器";
+                    break;
+            }
+        }
         /// <summary>
         /// 点击编辑Switch按钮
         /// </summary>
@@ -245,43 +310,7 @@ namespace Pkn_HostSystem.Views.Pages
             }
         }
 
-        /// <summary>
-        /// 当Http选择对象发生改变时
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void HttpSelectChange(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox? comboBox = sender as ComboBox;
-            if (comboBox != null)
-            {
-                var selectedItem = comboBox.SelectedItem as LoadMesAddAndUpdateWindowModel;
-            }
-        }
-        /// <summary>
-        /// 当 请求类型进行选择时
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GetMessageChange(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox? comboBox = sender as ComboBox;
-            string selectedValue = comboBox.SelectedValue as string;
-            DynCondition? selectedItem = DynConditionDataGrid.SelectedItem as DynCondition;
 
-            switch (selectedValue)
-            {
-                case "HTTP":
-                    selectedItem.MethodName = "Http";
-                    break;
-                case "自定义":
-                    selectedItem.MethodName = "自定义(无法填写)";
-                    break;
-                default:
-                    selectedItem.MethodName = "";
-                    break;
-            }
-        }
         /// <summary>
         /// 转发事件
         /// </summary>
@@ -332,14 +361,6 @@ namespace Pkn_HostSystem.Views.Pages
 
             viewModel.MesTcpModel.SwitchList?.Remove(value);
         }
-        /// <summary>
-        /// 设置需要解析的JSON
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void UserDefinedJsonSwitchButton(object sender, RoutedEventArgs e)
-        {
-            
-        }
+
     }
 }

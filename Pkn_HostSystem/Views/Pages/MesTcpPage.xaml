@@ -152,9 +152,10 @@
                                             Visibility="{Binding showConnectName ,Converter={StaticResource BooleanVisibilityConverter}}"
                                             ItemsSource="{Binding DataContext.MesTcpModel.NetWorkList,  RelativeSource={RelativeSource AncestorType=Page}}"
                                             DisplayMemberPath="NetworkDetailed.Name"
-                                            SelectedValuePath="NetworkDetailed.Name"
-                                            SelectedValue="{Binding ConnectName,UpdateSourceTrigger=PropertyChanged}"
-                                            SelectionChanged="Selector_OnSelectionChanged" />
+                                            Text="{Binding ConnectName,UpdateSourceTrigger=PropertyChanged}"
+                                            SelectedValue="{Binding NetWork,UpdateSourceTrigger=PropertyChanged}"
+                                            SelectionChanged="Selector_OnSelectionChanged"
+                                            />
                                         <ComboBox
                                             Visibility="{Binding showHttpName ,Converter={StaticResource BooleanVisibilityConverter}}"
                                             ItemsSource="{Binding DataContext.MesTcpModel.HttpList,  RelativeSource={RelativeSource AncestorType=Page}}"
@@ -373,8 +374,6 @@
                                                           Width="200"
                                                           SelectedValue="{Binding UserDefined}"/>
                                                 <StackPanel Orientation="Horizontal">
-                                                    <ui:ToggleSwitch />
-                                                    <Button Content="设置需要解析的Json" Click="UserDefinedJsonSwitchButton"  Width="150"/>
                                                 </StackPanel>
                                             </StackPanel>
                                             
