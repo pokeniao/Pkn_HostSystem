@@ -43,12 +43,14 @@ namespace Pkn_HostSystem.Base
             // 1. 检查是否仍然连接
             if (!tcpClient.Connected) return false;
 
-            // 2. 使用 Poll 检查是否可读（如果对方关闭，读取状态将会变更）
+            //Poll(..., SelectRead) 为true → socket “可读”,false 不可读没有数据，也没有关闭（仍处于等待中）
+            //；但 Available == 0 → 缓冲区没有数据；Available > 0缓冲区有数据,或者tcpClient.Client.Receive(buffer, SocketFlags.Peek)
             if (tcpClient.Client.Poll(0, SelectMode.SelectRead))
             {
                 byte[] buffer = new byte[1];
                 try
                 {
+                    //tcpClient.Client.Receive(buffer, SocketFlags.Peek) 是读缓冲区内是否有内容
                     if (tcpClient.Client.Receive(buffer, SocketFlags.Peek) == 0)
                     {
                         // 连接已关闭
