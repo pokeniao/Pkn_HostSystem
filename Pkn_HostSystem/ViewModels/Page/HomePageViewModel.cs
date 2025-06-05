@@ -341,7 +341,7 @@ public partial class HomePageViewModel : ObservableRecipient
     {
         if (!netWork.TcpTool.IsServerRunning)
         {
-            if (await netWork.TcpTool.StartServerAsync(netWork.NetworkDetailed.Port))
+            if (await netWork.TcpTool.StartServerAsync(netWork.NetworkDetailed.Port , netWork.NetworkDetailed.IsServerListen))
             {
                 Log.SuccessAndShowTask($"[{TraceContext.Name}]--Tcp服务器打开成功");
             }
@@ -398,6 +398,7 @@ public partial class HomePageViewModel : ObservableRecipient
         {
             ModbusToolModel.ModbusTcp_Ip_select = item.IP;
             ModbusToolModel.ModbusTcp_Port = item.Port;
+            ModbusToolModel.TcpServerNeedListen = item.IsServerListen;
         }
 
         if (item.Com != null)
@@ -425,6 +426,7 @@ public partial class HomePageViewModel : ObservableRecipient
         item.Parity = ModbusToolModel.ModbusRtu_parity_select;
         item.StopBits = ModbusToolModel.ModbusRtu_stopBits_select;
         item.NetMethod = ModbusToolModel.NetMethod_select;
+        item.IsServerListen = ModbusToolModel.TcpServerNeedListen;
     }
 
     #endregion

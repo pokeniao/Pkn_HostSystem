@@ -52,4 +52,6 @@ public class NetworkDetailed
     /// 校验码
     /// </summary>
     public Parity Parity { get; set; }
+
+    public bool IsServerListen { get; set; }
 }

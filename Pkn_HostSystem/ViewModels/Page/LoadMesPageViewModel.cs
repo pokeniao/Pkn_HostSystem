@@ -132,6 +132,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             return;
         }
 
+        item.cts = new CancellationTokenSource();
+
         TraceContext.Name = item.Name;
         //进行一次数据组装
         (bool succeed, string? message) = await ExecutionCondition(item);
@@ -194,6 +196,12 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     /// <param name="item"></param>
     public void OpenCyc(LoadMesAddAndUpdateWindowModel item)
     {
+        //需要再取消一下之前的,保险措施
+        if (item.cts != null)
+        {
+            item.cts.Cancel();
+        }
+
         item.cts = new CancellationTokenSource();
         item.Task = new Lazy<Task>(() => RunHttpCyc(item));
 
@@ -335,6 +343,11 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     /// </summary>
     public void TriggerCyc(LoadMesAddAndUpdateWindowModel item)
     {
+        //需要再取消一下之前的,保险措施
+        if (item.cts != null)
+        {
+            item.cts.Cancel();
+        }
         item.cts = new CancellationTokenSource();
         item.Task = new Lazy<Task>(() => RunTrigger(item));
 

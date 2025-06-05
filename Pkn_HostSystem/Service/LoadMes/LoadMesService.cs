@@ -52,7 +52,6 @@ public class LoadMesService
     /// <returns></returns>
     public string getNetKey(string ConnectName)
     {
-        //Log.Info($"getNetKey执行,ConnectName:{ConnectName}");
         var netWorkPoJoes = GlobalMannager.NetWorkDictionary.Items.ToList();
         foreach (var netWorkPoJo in netWorkPoJoes)
             if (netWorkPoJo.NetworkDetailed.Name == ConnectName)
@@ -228,7 +227,7 @@ public class LoadMesService
                     var (succeed, value) = await DynMessage(request, itemValue, cts);
                     if (!succeed)
                     {
-                        Log.Error($"[{TraceContext.Name}]--执行动态嵌入内容时发送错误");
+                        Log.Error($"[{TraceContext.Name}]--执行动态嵌入内容时发送错误:{value}");
                         return (false, null);
                     }
                     Log.Info($"[{TraceContext.Name}]--嵌入内容: \r\n{value}");
@@ -244,7 +243,6 @@ public class LoadMesService
                     break;
             }
         }
-
         return (true, request);
     }
 
@@ -379,7 +377,7 @@ public class LoadMesService
                         break;
                     case "Socket返回":
                         Log.Info($"[{TraceContext.Name}]--动态嵌入内容:执行Socket消息发送");
-                        (bool succeed, string tcp) = await ReadTcpMessageAsync(item);
+                        (bool succeed, string tcp) = await ReadTcpMessageAsync(item,cts);
                         //判断
                         if (!succeed)
                         {
@@ -497,10 +495,10 @@ public class LoadMesService
                 var method = userDefined.GetMethod("Main");
              
                 //执行方法
-                var invoke = method.Invoke(objInstance, new object[]{});
+                var invoke =  method.Invoke(objInstance, [cts]);
 
                 // 转换为具体元组类型
-                var (succeed, returnValue) = ((bool Succeed, object Return))invoke;
+                var (succeed, returnValue) =  await (Task<(bool Succeed, object Return)>)invoke;
 
                 if (succeed)
                 {
@@ -509,7 +507,7 @@ public class LoadMesService
                 }
                 else
                 {
-                    return (false, returnValue.ToString());
+                    return (false, returnValue?.ToString());
                 }
             }
 
@@ -952,21 +950,18 @@ public class LoadMesService
     #endregion
 
     #region 套接字通讯获取内容
-
     /// <summary>
     /// Socket套接字
     /// </summary>
     /// <param name="item">动态</param>
     /// <param name="parentName">调用的父类名称,用于日志显示</param>
     /// <returns></returns>
-    public async Task<(bool succeed, string response)> ReadTcpMessageAsync(DynCondition item)
+    public async Task<(bool succeed, string response)> ReadTcpMessageAsync(DynCondition item ,CancellationTokenSource cts)
     {
         //判断是走客户端发送,还是走服务器发送
         string itemConnectName = item.ConnectName;
         string netMethod = "";
-
         NetWork curNetWork = null;
-
         //遍历取出判断当前的网络是什么类型
         foreach (var netWorkPoJo in GlobalMannager.NetWorkDictionary.Items)
         {
@@ -976,13 +971,11 @@ public class LoadMesService
                 curNetWork = netWorkPoJo;
             }
         }
-
         if (curNetWork == null)
         {
             Log.Error($"[{TraceContext.Name}]--执行Socket时--遍历获取网络时,未获取到 GlobalMannager.NetWorkDictionary中不存在");
             return (false, null);
         }
-
         string response = string.Empty;
         TcpTool tcpTool = curNetWork.TcpTool;
         //更具类型选择发送
@@ -990,30 +983,26 @@ public class LoadMesService
         {
             case "Tcp客户端":
                 Log.Info($"[{TraceContext.Name}]--执行Tcp客户端消息发送,并等待消息返回");
-                (bool succeed, response) = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage);
+                (bool succeed, response) = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage , cts);
                 if (!succeed)
                 {
                     Log.Error($"[{TraceContext.Name}]--执行Tcp客户端消息发送,等待消息返回时发生错误");
-                    return (false, null);
+                    return (false, response);
                 }
-
                 break;
-
             case "Tcp服务器":
                 Log.Info($"[{TraceContext.Name}]--执行Tcp服务器消息发送,并等待消息返回");
-                (bool succeed2, response) = await tcpTool.ServerSendWaitResponseOneToOne(item.SocketSendMessage);
+                (bool succeed2, response) = await tcpTool.ServerSendWaitResponseOneToOne(item.SocketSendMessage,cts);
 
                 if (!succeed2)
                 {
                     Log.Error($"[{TraceContext.Name}]--执行Tcp服务器消息发送,等待消息返回时发生错误");
-                    return (false, null);
+                    return (false, response);
                 }
                 break;
         }
-
         return (true, response);
     }
-
     #endregion
 
     #region 动态获取Modbus通讯内容
