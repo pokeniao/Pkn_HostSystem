@@ -79,22 +79,6 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showHttpName));
             OnPropertyChanged(nameof(showHttp));
             OnPropertyChanged(nameof(showUserDefined));
-            // switch (value)
-            // {
-            //     case "读寄存器":
-            //         MethodNameMemory.Add($"{NetWork.NetworkDetailed.NetMethod}", value);
-            //         break;
-            //     case "读线圈":
-            //         MethodNameMemory.Add($"{NetWork.NetworkDetailed.NetMethod}", value);
-            //         break;
-            //     case "Socket返回":
-            //         break;
-            //     case "读DM寄存器":
-            //         break;
-            //
-            //
-            // }
-   
         }
     }
 

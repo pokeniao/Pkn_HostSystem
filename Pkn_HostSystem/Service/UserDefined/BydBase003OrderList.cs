@@ -62,7 +62,7 @@ namespace Pkn_HostSystem.Service.UserDefined
         /// 主入口
         /// </summary>
         /// <returns></returns>
-        public (bool Succeed, object Return) Main()
+        public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts)
         {
             
             return (true,null);

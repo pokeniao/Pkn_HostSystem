@@ -671,6 +671,14 @@
                                                                       Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
                                                                       Minimum="0" Maximum="65535" />
                                                     </WrapPanel>
+                                                    <WrapPanel Margin="5">
+                                                        <Border Margin="5">
+                                                            <TextBlock Text="监听模式" FontSize="15"
+                                                                       HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center" />
+                                                        </Border>
+                                                        <ui:ToggleSwitch OnContent="开启" OffContent="关闭" IsChecked="{Binding ModbusToolModel.TcpServerNeedListen}"/>
+                                                    </WrapPanel>
                                                 </StackPanel>
                                             </TabItem>
                                         </TabControl>

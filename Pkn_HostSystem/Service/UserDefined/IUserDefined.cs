@@ -13,7 +13,7 @@ namespace Pkn_HostSystem.Service.UserDefined
         /// 执行主入口
         /// </summary>
         /// <returns></returns>
-        (bool Succeed ,object Return) Main();
+       Task<(bool Succeed, object Return)>  Main(CancellationTokenSource cts);
 
         /// <summary>
         /// 获取属性值,通过反射获取

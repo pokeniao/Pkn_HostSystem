@@ -29,6 +29,12 @@ namespace Pkn_HostSystem.Models.Page
         [ObservableProperty]
         private List<Parity> modbusRtu_parity = Enum.GetValues(typeof(Parity)).Cast<Parity>().ToList();
 
+        #region 暂时先放在这里
+
+        [ObservableProperty] private bool tcpServerNeedListen;
+
+        #endregion
+
         /// <summary>
         /// 读写Modbus的功能码,站地址,起始地址等
         /// </summary>
