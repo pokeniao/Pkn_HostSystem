@@ -46,14 +46,24 @@ namespace Pkn_HostSystem.Service.UserDefined
             List<string> list = tcpTool._clientsResponse[ip];
             //获取最新的一行数据
             int responseIndex = list.Count;
-            if (responseIndex!=0)
+            if (responseIndex==0)
             {
-                string response = list[responseIndex-1];
-                Log.Info($"[{TraceContext.Name}]--服务器监听来自[{ip}]内容 {response}");
-                return (true, response);
+                return (false, null);
             }
 
-            return (false, null);
+            string response = list[responseIndex - 1];
+            Log.Info($"[{TraceContext.Name}]--服务器监听来自[{ip}]内容 {response}");
+
+            string[] strings = response.Split(';');
+
+            string[] XYZABC = strings[2].Split(',');
+
+            //字符串处理
+            string s =
+               "{\r\n\"lowerLimit\":\"\",\r\n\"paramCode\":\"\",\r\n\"paramName\":\"机器人X坐标\",\r\n\"paramValue\":\"" + XYZABC[0] +"\",\r\n\"standardValue\":\"\",\r\n\"upperLimit\":\"\"\r\n},\r\n{\r\n\"lowerLimit\":\"\",\r\n\"paramCode\":\"\",\r\n\"paramName\":\"机器人Y坐标\",\r\n\"paramValue\":\"" + XYZABC[1] + " \",\r\n\"standardValue\":\"\",\r\n\"upperLimit\":\"\"\r\n},\r\n{\r\n\"lowerLimit\":\"\",\r\n\"paramCode\":\"\",\r\n\"paramName\":\"机器人Z坐标\",\r\n\"paramValue\":\"" + XYZABC[2] + "\",\r\n\"standardValue\":\"\",\r\n\"upperLimit\":\"\"\r\n},\r\n{\r\n\"lowerLimit\":\"\",\r\n\"paramCode\":\"\",\r\n\"paramName\":\"机器人A坐标\",\r\n\"paramValue\":\"" + XYZABC[3] + "\",\r\n\"standardValue\":\"\",\r\n\"upperLimit\":\"\"\r\n},\r\n{\r\n\"lowerLimit\":\"\",\r\n\"paramCode\":\"\",\r\n\"paramName\":\"机器人B坐标\",\r\n\"paramValue\":\"" + XYZABC[4] + "\",\r\n\"standardValue\":\"\",\r\n\"upperLimit\":\"\"\r\n},\r\n{\r\n\"lowerLimit\":\"\",\r\n\"paramCode\":\"\",\r\n\"paramName\":\"机器人C坐标\",\r\n\"paramValue\":\"" + XYZABC[5] +"\",\r\n\"standardValue\":\"\",\r\n\"upperLimit\":\"\"\r\n}";
+            return (true, s);
+
+  
         }
 
         public string ErrorMessage()
