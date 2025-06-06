@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
-		<VersionPrefix>1.1.0</VersionPrefix>
+		<VersionPrefix>1.2.0</VersionPrefix>
 		<AssemblyName>Pkn_HostSystem</AssemblyName>
 		<UseWindowsForms>False</UseWindowsForms>
 		<RootNamespace>Pkn_HostSystem</RootNamespace>
