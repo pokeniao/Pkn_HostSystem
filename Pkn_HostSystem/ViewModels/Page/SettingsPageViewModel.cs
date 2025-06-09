@@ -131,7 +131,6 @@ public partial class SettingsPageViewModel : ObservableRecipient
         AppJsonTool<SettingsPageModel>.Save(SettingsPageModel);
       
     }
-
     #endregion
 
 
@@ -162,11 +161,9 @@ public partial class SettingsPageViewModel : ObservableRecipient
     #endregion
 
     #region 弹窗SnackbarService
-
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
     {
         SnackbarService.SetSnackbarPresenter(snackbarPresenter);
     }
-
     #endregion
 }

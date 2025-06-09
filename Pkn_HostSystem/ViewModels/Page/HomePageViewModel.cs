@@ -9,7 +9,6 @@ using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using System.Collections.ObjectModel;
-using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
@@ -40,15 +39,12 @@ public partial class HomePageViewModel : ObservableRecipient
             {
                 LogListBox = (ObservableCollection<string>)obj,
                 SetConnectDg = new ObservableCollection<NetworkDetailed>()
-                
             };
         }
         else
         {
             HomePageModel.LogListBox = (ObservableCollection<string>)GlobalMannager.GlobalDictionary["LogListBox"];
         }
-
-
         HomePageModel.HttpLists = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
 
         HomePageModel.CameraList = Ioc.Default.GetRequiredService<VisionPageViewModel>().VisionPageModel.CameraList;
@@ -341,7 +337,7 @@ public partial class HomePageViewModel : ObservableRecipient
     {
         if (!netWork.TcpTool.IsServerRunning)
         {
-            if (await netWork.TcpTool.StartServerAsync(netWork.NetworkDetailed.Port , netWork.NetworkDetailed.IsServerListen))
+            if (await netWork.TcpTool.StartServerAsync(netWork.NetworkDetailed.Port, netWork.NetworkDetailed.IsServerListen))
             {
                 Log.SuccessAndShowTask($"[{TraceContext.Name}]--Tcp服务器打开成功");
             }

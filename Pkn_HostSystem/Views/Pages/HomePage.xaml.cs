@@ -26,7 +26,7 @@ namespace Pkn_HostSystem.Views.Pages
     {
         public HomePageViewModel HomePageViewModel { get; set; }
 
-        public LogBase<HomePage> Log { get; set; } = new LogBase<HomePage>();
+        public LogBase<HomePage> Log { get; set; } = new();
 
         public HomePage()
         {

@@ -112,8 +112,6 @@ namespace Pkn_HostSystem.Base
                 kv.Value.Close();
                 kv.Value.Dispose();
             }
-
-           
             _clients.Clear();
             _server?.Stop();
             _server?.Dispose();
