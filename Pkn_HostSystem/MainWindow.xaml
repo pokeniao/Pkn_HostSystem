@@ -132,6 +132,14 @@
                                 <ui:SymbolIcon Symbol="Wrench16" />
                             </ui:NavigationViewItem.Icon>
                         </ui:NavigationViewItem>
+                        <ui:NavigationViewItem
+                            Content="Tcp发送工具"
+                            NavigationCacheMode="Enabled"
+                            TargetPageType="{x:Type pages:TcpToolPage}">
+                            <ui:NavigationViewItem.Icon>
+                                <ui:SymbolIcon Symbol="Wrench16" />
+                            </ui:NavigationViewItem.Icon>
+                        </ui:NavigationViewItem>
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
