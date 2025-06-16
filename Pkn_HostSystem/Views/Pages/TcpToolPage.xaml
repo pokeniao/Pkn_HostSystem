@@ -14,6 +14,7 @@
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      SizeChanged="TcpToolPage_OnSizeChanged"
       Title="TcpToolPage">
 
     <Grid>
@@ -48,9 +49,9 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="服务器IP" Margin="5" VerticalAlignment="Center"/>
+                        <TextBlock Text="服务器IP" Margin="5" VerticalAlignment="Center" />
                         <Grid Grid.Column="1" Margin="5,10">
-                            <TextBox  Text="{Binding TcpToolModel.ConnectServerIp,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Text="{Binding TcpToolModel.ConnectServerIp,UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                     </Grid>
                     <Grid Grid.Row="0" Grid.Column="1">
@@ -58,9 +59,10 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="端口号" Margin="5" VerticalAlignment="Center"/>
+                        <TextBlock Text="端口号" Margin="5" VerticalAlignment="Center" />
                         <Grid Grid.Column="1" Margin="5,10">
-                            <ui:NumberBox Value="{Binding TcpToolModel.ConnectServerPost}"/>
+                            <ui:NumberBox
+                                Value="{Binding TcpToolModel.ConnectServerPost , UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                     </Grid>
                     <Grid Grid.Row="1" Grid.Column="0">
@@ -68,15 +70,24 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="选择客户端" Margin="5" VerticalAlignment="Center"/>
+                        <TextBlock Text="客户端" Margin="5" VerticalAlignment="Center" />
                         <Grid Grid.Column="1" Margin="5,10">
-                            <ComboBox ItemsSource="{Binding TcpToolModel.SelectClient}"
-                                      DisplayMemberPath="IpAndPost"/>
+                            <ComboBox Name="SelectClientComboBox" ItemsSource="{Binding TcpToolModel.SelectClient}"
+                                      DisplayMemberPath="IpAndPost"
+                                      SelectedItem="{Binding TcpToolModel.SelectClientTcpNet}" />
                         </Grid>
                     </Grid>
 
                     <Grid Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
-                        <Button Content="连接/断开"  />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Width="70" Content="连接" Command="{Binding ClientConnectButtonCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
+                        <Button Grid.Column="1" Width="70" Content="断开" Command="{Binding ClientCloseButtonCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
+                                Margin="10,0" />
                     </Grid>
                 </Grid>
             </Border>
@@ -106,7 +117,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="端口号" Margin="5" VerticalAlignment="Center" />
                         <Grid Grid.Column="1" Margin="5,10">
-                            <ui:NumberBox Value="{Binding TcpToolModel.ServerPost}" />
+                            <ui:NumberBox Value="{Binding TcpToolModel.ServerPost,UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                     </Grid>
                     <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center">
@@ -114,9 +125,9 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="是否监听" Margin="5" VerticalAlignment="Center"/>
+                        <TextBlock Text="是否监听" Margin="5" VerticalAlignment="Center" />
                         <Grid Grid.Column="1" Margin="5,10">
-                            <ui:ToggleSwitch  IsChecked="{Binding TcpToolModel.IsLearn}"/>
+                            <ui:ToggleSwitch IsChecked="{Binding TcpToolModel.IsLearn}" />
                         </Grid>
                     </Grid>
                     <Grid Grid.Row="1" Grid.Column="0">
@@ -124,13 +135,24 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="切换服务器" Margin="5" VerticalAlignment="Center"/>
+                        <TextBlock Text="服务器" Margin="5" VerticalAlignment="Center" />
                         <Grid Grid.Column="1" Margin="5,10">
-                            <ComboBox ItemsSource="{Binding TcpToolModel.SelectServer}"/>
+                            <ComboBox Name="SelectServerComboBox"
+                                      ItemsSource="{Binding TcpToolModel.SelectServer}"
+                                      DisplayMemberPath="IpAndPost"
+                                      SelectedItem="{Binding TcpToolModel.SelectServerTcpNet}" />
                         </Grid>
                     </Grid>
                     <Grid Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
-                        <Button Content="连接/断开" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Width="70" Content="连接" Command="{Binding ServerConnectButtonCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
+                        <Button Grid.Column="1" Width="70" Content="断开" Command="{Binding ServerCloseButtonCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
+                                Margin="10,0" />
                     </Grid>
                 </Grid>
             </Border>
@@ -143,21 +165,38 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="0.1*" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0" Margin="5">
                         <GroupBox Header="接收">
-                            <TextBox Text="{Binding TcpToolModel.ClientAcceptMessage ,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox
+                                Style="{x:Null}"
+                                Name="ClientAcceptMessageTextBox"
+                                IsReadOnly="True"
+                                Text="{Binding TcpToolModel.SelectClientTcpNet.AcceptMessage ,UpdateSourceTrigger=PropertyChanged}"
+                                HorizontalScrollBarVisibility="Visible"
+                                VerticalScrollBarVisibility="Visible" />
                         </GroupBox>
 
                     </Grid>
                     <Grid Grid.Row="1" Margin="5">
                         <GroupBox Header="发送">
-                            <TextBox Text="{Binding TcpToolModel.ClientSendMessage ,UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox
+                                Style="{x:Null}"
+                                Name="ClientSendMessageTextBox"
+                                Text="{Binding TcpToolModel.SelectClientTcpNet.SendMessage ,UpdateSourceTrigger=PropertyChanged}"
+                                TextWrapping="Wrap"
+                                AcceptsReturn="True"
+                                HorizontalScrollBarVisibility="Visible"
+                                VerticalScrollBarVisibility="Visible" />
                         </GroupBox>
                     </Grid>
                     <Grid Grid.Row="2" HorizontalAlignment="Right" Margin="20,0">
-                        <Button Content="发送" Width="70" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="发送" Width="70" Command="{Binding SendClientButtonCommand}" />
+                            <Button Content="清空" Width="70" Margin="10,0,0,0"
+                                    Command="{Binding ClearClientButtonCommand}"/>
+                        </StackPanel>
                     </Grid>
                 </Grid>
             </Border>
@@ -168,39 +207,67 @@
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="0.3*" />
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.Row="0" Margin="5">
-                        <GroupBox Header="接收">
-                            <TextBox Text="{Binding TcpToolModel.ServerAcceptMessage ,UpdateSourceTrigger=PropertyChanged}" />
+                    <Grid Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="0.1*" />
+                        </Grid.RowDefinitions>
+                        <GroupBox Grid.Row="0" Header="接收" Name="ServerSendMessageGroupBox">
+                            <TextBox
+                                Style="{x:Null}"
+                                Name="ServerAcceptMessageTextBox"
+                                IsReadOnly="True"
+                                Text="{Binding TcpToolModel.SelectServerTcpNet.AcceptMessage ,UpdateSourceTrigger=PropertyChanged}"
+                                HorizontalScrollBarVisibility="Auto"
+                                VerticalScrollBarVisibility="Auto" />
                         </GroupBox>
-                    </Grid>
-                    <Grid Grid.Row="1" Margin="5">
-                        <GroupBox Header="发送">
-                            <TextBox Text="{Binding TcpToolModel.ServerSendMessage ,UpdateSourceTrigger=PropertyChanged}" /> 
+
+                        <GroupBox Header="发送" Grid.Row="1" Margin="5">
+                            <TextBox
+                                Style="{x:Null}"
+                                Name="ServerSendMessageTextBox"
+                                Text="{Binding TcpToolModel.SelectServerTcpNet.SendMessage ,UpdateSourceTrigger=PropertyChanged}"
+                                TextWrapping="Wrap"
+                                AcceptsReturn="True"
+                                HorizontalScrollBarVisibility="Auto"
+                                VerticalScrollBarVisibility="Auto" />
                         </GroupBox>
+
+                        <Grid Grid.Row="2" HorizontalAlignment="Right" Margin="20,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="广播" Width="70" Command="{Binding SeverBroadCastButtonCommand}" Margin="10,0"/>
+                                <Button Content="发送" Width="70" Command="{Binding SendServerButtonCommand }"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
+                                <Button Content="清空" Width="70" Margin="10,0,0,0"
+                                        Command="{Binding ClearServerButtonCommand }" />
+                            </StackPanel>
+                        </Grid>
                     </Grid>
-                    <Grid Grid.Row="2" HorizontalAlignment="Right" Margin="20,0">
-                        <Button Content="发送" Width="70" />
-                    </Grid>
-                    <Grid Grid.Column="1" Grid.RowSpan="2" Margin="5">
+                    <Grid Grid.Column="1" Margin="5">
+                      <Grid.RowDefinitions>
+                          <RowDefinition Height="*"/>
+                          <RowDefinition Height="0.07*"/>
+                      </Grid.RowDefinitions>
                         <GroupBox Header="连接的客户端">
-                        <Border BorderThickness="2" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            <Border
+                                Name="ConnectClientBorder"
+                                BorderThickness="2"
+                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
-                                <ListBox ItemsSource="{Binding TcpToolModel.ServerConnectClient}"/>
-                        </Border>
+                                <ListBox
+                                    Name="ConnectClientListBox"
+                                    ItemsSource="{Binding TcpToolModel.SelectServerTcpNet.ServerConnectClient}" />
+                            </Border>
                         </GroupBox>
+                        <Button Grid.Row="1" Content="强制断开"  HorizontalAlignment="Center"/>
                     </Grid>
-                    <Grid Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center">
-                        <Button Content="强制断开" />
-                    </Grid>
+                
                 </Grid>
             </Border>
         </Grid>
