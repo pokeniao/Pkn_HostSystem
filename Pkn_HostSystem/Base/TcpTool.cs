@@ -31,7 +31,7 @@ namespace Pkn_HostSystem.Base
         /// <summary>
         /// 客户端
         /// </summary>
-        private TcpClient? _client;
+        public TcpClient? _client;
         /// <summary>
         /// 通讯流
         /// </summary>
@@ -58,7 +58,6 @@ namespace Pkn_HostSystem.Base
         /// </summary>
         public event Action<string, string> OnMessageReceived;
 
-
         #region 服务器连接和断开
         public async Task<bool> StartServerAsync(int port , bool isListen)
         {
@@ -67,7 +66,15 @@ namespace Pkn_HostSystem.Base
             _cts = new CancellationTokenSource();
             //任何地址都可以开启服务器
             _server = new TcpListener(IPAddress.Any, port);
-            _server.Start();
+            try
+            {
+                _server.Start();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return false;
+            }
             Log.Info($"[{TraceContext.Name}]--[Server] 启动监听端口 {port}");
 
             //开启一个异步线程监听客户端连接
@@ -80,7 +87,6 @@ namespace Pkn_HostSystem.Base
                     {
                         var client = await _server.AcceptTcpClientAsync();
                         var ip = ((IPEndPoint)client.Client.RemoteEndPoint!).ToString();
-
                         //添加到客户端集合
                         _clients[ip] = client;
                         _clientsResponse[ip] = new List<string>(); 
@@ -119,11 +125,9 @@ namespace Pkn_HostSystem.Base
             _clientsResponse = new();
             Log.Info($"[{TraceContext.Name}]--[Server] 已停止监听");
         }
-
         #endregion
 
         #region 服务器接受消息
-
         public async Task ServeListenReadClient(TcpClient client, string ip, CancellationToken token)
         {
             try
@@ -214,7 +218,7 @@ namespace Pkn_HostSystem.Base
         /// <param name="ip"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public async Task SendServerAsync(string ip, string message)
+        public async Task ServerSendAsync(string ip, string message)
         {
             if (_clients.TryGetValue(ip, out TcpClient? client))
             {
@@ -234,7 +238,7 @@ namespace Pkn_HostSystem.Base
             {
                 try
                 {
-                    await SendServerAsync(kv.Key, message);
+                    await ServerSendAsync(kv.Key, message);
                 }
                 catch (Exception ex)
                 {
@@ -281,7 +285,7 @@ namespace Pkn_HostSystem.Base
                 // 发送消息
                 try
                 {
-                    await SendServerAsync(ip, message);
+                    await ServerSendAsync(ip, message);
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -375,7 +379,7 @@ namespace Pkn_HostSystem.Base
         {
             try
             {
-                await SendServerAsync(clientId, request);
+                await ServerSendAsync(clientId, request);
                 if (_clients.TryGetValue(clientId, out TcpClient? client))
                 {
                     //创建客户端通讯流
@@ -409,8 +413,7 @@ namespace Pkn_HostSystem.Base
                 _client = new TcpClient();
                 await _client.ConnectAsync(ip, port);
                 _clientStream = _client.GetStream();
-                ClientResponceCTS = new CancellationTokenSource();
-                //        _ = Task.Run(() => ReceiveFromServer(_clientStream));
+                // _ = Task.Run(() => ClientReceiveFromServer(_clientStream));
                 Log.Info($"[{TraceContext.Name}]--[Client] 连接服务器成功: {ip}:{port}");
                 return true;
             }
@@ -433,34 +436,28 @@ namespace Pkn_HostSystem.Base
         #endregion
 
         #region 客户端接受消息事件
-
-        private CancellationTokenSource ClientResponceCTS;
-
-        private async Task ReceiveFromServer(NetworkStream stream)
+        public async Task ClientReceiveFromServer(NetworkStream stream)
         {
             var buffer = new byte[1024];
-            while (!ClientResponceCTS.Token.IsCancellationRequested)
-            {
-                if (_client?.Connected ?? false)
+         
+                while (IsClientConnected)
                 {
                     try
                     {
+                        //阻塞,等待读取成功
                         int count = await stream.ReadAsync(buffer, 0, buffer.Length);
                         if (count == 0) break;
 
                         string msg = Encoding.UTF8.GetString(buffer, 0, count);
-                        OnMessageReceived?.Invoke("Server", msg);
+                        OnMessageReceived?.Invoke($"{stream}", msg);
                     }
                     catch
                     {
                         break;
                     }
                 }
-            }
-
             Log.Info($"[Client] 与服务器断开连接");
         }
-
         #endregion
 
         #region 客户端发送消息
@@ -525,7 +522,7 @@ namespace Pkn_HostSystem.Base
             return (true, msg);
         }
 
-        public async Task<bool> SendClientAsync(string message)
+        public async Task<bool> ClientSendAsync(string message)
         {
             if (_client == null || !_client.Connected || _clientStream == null) return false;
 
@@ -533,11 +530,9 @@ namespace Pkn_HostSystem.Base
             await _clientStream.WriteAsync(data, 0, data.Length);
             return true;
         }
-
         #endregion
 
         #region 私有帮助方法
-
         private void AddResponseList(string ip , string message)
         {
             List<string> list = _clientsResponse[ip];
