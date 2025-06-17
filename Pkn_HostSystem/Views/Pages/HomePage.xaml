@@ -392,7 +392,7 @@
                                 Width="60"
                                 Margin="0,0,0,15"
                                 Source="../../Assets/plc2.ico" />
-                            <ui:TextBlock Grid.Column="1" Text="连接PLC" VerticalAlignment="Center" />
+                            <ui:TextBlock Grid.Column="1" Text="添加通讯" VerticalAlignment="Center" />
                         </Grid>
                     </ui:CardAction>
                     <Border x:Name="ConnectPLCBorder"
