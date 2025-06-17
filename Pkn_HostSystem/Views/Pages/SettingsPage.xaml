@@ -59,6 +59,13 @@
                         <Button Content="打开目录" Margin="30,5,0,0" Click="ButtonBase_OnClick"></Button>
                     </WrapPanel>
                 </StackPanel>
+
+                <StackPanel Margin="0 ,12,0,0">
+                    <TextBlock Text="开机自启动" FontSize="18" FontWeight="Bold"/>
+                    <WrapPanel>
+                        <ui:ToggleSwitch OnContent="开启自启动" OffContent="关闭自启动"  Margin="40,15,0,0" IsChecked="{Binding SettingsPageModel.IsSelfStart }" Command="{Binding SelfStartCommand}"/>
+                    </WrapPanel>
+                </StackPanel>
                 <TextBlock Text="About" FontSize="18" FontWeight="Bold" Margin="0,24,0,8" />
                 <ui:CardExpander>
                     <ui:CardExpander.Icon>

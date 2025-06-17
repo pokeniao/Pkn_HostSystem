@@ -1,10 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Win32;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Views.Pages;
+using System.Diagnostics;
+using System.Reflection;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -51,6 +54,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
                 AutoThemeRadioButtonCheckedCommand.Execute(null);
                 break;
         }
+        SelfStartCommand.Execute(null);
     }
     /// <summary>
     /// 亮主题
@@ -82,6 +86,75 @@ public partial class SettingsPageViewModel : ObservableRecipient
         ApplicationThemeManager.ApplySystemTheme();
         // page.AutoThemeRadioButton.IsChecked = true;
     }
+
+    #region 开机自启动
+
+    //注册列表路径
+    private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
+    private const string AppName = "Pkn_HostSystem"; // 可自定义名称
+    [RelayCommand]
+    public void SelfStart()
+    {
+        // Assembly.GetExecutingAssembly().Location; 是获取到编译后的程序集 .dll文件路径
+        // string exePath = Assembly.GetExecutingAssembly().Location;
+
+        //Process.GetCurrentProcess().MainModule.FileName 是获取到编译后的执行主入口 .exe文件路径
+        string exePath = Process.GetCurrentProcess().MainModule.FileName;
+
+        RegistryKey runKey = Registry.CurrentUser.OpenSubKey(RunKeyPath, true);
+
+        if (SettingsPageModel.IsSelfStart)
+        {
+            if (!IsAutoStartEnabled())
+            {
+                //写入注册表
+                runKey.SetValue(AppName, $"\"{exePath}\"");
+            }
+
+            if (IsAutoStartEnabled())
+            {
+                Log.SuccessAndShow("开机自启动设置完毕");
+            }
+            else
+            {
+                Log.WarningAndShow("开机自启动设置未成功,注册表写入失败");
+            }
+        }
+        else
+        {
+            //从注册表中获取
+            if (runKey.GetValue(AppName) != null)
+            {
+                //删除
+                runKey.DeleteValue(AppName);
+            }
+
+            if (!IsAutoStartEnabled())
+            {
+         
+                Log.SuccessAndShow("开机自启动关闭");
+            }
+            else
+            {
+                Log.WarningAndShow("开机自启动关闭设置未成功,注册表删除失败");
+            }
+        }
+    }
+    /// <summary>
+    /// 判断注册表是否存在,开机自启动
+    /// </summary>
+    /// <returns></returns>
+    public bool IsAutoStartEnabled()
+    {
+        RegistryKey runKey = Registry.CurrentUser.OpenSubKey(RunKeyPath, false);
+        string value = runKey?.GetValue(AppName)?.ToString();
+        string exePath = $"\"{Process.GetCurrentProcess().MainModule.FileName}\"";
+        return value == exePath;
+    }
+    #endregion
+
+
+
 
     #region 保存存档
 
