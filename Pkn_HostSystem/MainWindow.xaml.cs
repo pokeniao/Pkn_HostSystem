@@ -16,9 +16,6 @@ using Wpf.Ui.Controls;
 namespace Pkn_HostSystem
 {
 
-    
-
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
