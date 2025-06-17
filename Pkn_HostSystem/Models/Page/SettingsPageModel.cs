@@ -12,4 +12,6 @@ public partial class SettingsPageModel : ObservableObject
 
     [ObservableProperty]
     private string currentTheme = "系统主题";
+
+    [ObservableProperty] private bool isSelfStart = true;
 }
