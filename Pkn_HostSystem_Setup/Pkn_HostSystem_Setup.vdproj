@@ -139,7 +139,7 @@
             "SourcePath" = "8:..\\..\\runtime\\打包卸载\\msiexec.exe"
             "TargetName" = "8:msiexec.exe"
             "Tag" = "8:"
-            "Folder" = "8:_CD9D0EDC61AD48D08DA4A9DF1F5BBA13"
+            "Folder" = "8:_F384FBB691274EC79F2EACECDE6A17C9"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -159,7 +159,7 @@
             "SourcePath" = "8:..\\Pkn_HostSystem\\Assets\\pokeniao_logo_圆角_128.ico"
             "TargetName" = "8:pokeniao_logo_圆角_128.ico"
             "Tag" = "8:"
-            "Folder" = "8:_CD9D0EDC61AD48D08DA4A9DF1F5BBA13"
+            "Folder" = "8:_F384FBB691274EC79F2EACECDE6A17C9"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -201,6 +201,17 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_F384FBB691274EC79F2EACECDE6A17C9"
+                    {
+                    "Name" = "8:bin"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_3D2C221276E442C5A6447F6EAD486101"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
             "{1525181F-901A-416C-8A58-119130FE478E}:_D464CAECDD284707B9D61F8D88B44652"
@@ -231,7 +242,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Pkn_HostSystem_Setup"
         "ProductCode" = "8:{C6662D19-2489-4A43-B035-3937EAAD4FDC}"
-        "PackageCode" = "8:{310813D3-7227-40DA-BE3F-08AF2E70C94E}"
+        "PackageCode" = "8:{A54FB495-61E6-451B-9ADA-3E2D01E777CE}"
         "UpgradeCode" = "8:{1CB31F93-E555-419A-914D-52825393F66C}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -811,7 +822,7 @@
             "SourcePath" = "8:..\\Pkn_HostSystem\\obj\\Debug\\net8.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_CD9D0EDC61AD48D08DA4A9DF1F5BBA13"
+            "Folder" = "8:_F384FBB691274EC79F2EACECDE6A17C9"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -839,7 +850,7 @@
             "SourcePath" = "8:..\\Pkn_HostSystem\\obj\\Debug\\net8.0-windows\\Pkn_HostSystem.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_CD9D0EDC61AD48D08DA4A9DF1F5BBA13"
+            "Folder" = "8:_F384FBB691274EC79F2EACECDE6A17C9"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
