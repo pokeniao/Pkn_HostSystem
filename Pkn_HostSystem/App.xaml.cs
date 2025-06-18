@@ -27,6 +27,7 @@ namespace Pkn_HostSystem
             AppRunOn();
             LogConfig();
             CreateIoc();
+            LoadDll();
             base.OnStartup(e);
         }
 
@@ -123,6 +124,16 @@ namespace Pkn_HostSystem
             );
         }
 
+        /// <summary>
+        /// 加载引用的DLL配置
+        /// </summary>
+        private void LoadDll()
+        {
+            // AppDomain.CurrentDomain.BaseDirectory 获取当前程序（即 .exe 可执行文件）所在的根目录路径，结尾自带 \ 
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "lib");
+            //创建临时环境变量 , 下面代码代表 先获取PATH环境变量,然后在PATH前面添加path变量,不是永久的,程序关闭失效
+            Environment.SetEnvironmentVariable("PATH", path + ";" + Environment.GetEnvironmentVariable("PATH"));
+        }
         /// <summary>
         /// 程序结束的时候
         /// </summary>
