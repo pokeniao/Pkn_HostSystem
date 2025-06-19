@@ -19,11 +19,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Assets\Pkn_Install128.ico" />
 		<None Remove="Assets\plc2.ico" />
 		<None Remove="Assets\工单.png" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Assets\Pkn_Install128.ico" />
 		<Resource Include="Assets\pokeniao_logo_圆角_128.ico">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
