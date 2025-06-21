@@ -18,7 +18,9 @@
                  ExtendsContentIntoTitleBar="True"
                  WindowBackdropType="Mica"
                  WindowCornerPreference="Round"
-                 SizeChanged="MainWindow_OnSizeChanged">
+                 SizeChanged="MainWindow_OnSizeChanged"
+               
+                 Name="Pkn_HostSystemMainWindow">
 
     <!-- ApplicationBackgroundBrush → 全局背景色（深色模式/浅色模式切换）。 -->
     <!-- TextFillColorPrimaryBrush → 文本颜色（适应主题）。 -->
@@ -136,6 +138,14 @@
                             Content="Tcp发送工具"
                             NavigationCacheMode="Enabled"
                             TargetPageType="{x:Type pages:TcpToolPage}">
+                            <ui:NavigationViewItem.Icon>
+                                <ui:SymbolIcon Symbol="Wrench16" />
+                            </ui:NavigationViewItem.Icon>
+                        </ui:NavigationViewItem>
+                        <ui:NavigationViewItem
+                            Content="表格工具"
+                            NavigationCacheMode="Enabled"
+                            TargetPageType="{x:Type pages:LiveChartsTestPage}">
                             <ui:NavigationViewItem.Icon>
                                 <ui:SymbolIcon Symbol="Wrench16" />
                             </ui:NavigationViewItem.Icon>
