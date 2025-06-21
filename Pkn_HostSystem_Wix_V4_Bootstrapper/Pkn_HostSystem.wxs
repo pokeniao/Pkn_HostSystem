@@ -1,5 +1,5 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Compressed="yes" ProductCode="30854a0c-8c60-4957-8ba4-a0a58f34fa12" Name="Pkn_HostSystem" Language="2052" Version="1.2.0.0" UpgradeCode="f9a314c0-7f34-4a5d-abf3-54c4c48b9f2c" Manufacturer="Pokeniao" InstallerVersion="200">
+  <Package Compressed="yes" ProductCode="30854a0c-8c60-4957-8ba4-a0a58f44fa12" Name="Pkn_HostSystem" Language="2052" Version="1.3.0.0" UpgradeCode="f9a314c0-7f34-4a5d-abf3-54c4c48b9f2c" Manufacturer="Pokeniao" InstallerVersion="200">
     <SummaryInformation Codepage="936" />
     <Media Id="1" Cabinet="Pkn_HostSystem.cab" EmbedCab="yes" />
 
