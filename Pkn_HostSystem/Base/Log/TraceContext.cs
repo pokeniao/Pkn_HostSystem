@@ -9,7 +9,7 @@
 
         public static string Name
         {
-            get => _name.Value ?? "未设置";
+            get => _name.Value ?? "NuLL";
             set => _name.Value = value;
         }
     }
