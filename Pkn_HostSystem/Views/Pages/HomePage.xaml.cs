@@ -12,6 +12,7 @@ using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Service.UserDefined;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
+using System.Windows.Input;
 using Wpf.Ui.Controls;
 using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
@@ -285,6 +286,7 @@ namespace Pkn_HostSystem.Views.Pages
         private void HomePage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             LogListBorder.MaxHeight = e.NewSize.Height - 100;
+            LogListBox.Height = e.NewSize.Height - 100;
         }
 
 
