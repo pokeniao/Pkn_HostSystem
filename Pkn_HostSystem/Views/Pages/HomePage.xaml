@@ -13,6 +13,7 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       mc:Ignorable="d"
       SizeChanged="HomePage_OnSizeChanged"
+    
       Title="HomePage">
     <Page.Resources>
 
@@ -125,32 +126,38 @@
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="3.265"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="4.794"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="3.265" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="4.794" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
             </DoubleAnimationUsingKeyFrames>
             <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="115.5"/> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="193.5"/> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="238.875"/> -->
             <!-- </DoubleAnimationUsingKeyFrames> -->
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1.711"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="2.149"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1.711" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="2.149" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3" />
             </DoubleAnimationUsingKeyFrames>
             <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="-67.5"/> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="-109.125"/> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-106.875"/> -->
             <!-- </DoubleAnimationUsingKeyFrames> -->
-            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.BorderThickness)">
-                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000" Value="0.2000031999952,0.2000015999992,0.2000023999976,0"/>
-                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0.2000023999976,0.2000008,0.2000015999992,0.2"/>
-                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0.2,0.2,0.2,0.2"/>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                              Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000"
+                                         Value="0.2000031999952,0.2000015999992,0.2000023999976,0" />
+                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000"
+                                         Value="0.2000023999976,0.2000008,0.2000015999992,0.2" />
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0.2,0.2,0.2,0.2" />
             </ThicknessAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.CornerRadius)">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
                 <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
                     <DiscreteObjectKeyFrame.Value>
                         <CornerRadius>5,5,5,5</CornerRadius>
@@ -167,14 +174,16 @@
                     </DiscreteObjectKeyFrame.Value>
                 </DiscreteObjectKeyFrame>
             </ObjectAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.3"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.6"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.3" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.6" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
             </DoubleAnimationUsingKeyFrames>
-            <Int32AnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Panel.ZIndex)">
-                <EasingInt32KeyFrame KeyTime="00:00:00.1000000" Value="-3"/>
-                <EasingInt32KeyFrame KeyTime="00:00:00.2000000" Value="0"/>
+            <Int32AnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                          Storyboard.TargetProperty="(Panel.ZIndex)">
+                <EasingInt32KeyFrame KeyTime="00:00:00.1000000" Value="-3" />
+                <EasingInt32KeyFrame KeyTime="00:00:00.2000000" Value="0" />
             </Int32AnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="CloseBydOrder">
@@ -186,32 +195,38 @@
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.BorderThickness)">
-                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000" Value="0.2"/>
-                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0.2"/>
-                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0.2"/>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                              Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000" Value="0.2" />
+                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0.2" />
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0.2" />
             </ThicknessAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Border.CornerRadius)">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
                 <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
                     <DiscreteObjectKeyFrame.Value>
                         <CornerRadius>2,2,2,2</CornerRadius>
@@ -228,51 +243,61 @@
                     </DiscreteObjectKeyFrame.Value>
                 </DiscreteObjectKeyFrame>
             </ObjectAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.6"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.3"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.6" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.3" />
             </DoubleAnimationUsingKeyFrames>
-            <Int32AnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(Panel.ZIndex)">
-                <EasingInt32KeyFrame KeyTime="00:00:00.1000000" Value="-3"/>
-                <EasingInt32KeyFrame KeyTime="00:00:00.2000000" Value="0"/>
+            <Int32AnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
+                                          Storyboard.TargetProperty="(Panel.ZIndex)">
+                <EasingInt32KeyFrame KeyTime="00:00:00.1000000" Value="-3" />
+                <EasingInt32KeyFrame KeyTime="00:00:00.2000000" Value="0" />
             </Int32AnimationUsingKeyFrames>
         </Storyboard>
         <!-- 展开动画 -->
         <!-- 收缩动画 -->
         <Storyboard x:Key="OpenCameraSelect">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="3.474"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="4.496"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="3.474" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="4.496" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
             </DoubleAnimationUsingKeyFrames>
             <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="32.438"/> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="40.313"/> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="91.688"/> -->
             <!-- </DoubleAnimationUsingKeyFrames> -->
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1.789"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="2.125"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1.789" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="2.125" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3" />
             </DoubleAnimationUsingKeyFrames>
             <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="75"/> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="106.875"/> -->
             <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="123.375"/> -->
             <!-- </DoubleAnimationUsingKeyFrames> -->
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1" Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1" Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.434782"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.434782" />
             </DoubleAnimationUsingKeyFrames>
-            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(Border.BorderThickness)">
-                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000" Value="0.1999994000006,0.1999998,0.1999994000006,0.1999996000002"/>
-                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000" Value="0.2,0.1999999999998,0.1999999999988,0.1999999999992"/>
-                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0.2,0.2,0.2,0.2"/>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                              Storyboard.TargetProperty="(Border.BorderThickness)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00.1000000"
+                                         Value="0.1999994000006,0.1999998,0.1999994000006,0.1999996000002" />
+                <EasingThicknessKeyFrame KeyTime="00:00:00.2000000"
+                                         Value="0.2,0.1999999999998,0.1999999999988,0.1999999999992" />
+                <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0.2,0.2,0.2,0.2" />
             </ThicknessAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(Border.CornerRadius)">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
                 <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
                     <DiscreteObjectKeyFrame.Value>
                         <CornerRadius>5,5,5,5</CornerRadius>
@@ -289,12 +314,12 @@
                     </DiscreteObjectKeyFrame.Value>
                 </DiscreteObjectKeyFrame>
             </ObjectAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.6"/>
-                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.6" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
-
         <Storyboard x:Key="CloseCameraSelect">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
@@ -360,546 +385,542 @@
             </ThicknessAnimationUsingKeyFrames>
         </Storyboard>
     </Page.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid Margin="10">
-            </Grid>
-            <UniformGrid Grid.Row="1" Columns="2" Margin="20">
-                <Grid Margin="20,30,20,0">
-                    <ui:CardAction
-                        Name="CA_ConnectPLC"
-                        IsChevronVisible="False"
+    <Grid Name="HomeGrid">
+        <Grid Grid.Row="0" Height="674.5" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid Margin="10">
+                </Grid>
+                <UniformGrid Grid.Row="1" Columns="2" Margin="20,0">
+                    <Grid Margin="20,0,20,5">
+                        <ui:CardAction
+                            Name="CA_ConnectPLC"
+                            IsChevronVisible="False"
 
-                        VerticalAlignment="Stretch" Click="CA_ConnectPLC_Click">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Image
-                                Width="60"
-                                Margin="0,0,0,15"
-                                Source="../../Assets/plc2.ico" />
-                            <ui:TextBlock Grid.Column="1" Text="添加通讯" VerticalAlignment="Center" />
-                        </Grid>
-                    </ui:CardAction>
-                    <Border x:Name="ConnectPLCBorder"
-                            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            VerticalAlignment="Stretch" Click="CA_ConnectPLC_Click">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image
+                                    Width="60"
+                                    Margin="0,0,0,15"
+                                    Source="../../Assets/plc2.ico" />
+                                <ui:TextBlock Grid.Column="1" Text="添加通讯" VerticalAlignment="Center" />
+                            </Grid>
+                        </ui:CardAction>
+                        <Border x:Name="ConnectPLCBorder"
+                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                CornerRadius="10"
+                                Visibility="Collapsed"
+                                Opacity="0"
+                                Height="102" BorderThickness="1">
+                            <Border.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </Border.RenderTransform>
+                            <Grid x:Name="grid2">
+                                <Grid.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </Grid.LayoutTransform>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Margin="15,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="0.5*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="连接目标" Margin="0,15" />
+                                    <DataGrid
+                                        Grid.Row="1"
+                                        Name="setConnectDg"
+                                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                        ItemsSource="{Binding HomePageModel.SetConnectDg}"
+                                        AutoGenerateColumns="False"
+                                        CellEditEnding="SetConnectDg_OnCellEditEnding">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="连接名" Width="*" Binding="{Binding Name  }" />
+                                            <DataGridTemplateColumn Width="0.8*" Header="配置">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Button Name="配置" Content="配置"
+                                                                    Command="{Binding HomePageViewModel.SetConnectConfigCommand,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }">
+                                                                <Button.IsEnabled>
+                                                                    <MultiBinding
+                                                                        Converter="{StaticResource HomePageRunButtonConverter}">
+                                                                        <!-- 绑定 IsNewItem -->
+                                                                        <Binding
+                                                                            RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                                            Path="IsNewItem" />
+                                                                        <!-- 绑定 NoSet -->
+                                                                        <Binding Path="Open" />
+                                                                    </MultiBinding>
+                                                                </Button.IsEnabled>
+                                                            </Button>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Header="启动" Width="*">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <ui:ToggleSwitch OffContent="关闭" OnContent="启动"
+                                                                             IsChecked="{Binding Open ,UpdateSourceTrigger=PropertyChanged}"
+
+                                                                             Command="{Binding DataContext.ConnectCommand ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
+
+                                                                <ui:ToggleSwitch.IsEnabled>
+                                                                    <MultiBinding
+                                                                        Converter="{StaticResource HomePageRunButtonConverter}">
+                                                                        <Binding
+                                                                            RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                                            Path="IsNewItem" />
+                                                                        <Binding Path="Open" />
+                                                                    </MultiBinding>
+                                                                </ui:ToggleSwitch.IsEnabled>
+                                                            </ui:ToggleSwitch>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn Header="删除" Width="0.9*">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <CheckBox
+                                                                Command="{Binding DataContext.DeleteReadRegDvgCommand  ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                CommandParameter="{Binding  RelativeSource={RelativeSource AncestorType=Page} }">
+                                                                <CheckBox.IsEnabled>
+                                                                    <MultiBinding
+                                                                        Converter="{StaticResource HomePageRunButtonConverter}">
+                                                                        <Binding
+                                                                            RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                                            Path="IsNewItem" />
+                                                                        <Binding Path="Open" />
+                                                                    </MultiBinding>
+                                                                </CheckBox.IsEnabled>
+                                                            </CheckBox>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+
+                                    <Border
+                                        Grid.Row="2"
+                                        Name="IpSet"
+                                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                        Margin="0, 15"
+                                        CornerRadius="10"
+                                        Visibility="Collapsed">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+
+                                            <Border Grid.Row="0"
+                                                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                                    BorderThickness="0,1,0,1"
+                                                    Margin="4">
+                                                <TextBlock Text="{Binding HomePageModel.CurrentSetName}" Margin="10" />
+                                            </Border>
+                                            <Border Grid.Row="1"
+                                                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                                    BorderThickness="0,0,0,1"
+                                                    Margin="4">
+                                                <WrapPanel>
+                                                    <TextBlock Text="当前选择的通讯" Margin="10" TextAlignment="Center" />
+                                                    <ComboBox Width="150" ItemsSource="{Binding NetMethod}"
+                                                              SelectedValue="{Binding ModbusToolModel.NetMethod_select}" />
+                                                    <Button Content="设置" HorizontalAlignment="Right" Margin="20,5"
+                                                            Command="{Binding CommitConfigCommand}"
+                                                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }" />
+                                                </WrapPanel>
+                                            </Border>
+
+                                            <TabControl Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,15">
+                                                <TabItem Width="130">
+
+                                                    <TabItem.Header>
+                                                        <TextBlock FontWeight="Bold" FontSize="13" Text="TCP通讯设置" />
+                                                    </TabItem.Header>
+                                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto" />
+                                                            <RowDefinition Height="Auto" />
+                                                        </Grid.RowDefinitions>
+                                                        <WrapPanel Grid.Row="0" Margin="5 ">
+                                                            <Border Margin="5">
+                                                                <TextBlock Text="IP地址" FontSize="15"
+                                                                           HorizontalAlignment="Center"
+                                                                           VerticalAlignment="Center" />
+                                                            </Border>
+                                                            <ComboBox Name="cbb_modbus_tpc_ip" Width="250"
+                                                                      IsEditable="True"
+                                                                      ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}"
+                                                                      SelectedIndex="0"
+                                                                      Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}"
+                                                                      DropDownOpened="ComboBox_DropDownOpened_1" />
+                                                        </WrapPanel>
+                                                        <WrapPanel Grid.Row="1" Margin="5">
+                                                            <Border Margin="5">
+                                                                <TextBlock Text="端口号" FontSize="15"
+                                                                           HorizontalAlignment="Center"
+                                                                           VerticalAlignment="Center" />
+                                                            </Border>
+                                                            <ui:NumberBox Width="250"
+                                                                          Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
+                                                                          Minimum="0" Maximum="65535" />
+                                                        </WrapPanel>
+                                                    </Grid>
+                                                </TabItem>
+                                                <TabItem Width="130">
+                                                    <TabItem.Header>
+                                                        <TextBlock FontWeight="Bold" FontSize="13" Text="串口通讯设置" />
+                                                    </TabItem.Header>
+                                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                        <WrapPanel>
+                                                            <StackPanel Orientation="Horizontal" Margin="0 5">
+                                                                <Border VerticalAlignment="Center" Width="58">
+                                                                    <TextBlock Text="端口号" HorizontalAlignment="Right"
+                                                                               Margin="5" />
+                                                                </Border>
+                                                                <ComboBox Margin="0 0 10 0" Width="90"
+                                                                          ItemsSource="{Binding ModbusToolModel.ModbusRtu_COM}"
+                                                                          SelectedIndex="0"
+                                                                          DropDownOpened="ComboBox_DropDownOpened"
+                                                                          Text="{Binding ModbusToolModel.ModbusRtu_COM_select}" />
+                                                            </StackPanel>
+                                                            <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                                                <Border HorizontalAlignment="Center" Width="58"
+                                                                        VerticalAlignment="Center">
+                                                                    <TextBlock Text="波特率" Margin="5"
+                                                                               HorizontalAlignment="Right" />
+                                                                </Border>
+                                                                <ComboBox Margin="0 0 10 0" Width="90"
+                                                                          ItemsSource="{Binding ModbusToolModel.ModbusRtu_baudRate}"
+                                                                          SelectedIndex="0"
+                                                                          Text="{Binding ModbusToolModel.ModbusRtu_baudRate_select}" />
+                                                            </StackPanel>
+
+                                                        </WrapPanel>
+                                                        <WrapPanel>
+                                                            <StackPanel Orientation="Horizontal" Margin="0 5">
+                                                                <Border HorizontalAlignment="Center"
+                                                                        VerticalAlignment="Center"
+                                                                        Width="58">
+                                                                    <TextBlock Text="数据位" HorizontalAlignment="Right"
+                                                                               Margin="5" />
+                                                                </Border>
+                                                                <ComboBox Margin="0 0 10 0" Width="90"
+                                                                          ItemsSource="{Binding ModbusToolModel.ModbusRtu_dataBits}"
+                                                                          SelectedIndex="0"
+                                                                          Text="{Binding ModbusToolModel.ModbusRtu_dataBits_select}" />
+                                                            </StackPanel>
+                                                            <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                                                <Border HorizontalAlignment="Center" Width="58"
+                                                                        VerticalAlignment="Center">
+                                                                    <TextBlock Text="停止位" Margin="5"
+                                                                               HorizontalAlignment="Right" />
+                                                                </Border>
+                                                                <ComboBox Width="90"
+                                                                          ItemsSource="{Binding ModbusToolModel.ModbusRtu_stopBits}"
+                                                                          Text="{Binding ModbusToolModel.ModbusRtu_stopBits_select}" />
+                                                            </StackPanel>
+                                                        </WrapPanel>
+                                                        <WrapPanel>
+                                                            <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                                                <Border HorizontalAlignment="Center"
+                                                                        VerticalAlignment="Center"
+                                                                        Width="58">
+                                                                    <TextBlock Text="校验位" HorizontalAlignment="Right"
+                                                                               Margin="5" />
+                                                                </Border>
+                                                                <ComboBox Margin="0 0 5 0" Width="90"
+                                                                          ItemsSource="{Binding ModbusToolModel.ModbusRtu_parity}"
+                                                                          SelectedIndex="0"
+                                                                          Text="{Binding ModbusToolModel.ModbusRtu_parity_select}" />
+                                                            </StackPanel>
+                                                        </WrapPanel>
+                                                    </StackPanel>
+                                                </TabItem>
+                                                <TabItem Width="130">
+                                                    <TabItem.Header>
+                                                        <TextBlock FontWeight="Bold" FontSize="13" Text="TCP服务器" />
+                                                    </TabItem.Header>
+                                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <WrapPanel Margin="5">
+                                                            <Border Margin="5">
+                                                                <TextBlock Text="开启服务器端口号" FontSize="15"
+                                                                           HorizontalAlignment="Center"
+                                                                           VerticalAlignment="Center" />
+                                                            </Border>
+                                                            <ui:NumberBox Width="150"
+                                                                          Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
+                                                                          Minimum="0" Maximum="65535" />
+                                                        </WrapPanel>
+                                                        <WrapPanel Margin="5">
+                                                            <Border Margin="5">
+                                                                <TextBlock Text="监听模式" FontSize="15"
+                                                                           HorizontalAlignment="Center"
+                                                                           VerticalAlignment="Center" />
+                                                            </Border>
+                                                            <ui:ToggleSwitch OnContent="开启" OffContent="关闭"
+                                                                             IsChecked="{Binding ModbusToolModel.TcpServerNeedListen}" />
+                                                        </WrapPanel>
+                                                    </StackPanel>
+                                                </TabItem>
+                                            </TabControl>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
+                                        <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick" />
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <Grid Margin="20,0,20,5">
+                        <ui:CardAction
+                            Name="CA_bydOrderSelect"
+                            IsChevronVisible="False"
+                            VerticalAlignment="Stretch" Click="CA_bydOrderSelect_OnClick">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image
+                                    Width="40"
+                                    Margin="0"
+                                    Source="../../Assets/工单.png" />
+                                <ui:TextBlock Grid.Column="1" Text="工单选择" VerticalAlignment="Center" />
+                            </Grid>
+                        </ui:CardAction>
+                        <Border
+                            x:Name="OrderBorder" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                             BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             CornerRadius="10"
                             Visibility="Collapsed"
                             Opacity="0"
-                            Height="102" BorderThickness="1">
-                        <Border.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform />
-                                <SkewTransform />
-                                <RotateTransform />
-                                <TranslateTransform />
-                            </TransformGroup>
-                        </Border.RenderTransform>
-                        <Grid x:Name="grid2">
-                            <Grid.LayoutTransform>
+                            Height="102" BorderThickness="1" RenderTransformOrigin="0.93,0">
+                            <Border.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
                                     <SkewTransform />
                                     <RotateTransform />
                                     <TranslateTransform />
                                 </TransformGroup>
-                            </Grid.LayoutTransform>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <Grid Margin="15,0">
+                            </Border.RenderTransform>
+
+                            <Grid x:Name="grid"
+                                  RenderTransformOrigin="0.5,0.5">
+                                <Grid.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </Grid.LayoutTransform>
+
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="0.5*" />
                                     <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.3*" />
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="连接目标" Margin="0,15" />
-                                <DataGrid
-                                    Grid.Row="1"
-                                    Name="setConnectDg"
-                                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                                    ItemsSource="{Binding HomePageModel.SetConnectDg}"
-                                    AutoGenerateColumns="False"
-                                    CellEditEnding="SetConnectDg_OnCellEditEnding">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="连接名" Width="*" Binding="{Binding Name  }" />
-                                        <DataGridTemplateColumn Width="0.8*" Header="配置">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Grid>
-                                                        <Button Name="配置" Content="配置"
-                                                                Command="{Binding HomePageViewModel.SetConnectConfigCommand,RelativeSource={RelativeSource AncestorType=Page}}"
-                                                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }">
-                                                            <Button.IsEnabled>
-                                                                <MultiBinding
-                                                                    Converter="{StaticResource HomePageRunButtonConverter}">
-                                                                    <!-- 绑定 IsNewItem -->
-                                                                    <Binding
-                                                                        RelativeSource="{RelativeSource AncestorType=DataGridRow}"
-                                                                        Path="IsNewItem" />
-                                                                    <!-- 绑定 NoSet -->
-                                                                    <Binding Path="Open" />
-                                                                </MultiBinding>
-                                                            </Button.IsEnabled>
-                                                        </Button>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                        <DataGridTemplateColumn Header="启动" Width="*">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Grid>
-                                                        <ui:ToggleSwitch OffContent="关闭" OnContent="启动"
-                                                                         IsChecked="{Binding Open ,UpdateSourceTrigger=PropertyChanged}"
-
-                                                                         Command="{Binding DataContext.ConnectCommand ,RelativeSource={RelativeSource AncestorType=Page}}"
-                                                                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
-
-                                                            <ui:ToggleSwitch.IsEnabled>
-                                                                <MultiBinding
-                                                                    Converter="{StaticResource HomePageRunButtonConverter}">
-                                                                    <Binding
-                                                                        RelativeSource="{RelativeSource AncestorType=DataGridRow}"
-                                                                        Path="IsNewItem" />
-                                                                    <Binding Path="Open" />
-                                                                </MultiBinding>
-                                                            </ui:ToggleSwitch.IsEnabled>
-                                                        </ui:ToggleSwitch>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-
-                                        <DataGridTemplateColumn Header="删除" Width="0.9*">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Grid>
-                                                        <CheckBox
-                                                            Command="{Binding DataContext.DeleteReadRegDvgCommand  ,RelativeSource={RelativeSource AncestorType=Page}}"
-                                                            CommandParameter="{Binding  RelativeSource={RelativeSource AncestorType=Page} }">
-                                                            <CheckBox.IsEnabled>
-                                                                <MultiBinding
-                                                                    Converter="{StaticResource HomePageRunButtonConverter}">
-                                                                    <Binding
-                                                                        RelativeSource="{RelativeSource AncestorType=DataGridRow}"
-                                                                        Path="IsNewItem" />
-                                                                    <Binding Path="Open" />
-                                                                </MultiBinding>
-                                                            </CheckBox.IsEnabled>
-                                                        </CheckBox>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                    </DataGrid.Columns>
-                                </DataGrid>
-
-                                <Border
-                                    Grid.Row="2"
-                                    Name="IpSet"
-                                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                                    Margin="0, 15"
-                                    CornerRadius="10"
-                                    Visibility="Collapsed">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-
-                                        <Border Grid.Row="0"
-                                            BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="0,1,0,1"
-                                            Margin="4">
-                                            <TextBlock Text="{Binding HomePageModel.CurrentSetName}" Margin="10" />
-                                        </Border>
-                                        <Border Grid.Row="1"
-                                            BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                                            BorderThickness="0,0,0,1"
-                                            Margin="4">
-                                            <WrapPanel>
-                                                <TextBlock Text="当前选择的通讯" Margin="10" TextAlignment="Center" />
-                                                <ComboBox Width="150" ItemsSource="{Binding NetMethod}"
-                                                          SelectedValue="{Binding ModbusToolModel.NetMethod_select}" />
-                                                <Button Content="设置" HorizontalAlignment="Right" Margin="20,5"
-                                                        Command="{Binding CommitConfigCommand}"
-                                                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }" />
-                                            </WrapPanel>
-                                        </Border>
-
-                                        <TabControl Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,15">
-                                            <TabItem Width="130" >
-
-                                                <TabItem.Header>
-                                                    <TextBlock FontWeight="Bold" FontSize="13" Text="TCP通讯设置" />
-                                                </TabItem.Header>
-                                                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                    </Grid.RowDefinitions>
-                                                    <WrapPanel Grid.Row="0" Margin="5 ">
-                                                        <Border Margin="5">
-                                                            <TextBlock Text="IP地址" FontSize="15"
-                                                                       HorizontalAlignment="Center"
-                                                                       VerticalAlignment="Center" />
-                                                        </Border>
-                                                        <ComboBox Name="cbb_modbus_tpc_ip" Width="250"
-                                                                  IsEditable="True"
-                                                                  ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}"
-                                                                  SelectedIndex="0"
-                                                                  Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}"
-                                                                  DropDownOpened="ComboBox_DropDownOpened_1" />
-                                                    </WrapPanel>
-                                                    <WrapPanel Grid.Row="1" Margin="5">
-                                                        <Border Margin="5">
-                                                            <TextBlock Text="端口号" FontSize="15"
-                                                                       HorizontalAlignment="Center"
-                                                                       VerticalAlignment="Center" />
-                                                        </Border>
-                                                        <ui:NumberBox Width="250"
-                                                                      Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
-                                                                      Minimum="0" Maximum="65535" />
-                                                    </WrapPanel>
-                                                </Grid>
-                                            </TabItem>
-                                            <TabItem  Width="130" >
-                                                <TabItem.Header>
-                                                    <TextBlock FontWeight="Bold" FontSize="13" Text="串口通讯设置" />
-                                                </TabItem.Header>
-                                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                    <WrapPanel>
-                                                        <StackPanel Orientation="Horizontal" Margin="0 5">
-                                                            <Border VerticalAlignment="Center" Width="58">
-                                                                <TextBlock Text="端口号" HorizontalAlignment="Right"
-                                                                           Margin="5" />
-                                                            </Border>
-                                                            <ComboBox Margin="0 0 10 0" Width="90"
-                                                                      ItemsSource="{Binding ModbusToolModel.ModbusRtu_COM}"
-                                                                      SelectedIndex="0"
-                                                                      DropDownOpened="ComboBox_DropDownOpened"
-                                                                      Text="{Binding ModbusToolModel.ModbusRtu_COM_select}" />
-                                                        </StackPanel>
-                                                        <StackPanel Orientation="Horizontal" Margin="0 5">
-
-                                                            <Border HorizontalAlignment="Center" Width="58"
-                                                                    VerticalAlignment="Center">
-                                                                <TextBlock Text="波特率" Margin="5"
-                                                                           HorizontalAlignment="Right" />
-                                                            </Border>
-                                                            <ComboBox Margin="0 0 10 0" Width="90"
-                                                                      ItemsSource="{Binding ModbusToolModel.ModbusRtu_baudRate}"
-                                                                      SelectedIndex="0"
-                                                                      Text="{Binding ModbusToolModel.ModbusRtu_baudRate_select}" />
-                                                        </StackPanel>
-
-                                                    </WrapPanel>
-                                                    <WrapPanel>
-                                                        <StackPanel Orientation="Horizontal" Margin="0 5">
-                                                            <Border HorizontalAlignment="Center"
-                                                                    VerticalAlignment="Center"
-                                                                    Width="58">
-                                                                <TextBlock Text="数据位" HorizontalAlignment="Right"
-                                                                           Margin="5" />
-                                                            </Border>
-                                                            <ComboBox Margin="0 0 10 0" Width="90"
-                                                                      ItemsSource="{Binding ModbusToolModel.ModbusRtu_dataBits}"
-                                                                      SelectedIndex="0"
-                                                                      Text="{Binding ModbusToolModel.ModbusRtu_dataBits_select}" />
-                                                        </StackPanel>
-                                                        <StackPanel Orientation="Horizontal" Margin="0 5">
-
-                                                            <Border HorizontalAlignment="Center" Width="58"
-                                                                    VerticalAlignment="Center">
-                                                                <TextBlock Text="停止位" Margin="5"
-                                                                           HorizontalAlignment="Right" />
-                                                            </Border>
-                                                            <ComboBox Width="90"
-                                                                      ItemsSource="{Binding ModbusToolModel.ModbusRtu_stopBits}"
-                                                                      Text="{Binding ModbusToolModel.ModbusRtu_stopBits_select}" />
-                                                        </StackPanel>
-                                                    </WrapPanel>
-                                                    <WrapPanel>
-                                                        <StackPanel Orientation="Horizontal" Margin="0 5">
-
-                                                            <Border HorizontalAlignment="Center"
-                                                                    VerticalAlignment="Center"
-                                                                    Width="58">
-                                                                <TextBlock Text="校验位" HorizontalAlignment="Right"
-                                                                           Margin="5" />
-                                                            </Border>
-                                                            <ComboBox Margin="0 0 5 0" Width="90"
-                                                                      ItemsSource="{Binding ModbusToolModel.ModbusRtu_parity}"
-                                                                      SelectedIndex="0"
-                                                                      Text="{Binding ModbusToolModel.ModbusRtu_parity_select}" />
-                                                        </StackPanel>
-                                                    </WrapPanel>
-                                                </StackPanel>
-                                            </TabItem>
-                                            <TabItem Width="130"  >
-                                                <TabItem.Header>
-                                                    <TextBlock FontWeight="Bold" FontSize="13" Text="TCP服务器" />
-                                                </TabItem.Header>
-                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <WrapPanel Margin="5">
-                                                        <Border Margin="5">
-                                                            <TextBlock Text="开启服务器端口号" FontSize="15"
-                                                                       HorizontalAlignment="Center"
-                                                                       VerticalAlignment="Center" />
-                                                        </Border>
-                                                        <ui:NumberBox Width="150"
-                                                                      Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
-                                                                      Minimum="0" Maximum="65535" />
-                                                    </WrapPanel>
-                                                    <WrapPanel Margin="5">
-                                                        <Border Margin="5">
-                                                            <TextBlock Text="监听模式" FontSize="15"
-                                                                       HorizontalAlignment="Center"
-                                                                       VerticalAlignment="Center" />
-                                                        </Border>
-                                                        <ui:ToggleSwitch OnContent="开启" OffContent="关闭" IsChecked="{Binding ModbusToolModel.TcpServerNeedListen}"/>
-                                                    </WrapPanel>
-                                                </StackPanel>
-                                            </TabItem>
-                                        </TabControl>
-                                    </Grid>
-                                </Border>
-                            </Grid>
-                            <Grid Grid.Row="1">
-                                <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
-                                    <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick" />
+                                <StackPanel Margin="50,10">
+                                    <WrapPanel Margin="0,10,0,0">
+                                        <TextBlock Text="当前工单" Margin="10" />
+                                        <ComboBox Width="150"
+                                                  SelectedValue="{Binding HomePageModel.CurrentSelectBydOrder}"
+                                                  SelectionChanged="SelectedBydOrder"
+                                                  DropDownOpened="SelectBydOrderDown"
+                                                  ItemsSource="{Binding HomePageModel.BydOrderLists}"
+                                                  DisplayMemberPath="scheduleCode" />
+                                    </WrapPanel>
+                                    <WrapPanel Margin="0,10,0,0">
+                                        <TextBlock Text="HTTP请求:" Margin="10" />
+                                        <ComboBox Width="150"
+                                                  SelectedValue="{Binding HomePageModel.HttpName}"
+                                                  ItemsSource="{Binding HomePageModel.HttpLists}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedValuePath="Name" />
+                                    </WrapPanel>
+                                    <WrapPanel Margin="10">
+                                        <TextBlock Text="产线名称: " />
+                                        <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.lineName}" />
+                                    </WrapPanel>
+                                    <WrapPanel Margin="10">
+                                        <TextBlock Text="产品名称: " />
+                                        <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.productName}" />
+                                    </WrapPanel>
+                                    <WrapPanel Margin="10">
+                                        <TextBlock Text="工单编码: " />
+                                        <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.orderCode}" />
+                                    </WrapPanel>
+                                    <WrapPanel Margin="10">
+                                        <TextBlock Text="排程编码: " />
+                                        <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.scheduleCode}" />
+                                    </WrapPanel>
+                                    <WrapPanel Margin="10">
+                                        <TextBlock Text="排程状态编码: " />
+                                        <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.scheduleStatus}" />
+                                    </WrapPanel>
+                                    <WrapPanel Margin="10">
+                                        <TextBlock Text="计划开始时间: " />
+                                        <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.startTime}" />
+                                    </WrapPanel>
+                                    <WrapPanel Margin="10">
+                                        <TextBlock Text="计划结束时间: " />
+                                        <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.endTime}" />
+                                    </WrapPanel>
                                 </StackPanel>
-                            </Grid>
-                        </Grid>
-                    </Border>
-                </Grid>
-                <Grid Margin="20,30,20,0">
-                    <ui:CardAction
-                        Name="CA_bydOrderSelect"
-                        IsChevronVisible="False"
-                        VerticalAlignment="Stretch" Click="CA_bydOrderSelect_OnClick">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Image
-                                Width="40"
-                                Margin="0"
-                                Source="../../Assets/工单.png" />
-                            <ui:TextBlock Grid.Column="1" Text="工单选择" VerticalAlignment="Center" />
-                        </Grid>
-                    </ui:CardAction>
-                    <Border
-                        x:Name="OrderBorder" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                        CornerRadius="10"
-                        Visibility="Collapsed"
-                        Opacity="0"
-                        Height="102" BorderThickness="1" RenderTransformOrigin="0.93,0">
-                        <Border.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform />
-                                <SkewTransform />
-                                <RotateTransform />
-                                <TranslateTransform />
-                            </TransformGroup>
-                        </Border.RenderTransform>
-
-                        <Grid x:Name="grid"
-                              RenderTransformOrigin="0.5,0.5">
-                            <Grid.LayoutTransform>
-                                <TransformGroup>
-                                    <ScaleTransform />
-                                    <SkewTransform />
-                                    <RotateTransform />
-                                    <TranslateTransform />
-                                </TransformGroup>
-                            </Grid.LayoutTransform>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="0.3*" />
-                            </Grid.RowDefinitions>
-                            <StackPanel Margin="50,10">
-                                <WrapPanel Margin="0,10,0,0">
-                                    <TextBlock Text="当前工单" Margin="10" />
-                                    <ComboBox Width="150"
-                                              SelectedValue="{Binding HomePageModel.CurrentSelectBydOrder}"
-                                              SelectionChanged="SelectedBydOrder"
-                                              DropDownOpened="SelectBydOrderDown"
-                                              ItemsSource="{Binding HomePageModel.BydOrderLists}"
-                                              DisplayMemberPath="scheduleCode" />
-                                </WrapPanel>
-                                <WrapPanel Margin="0,10,0,0">
-                                    <TextBlock Text="HTTP请求:" Margin="10" />
-                                    <ComboBox Width="150"
-                                              SelectedValue="{Binding HomePageModel.HttpName}"
-                                              ItemsSource="{Binding HomePageModel.HttpLists}"
-                                              DisplayMemberPath="Name"
-                                              SelectedValuePath="Name" />
-                                </WrapPanel>
-                                <WrapPanel Margin="10">
-                                    <TextBlock Text="产线名称: " />
-                                    <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.lineName}" />
-                                </WrapPanel>
-                                <WrapPanel Margin="10">
-                                    <TextBlock Text="产品名称: " />
-                                    <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.productName}" />
-                                </WrapPanel>
-                                <WrapPanel Margin="10">
-                                    <TextBlock Text="工单编码: " />
-                                    <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.orderCode}" />
-                                </WrapPanel>
-                                <WrapPanel Margin="10">
-                                    <TextBlock Text="排程编码: " />
-                                    <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.scheduleCode}" />
-                                </WrapPanel>
-                                <WrapPanel Margin="10">
-                                    <TextBlock Text="排程状态编码: " />
-                                    <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.scheduleStatus}" />
-                                </WrapPanel>
-                                <WrapPanel Margin="10">
-                                    <TextBlock Text="计划开始时间: " />
-                                    <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.startTime}" />
-                                </WrapPanel>
-                                <WrapPanel Margin="10">
-                                    <TextBlock Text="计划结束时间: " />
-                                    <TextBlock Text="{Binding HomePageModel.CurrentSelectBydOrder.endTime}" />
-                                </WrapPanel>
-                            </StackPanel>
-                            <Grid Grid.Row="1">
-                                <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
-                                    <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick2" />
-                                </StackPanel>
-                            </Grid>
-                        </Grid>
-                    </Border>
-                </Grid>
-                <Grid Margin="20,30,20,0">
-                    <ui:CardAction
-                        Name="CA_CameraSelect"
-                        
-                        IsChevronVisible="False"
-                        VerticalAlignment="Stretch" Click="CA_CameraSelect_OnClick">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon Symbol="CameraAdd20" FontSize="40" />
-                            <ui:TextBlock Grid.Column="1" Text="相机添加" VerticalAlignment="Center" />
-                        </Grid>
-                    </ui:CardAction>
-                    <Border
-                        x:Name="CameraBorder" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                        CornerRadius="10"
-                        Visibility="Collapsed"
-                        Opacity="0"
-                        Height="102" BorderThickness="0" RenderTransformOrigin="0,0.3">
-                        <Border.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform />
-                                <SkewTransform />
-                                <RotateTransform />
-                                <TranslateTransform />
-                            </TransformGroup>
-                        </Border.RenderTransform>
-                        <Grid x:Name="grid1">
-                            <Grid.LayoutTransform>
-                                <TransformGroup>
-                                    <ScaleTransform />
-                                    <SkewTransform />
-                                    <RotateTransform />
-                                    <TranslateTransform />
-                                </TransformGroup>
-                            </Grid.LayoutTransform>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="0.3*" />
-                            </Grid.RowDefinitions>
-                            <Grid>
-                                <DataGrid 
-                                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    Margin="20"
-                                    ItemsSource="{Binding HomePageModel.CameraList}"
-                                    AutoGenerateColumns="False">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="相机名" Width="*" Binding="{Binding CameraName}"/>
-                                        <DataGridTextColumn Header="相机GenICamTL"  Width="*" Binding="{Binding GenICamTL}"/>
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </Grid>
                                 <Grid Grid.Row="1">
-                                <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
-                                    <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick3" />
-                                </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
+                                        <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick2" />
+                                    </StackPanel>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Border>
-                </Grid>
-            </UniformGrid>
-
-        </Grid>
-        <Grid Grid.Column="1" Cursor="Arrow">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="auto" />
-                </Grid.RowDefinitions>
-                <ui:TextBlock Grid.Row="0" FontTypography="Subtitle" Text="日志" Margin="30 10" />
-                <Border
-                    Grid.Row="1" x:Name="LogListBorder" Margin="30 0"
-                    BorderThickness="2"
-                    CornerRadius="10"
-                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}" RenderTransformOrigin="0.5,0.5">
-                    <Border.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform />
-                            <SkewTransform />
-                            <RotateTransform />
-                            <TranslateTransform />
-                        </TransformGroup>
-                    </Border.RenderTransform>
-                    <ListBox x:Name="LogListBox"
-                             ItemsSource="{Binding HomePageModel.LogListBox, UpdateSourceTrigger=PropertyChanged}" />
-                </Border>
-
-                <WrapPanel HorizontalAlignment="Right" Grid.Row="2" Margin="30 10">
-                    <Button Content="清空日志" Click="ClearLog" />
-                    <Button Content="滚动到底部" Command="{Binding ScrollToBottomCommand}"
-                            CommandParameter="{Binding ElementName=LogListBox}"
-                            Margin="10,0,0,0" />
-                </WrapPanel>
+                        </Border>
+                    </Grid>
+                    <Grid Margin="20,5,20,0">
+                        <ui:CardAction
+                            Name="CA_CameraSelect"
+                            IsChevronVisible="False"
+                            VerticalAlignment="Stretch" Click="CA_CameraSelect_OnClick">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <ui:SymbolIcon Symbol="CameraAdd20" FontSize="40" />
+                                <ui:TextBlock Grid.Column="1" Text="相机添加" VerticalAlignment="Center" />
+                            </Grid>
+                        </ui:CardAction>
+                        <Border
+                            x:Name="CameraBorder" Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                            CornerRadius="10"
+                            Visibility="Collapsed"
+                            Opacity="0"
+                            Height="102" BorderThickness="0" RenderTransformOrigin="0,0.3">
+                            <Border.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </Border.RenderTransform>
+                            <Grid x:Name="grid1">
+                                <Grid.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </Grid.LayoutTransform>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.3*" />
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <DataGrid
+                                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        Margin="20"
+                                        ItemsSource="{Binding HomePageModel.CameraList}"
+                                        AutoGenerateColumns="False">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="相机名" Width="*" Binding="{Binding CameraName}" />
+                                            <DataGridTextColumn Header="相机GenICamTL" Width="*"
+                                                                Binding="{Binding GenICamTL}" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
+                                        <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick3" />
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </UniformGrid>
 
             </Grid>
+            <Grid Grid.Row="0" Grid.Column="1" Cursor="Arrow">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.9*" />
+                        <RowDefinition Height="0.1*" />
+                    </Grid.RowDefinitions>
+                    <Border
+                        Grid.Row="0" x:Name="LogListBorder" Margin="30 0"
+                        BorderThickness="2"
+                        CornerRadius="10"
+                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}" RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Border.RenderTransform>
+                        <ListBox x:Name="LogListBox"
+                                 ItemsSource="{Binding HomePageModel.LogListBox, UpdateSourceTrigger=PropertyChanged}" />
+                    </Border>
 
+                    <WrapPanel HorizontalAlignment="Right" Grid.Row="2" Margin="30 0">
+                        <Button Content="清空日志" Click="ClearLog" />
+                        <Button Content="滚动到底部" Command="{Binding ScrollToBottomCommand}"
+                                CommandParameter="{Binding ElementName=LogListBox}"
+                                Margin="10,0,0,0" />
+                    </WrapPanel>
+                </Grid>
+
+            </Grid>
+            <ui:SnackbarPresenter Grid.Column="0" Grid.Row="0"  Grid.ColumnSpan="2" Name="SnackbarPresenter" />
         </Grid>
-        <ui:SnackbarPresenter Grid.ColumnSpan="2" Name="SnackbarPresenter" />
     </Grid>
 </Page>

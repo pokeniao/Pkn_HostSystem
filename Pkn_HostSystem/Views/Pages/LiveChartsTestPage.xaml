@@ -1,0 +1,33 @@
+﻿<Page x:Class="Pkn_HostSystem.Views.Pages.LiveChartsTestPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
+      xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
+      xmlns:wpf="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+      mc:Ignorable="d"
+      ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+      ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+
+      d:DataContext="{d:DesignInstance page:LiveChartsTestViewModel}"
+      d:DesignHeight="714.5" d:DesignWidth="1000"
+      Title="LiveChartsTestPage"
+    >
+
+    <UniformGrid  Columns="2">
+        
+        <wpf:CartesianChart Series="{Binding Series}"/>
+        <!-- <wpf:GeoMap Series="{Binding Series2}"/>  -->
+        <wpf:PieChart Series="{Binding Series3}"/>
+        <wpf:CartesianChart
+            SyncContext="{Binding Sync}"
+            Series="{Binding Series4}"
+            XAxes="{Binding XAxes}"/>
+
+        <wpf:PieChart Series="{Binding Series5}" LegendPosition="Right"/>
+        <ui:SnackbarPresenter Name="SnackbarPresenter"/>
+    </UniformGrid>
+</Page>

@@ -94,23 +94,31 @@
                             Background="Transparent"
                             BorderThickness="0,1,0,1"
                             CornerRadius="0"
-                            NavigateUri="https://github.com/pokeniao">
+                            NavigateUri="https://github.com/pokeniao/Pkn_HostSystem">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Grid.Column="0" Source="../../Assets/github.png" Width="30"  Margin="0,0,10,0"/>
+                                <Grid Grid.Column="1">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
                                     <TextBlock Text="链接地址 " />
                                     <TextBlock Grid.Row="1"
-                                               Text="https://github.com/pokeniao "
+                                               Text="https://github.com/pokeniao/Pkn_HostSystem"
                                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush }" />
-                                </Grid>
+                                    </Grid>
 
+                                 
+                                </Grid>
                                 <ui:SymbolIcon Grid.Column="1" Symbol="Link24" />
                             </Grid>
                         </ui:Anchor>

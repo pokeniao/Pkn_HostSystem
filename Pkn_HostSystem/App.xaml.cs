@@ -109,7 +109,7 @@ namespace Pkn_HostSystem
                     .AddSingleton<VisionPageViewModel>()
                     .AddSingleton<StationViewModel>()
                     .AddSingleton<TcpToolViewModel>()
-
+                    .AddSingleton<LiveChartsTestViewModel>()
                   //页面单例 ,预加载
                     .AddSingleton<StationPage>()
                     .AddSingleton<VisionPage>()
@@ -120,6 +120,7 @@ namespace Pkn_HostSystem
                     .AddSingleton<SettingsPage>()
                     .AddSingleton<ModbusToolPage>()
                     .AddSingleton<TcpToolPage>()
+                    .AddSingleton<LiveChartsTestPage>()
                     .BuildServiceProvider()
             );
         }

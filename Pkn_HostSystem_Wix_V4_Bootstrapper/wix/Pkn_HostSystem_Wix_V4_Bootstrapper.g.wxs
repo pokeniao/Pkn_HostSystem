@@ -6,7 +6,7 @@
     To suppress generation of this file remove `set ide=true` from the PostBuildEvent of the VS project
 </auto-generated>
 -->
-  <Bundle Name="Pkn_HostSystemInstall" IconSourceFile="C:\Users\admin\Desktop\space\C#Project\Pkn_HostSystem\Pkn_HostSystem\Assets\Pkn_Install128.ico" UpgradeCode="f9a314c0-7f34-4a5d-abf3-54c4c48b9f2c" Version="1.2.0.0" >
+  <Bundle Name="Pkn_HostSystemInstall" IconSourceFile="C:\Users\admin\Desktop\space\C#Project\Pkn_HostSystem\Pkn_HostSystem\Assets\Pkn_Install128.ico" UpgradeCode="f9a314c0-7f34-4a5d-abf3-54c4c48b9f2c" Version="1.3.0.0" >
     <BootstrapperApplication>
       <bal:WixStandardBootstrapperApplication Theme="hyperlinkLicense" LicenseUrl="" />
     </BootstrapperApplication>

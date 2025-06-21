@@ -168,11 +168,13 @@
                         <RowDefinition Height="0.1*" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0" Margin="5">
-                        <GroupBox Header="接收">
+                        <GroupBox Header="接收" 
+                                  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <TextBox
                                 Style="{x:Null}"
                                 Name="ClientAcceptMessageTextBox"
                                 IsReadOnly="True"
+                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 Text="{Binding TcpToolModel.SelectClientTcpNet.AcceptMessage ,UpdateSourceTrigger=PropertyChanged}"
                                 HorizontalScrollBarVisibility="Visible"
                                 VerticalScrollBarVisibility="Visible" />
@@ -180,10 +182,12 @@
 
                     </Grid>
                     <Grid Grid.Row="1" Margin="5">
-                        <GroupBox Header="发送">
+                        <GroupBox Header="发送"
+                                  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <TextBox
                                 Style="{x:Null}"
                                 Name="ClientSendMessageTextBox"
+                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 Text="{Binding TcpToolModel.SelectClientTcpNet.SendMessage ,UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="Wrap"
                                 AcceptsReturn="True"
@@ -218,20 +222,24 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="0.1*" />
                         </Grid.RowDefinitions>
-                        <GroupBox Grid.Row="0" Header="接收" Name="ServerSendMessageGroupBox">
+                        <GroupBox Grid.Row="0" Header="接收" Name="ServerSendMessageGroupBox"
+                                  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <TextBox
                                 Style="{x:Null}"
                                 Name="ServerAcceptMessageTextBox"
                                 IsReadOnly="True"
+                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 Text="{Binding TcpToolModel.SelectServerTcpNet.AcceptMessage ,UpdateSourceTrigger=PropertyChanged}"
                                 HorizontalScrollBarVisibility="Auto"
                                 VerticalScrollBarVisibility="Auto" />
                         </GroupBox>
 
-                        <GroupBox Header="发送" Grid.Row="1" Margin="5">
+                        <GroupBox Header="发送" Grid.Row="1" Margin="5"
+                                  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <TextBox
                                 Style="{x:Null}"
                                 Name="ServerSendMessageTextBox"
+                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 Text="{Binding TcpToolModel.SelectServerTcpNet.SendMessage ,UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="Wrap"
                                 AcceptsReturn="True"
@@ -254,7 +262,7 @@
                           <RowDefinition Height="*"/>
                           <RowDefinition Height="0.07*"/>
                       </Grid.RowDefinitions>
-                        <GroupBox Header="连接的客户端">
+                        <GroupBox Header="连接的客户端"  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <Border
                                 Name="ConnectClientBorder"
                                 BorderThickness="2"
