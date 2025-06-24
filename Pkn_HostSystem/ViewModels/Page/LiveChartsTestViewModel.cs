@@ -1,91 +1,86 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Force.DeepCloner;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
 using LiveChartsCore.SkiaSharpView.Extensions;
 using LiveChartsCore.SkiaSharpView.Painting;
-using Newtonsoft.Json.Linq;
+using LiveChartsCore.SkiaSharpView.Painting.Effects;
+using LiveChartsCore.SkiaSharpView.VisualElements;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.Static;
+using Pkn_HostSystem.Views.Pages;
 using SkiaSharp;
 using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
 namespace Pkn_HostSystem.ViewModels.Page
 {
-    public partial class LiveChartsTestViewModel :ObservableRecipient
+    public partial class LiveChartsTestViewModel : ObservableRecipient
     {
         public LiveChartsTestModel LiveChartsTestModel { get; set; } = AppJsonTool<LiveChartsTestModel>.Load();
         public LogBase<LiveChartsTestViewModel> Log;
         public SnackbarService SnackbarService = new SnackbarService();
 
-        #region 树状图
-        public ISeries[] Series { get; set; } = [
-            new ColumnSeries<int>(3, 4, 2),
-            new ColumnSeries<int>(4, 2, 6),
-            new ColumnSeries<double, DiamondGeometry>(4, 3, 4)
-        ];
-        #endregion
+        #region 饼图--良率统计
 
-        #region 世界热地图
-        /// <summary>
-        /// 世界热地图
-        /// </summary>
-        public HeatLandSeries[] Series2 { get; set; } = [new HeatLandSeries()
-        {
-            Lands = new HeatLand[]
+        public ISeries[] OkTotalPieSeries { get; set; }
+
+
+        public ISeries[] TimePieSeries { get; set; }
+
+        public LabelVisual TotalTitlePie { get; set; } =
+            new()
             {
-                new() { Name = "bra", Value = 13 },
-                new() { Name = "mex", Value = 10 },
-                new() { Name = "usa", Value = 15 },
-                new() { Name = "can", Value = 8 },
-                new() { Name = "ind", Value = 12 },
-                new() { Name = "deu", Value = 13 },
-                new() { Name= "jpn", Value = 15 },
-                new() { Name = "chn", Value = 14 },
-                new() { Name = "rus", Value = 11 },
-                new() { Name = "fra", Value = 8 },
-                new() { Name = "esp", Value = 7 },
-                new() { Name = "kor", Value = 10 },
-                new() { Name = "zaf", Value = 12 },
-                new() { Name = "are", Value = 13 }
-            }
-        }];
+                Text = "良率产量统计",
+                TextSize = 15,
+                Padding = new LiveChartsCore.Drawing.Padding(15),
+                Paint = new SolidColorPaint
+                {
+                    Color = GlobalMannager.ThemeSkColor,
+                    SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
+                }
+            };
 
-
-        #endregion
-
-        #region 饼图 , 分散型
-        public IEnumerable<ISeries> Series3 { get; set; } =
-            new[] { 6, 5, 4, 3, 2 }.AsPieSeries((value, series) =>
+        public LabelVisual TotalTitlePie2 { get; set; } =
+            new()
             {
-                // pushes out the slice with the value of 6 to 30 pixels.
-                if (value != 6) return;
+                Text = "耗时统计",
+                TextSize = 15,
+                Padding = new LiveChartsCore.Drawing.Padding(15),
+                Paint = new SolidColorPaint
+                {
+                    Color = GlobalMannager.ThemeSkColor,
+                    SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
+                }
+            };
 
-                series.Pushout = 30;
-            });
+
+
         #endregion
 
-        #region 波动图
+        #region 实时线图
         private readonly Random _random = new();
         private readonly List<DateTimePoint> _values = [];
         private DateTimeAxis _customAxis ;
 
-        public ObservableCollection<ISeries> Series4 { get; set; }
+        public ObservableCollection<ISeries> Series { get; set; }
 
         public Axis[] XAxes { get; set; }
 
         public object Sync { get; } = new object();
 
         public bool IsReading { get; set; } = true;
-        public void CartesianChartInit()
+
+
+        public void HeartBeat()
         {
-            Series4 = [
+            Series = [
                 new LineSeries<DateTimePoint>
                 {
                     Values = _values,
@@ -155,35 +150,99 @@ namespace Pkn_HostSystem.ViewModels.Page
         }
         #endregion
 
-        #region 饼图,普通
-        private static readonly SKColor[] s_colors = [
-            new SKColor(179, 229, 252),
-            new SKColor(1, 87, 155)
-            // ...
+        #region 柱状图
 
-            // you can add as many colors as you require to build the gradient
-            // by default all the distance between each color is equal
-            // use the colorPos parameter in the constructor of the RadialGradientPaint class
-            // to specify the distance between each color
-        ];
-        public ISeries[] Series5 { get; set; } = [
-            new PieSeries<int>
-            {
-                Name = "Maria",
-                Values = [7],
+        public ISeries[] DayTimeYieldSeries { get; set; } = [
+            new ColumnSeries<int>
+            {   
+                Values = [6, 3, 5, 7, 3, 4, 6, 3,70,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+
+                Fill = new RadialGradientPaint([new SKColor(0, 240, 0),new SKColor(100,200,50)]),
                 Stroke = null,
-                Fill = new RadialGradientPaint(s_colors),
-                Pushout = 10,
-                OuterRadiusOffset = 20
+                MaxBarWidth = double.MaxValue,
+                IgnoresBarPosition = true
             },
-            new PieSeries<int>
+            new ColumnSeries<int>
             {
-                Name = "Charles",
-                Values = [3],
+                Values = [2, 4, 8, 9, 5, 2, 4, 7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+
+                Fill = new RadialGradientPaint([new SKColor(255, 0, 0),new SKColor(200,100,100)]),
                 Stroke = null,
-                Fill = new RadialGradientPaint(new SKColor(255, 205, 210), new SKColor(183, 28, 28))
+                MaxBarWidth = 30,
+                IgnoresBarPosition = true
+            }, 
+            new LineSeries<double>   { 
+                Values = [6, 3, 5, 7, 3, 4, 6, 3, 70, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                Fill = null,
+                GeometrySize = 0
             }
         ];
+
+        public Axis[] XAxesDayTimeYield { get; set; }
+            = new Axis[]
+            {
+                new Axis
+                {
+                    Name = "时间",
+
+                    Labels = ["0:00", "1:00", "2:00", "3:00","4:00","5:00","6:00","7:00","8:00","9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"
+                    ],
+                    NamePaint = new SolidColorPaint(GlobalMannager.ThemeSkColor)
+                    {
+                        SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
+                    },
+                    LabelsPaint = new SolidColorPaint(SKColors.Blue),
+                    TextSize = 15,
+                    
+                    // SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) { StrokeThickness = 2 }
+                }
+            };
+
+        public Axis[] YAxesDayTimeYield { get; set; }
+            = new Axis[]
+            {
+                new Axis
+                {
+                    Name = "产量",
+                    NamePaint = new SolidColorPaint(GlobalMannager.ThemeSkColor) 
+                    {
+                        SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
+                    },
+
+                    LabelsPaint = new SolidColorPaint(SKColors.Green),
+                    TextSize = 15,
+
+                    // SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
+                    // {
+                    //     StrokeThickness = 2,
+                    //     PathEffect = new DashEffect(new float[] { 3, 3 })
+                    // }
+                }
+            };
+
+        #endregion
+
+
+        #region CT图
+        public IEnumerable<ISeries> CTSeries { get; set; } =
+            GaugeGenerator.BuildSolidGauge(
+                new GaugeItem(50, series => SetStyle("Station1", series)),
+                new GaugeItem(80, series => SetStyle("Station2", series)),
+                new GaugeItem(95, series => SetStyle("Station3", series)),
+                new GaugeItem(GaugeItem.Background, series =>
+                {
+                    series.Fill = null;
+                }));
+        public static void SetStyle(string name, PieSeries<ObservableValue> series)
+        {
+            series.Name = name;
+            series.DataLabelsSize = 20;
+            series.DataLabelsPosition = PolarLabelsPosition.End;
+            series.DataLabelsFormatter =
+                point => point.Coordinate.PrimaryValue.ToString();
+            series.InnerRadius = 20;
+            series.MaxRadialColumnWidth = 5;
+        }
 
         #endregion
 
@@ -199,7 +258,152 @@ namespace Pkn_HostSystem.ViewModels.Page
 
             Log = new LogBase<LiveChartsTestViewModel>(SnackbarService);
 
-            CartesianChartInit();
+            OkTotalPieSeries =
+            [
+                new PieSeries<ObservableValue>
+                {
+                    Name = "OK",
+                    Values = [LiveChartsTestModel.Ok],
+                    Stroke = null,
+                    Fill = new RadialGradientPaint([new SKColor(0, 240, 0),new SKColor(100,200,50)]),
+                    DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor), //页面上显示数据
+                },
+                new PieSeries<ObservableValue>
+                {
+                    Name = "NG",
+                    Values = [LiveChartsTestModel.Ng],
+                    Stroke = null,
+                    Fill = new RadialGradientPaint([new SKColor(255, 0, 0),new SKColor(200,100,50)]),
+                    DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor), //页面上显示数据
+                    Pushout = 10,
+                    OuterRadiusOffset = 20
+                }
+            ];
+
+            TimePieSeries =
+            [
+                new PieSeries<ObservableValue>
+                {
+                    Values = [LiveChartsTestModel.RunTime],
+                    Fill = new RadialGradientPaint([new SKColor(0, 240, 0),new SKColor(100,200,100)]),
+                    DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor)
+                    {
+                        SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
+                    }, //页面上显示数据
+                    OuterRadiusOffset = 0,
+                    ToolTipLabelFormatter =
+                        point =>
+                        {
+                            var pv = point.Coordinate.PrimaryValue;
+                            var sv = point.StackedValue!;
+                            var a = $"{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
+                            return a;
+                        },
+                    DataLabelsFormatter =
+                        point =>
+                        {
+                            var pv = point.Coordinate.PrimaryValue;
+                            var sv = point.StackedValue!;
+                            var a = $"运行时间{Environment.NewLine}{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
+                            return a;
+                        }
+                },
+                new PieSeries<ObservableValue>
+                {
+                    Values = [LiveChartsTestModel.StopTime],
+                    Fill = new RadialGradientPaint([new SKColor(0, 0, 245),new SKColor(100,100,240)]),
+                    DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor)
+                    {
+                        SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
+                    }, //页面上显示数据
+                    OuterRadiusOffset = 25,
+                    ToolTipLabelFormatter =
+                        point =>
+                        {
+                            var pv = point.Coordinate.PrimaryValue;
+                            var sv = point.StackedValue!;
+                            var a = $"{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
+                            return a;
+                        },
+                    DataLabelsFormatter =
+                        point =>
+                        {
+                            var pv = point.Coordinate.PrimaryValue;
+                            var sv = point.StackedValue!;
+                            var a = $"待机时间{Environment.NewLine}{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
+                            return a;
+                        }
+                },
+                new PieSeries<ObservableValue>
+                {
+                    Values = [LiveChartsTestModel.ErrorTime],
+                    Fill = new RadialGradientPaint([new SKColor(255, 0, 0),new SKColor(200,100,100)]),
+                    DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor)
+                    {
+                        SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
+                    }, //页面上显示数据
+
+                    OuterRadiusOffset = 50,
+                    ToolTipLabelFormatter =
+                        point =>
+                        {
+                            var pv = point.Coordinate.PrimaryValue;
+                            var sv = point.StackedValue!;
+
+                            var a = $"{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
+                            return a;
+                        },
+                    DataLabelsFormatter =
+                        point =>
+                        {
+                            var pv = point.Coordinate.PrimaryValue;
+                            var sv = point.StackedValue!;
+
+                            var a = $"报警时间{Environment.NewLine}{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
+                            return a;
+                        }
+                }
+            ];
+
+            HeartBeat();
+        }
+
+
+        /// <summary>
+        /// 刷新页面
+        /// </summary>
+        /// <param name="page"></param>
+        [RelayCommand]
+        public void Refresh(LiveChartsTestPage page)
+        {
+            TotalTitlePie = new()
+            {
+                Text = "良率产量统计",
+                TextSize = 15,
+                Padding = new LiveChartsCore.Drawing.Padding(15),
+                Paint = new SolidColorPaint
+                {
+                    Color = GlobalMannager.ThemeSkColor,
+                    SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
+                }
+            };
+
+            TotalTitlePie2 =
+                new()
+                {
+                    Text = "耗时统计",
+                    TextSize = 15,
+                    Padding = new LiveChartsCore.Drawing.Padding(15),
+                    Paint = new SolidColorPaint
+                    {
+                        Color = GlobalMannager.ThemeSkColor,
+                        SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
+                    }
+                };
+            foreach (var series in OkTotalPieSeries)
+            {
+                series.DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor);
+            }
         }
 
         #region SnackBar弹窗

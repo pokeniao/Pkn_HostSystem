@@ -1,11 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using LiveChartsCore;
+using LiveChartsCore.Kernel;
+using LiveChartsCore.SkiaSharpView;
 using Microsoft.Win32;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.Service.UserDefined;
+using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
+using SkiaSharp;
 using System.Diagnostics;
 using System.Reflection;
 using Wpf.Ui;
@@ -42,6 +48,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
     /// </summary>
     public void Init()
     {
+        TraceContext.Name = "系统初始化";
         switch (SettingsPageModel.CurrentTheme)
         {
             case "亮主题":
@@ -63,7 +70,17 @@ public partial class SettingsPageViewModel : ObservableRecipient
     public void LightThemeRadioButtonChecked(SettingsPage page)
     {
         ApplicationThemeManager.Apply(ApplicationTheme.Light);
-        // page.LightThemeRadioButton.IsChecked = true;
+        //设置LiveCharts报表图片主题
+        LiveCharts.Configure(config =>
+        {
+            config.AddLightTheme();
+            GlobalMannager.ThemeSkColor = new SKColor(0, 0, 0);
+            Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().RefreshCommand.Execute(null);
+        });
+        if (TraceContext.Name!= "系统初始化")
+        {
+            Log.SuccessAndShow("切换主题成功,LiveCharts渲染需要重启后生效");
+        }
     }
 
     /// <summary>
@@ -73,7 +90,17 @@ public partial class SettingsPageViewModel : ObservableRecipient
     public void DarkThemeRadioButtonChecked(SettingsPage page)
     {
         ApplicationThemeManager.Apply(ApplicationTheme.Dark);
-        // page.DarkThemeRadioButton.IsChecked =true;
+        //设置LiveCharts报表图片主题
+        LiveCharts.Configure(config =>
+        {
+            config.AddDarkTheme();
+            GlobalMannager.ThemeSkColor = new SKColor(255, 255, 255);
+            Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().RefreshCommand.Execute(null);
+        });
+        if (TraceContext.Name != "系统初始化")
+        {
+            Log.SuccessAndShow("切换主题成功,LiveCharts渲染需要重启后生效");
+        }
     }
 
 
@@ -84,7 +111,31 @@ public partial class SettingsPageViewModel : ObservableRecipient
     public void AutoThemeRadioButtonChecked(SettingsPage page)
     {
         ApplicationThemeManager.ApplySystemTheme();
-        // page.AutoThemeRadioButton.IsChecked = true;
+        var systemTheme = ApplicationThemeManager.GetSystemTheme();
+
+        if (systemTheme is SystemTheme.Light)
+        {
+            //设置LiveCharts报表图片主题
+            LiveCharts.Configure(config =>
+            {
+                config.AddLightTheme();
+                GlobalMannager.ThemeSkColor = new SKColor(0, 0, 0);
+                Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().RefreshCommand.Execute(null);
+            });
+        } else if (systemTheme is SystemTheme.Dark)
+        {
+            //设置LiveCharts报表图片主题
+            LiveCharts.Configure(config =>
+            {
+                config.AddDarkTheme();
+                GlobalMannager.ThemeSkColor = new SKColor(255, 255, 255);
+                Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().RefreshCommand.Execute(null);
+            });
+        }
+        if (TraceContext.Name != "系统初始化")
+        {
+            Log.SuccessAndShow("切换主题成功,LiveCharts渲染需要重启后生效");
+        }
     }
 
     #region 开机自启动

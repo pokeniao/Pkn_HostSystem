@@ -1,6 +1,7 @@
 ﻿using DynamicData;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Stations;
+using SkiaSharp;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -54,7 +55,12 @@ public static class GlobalMannager
     /// 工站字典
     /// </summary>
     public static SourceCache<IEachStation, string> StationDictionary;
-         
+
+    /// <summary>
+    /// 静态主题颜色
+    /// </summary>
+    public static SKColor ThemeSkColor;
+
     static GlobalMannager()
     {
         GlobalDictionary = new ConcurrentDictionary<string, object>();
