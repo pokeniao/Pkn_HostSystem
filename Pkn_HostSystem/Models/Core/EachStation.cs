@@ -15,7 +15,7 @@ namespace Pkn_HostSystem.Models.Core
         [ObservableProperty] private ObservableCollection<T> items =new();  // DataGrid数据
         [ObservableProperty] private LogControl<T> userLog = new(new FlowDocument());// 富文本的LogDocument , 用户查看日志
         [ObservableProperty] private LogControl<T> errorLog = new(new FlowDocument()); // 错误日志
-        [ObservableProperty] private LogControl<T> devLog = new(new FlowDocument()); // 开发者查看日志
+        [ObservableProperty] private LogControl<T> devLog = new(new FlowDocument()); // 开发者查看日志 
 
         /// <summary>
         /// DataGrid的添加方法
