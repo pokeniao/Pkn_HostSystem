@@ -531,19 +531,19 @@
                                                 <WrapPanel Margin="0,10,0,0">
                                                     <TextBlock Text="站地址" Margin="5" VerticalAlignment="Center" />
                                                     <ui:NumberBox
-                                                        Width="100"
+                                                        Width="200"
                                                         Value="{Binding MesTcpModel.TranspondModbusDetailed.SlaveAddress,UpdateSourceTrigger=PropertyChanged}" />
                                                 </WrapPanel>
                                                 <WrapPanel Margin="0,10,0,0">
                                                     <TextBlock Text="起始地址" Margin="5" VerticalAlignment="Center" />
                                                     <ui:NumberBox
-                                                        Width="100"
+                                                        Width="200"
                                                         Value="{Binding MesTcpModel.TranspondModbusDetailed.StartAddress,UpdateSourceTrigger=PropertyChanged}" />
                                                 </WrapPanel>
                                                 <WrapPanel Margin="0,10,0,0">
                                                     <TextBlock Text="长度" Margin="5" VerticalAlignment="Center" />
                                                     <ui:NumberBox
-                                                        Width="100"
+                                                        Width="200"
                                                         Value="{Binding MesTcpModel.TranspondModbusDetailed.Length,UpdateSourceTrigger=PropertyChanged}" />
                                                 </WrapPanel>
 
