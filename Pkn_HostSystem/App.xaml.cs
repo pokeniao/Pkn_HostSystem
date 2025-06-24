@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using log4net.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Pkn_HostSystem.Base;
@@ -17,7 +19,6 @@ namespace Pkn_HostSystem
     /// </summary>
     public partial class App : Application
     {
-
         /// <summary>
         /// 程序加载的时候
         /// </summary>
@@ -68,14 +69,10 @@ namespace Pkn_HostSystem
                 {
                     MessageBox.Show("程序已在运行中。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-
                 Shutdown();
                 return;
             }
-
         }
-
-
         #endregion
 
         /// <summary>
@@ -120,7 +117,7 @@ namespace Pkn_HostSystem
                     .AddSingleton<SettingsPage>()
                     .AddSingleton<ModbusToolPage>()
                     .AddSingleton<TcpToolPage>()
-                    .AddSingleton<LiveChartsTestPage>()
+                    .AddTransient<LiveChartsTestPage>()  //AddTransient每次导航会new 一个新对象
                     .BuildServiceProvider()
             );
         }
