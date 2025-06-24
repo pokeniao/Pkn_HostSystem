@@ -10,11 +10,11 @@ namespace Pkn_HostSystem_Wix_V4_Bootstrapper
     public class Program
     {
         static string baseDir =
-            @"C:\Users\admin\Desktop\space\C#Project\Pkn_HostSystem\Pkn_HostSystem\bin\Debug\net8.0-windows";
+            @"..\Pkn_HostSystem\bin\Debug\net8.0-windows";
 
 
         static string iconFile =
-            @"C:\Users\admin\Desktop\space\C#Project\Pkn_HostSystem\Pkn_HostSystem\Assets\Pkn_Install128.ico";
+            @"..\Pkn_HostSystem\Assets\Pkn_Install128.ico";
 
         static Guid upgradeCode = new Guid("F9A314C0-7F34-4A5D-ABF3-54C4C48B9F2C");
 
