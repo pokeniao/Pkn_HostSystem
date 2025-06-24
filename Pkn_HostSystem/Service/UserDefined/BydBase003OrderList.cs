@@ -64,8 +64,10 @@ namespace Pkn_HostSystem.Service.UserDefined
         /// <returns></returns>
         public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts)
         {
-            
-            return (true,null);
+            string message = $"\"materialCode\":\"{PppOrderList.materialCode}\",\r\n\"workOrderNumber\":\"{PppOrderList.orderCode}\",\r\n\"scheduleNumber\":\"{PppOrderList.scheduleCode}\",";
+
+            Log.Info($"[{TraceContext.Name}]--从工单中获取到: {message}");
+            return (true, message);
         }
 
         /// <summary>
@@ -74,7 +76,7 @@ namespace Pkn_HostSystem.Service.UserDefined
         /// <returns></returns>
         public string ErrorMessage()
         {
-            return "未选择工单!请选择工单后操作";
+            return "自定义类PppBase003OrderList错误";
         }
 
 
