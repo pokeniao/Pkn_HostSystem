@@ -1,0 +1,44 @@
+﻿<ui:FluentWindow x:Class="Pkn_HostSystem.Views.Windows.SetLiveChartsParamWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:windows="clr-namespace:Pkn_HostSystem.ViewModels.Windows"
+                 mc:Ignorable="d"
+                 WindowStartupLocation="CenterScreen"
+                 ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+                 ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                 Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                 d:DataContext="{d:DesignInstance windows:SetLiveChartsParamViewModel}"
+                 Title="SetLiveChartsParamWindow"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowStyle="None"
+                 WindowBackdropType="Mica"
+                 WindowCornerPreference="Round"
+                 MaxWidth="900"
+                 Width="900"
+                 Height="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+
+
+
+
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="30">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="确认" Width="70" Command="{Binding AckButtonCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Button Content="取消" Margin="30,0" Width="70" Click="ButtonBase_OnClick"/>
+            </StackPanel>
+        </Grid>
+        <ui:SnackbarPresenter Name="SnackbarPresenter"/>
+    </Grid>
+</ui:FluentWindow >

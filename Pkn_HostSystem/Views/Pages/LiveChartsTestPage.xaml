@@ -88,7 +88,6 @@
                                         YAxes="{Binding YAxesDayTimeYield}"
                                         ZoomMode="X" />
                 </Grid>
-
             </Border>
         </Grid>
         <Grid Grid.Column="1">
@@ -96,6 +95,7 @@
                 <RowDefinition Height="0.8*" />
                 <RowDefinition Height="0.8*" />
             </Grid.RowDefinitions>
+
             <Border Grid.Row="0" BorderThickness="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     CornerRadius="5"
@@ -112,6 +112,13 @@
                               InitialRotation="-90"
                               Title="{Binding TotalTitlePie2}" />
             </Border>
+
+            <Button Grid.RowSpan="2" HorizontalAlignment="Right" Command="{Binding SetParamButtonCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
+                <ui:SymbolIcon Symbol="ChevronUp24" />
+                <Button.LayoutTransform>
+                    <RotateTransform Angle="-90"/>
+                </Button.LayoutTransform>
+            </Button>
         </Grid>
 
         <ui:SnackbarPresenter Name="SnackbarPresenter" />
