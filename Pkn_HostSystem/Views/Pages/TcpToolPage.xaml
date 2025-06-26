@@ -169,6 +169,7 @@
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0" Margin="5">
                         <GroupBox Header="接收" 
+                                  BorderThickness="0"
                                   BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <TextBox
                                 Style="{x:Null}"
@@ -183,6 +184,7 @@
                     </Grid>
                     <Grid Grid.Row="1" Margin="5">
                         <GroupBox Header="发送"
+                                  BorderThickness="0"
                                   BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <TextBox
                                 Style="{x:Null}"
@@ -223,6 +225,7 @@
                             <RowDefinition Height="0.1*" />
                         </Grid.RowDefinitions>
                         <GroupBox Grid.Row="0" Header="接收" Name="ServerSendMessageGroupBox"
+                                  BorderThickness="0"
                                   BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <TextBox
                                 Style="{x:Null}"
@@ -235,6 +238,7 @@
                         </GroupBox>
 
                         <GroupBox Header="发送" Grid.Row="1" Margin="5"
+                                  BorderThickness="0"
                                   BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <TextBox
                                 Style="{x:Null}"
@@ -262,7 +266,9 @@
                           <RowDefinition Height="*"/>
                           <RowDefinition Height="0.07*"/>
                       </Grid.RowDefinitions>
-                        <GroupBox Header="连接的客户端"  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
+                        <GroupBox Header="连接的客户端"
+                                  BorderThickness="0"
+                                  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                             <Border
                                 Name="ConnectClientBorder"
                                 BorderThickness="2"
