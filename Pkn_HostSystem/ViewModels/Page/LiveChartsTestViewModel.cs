@@ -14,6 +14,7 @@ using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
+using Pkn_HostSystem.Views.Windows;
 using SkiaSharp;
 using System.Collections.ObjectModel;
 using Wpf.Ui;
@@ -222,7 +223,6 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         #endregion
 
-
         #region CT图
         public IEnumerable<ISeries> CTSeries { get; set; } =
             GaugeGenerator.BuildSolidGauge(
@@ -369,6 +369,20 @@ namespace Pkn_HostSystem.ViewModels.Page
         }
 
 
+        #region 设置参数
+
+        [RelayCommand]
+        public void SetParamButton(LiveChartsTestPage page)
+        {
+            var setLiveChartsParamWindow = new SetLiveChartsParamWindow();
+
+            var showDialog = setLiveChartsParamWindow.ShowDialog();
+        }
+        #endregion
+
+
+
+        #region 刷新页面
         /// <summary>
         /// 刷新页面
         /// </summary>
@@ -405,6 +419,9 @@ namespace Pkn_HostSystem.ViewModels.Page
                 series.DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor);
             }
         }
+
+
+        #endregion
 
         #region SnackBar弹窗
 
