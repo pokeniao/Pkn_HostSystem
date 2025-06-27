@@ -1,13 +1,7 @@
 ﻿using System;
-
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using WixSharp;
-using File = WixSharp.File;
-using WixSharp.CommonTasks;
 
-namespace Pkn_HostSystem_Wix
+namespace WixSharp
 {
     public class Program
     {
