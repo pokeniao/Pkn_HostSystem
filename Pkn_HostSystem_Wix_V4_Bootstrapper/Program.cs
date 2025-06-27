@@ -1,57 +1,67 @@
 ﻿using System;
 using System.Diagnostics;
-using WixSharp;
 using WixSharp.Bootstrapper;
 using WixSharp.CommonTasks;
-using RegistryHive = WixSharp.RegistryHive;
 
-namespace Pkn_HostSystem_Wix_V4_Bootstrapper
+namespace WixSharp
 {
     public class Program
     {
         static string baseDir =
-            @"..\Pkn_HostSystem\bin\Debug\net8.0-windows";
-
+            @"..\..\..\..\Pkn_HostSystem\bin\Debug\net8.0-windows";
 
         static string iconFile =
-            @"..\Pkn_HostSystem\Assets\Pkn_Install128.ico";
+            @"..\..\..\..\Pkn_HostSystem\Assets\Pkn_Install128.ico";
 
         static Guid upgradeCode = new Guid("F9A314C0-7F34-4A5D-ABF3-54C4C48B9F2C");
 
         static Guid productCode = new Guid("30854a0c-8c60-4957-8ba4-a0a57f14fa11");
 
-        static string version = FileVersionInfo.GetVersionInfo($@"{baseDir}\Pkn_HostSystem.exe").FileVersion;
+        static string version;
 
         static void Main()
         {
-            string productMsi = BuildMsi();
+            try
+            {
+                try
+                {
+                    version = FileVersionInfo.GetVersionInfo($@"{baseDir}\Pkn_HostSystem.exe").FileVersion;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("获取版本号失败：" + ex.Message);
+                    return;
+                }
 
-            var bootstrapper =
-                new Bundle("Pkn_HostSystemInstall",
-                    new PackageGroupRef("NetFx462Web"),
-                    new ExePackage(@"windowsdesktop-runtime-8.0.11-win-x64.exe")
-                    {
-                        Permanent = true, //此组件是永久性的，不会被 Bootstrapper 卸载。
-                        // UninstallCommand = "/uninstall /quiet /norestart",
-                        InstallArguments = "/install /quiet /norestart", //安装时调用的命令行参数（静默安装、无重启）
-                        //DetectCondition = "DOTNET_VERSION >= \"8.0.0\" AND DOTNET_VERSION < \"9.0.0\"",  //如果当前系统中已满足这个条件，就不执行安装（即已安装 .NET 8，就不重复安装） , 不需要这行了, 即使安装器运行了，微软的 .NET Desktop Runtime 安装器会检测已有版本并自动退出
-                        Compressed = true, //将安装包一起打进最终生成的 .exe 安装器（否则需要外部放置）
-                        DisplayName = ".NET 8 Runtime" //安装引导界面中显示的组件名称
-                    },
-                    new MsiPackage(productMsi) { DisplayInternalUI = true });
-            bootstrapper.Language= "zh-CN";
-            bootstrapper.Version = new Version(version);
-            bootstrapper.UpgradeCode = upgradeCode;
-            bootstrapper.IconFile = iconFile;
-            // bootstrapper.PreserveTempFiles = true;
-            bootstrapper.Build("Pkn_HostSystemInstall.exe");
+                string productMsi = BuildMsi();
+                var bootstrapper =
+                    new Bundle("Pkn_HostSystemInstall",
+                        new PackageGroupRef("NetFx462Web"),
+                        new ExePackage(@"..\..\..\windowsdesktop-runtime-8.0.11-win-x64.exe")
+                        {
+                            Permanent = true, //此组件是永久性的，不会被 Bootstrapper 卸载。
+                            // UninstallCommand = "/uninstall /quiet /norestart",
+                            InstallArguments = "/install /quiet /norestart", //安装时调用的命令行参数（静默安装、无重启）
+                            //DetectCondition = "DOTNET_VERSION >= \"8.0.0\" AND DOTNET_VERSION < \"9.0.0\"",  //如果当前系统中已满足这个条件，就不执行安装（即已安装 .NET 8，就不重复安装） , 不需要这行了, 即使安装器运行了，微软的 .NET Desktop Runtime 安装器会检测已有版本并自动退出
+                            Compressed = true, //将安装包一起打进最终生成的 .exe 安装器（否则需要外部放置）
+                            DisplayName = ".NET 8 Runtime" //安装引导界面中显示的组件名称
+                        },
+                        new MsiPackage(productMsi) { DisplayInternalUI = true });
+                bootstrapper.Language = "zh-CN";
+                bootstrapper.Version = new Version(version);
+                bootstrapper.UpgradeCode = upgradeCode;
+                bootstrapper.IconFile = iconFile;
+                // bootstrapper.PreserveTempFiles = true;
+                bootstrapper.Build("Pkn_HostSystemInstall.exe");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("安装器构建失败: " + ex.ToString());
+            }
         }
 
         static string BuildMsi()
         {
-            string baseDir =
-                @"C:\Users\admin\Desktop\space\C#Project\Pkn_HostSystem\Pkn_HostSystem\bin\Debug\net8.0-windows";
-
             var project = new Project("Pkn_HostSystem",
                 new Dir(@"%ProgramFiles%\Pokeniao\Pkn_HostSystem", //这是告诉 WixSharp 你想让这个目录作为安装根目录
                     new Files($@"{baseDir}\*.*")

@@ -25,11 +25,6 @@ namespace Pkn_HostSystem.Service.UserDefined
             return (true, message);
         }
 
-        public object GetPropertyValue(string key)
-        {
-            throw new NotImplementedException();
-        }
-
         public string ErrorMessage()
         {
             return "自定义类PppBase003OrderGetMaterialCode错误";

@@ -29,36 +29,6 @@ namespace Pkn_HostSystem.Service.UserDefined
 
 
         /// <summary>
-        /// 获得属性值
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public object GetPropertyValue(string key)
-        {
-            HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
-            PppOrderList currentSelectPppOrder = homePageViewModel.HomePageModel.CurrentSelectPppOrder;
-
-            //反射获得属性
-            Type type = currentSelectPppOrder.GetType();
-            //获取当前选中的对象
-            if (currentSelectPppOrder != null)
-            {
-                //获得当前选中对象
-                PropertyInfo? propertyInfo = type.GetProperty(key);
-                if (propertyInfo != null)
-                {
-                    object? value = propertyInfo.GetValue(currentSelectPppOrder);
-                    if (value != null)
-                    {
-                        return value;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// 主入口
         /// </summary>
         /// <returns></returns>
