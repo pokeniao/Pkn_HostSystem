@@ -10,10 +10,6 @@ namespace Pkn_HostSystem.Service.UserDefined
     {
 
         public LogBase<PppIOT> Log = new();
-        public object GetPropertyValue(string key)
-        {
-            return null;
-        }
 
         public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts)
         {

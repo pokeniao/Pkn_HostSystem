@@ -458,28 +458,9 @@ public class LoadMesService
                 {
                     string JsonKey = httpObject.JsonKey;
                     //判断是否是自定义的JsonKey
-                    string value = RunUserDefined(JsonKey, out bool error, out bool userDefind,
-                        out string errorMessage);
 
-                    if (userDefind)
-                    {
-                        if (error)
-                        {
-                            Log.Error($"[{TraceContext.Name}]--" + errorMessage);
-                            //已经执行完自定义的,需要退出
-                            return (false, null);
-                        }
-                    }
                     //常规执行
-                    string jToken;
-                    if (userDefind)
-                    {
-                        jToken = value;
-                    }
-                    else
-                    {
-                        jToken = jObject.SelectToken(JsonKey).ToString();
-                    }
+                    string jToken = jObject.SelectToken(JsonKey).ToString();
 
                     Log.Info($"[{TraceContext.Name}]--解析 {httpObject.JsonKey}:\r\n {jToken}");
                     message = StaticMessageSon(message, itemKey, httpObject.Name, jToken);
@@ -577,69 +558,6 @@ public class LoadMesService
 
     #endregion
 
-    /// <summary>
-    /// 用户自定义的
-    /// </summary>
-    /// <param name="JsonKey"></param>
-    /// <returns></returns>
-    public string RunUserDefined(string JsonKey, out bool error, out bool userDefined, out string ErrorMessage)
-    {
-        string returnMessage = null;
-        //格式  UserDefined:类名:属性
-        if (JsonKey.Contains("UserDefined"))
-        {
-            userDefined = true;
-            //1.去掉收尾空格
-            string trim = JsonKey.Trim();
-            //2.进行分割
-            string[] split = trim.Split(':');
-            //3.反射类
-            //3.1 拼接命名空间
-            string className = "Pkn_HostSystem.Service.UserDefined." + split[1];
-            //获得示例对象
-            Type? userObjectType = Type.GetType(className);
-            if (userObjectType != null)
-            {
-                //创建示例对象
-                object? userObject = Activator.CreateInstance(userObjectType);
-
-                //获得方法,并且调用
-                MethodInfo? methodInfo = userObjectType.GetMethod("GetPropertyValue");
-
-                //执行方法
-                object? invoke = methodInfo?.Invoke(userObject, [split[2]]);
-                if (invoke == null)
-                {
-                    //返回错误
-                    error = true;
-                    MethodInfo? method = userObjectType.GetMethod("ErrorMessage");
-                    try
-                    {
-                        var message = method?.Invoke(userObject, []);
-                        ErrorMessage = message.ToString();
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error(e.Message);
-                    }
-                }
-                else
-                {
-                    error = false;
-                    ErrorMessage = String.Empty;
-                    returnMessage = invoke.ToString();
-                }
-            }
-        }
-        else
-        {
-            userDefined = false;
-        }
-
-        error = false;
-        ErrorMessage = String.Empty;
-        return returnMessage;
-    }
 
     #endregion
 

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Diagnostics;
 using WixSharp;
 using WixSharp.CommonTasks;
-using static System.Net.WebRequestMethods;
-using File = WixSharp.File;
 
 
-namespace Pkn_HostSystem_Wix
+namespace Pkn_HostSystem_Wix_.NETCore
 {
     public class Program
     {
