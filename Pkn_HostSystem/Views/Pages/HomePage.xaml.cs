@@ -259,6 +259,7 @@ namespace Pkn_HostSystem.Views.Pages
             {
                 //返回结果,显示到页面Combobox提供选择
                 HomePageViewModel.HomePageModel.PppOrderLists = pppOrderLists;
+
                 Log.Info("获取工单成功");
             }
             else
@@ -266,13 +267,14 @@ namespace Pkn_HostSystem.Views.Pages
                 Log.Info("获取工单失败--pppBase003OrderList.GetPppOrderLists返回false");
             }
         }
-
-        private void SelectedPppOrder(object sender, SelectionChangedEventArgs e)
+        /// <summary>
+        /// 选择123工单
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SelectPppOrderButton(object sender, RoutedEventArgs e)
         {
-            //选中结果赋值到显示区域
-            ComboBox? comboBox = sender as ComboBox;
-            var orderList = comboBox.SelectedValue as PppOrderList;
-            HomePageViewModel.HomePageModel.CurrentSelectPppOrder = orderList;
+            HomePageViewModel.HomePageModel.CurrentSelectPppOrder = PppOrderListComboBox.SelectedValue as PppOrderList;
         }
 
         #endregion
@@ -288,6 +290,7 @@ namespace Pkn_HostSystem.Views.Pages
             LogListBorder.MaxHeight = e.NewSize.Height - 100;
             LogListBox.Height = e.NewSize.Height - 100;
         }
+
 
 
     }
