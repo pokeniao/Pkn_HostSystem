@@ -4,24 +4,24 @@ using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
+using Pkn_HostSystem.Service.LoadMes.Interface;
 using Pkn_HostSystem.Static;
 using RestSharp;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Pkn_HostSystem.Service.LoadMes;
 
-public class LoadMesService
+public class LoadMesService: ILoadMesService
 {
     private ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
 
     private LogControl<LoadMesService> Log;
 
 
-    public LoadMesService(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList)
+    public  LoadMesService(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList)
     {
         this.mesPojoList = mesPojoList;
         GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
@@ -72,7 +72,7 @@ public class LoadMesService
     /// <param name="Name">HTTP请求名称</param>
     /// <param name="cts"></param>
     /// <returns></returns>
-    public async Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts)
+    public virtual async Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts)
     {
         Log.Info($"[{TraceContext.Name}]--执行发送一次Http请求");
         //获取当前Name的行数据
@@ -96,7 +96,7 @@ public class LoadMesService
     /// <param name="request">请求体</param>
     /// <param name="cts"></param>
     /// <returns></returns>
-    public async Task<(bool succeed, string? response)> RunOne(string Name, string request, CancellationTokenSource cts)
+    public virtual async Task<(bool succeed, string? response)> RunOne(string Name, string request, CancellationTokenSource cts)
     {
         Log.Info($"[{TraceContext.Name}]--执行发送一次Http请求");
         //获取当前Name的行数据
@@ -108,8 +108,14 @@ public class LoadMesService
     #endregion
 
     #region 发送Http任务
-
-    public async Task<(bool succeed, string? response)> SendHttp(LoadMesAddAndUpdateWindowModel item,
+    /// <summary>
+    /// 发送Http任务
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="request"></param>
+    /// <param name="cts"></param>
+    /// <returns></returns>
+    public virtual async Task<(bool succeed, string? response)> SendHttp(LoadMesAddAndUpdateWindowModel item,
         string request,
         CancellationTokenSource cts)
     {
@@ -221,7 +227,7 @@ public class LoadMesService
     /// 包装Request请求
     /// </summary>
     /// <param httpName="httpName"></param>
-    public async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
+    public virtual async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
     {
         //获得当前行的数据
         var loadMesAddAndUpdateWindowModel = SelectByName(httpName);
@@ -281,7 +287,7 @@ public class LoadMesService
     /// <param name="itemKey">填充键</param>
     /// <param name="itemValue">填充值</param>
     /// <returns></returns>
-    public string StaticMessage(string request, string itemKey, string itemValue)
+    public virtual string StaticMessage(string request, string itemKey, string itemValue)
     {
         var i = request.IndexOf($"[{itemKey}]");
         if (i != -1)
@@ -303,7 +309,7 @@ public class LoadMesService
     /// <param name="itemKeySon"></param>
     /// <param name="itemValue"></param>
     /// <returns></returns>
-    public string StaticMessageSon(string request, string itemKey, string itemKeySon, string itemValue)
+    public virtual string StaticMessageSon(string request, string itemKey, string itemKeySon, string itemValue)
     {
         var i = request.IndexOf($"[{itemKey}.{itemKeySon}]");
         if (i != -1)
@@ -327,7 +333,7 @@ public class LoadMesService
     /// <param name="DynName">动态嵌入的名称</param>
     /// <param name="cts"></param>
     /// <returns></returns>
-    public async Task<(bool sueeced, string? result)> DynMessage(string request, string DynName,
+    public virtual async Task<(bool sueeced, string? result)> DynMessage(string request, string DynName,
         CancellationTokenSource cts)
     {
         if (DynName == null)
@@ -586,8 +592,13 @@ public class LoadMesService
     #endregion
 
     #region Verity校验方法
-
-    public bool VerityMessage(string message, DynVerify verify)
+    /// <summary>
+    /// Verity校验方法
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="verify"></param>
+    /// <returns></returns>
+    public virtual bool VerityMessage(string message, DynVerify verify)
     {
         switch (verify.Type)
         {
@@ -734,8 +745,14 @@ public class LoadMesService
     #endregion
 
     #region 方法集内容嵌入
-
-    private async Task<string> MethodMessage(string request, string itemValue, string itemMethodOtherValue)
+    /// <summary>
+    /// 方法集内容嵌入
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="itemValue"></param>
+    /// <param name="itemMethodOtherValue"></param>
+    /// <returns></returns>
+    public virtual async Task<string> MethodMessage(string request, string itemValue, string itemMethodOtherValue)
     {
         if (itemValue == null)
         {
@@ -759,8 +776,12 @@ public class LoadMesService
         }
     }
 
-    //规则-,5M,5D,5H,5m,5s
-    public DateTime DateTimeDispose(string itemMethodOtherValue)
+    /// <summary>
+    /// 时间计算方法 规则: -,5M,5D,5H,5m,5s
+    /// </summary>
+    /// <param name="itemMethodOtherValue"></param>
+    /// <returns></returns>
+    public virtual DateTime DateTimeDispose(string itemMethodOtherValue)
     {
         if (itemMethodOtherValue == null)
         {
@@ -870,7 +891,7 @@ public class LoadMesService
     /// <param name="message"></param>
     /// <param name="item"></param>
     /// <returns></returns>
-    public string SwitchGetMessage(string message, DynCondition item)
+    public virtual string SwitchGetMessage(string message, DynCondition item)
     {
         var dynSwitches = item.SwitchList;
 
@@ -899,7 +920,7 @@ public class LoadMesService
     /// <param name="item">动态</param>
     /// <param name="parentName">调用的父类名称,用于日志显示</param>
     /// <returns></returns>
-    public async Task<(bool succeed, string response)> ReadTcpMessageAsync(DynCondition item,
+    public virtual async Task<(bool succeed, string response)> ReadTcpMessageAsync(DynCondition item,
         CancellationTokenSource cts)
     {
         //判断是走客户端发送,还是走服务器发送
@@ -962,7 +983,7 @@ public class LoadMesService
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public async Task<(bool succeed, string? result)> ReadCoid(DynCondition item)
+    public virtual async Task<(bool succeed, string? result)> ReadCoid(DynCondition item)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;
@@ -992,7 +1013,7 @@ public class LoadMesService
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public async Task<(bool succeed, string? result)> ReadReg(DynCondition item)
+    public virtual async Task<(bool succeed, string? result)> ReadReg(DynCondition item)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;
@@ -1120,8 +1141,12 @@ public class LoadMesService
     #endregion
 
     #region 动态获取基恩士上链路内容
-
-    public async Task<string> KeyenceReadDM(DynCondition item)
+    /// <summary>
+    /// 动态获取基恩士上链路内容
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public virtual async Task<string> KeyenceReadDM(DynCondition item)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;

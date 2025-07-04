@@ -2,6 +2,7 @@
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Service.LoadMes.Decorator;
 using Pkn_HostSystem.Service.Stations;
 using Station1 = Pkn_HostSystem.Service.Stations.Station1;
 
@@ -13,9 +14,8 @@ namespace Pkn_HostSystem.Static
 
         public static void InitStation()
         {
-            GlobalManager.StationDictionary.AddOrUpdate(new EachStation<Station1>() { Header = "扫码过站", });
-
-            GlobalManager.StationDictionary.AddOrUpdate(new EachStation<Station2>() { Header = "生产信息上传", });
+            GlobalManager.StationDictionary.AddOrUpdate(new EachStation<Station1>() { Header = "扫码过站",CreateDecoratorFunc = (loadMesService) => new Station1LoadMesServiceDecorator(loadMesService ) });
+            GlobalManager.StationDictionary.AddOrUpdate(new EachStation<Station2>() { Header = "生产信息上传", CreateDecoratorFunc = (loadMesService) => new Station2LoadMesServiceDecorator(loadMesService ) });
         }
         /// <summary>
         /// 记录工位日志

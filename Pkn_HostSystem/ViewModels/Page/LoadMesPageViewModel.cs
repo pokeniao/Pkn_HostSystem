@@ -5,9 +5,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Core.Interface;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Service.LoadMes;
+using Pkn_HostSystem.Service.LoadMes.Interface;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
@@ -29,7 +31,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     public LogBase<LoadMesPageViewModel> Log;
 
     //手动发送Http请求
-    public LoadMesService LoadMesService { get; set; }
+    // public ILoadMesService LoadMesService { get; set; }
 
     public LoadMesPageViewModel()
     {
@@ -49,8 +51,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         SnackbarService = new SnackbarService();
         Log = new LogBase<LoadMesPageViewModel>(SnackbarService);
-
-        LoadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
+        //创建LoadMesService服务
+        // LoadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
         // 启用监听
         IsActive = true;
     }
@@ -77,6 +79,12 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         if (item == null)
         {
             Log.WarningAndShow("没有选中行", "当前HTTP列表没有数据,用户点击更新操作");
+            return;
+        }
+
+        if (item.RunCyc == true)
+        {
+            Log.WarningAndShowTask("请停止后修改");
             return;
         }
 
@@ -131,20 +139,18 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             return;
         }
 
-        item.cts = new CancellationTokenSource();
-
-        //保存堆栈信息
-        TraceContext.Name = item.Name;
-        if (item.NeedStationLog)
+        if (item.RunCyc == true)
         {
-
-
-         
+            Log.WarningAndShowTask("请停止后手动");
+            return;
         }
 
   
+        //初始化
+        InitRun(item);
 
-
+        //保存堆栈信息
+        TraceContext.Name = item.Name;
         //进行一次数据组装
         (bool succeed, string? message) = await ExecutionCondition(item);
         if (succeed)
@@ -190,7 +196,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             //停止
             item.cts.Cancel();
-            item.cts = new CancellationTokenSource();
             item.Task = new Lazy<Task>(() => RunHttpCyc(item));
             item.Task = new Lazy<Task>(() => RunTrigger(item));
             Log.Info($"[{TraceContext.Name}]--任务已关闭");
@@ -212,8 +217,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             item.cts.Cancel();
         }
-
-        item.cts = new CancellationTokenSource();
+        //初始化
+        InitRun(item);
         item.Task = new Lazy<Task>(() => RunHttpCyc(item));
 
         //运行
@@ -237,16 +242,16 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
     public async Task<(bool succeed, string? message)> ExecutionCondition(LoadMesAddAndUpdateWindowModel model)
     {
-        Log.Info($"[{TraceContext.Name}]--开始执行ExecutionCondition");
+        Log.Info($"[{TraceContext.Name}]--开始执行触发和循环共同的代码");
         //从MesServer中取出绑定好的item
-        LoadMesAddAndUpdateWindowModel item = LoadMesService.SelectByName(model.Name);
+        // LoadMesAddAndUpdateWindowModel item = LoadMesService.SelectByName(model.Name);
         //维护一个集合,用于判断动态嵌入HTTP请求不会循环嵌套;
         // model.UseHttpList = new List<string>();
         // model.UseHttpList.Add(model.Name);
 
         Log.Info($"[{TraceContext.Name}]--消息体准备组装");
         //消息体打包
-        var (succeed, request) = await LoadMesService.PackRequest(item.Name, model.cts);
+        var (succeed, request) = await model.LoadMesService.PackRequest(model.Name, model.cts);
         if (!succeed)
         {
             //消息体组装失败
@@ -261,7 +266,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         if (model.HttpNeed)
         {
             //发送Http请求
-            (bool succeed2, response) = await LoadMesService.RunOne(model.Name, request, model.cts);
+            (bool succeed2, response) = await model.LoadMesService.RunOne(model.Name, request, model.cts);
             if (!succeed2)
             {
                 //消息体发送失败
@@ -306,7 +311,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         //通过名字搜索id
         string forwardingName = model.ForwardingName;
         //获得网络名
-        string netKey = LoadMesService.getNetKey(forwardingName);
+        string netKey = model.LoadMesService.getNetKey(forwardingName);
         //获得网络
         var netWork = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
 
@@ -358,7 +363,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             item.cts.Cancel();
         }
 
-        item.cts = new CancellationTokenSource();
+        //初始化
+        InitRun(item);
         item.Task = new Lazy<Task>(() => RunTrigger(item));
 
         //运行
@@ -473,8 +479,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     private async Task<string> ModbusTcpTrigger(LoadMesAddAndUpdateWindowModel model)
     {
         //获取当前通讯对象
-        LoadMesAddAndUpdateWindowModel item = LoadMesService.SelectByName(model.Name);
-        string key = LoadMesService.getNetKey(item.TriggerConnectName);
+        LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
+        string key = model.LoadMesService.getNetKey(item.TriggerConnectName);
         var netWork = GlobalManager.NetWorkDictionary.Lookup(key).Value;
         //获得ModBase对象
         ModbusBase modbusBase = netWork.ModbusBase;
@@ -501,8 +507,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         try
         {
             //获取当前通讯对象
-            LoadMesAddAndUpdateWindowModel item = LoadMesService.SelectByName(model.Name);
-            string key = LoadMesService.getNetKey(item.TriggerConnectName);
+            LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
+            string key = model.LoadMesService.getNetKey(item.TriggerConnectName);
             var netWork = GlobalManager.NetWorkDictionary.Lookup(key).Value;
             //获得ModBase对象
             ModbusBase modbusBase = netWork.ModbusBase;
@@ -604,6 +610,44 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     public void Save()
     {
         AppJsonTool<LoadMesPageModel>.Save(LoadMesPageModel);
+    }
+
+    #endregion
+
+
+    #region private方法
+
+    private void InitRun(LoadMesAddAndUpdateWindowModel item)
+    {
+        //1. 初始化令牌
+        item.cts = new CancellationTokenSource();
+        //2. LoadMesService 初始化
+        if (item.NeedStationLog)
+        {
+            if (item.Station == null)
+            {
+                item.LoadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
+                return;
+            }
+
+            bool hasValue = GlobalManager.StationDictionary.Lookup(item.Station).HasValue;
+            if (hasValue)
+            {
+                var eachStation = GlobalManager.StationDictionary.Lookup(item.Station).Value;
+                //通过委托创建出特别的 LoadMesService
+                //每个站点的LoadMesService都不一样,所以需要通过委托来创建
+                item.LoadMesService = eachStation.CreateDecoratorFunc(new LoadMesService(LoadMesPageModel.MesPojoList));
+            }
+            else
+            {
+                item.LoadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
+                return;
+            }
+        }
+        else
+        {
+            item.LoadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
+        }
     }
 
     #endregion
