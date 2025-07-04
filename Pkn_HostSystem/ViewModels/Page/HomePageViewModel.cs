@@ -34,7 +34,7 @@ public partial class HomePageViewModel : ObservableRecipient
         if (HomePageModel == null)
         {
             //全局的
-            GlobalMannager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
+            GlobalManager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
             HomePageModel = new HomePageModel()
             {
                 LogListBox = (ObservableCollection<string>)obj,
@@ -43,22 +43,27 @@ public partial class HomePageViewModel : ObservableRecipient
         }
         else
         {
-            HomePageModel.LogListBox = (ObservableCollection<string>)GlobalMannager.GlobalDictionary["LogListBox"];
+            HomePageModel.LogListBox = (ObservableCollection<string>)GlobalManager.GlobalDictionary["LogListBox"];
         }
-        HomePageModel.HttpLists = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
+
+        var vm = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
+        HomePageModel.HttpLists = vm.LoadMesPageModel.MesPojoList;
 
         HomePageModel.CameraList = Ioc.Default.GetRequiredService<VisionPageViewModel>().VisionPageModel.CameraList;
         Log = new LogBase<HomePageViewModel>(SnackbarService);
     }
 
     #region 弹窗SnackbarService
+
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
     {
         SnackbarService.SetSnackbarPresenter(snackbarPresenter);
     }
+
     #endregion
 
     #region 滚动到底部
+
     [RelayCommand]
     public void ScrollToBottom(ListBox LogListBox)
     {
@@ -66,9 +71,11 @@ public partial class HomePageViewModel : ObservableRecipient
 
         LogListBox.ScrollIntoView(LogListBox.Items[^1]);
     }
+
     #endregion
 
     #region 连接网络
+
     [RelayCommand]
     public async void Connect(HomePage page)
     {
@@ -83,7 +90,6 @@ public partial class HomePageViewModel : ObservableRecipient
 
     public async Task StartConnect(NetworkDetailed networkDetailed)
     {
-
         var key = networkDetailed.Id;
         var Name = networkDetailed.Name;
         Log.Info($"[{TraceContext.Name}]--正在启动.");
@@ -93,7 +99,7 @@ public partial class HomePageViewModel : ObservableRecipient
             return;
         }
 
-        var lookup = GlobalMannager.NetWorkDictionary.Lookup(key);
+        var lookup = GlobalManager.NetWorkDictionary.Lookup(key);
         if (lookup.HasValue)
         {
             var netWorkPoJo = lookup.Value;
@@ -108,7 +114,7 @@ public partial class HomePageViewModel : ObservableRecipient
 
                 netWorkPoJo.Task = new Lazy<Task>(() => RunAndReconnection(cts, netWorkPoJo));
 
-                GlobalMannager.NetWorkDictionary.AddOrUpdate(netWorkPoJo);
+                GlobalManager.NetWorkDictionary.AddOrUpdate(netWorkPoJo);
             }
 
             await netWorkPoJo.Task.Value;
@@ -132,23 +138,22 @@ public partial class HomePageViewModel : ObservableRecipient
             var lazy = new Lazy<Task>(() => RunAndReconnection(cts, workPoJo));
             //创建网络连接
             workPoJo.Task = lazy;
-            GlobalMannager.NetWorkDictionary.AddOrUpdate(workPoJo);
+            GlobalManager.NetWorkDictionary.AddOrUpdate(workPoJo);
             await workPoJo.Task.Value;
         }
     }
 
     public void StopConnect(NetworkDetailed networkDetailed)
     {
-
         var key = networkDetailed.Id;
         var name = networkDetailed.Name;
         Log.Info($"[{TraceContext.Name}]--正在停止");
         if (name == null) return;
 
-        var b = GlobalMannager.NetWorkDictionary.Lookup(key).HasValue;
+        var b = GlobalManager.NetWorkDictionary.Lookup(key).HasValue;
         NetWork netWork;
         if (b)
-            netWork = GlobalMannager.NetWorkDictionary.Lookup(key).Value;
+            netWork = GlobalManager.NetWorkDictionary.Lookup(key).Value;
         else
             return;
 
@@ -165,7 +170,7 @@ public partial class HomePageViewModel : ObservableRecipient
         netWork.Task = new Lazy<Task>(() => Task.Run(() => RunAndReconnection(cts, netWork)));
 
         //更新网络体
-        GlobalMannager.NetWorkDictionary.AddOrUpdate(netWork);
+        GlobalManager.NetWorkDictionary.AddOrUpdate(netWork);
 
         if (netWork.ModbusBase.IsTCPConnect())
         {
@@ -201,7 +206,7 @@ public partial class HomePageViewModel : ObservableRecipient
         }
 
         //从全局变量中移除
-        GlobalMannager.NetWorkDictionary.Remove(netWork);
+        GlobalManager.NetWorkDictionary.Remove(netWork);
     }
 
     public async Task RunAndReconnection(CancellationTokenSource cts, NetWork netWork)
@@ -237,7 +242,6 @@ public partial class HomePageViewModel : ObservableRecipient
             }
             catch (Exception e)
             {
-
             }
         }
     }
@@ -337,7 +341,8 @@ public partial class HomePageViewModel : ObservableRecipient
     {
         if (!netWork.TcpTool.IsServerRunning)
         {
-            if (await netWork.TcpTool.StartServerAsync(netWork.NetworkDetailed.Port, netWork.NetworkDetailed.IsServerListen))
+            if (await netWork.TcpTool.StartServerAsync(netWork.NetworkDetailed.Port,
+                    netWork.NetworkDetailed.IsServerListen))
             {
                 Log.SuccessAndShowTask($"[{TraceContext.Name}]--Tcp服务器打开成功");
             }
@@ -363,7 +368,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 if (item.Open != true)
                 {
                     HomePageModel.SetConnectDg.Remove(item);
-                    GlobalMannager.NetWorkDictionary.Remove(item.Id);
+                    GlobalManager.NetWorkDictionary.Remove(item.Id);
                     Log.SuccessAndShow("删除成功!", $"{item.Name}->连接被删除");
                 }
                 else
@@ -423,6 +428,25 @@ public partial class HomePageViewModel : ObservableRecipient
         item.StopBits = ModbusToolModel.ModbusRtu_stopBits_select;
         item.NetMethod = ModbusToolModel.NetMethod_select;
         item.IsServerListen = ModbusToolModel.TcpServerNeedListen;
+    }
+
+    #endregion
+
+
+    #region 设置当前数据库信息
+
+    [RelayCommand]
+    public void SetJDBC(HomePage page)
+    {
+        HomePageModel.JdbcUrl.Pwd = page.PasswordBox.Password;
+        string path =
+            $"Server={HomePageModel.JdbcUrl.Server};DataBase={HomePageModel.JdbcUrl.DataBase};Uid={HomePageModel.JdbcUrl.Uid};Pwd={HomePageModel.JdbcUrl.Pwd};TrustServerCertificate=True;";
+
+        string showPwd = new string('*', HomePageModel.JdbcUrl.Pwd.Length);
+
+        HomePageModel.ShowJdbcUrl = $"Server={HomePageModel.JdbcUrl.Server};DataBase={HomePageModel.JdbcUrl.DataBase};Uid={HomePageModel.JdbcUrl.Uid};Pwd={showPwd};TrustServerCertificate=True;";
+        HomePageModel.RealJdbcUrl = path;
+        GlobalManager.jdbcPath = path;
     }
 
     #endregion

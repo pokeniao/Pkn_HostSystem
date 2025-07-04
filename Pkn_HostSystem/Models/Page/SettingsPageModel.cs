@@ -9,7 +9,7 @@ public partial class SettingsPageModel : ObservableObject
     /// <summary>
     /// 当前软件的版本
     /// </summary>
-    [JsonIgnore] public string AssemblyVersion { get; set; } = "当前版本: "+ GlobalMannager.AssemblyVersion;
+    [JsonIgnore] public string AssemblyVersion { get; set; } = "当前版本: "+ GlobalManager.AssemblyVersion;
 
     [ObservableProperty]
     private string currentTheme = "系统主题";

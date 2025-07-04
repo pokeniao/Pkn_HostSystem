@@ -1,6 +1,7 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
+﻿using System.Data;
+// using System.Data.SqlClient; 旧版本
+using Microsoft.Data.SqlClient;
+using Pkn_HostSystem.Static; //新版本
 using System.Reflection;
 using System.Text;
 
@@ -15,54 +16,66 @@ namespace Pkn_HostSystem.Base
     public class BaseMapper<T>
     {
         //获取类型
-        public Type type { get; set; }
+        private Type type;
         //获取属性
+        private PropertyInfo[] propertyInfos;
 
-        public PropertyInfo[] propertyInfos;
-
-        public string tableName;
-        public string primaryKey = "id";
-        public string primaryKeyProperty = "id";
-        public List<string> incrementyProperty = new List<string>();
-        public string sql { get; set; }
+        private string tableName;
+        private string primaryKey = "id";
+        private string primaryKeyProperty = "id";
+        private List<string> incrementyProperty = new();
+        private string sql { get; set; }
         //读取配置文件
-        private static string url = ConfigurationManager.ConnectionStrings["url"].ToString();
-
+        // private static string url = ConfigurationManager.ConnectionStrings["url"].ToString();
         //private static string url = "Server=POKENIAO;DataBase=LearnSQL;Uid=sa;Pwd=pan1zhi2gao3";
 
         protected BaseMapper()
         {
+            //1.获取当前Mapper的类型
             type = typeof(T);
+            //2.获取当前Mapper的属性
             propertyInfos = type.GetProperties();
-            //设置表名
+            //3.默认Mapper类名为表名
             tableName = type.Name;
 
+            //4.通过反射获取当前Mapper类所有特性
             IEnumerable<CustomAttributeData> customAttributes = type.CustomAttributes;
+            //4.1 遍历特性
             foreach (CustomAttributeData attribute in customAttributes)
             {
+                //获取特性
                 Type attributeType = attribute.AttributeType;
                 string name = attributeType.Name;
+                //如果特性为 TableName
                 if (name == "TableNameAttribute")
                 {
+                    //获取当前当前特性内容
                     TableNameAttribute tableNameAttribute = (TableNameAttribute)type.GetCustomAttributes(typeof(TableNameAttribute), false)[0];
+                    //设为表名
                     tableName = tableNameAttribute.TableName;
                 }
             }
-            //设置主键
+            //5.1 遍历所有属性
             foreach (PropertyInfo propertyInfo in propertyInfos)
             {
+                //5.2 遍历所有属性获取其特性
                 IEnumerable<CustomAttributeData> attributes = propertyInfo.CustomAttributes;
+                //5.3 遍历属性的特性
                 foreach (CustomAttributeData attribute in attributes)
                 {
                     Type attributeType = attribute.AttributeType;
                     string name = attributeType.Name;
+                    //如果特性为PrimaryKey
                     if (name == "PrimaryKeyAttribute")
                     {
                         PrimaryKeyAttribute primaryKeyAttribute = (PrimaryKeyAttribute)propertyInfo.GetCustomAttributes(typeof(PrimaryKeyAttribute), false)[0];
+                        //将主键设为特性内容
                         primaryKey = primaryKeyAttribute.PrimaryKeyName;
+
+                        //并获取原主键的属性名
                         primaryKeyProperty = propertyInfo.Name;
                     }
-
+                    //如果特性为自增加
                     if (name == "IncremntAttribute")
                     {
                         incrementyProperty.Add(propertyInfo.Name);
@@ -71,7 +84,6 @@ namespace Pkn_HostSystem.Base
             }
         }
         
-
         #region 插入一行数据
         /// <summary>
         /// 查入单行用
@@ -91,7 +103,7 @@ namespace Pkn_HostSystem.Base
 
         #region 插入逻辑
 
-        public StringBuilder insertLogic(T pojo, StringBuilder sql)
+        private StringBuilder insertLogic(T pojo, StringBuilder sql)
         {
             Type pojoType = pojo.GetType();
             sql.Append("insert into ");
@@ -355,7 +367,7 @@ namespace Pkn_HostSystem.Base
             sql.Append(type.Name);
             sql.Append($" where {primaryKey} = ");
             sql.Append(id.ToString());
-            using (SqlConnection sqlConnection = new SqlConnection(url))
+            using (SqlConnection sqlConnection = new SqlConnection(GlobalManager.jdbcPath))
             {
                 try
                 {
@@ -414,7 +426,7 @@ namespace Pkn_HostSystem.Base
             }
             sql.Remove(sql.Length - 1, 1);
             sql.Append(")");
-            using (SqlConnection sqlConnection = new SqlConnection(url))
+            using (SqlConnection sqlConnection = new SqlConnection(GlobalManager.jdbcPath))
             {
                 try
                 {
@@ -449,8 +461,6 @@ namespace Pkn_HostSystem.Base
                 return listPojo;
             }
         }
-
-
         #endregion
 
         #region 查询通过where,返回List
@@ -470,7 +480,7 @@ namespace Pkn_HostSystem.Base
             sql.Append(tableName);
             sql.Append(" ");
             sql.Append(where);
-            using (SqlConnection sqlConnection = new SqlConnection(url))
+            using (SqlConnection sqlConnection = new SqlConnection(GlobalManager.jdbcPath))
             {
                 try
                 {
@@ -539,7 +549,7 @@ namespace Pkn_HostSystem.Base
         #region ADO增删改查ExecuteNonQuery
         public int ExecuteNonQuery(string sql)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(url))
+            using (SqlConnection sqlConnection = new SqlConnection(GlobalManager.jdbcPath))
             {
                 int result;
                 try
@@ -566,7 +576,7 @@ namespace Pkn_HostSystem.Base
 
         public async Task<int> ExecuteNonQueryAsync(string sql)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(url))
+            using (SqlConnection sqlConnection = new SqlConnection(GlobalManager.jdbcPath))
             {
                 int result;
                 try
@@ -586,15 +596,13 @@ namespace Pkn_HostSystem.Base
                 return result;
             }
         }
-
-
         #endregion
 
         #region 查询ExecuteScalar只返回一个结果的
 
         public int ExecuteScalar(string sql)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(url))
+            using (SqlConnection sqlConnection = new SqlConnection(GlobalManager.jdbcPath))
             {
                 object result;
                 try
@@ -621,7 +629,7 @@ namespace Pkn_HostSystem.Base
         #region 返回一个结果集ExecuteReader
         public T ExecuteReader(string sql)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(url))
+            using (SqlConnection sqlConnection = new SqlConnection(GlobalManager.jdbcPath))
             {
                 try
                 {
@@ -664,7 +672,7 @@ namespace Pkn_HostSystem.Base
         #region 返回一个DateTable,在内存产生数据库里面一个表
         public DataTable SqlDataAdapter(string sql)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(url))
+            using (SqlConnection sqlConnection = new SqlConnection(GlobalManager.jdbcPath))
             {
                 try
                 {
@@ -703,10 +711,9 @@ namespace Pkn_HostSystem.Base
     /// <summary>
     /// 在POJO中
     /// 通过[PrimaryKey]标记主键
-    /// 通过[TableName]标记表明
-    /// 通过[Incremnt]标记递增,标记递增后不会继续增加
+    /// 通过[TableName]标记表名
+    /// 通过[Incremnt]标记递增,如果是递增必须要标记
     /// </summary>
-
     #region Attribute
     [AttributeUsage(AttributeTargets.Property)]
     public class PrimaryKeyAttribute : System.Attribute

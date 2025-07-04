@@ -56,4 +56,15 @@ public partial class HomePageModel : ObservableObject
     /// </summary>
     [ObservableProperty] private ObservableCollection<CameraDetailed> cameraList;
 
+    /// <summary>
+    /// 连接数据库
+    /// </summary>
+    [ObservableProperty] private JdbcUrl jdbcUrl = new();
+
+    /// <summary>
+    /// 连接数据URL地址
+    /// </summary>
+    [ObservableProperty] private string realJdbcUrl = "Server=服务器名;DataBase=数据名;Uid=sa;Pwd=密码;TrustServerCertificate=True;";
+    [ObservableProperty] private string showJdbcUrl = "Server=服务器名;DataBase=数据名;Uid=sa;Pwd=密码;TrustServerCertificate=True;";
+
 }

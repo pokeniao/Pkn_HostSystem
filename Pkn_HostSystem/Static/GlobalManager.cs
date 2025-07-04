@@ -1,6 +1,8 @@
 ﻿using DynamicData;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.Stations;
+using Pkn_HostSystem.Models.Core.Interface;
+using Pkn_HostSystem.Models.Page;
 using SkiaSharp;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -10,7 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace Pkn_HostSystem.Static;
 
-public static class GlobalMannager
+public static class GlobalManager
 {
     /// <summary>
     /// 当前全局字典
@@ -61,16 +63,33 @@ public static class GlobalMannager
     /// </summary>
     public static SKColor ThemeSkColor;
 
-    static GlobalMannager()
+    /// <summary>
+    /// 数据库
+    /// </summary>
+    public static string jdbcPath;
+
+
+    static GlobalManager()
     {
+        //向静态字典添加东西
         GlobalDictionary = new ConcurrentDictionary<string, object>();
         GlobalDictionary.TryAdd("LogListBox", new ObservableCollection<string>());
         GlobalDictionary.TryAdd("MesLogListBox", new ObservableCollection<string>());
+        //初始化网路连接字典
         NetWorkDictionary =
             new SourceCache<NetWork, string>(n => n.NetWorkId);
+        //初始化话动态字典
         DynDictionary = new SourceCache<LoadMesDynContent, string>(n => n.Name);
+        //初始化工位字典
         StationDictionary = new SourceCache<IEachStation, string>(n => n.Header);
+        //数据库JDBC路径赋值
+        jdbcPath = AppJsonTool<HomePageModel>.Load()?.RealJdbcUrl;
+        //初始化工位信息
+        StationManager.InitStation();
     }
+
+
+
 
     /// <summary>
     /// 获得用户定义类的 所有Types
@@ -88,6 +107,8 @@ public static class GlobalMannager
                     x.Namespace!.StartsWith(namespaceName, StringComparison.InvariantCultureIgnoreCase) &&
                     !x.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false) // 排除编译器生成的类型
             );
-        return  types.ToList();
+        return types.ToList();
     }
+
+
 }

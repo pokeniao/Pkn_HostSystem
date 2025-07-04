@@ -3,10 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using DynamicData.Binding;
-using Force.DeepCloner;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Core.Interface;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Windows;
@@ -46,6 +46,10 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public ObservableCollectionExtended<LoadMesDynContent> Para_dyn { get; set; } = new();
 
+    /// <summary>
+    /// 可选择的工单任务
+    /// </summary>
+    [ObservableProperty] private ObservableCollectionExtended<IEachStation> stations = new ObservableCollectionExtended<IEachStation>();
     //添加
     public LoadMesAddAndUpdateWindowsViewModel()
     {
@@ -58,9 +62,10 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
             NetWorkList = new ObservableCollectionExtended<NetWork>()
         };
         Log = new LogBase<LoadMesAddAndUpdateWindowsViewModel>(SnackbarService);
-        GlobalMannager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
         add = true;
-        GlobalMannager.NetWorkDictionary.Connect().Bind(LoadMesAddAndUpdateWindowModel.NetWorkList).Subscribe();
+        GlobalManager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
+        GlobalManager.StationDictionary.Connect().Bind(Stations).Subscribe();
+        GlobalManager.NetWorkDictionary.Connect().Bind(LoadMesAddAndUpdateWindowModel.NetWorkList).Subscribe();
     }
 
     //修改
@@ -73,8 +78,9 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
         Log = new LogBase<LoadMesAddAndUpdateWindowsViewModel>(SnackbarService);
         add = false;
-        GlobalMannager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
-        GlobalMannager.NetWorkDictionary.Connect().Bind(LoadMesAddAndUpdateWindowModel.NetWorkList).Subscribe();
+        GlobalManager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
+        GlobalManager.StationDictionary.Connect().Bind(Stations).Subscribe();
+        GlobalManager.NetWorkDictionary.Connect().Bind(LoadMesAddAndUpdateWindowModel.NetWorkList).Subscribe();
     }
 
     /// <summary>
@@ -196,8 +202,6 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
         }
         return true;
     }
-
-
     /// <summary>
     /// 点击取消
     /// </summary>

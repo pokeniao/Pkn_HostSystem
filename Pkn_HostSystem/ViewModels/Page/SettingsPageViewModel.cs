@@ -74,7 +74,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         LiveCharts.Configure(config =>
         {
             config.AddLightTheme();
-            GlobalMannager.ThemeSkColor = new SKColor(0, 0, 0);
+            GlobalManager.ThemeSkColor = new SKColor(0, 0, 0);
             Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().RefreshCommand.Execute(null);
         });
         if (TraceContext.Name!= "系统初始化")
@@ -94,7 +94,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         LiveCharts.Configure(config =>
         {
             config.AddDarkTheme();
-            GlobalMannager.ThemeSkColor = new SKColor(255, 255, 255);
+            GlobalManager.ThemeSkColor = new SKColor(255, 255, 255);
             Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().RefreshCommand.Execute(null);
         });
         if (TraceContext.Name != "系统初始化")
@@ -119,7 +119,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
             LiveCharts.Configure(config =>
             {
                 config.AddLightTheme();
-                GlobalMannager.ThemeSkColor = new SKColor(0, 0, 0);
+                GlobalManager.ThemeSkColor = new SKColor(0, 0, 0);
                 Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().RefreshCommand.Execute(null);
             });
         } else if (systemTheme is SystemTheme.Dark)
@@ -128,7 +128,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
             LiveCharts.Configure(config =>
             {
                 config.AddDarkTheme();
-                GlobalMannager.ThemeSkColor = new SKColor(255, 255, 255);
+                GlobalManager.ThemeSkColor = new SKColor(255, 255, 255);
                 Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().RefreshCommand.Execute(null);
             });
         }

@@ -1,9 +1,11 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using AspectCore.Extensions.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using log4net.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Pkn_HostSystem.Base;
+using Pkn_HostSystem.Service.LoadMes;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
@@ -12,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using Wpf.Ui;
 using Wpf.Ui.DependencyInjection;
+
 namespace Pkn_HostSystem
 {
     /// <summary>
@@ -33,22 +36,26 @@ namespace Pkn_HostSystem
         }
 
         #region 唯一运行程序
+
         /// <summary>
         /// 运行唯一App
         /// </summary>
         private static Mutex _mutex;
-        private static readonly string MutexName = GlobalMannager.AssemblyName; // 应用唯一标识
-        private static readonly string MainWindowTitle = GlobalMannager.AssemblyName; // 用你的窗口标题替换
+
+        private static readonly string MutexName = GlobalManager.AssemblyName; // 应用唯一标识
+        private static readonly string MainWindowTitle = GlobalManager.AssemblyName; // 用你的窗口标题替换
 
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         private const int SW_RESTORE = 9;
+
         private void AppRunOn()
         {
             bool createdNew;
@@ -69,10 +76,12 @@ namespace Pkn_HostSystem
                 {
                     MessageBox.Show("程序已在运行中。", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+
                 Shutdown();
                 return;
             }
         }
+
         #endregion
 
         /// <summary>
@@ -81,11 +90,12 @@ namespace Pkn_HostSystem
         private void LogConfig()
         {
             // 设置 log4net 全局变量
-            log4net.GlobalContext.Properties["LOG_DIR"] = Path.Combine(GlobalMannager.AppFolder, "Logs");
+            log4net.GlobalContext.Properties["LOG_DIR"] = Path.Combine(GlobalManager.AppFolder, "Logs");
             // 开启 log4net 内部调试信息输出到控制台
             log4net.Util.LogLog.InternalDebugging = true;
             XmlConfigurator.ConfigureAndWatch(new FileInfo("Config\\log4net.config"));
         }
+
         /// <summary>
         /// IOC配置
         /// </summary>
@@ -94,7 +104,6 @@ namespace Pkn_HostSystem
             // IOC 容器
             Ioc.Default.ConfigureServices(
                 new ServiceCollection()
-                   
                     .AddNavigationViewPageProvider()
                     .AddSingleton<INavigationService, NavigationService>()
                     .AddSingleton<HomePageViewModel>()
@@ -107,7 +116,8 @@ namespace Pkn_HostSystem
                     .AddSingleton<StationViewModel>()
                     .AddSingleton<TcpToolViewModel>()
                     .AddSingleton<LiveChartsTestViewModel>()
-                  //页面单例 ,预加载
+                    
+                    //页面单例 ,预加载
                     .AddSingleton<StationPage>()
                     .AddSingleton<VisionPage>()
                     .AddSingleton<MesTcpPage>()
@@ -117,8 +127,9 @@ namespace Pkn_HostSystem
                     .AddSingleton<SettingsPage>()
                     .AddSingleton<ModbusToolPage>()
                     .AddSingleton<TcpToolPage>()
-                    .AddTransient<LiveChartsTestPage>()  //AddTransient每次导航会new 一个新对象
-                    .BuildServiceProvider()
+                    .AddTransient<LiveChartsTestPage>() //AddTransient每次导航会new 一个新对象
+                    // .BuildServiceProvider()  Microsoft.Extensions.DependencyInjection原生
+                    .BuildDynamicProxyProvider() //AspectCore中的Ioc,支持Aop
             );
         }
 
@@ -132,6 +143,7 @@ namespace Pkn_HostSystem
             //创建临时环境变量 , 下面代码代表 先获取PATH环境变量,然后在PATH前面添加path变量,不是永久的,程序关闭失效
             Environment.SetEnvironmentVariable("PATH", path + ";" + Environment.GetEnvironmentVariable("PATH"));
         }
+
         /// <summary>
         /// 程序结束的时候
         /// </summary>
@@ -144,5 +156,4 @@ namespace Pkn_HostSystem
             base.OnExit(e);
         }
     }
-
 }
