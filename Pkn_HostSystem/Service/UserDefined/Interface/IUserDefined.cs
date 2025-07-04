@@ -1,9 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Pkn_HostSystem.Models.Pojo;
-using Pkn_HostSystem.ViewModels.Page;
-using System.Reflection;
-
-namespace Pkn_HostSystem.Service.UserDefined
+﻿namespace Pkn_HostSystem.Service.UserDefined.Interface
 {
     public interface IUserDefined
     {

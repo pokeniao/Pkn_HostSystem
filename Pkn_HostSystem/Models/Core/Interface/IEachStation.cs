@@ -1,12 +1,13 @@
-﻿using Pkn_HostSystem.Base.Log;
-using Pkn_HostSystem.Base.Log.Interface;
+﻿using Pkn_HostSystem.Base.Log.Interface;
 using System.Collections.ObjectModel;
 
-namespace Pkn_HostSystem.Models.Core
+namespace Pkn_HostSystem.Models.Core.Interface
 {
     public interface IEachStation
     {
         string Header { get; set; }
+
+        object Station { get; set; }
 
         ObservableCollection<object> Items { get; set; }
 

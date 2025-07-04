@@ -30,7 +30,7 @@ public partial class MesTcpViewModel : ObservableRecipient
 
     public ObservableCollection<string> ForwardingMethod { get; set; } = ["通讯", "队列"];
 
-    public List<Type> UserDefinedList { get; set; } = GlobalMannager.GetUserDefinedTypes();
+    public List<Type> UserDefinedList { get; set; } = GlobalManager.GetUserDefinedTypes();
     public MesTcpViewModel()
     {
         SnackbarService = new SnackbarService();
@@ -46,15 +46,15 @@ public partial class MesTcpViewModel : ObservableRecipient
                 HttpList = new ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel>(),
                 DynNetList = new ObservableCollectionExtended<LoadMesDynContent>(),
             };
-            GlobalMannager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe();
-            GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
+            GlobalManager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe();
+            GlobalManager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
             MesTcpModel.HttpList = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
         }
         else
         {
-            GlobalMannager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe(); //绑定
-            GlobalMannager.DynDictionary.AddOrUpdate(MesTcpModel.DynNetList); //存入到缓存,后面在绑定
-            GlobalMannager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
+            GlobalManager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe(); //绑定
+            GlobalManager.DynDictionary.AddOrUpdate(MesTcpModel.DynNetList); //存入到缓存,后面在绑定
+            GlobalManager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
             MesTcpModel.HttpList = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
         }
         log = new LogBase<MesTcpViewModel>(SnackbarService);
@@ -77,13 +77,13 @@ public partial class MesTcpViewModel : ObservableRecipient
                 Name = addDynWindow.viewModel.Name,
                 DynCondition = new ObservableCollection<DynCondition>(),
             };
-            if (GlobalMannager.DynDictionary.Lookup(addDynWindow.viewModel.Name).HasValue)
+            if (GlobalManager.DynDictionary.Lookup(addDynWindow.viewModel.Name).HasValue)
             {
                 log.WarningAndShow("添加动态通讯名称已存在", $"添加动态通讯名称已存在{addDynWindow.viewModel.Name}");
                 return;
             }
 
-            GlobalMannager.DynDictionary.AddOrUpdate(loadMesDynContent);
+            GlobalManager.DynDictionary.AddOrUpdate(loadMesDynContent);
         }
     }
 
@@ -96,9 +96,9 @@ public partial class MesTcpViewModel : ObservableRecipient
         LoadMesDynContent? mesTcpPojo = page.DynNameListBox.SelectedItem as LoadMesDynContent;
         if (mesTcpPojo != null)
         {
-            if (GlobalMannager.DynDictionary.Lookup(mesTcpPojo.Name).HasValue)
+            if (GlobalManager.DynDictionary.Lookup(mesTcpPojo.Name).HasValue)
             {
-                GlobalMannager.DynDictionary.Remove(mesTcpPojo);
+                GlobalManager.DynDictionary.Remove(mesTcpPojo);
             }
             else
             {

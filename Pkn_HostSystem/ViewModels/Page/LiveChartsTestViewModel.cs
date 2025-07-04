@@ -28,10 +28,48 @@ namespace Pkn_HostSystem.ViewModels.Page
         public LogBase<LiveChartsTestViewModel> Log;
         public SnackbarService SnackbarService = new SnackbarService();
 
+        private static readonly RadialGradientPaint green = new RadialGradientPaint(
+            [
+                new SKColor(130, 220, 100), // 中心亮绿
+                new SKColor(150, 230, 110), // 中间柔绿
+                new SKColor(100, 180, 90), // 次深绿
+                new SKColor(80, 160, 70) // 最外围深绿
+            ],
+            center: null, // 可选，自定义圆心
+            radius: 0, // 0 表示自动半径
+            [0f, 0.4f, 0.7f, 1f],
+            tileMode: SKShaderTileMode.Clamp
+        );
+
+        private static readonly RadialGradientPaint red = new RadialGradientPaint(
+            [
+                new SKColor(200, 50, 70), // 中心酒红
+                new SKColor(230, 80, 90), // 柔和过渡红
+                new SKColor(240, 110, 110), // 珊瑚红
+                new SKColor(160, 40, 50) // 边缘暗红
+            ],
+            center: null,
+            radius: 0,
+            [0f, 0.3f, 0.6f, 1f],
+            tileMode: SKShaderTileMode.Clamp);
+
+
+        private readonly RadialGradientPaint blue = new RadialGradientPaint(
+            [
+                new SKColor(40, 100, 220), // 深科技蓝
+                new SKColor(80, 140, 240), // 过渡蓝
+                new SKColor(120, 180, 255), // 天蓝
+                new SKColor(30, 80, 160) // 边缘深蓝
+            ],
+            center: null,
+            radius: 0,
+            [0f, 0.4f, 0.75f, 1f],
+            tileMode: SKShaderTileMode.Clamp
+        );
+
         #region 饼图--良率统计
 
         public ISeries[] OkTotalPieSeries { get; set; }
-
 
         public ISeries[] TimePieSeries { get; set; }
 
@@ -43,7 +81,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 Padding = new LiveChartsCore.Drawing.Padding(15),
                 Paint = new SolidColorPaint
                 {
-                    Color = GlobalMannager.ThemeSkColor,
+                    Color = GlobalManager.ThemeSkColor,
                     SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                 }
             };
@@ -56,19 +94,18 @@ namespace Pkn_HostSystem.ViewModels.Page
                 Padding = new LiveChartsCore.Drawing.Padding(15),
                 Paint = new SolidColorPaint
                 {
-                    Color = GlobalMannager.ThemeSkColor,
+                    Color = GlobalManager.ThemeSkColor,
                     SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                 }
             };
 
-
-
         #endregion
 
         #region 实时线图
+
         private readonly Random _random = new();
         private readonly List<DateTimePoint> _values = [];
-        private DateTimeAxis _customAxis ;
+        private DateTimeAxis _customAxis;
 
         public ObservableCollection<ISeries> Series { get; set; }
 
@@ -81,13 +118,11 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         public void HeartBeat()
         {
-            Series = [
+            Series =
+            [
                 new LineSeries<DateTimePoint>
                 {
-                    Values = _values,
-                    Fill = null,
-                    GeometryFill = null,
-                    GeometryStroke = null
+                    Values = _values, Fill = null, GeometryFill = null, GeometryStroke = null
                 }
             ];
 
@@ -149,31 +184,32 @@ namespace Pkn_HostSystem.ViewModels.Page
                 ? "now"
                 : $"{secsAgo:N0}s ago";
         }
+
         #endregion
 
         #region 柱状图
 
-        public ISeries[] DayTimeYieldSeries { get; set; } = [
+        public ISeries[] DayTimeYieldSeries { get; set; } =
+        [
             new ColumnSeries<int>
-            {   
-                Values = [6, 3, 5, 7, 3, 4, 6, 3,70,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-
-                Fill = new RadialGradientPaint([new SKColor(0, 240, 0),new SKColor(100,200,50)]),
+            {
+                Values = [6, 3, 5, 7, 3, 4, 6, 3, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                Fill = green,
                 Stroke = null,
                 MaxBarWidth = double.MaxValue,
                 IgnoresBarPosition = true
             },
             new ColumnSeries<int>
             {
-                Values = [2, 4, 8, 9, 5, 2, 4, 7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-
-                Fill = new RadialGradientPaint([new SKColor(255, 0, 0),new SKColor(200,100,100)]),
+                Values = [2, 4, 8, 9, 5, 2, 4, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                Fill = red,
                 Stroke = null,
                 MaxBarWidth = 30,
                 IgnoresBarPosition = true
-            }, 
-            new LineSeries<double>   { 
-                Values = [6, 3, 5, 7, 3, 4, 6, 3, 70, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+            },
+            new LineSeries<double>
+            {
+                Values = [6, 3, 5, 7, 3, 4, 6, 3, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 Fill = null,
                 GeometrySize = 0
             }
@@ -185,16 +221,19 @@ namespace Pkn_HostSystem.ViewModels.Page
                 new Axis
                 {
                     Name = "时间",
-
-                    Labels = ["0:00", "1:00", "2:00", "3:00","4:00","5:00","6:00","7:00","8:00","9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"
+                    Labels =
+                    [
+                        "0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00",
+                        "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00",
+                        "21:00", "22:00", "23:00"
                     ],
-                    NamePaint = new SolidColorPaint(GlobalMannager.ThemeSkColor)
+                    NamePaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
                     {
                         SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                     },
                     LabelsPaint = new SolidColorPaint(SKColors.Blue),
                     TextSize = 15,
-                    
+
                     // SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) { StrokeThickness = 2 }
                 }
             };
@@ -205,11 +244,10 @@ namespace Pkn_HostSystem.ViewModels.Page
                 new Axis
                 {
                     Name = "产量",
-                    NamePaint = new SolidColorPaint(GlobalMannager.ThemeSkColor) 
+                    NamePaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
                     {
                         SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                     },
-
                     LabelsPaint = new SolidColorPaint(SKColors.Green),
                     TextSize = 15,
 
@@ -224,6 +262,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         #endregion
 
         #region CT图
+
         public IEnumerable<ISeries> CTSeries { get; set; } =
             GaugeGenerator.BuildSolidGauge(
                 new GaugeItem(50, series => SetStyle("Station1", series)),
@@ -233,6 +272,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 {
                     series.Fill = null;
                 }));
+
         public static void SetStyle(string name, PieSeries<ObservableValue> series)
         {
             series.Name = name;
@@ -265,16 +305,17 @@ namespace Pkn_HostSystem.ViewModels.Page
                     Name = "OK",
                     Values = [LiveChartsTestModel.Ok],
                     Stroke = null,
-                    Fill = new RadialGradientPaint([new SKColor(0, 240, 0),new SKColor(100,200,50)]),
-                    DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor), //页面上显示数据
+                    Fill = green
+                    ,
+                    DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor), //页面上显示数据
                 },
                 new PieSeries<ObservableValue>
                 {
                     Name = "NG",
                     Values = [LiveChartsTestModel.Ng],
                     Stroke = null,
-                    Fill = new RadialGradientPaint([new SKColor(255, 0, 0),new SKColor(200,100,50)]),
-                    DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor), //页面上显示数据
+                    Fill = red,
+                    DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor), //页面上显示数据
                     Pushout = 10,
                     OuterRadiusOffset = 20
                 }
@@ -285,8 +326,8 @@ namespace Pkn_HostSystem.ViewModels.Page
                 new PieSeries<ObservableValue>
                 {
                     Values = [LiveChartsTestModel.RunTime],
-                    Fill = new RadialGradientPaint([new SKColor(0, 240, 0),new SKColor(100,200,100)]),
-                    DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor)
+                    Fill = green,
+                    DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
                     {
                         SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                     }, //页面上显示数据
@@ -311,8 +352,8 @@ namespace Pkn_HostSystem.ViewModels.Page
                 new PieSeries<ObservableValue>
                 {
                     Values = [LiveChartsTestModel.StopTime],
-                    Fill = new RadialGradientPaint([new SKColor(0, 0, 245),new SKColor(100,100,240)]),
-                    DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor)
+                    Fill = blue,
+                    DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
                     {
                         SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                     }, //页面上显示数据
@@ -337,8 +378,8 @@ namespace Pkn_HostSystem.ViewModels.Page
                 new PieSeries<ObservableValue>
                 {
                     Values = [LiveChartsTestModel.ErrorTime],
-                    Fill = new RadialGradientPaint([new SKColor(255, 0, 0),new SKColor(200,100,100)]),
-                    DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor)
+                    Fill = red,
+                    DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
                     {
                         SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                     }, //页面上显示数据
@@ -378,11 +419,12 @@ namespace Pkn_HostSystem.ViewModels.Page
 
             var showDialog = setLiveChartsParamWindow.ShowDialog();
         }
+
         #endregion
 
 
-
         #region 刷新页面
+
         /// <summary>
         /// 刷新页面
         /// </summary>
@@ -397,7 +439,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 Padding = new LiveChartsCore.Drawing.Padding(15),
                 Paint = new SolidColorPaint
                 {
-                    Color = GlobalMannager.ThemeSkColor,
+                    Color = GlobalManager.ThemeSkColor,
                     SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                 }
             };
@@ -410,16 +452,15 @@ namespace Pkn_HostSystem.ViewModels.Page
                     Padding = new LiveChartsCore.Drawing.Padding(15),
                     Paint = new SolidColorPaint
                     {
-                        Color = GlobalMannager.ThemeSkColor,
+                        Color = GlobalManager.ThemeSkColor,
                         SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                     }
                 };
             foreach (var series in OkTotalPieSeries)
             {
-                series.DataLabelsPaint = new SolidColorPaint(GlobalMannager.ThemeSkColor);
+                series.DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor);
             }
         }
-
 
         #endregion
 

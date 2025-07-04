@@ -2,6 +2,7 @@
 using DynamicData.Binding;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Core.Interface;
 using System.Collections.ObjectModel;
 using System.Reflection.Emit;
 using System.Windows.Documents;

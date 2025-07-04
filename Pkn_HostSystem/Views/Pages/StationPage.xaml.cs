@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using DynamicData.Kernel;
-using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Base;
+using Pkn_HostSystem.Models.Core.Interface;
+using Pkn_HostSystem.Models.Mapper;
 using Pkn_HostSystem.Static;
-using Pkn_HostSystem.Stations;
 using Pkn_HostSystem.ViewModels.Page;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+using Station1 = Pkn_HostSystem.Service.Stations.Station1;
 
 namespace Pkn_HostSystem.Views.Pages
 {
@@ -16,11 +16,13 @@ namespace Pkn_HostSystem.Views.Pages
     public partial class StationPage : Page
     {
         public StationViewModel ViewModel { get; set; }
+
         public StationPage()
         {
             InitializeComponent();
             ViewModel = Ioc.Default.GetRequiredService<StationViewModel>();
             DataContext = ViewModel;
+            ViewModel.setSnackbarPresenter(SnackbarPresenter);
         }
 
         #region 富文本加载事件
@@ -106,9 +108,30 @@ namespace Pkn_HostSystem.Views.Pages
 
         private void ClearLog_OnClick1(object sender, RoutedEventArgs e)
         {
-            var value = GlobalMannager.StationDictionary.Lookup("工位1").Value as EachStation<Station1>;
+            ScanQR scanQr = new ScanQR();
+            scanQr.id = new SnowflakeIdGenerator(1, 1).GetId();
+            scanQr.qr_code = "12345";
+            scanQr.orderCode = "123";
+            scanQr.materialCode = "123";
+            scanQr.CT = "12";
+            scanQr.Pass = 'Y';
 
-            value.AddItem(new Station1() { CT = "1", ID = "1", 参数 = "1", 名字 = "1" });
+            int insert = scanQr.insert(scanQr);
+            if (insert != 0)
+            {
+                ViewModel.Log.SuccessAndShow($"添加成功{insert}");
+            }
+
+
+
+            // var value = GlobalManager.StationDictionary.Lookup("生产信息上传").Value as EachStation<Station2>;
+            dynamic value = GlobalManager.StationDictionary.Lookup("扫码过站").Value;
+
+            value.AddItem(new Station1() { CT = "1" });
+            var observableCollection = value.Items[2];
+            observableCollection.合格 = "123";
+            value.Items[2] = observableCollection;
+
             value.UserLog.InfoToRichTextBox("添加一行");
         }
     }

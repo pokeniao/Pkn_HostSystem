@@ -20,7 +20,7 @@ public class LogBase<T>
     public LogBase()
     {
         log = LogManager.GetLogger(typeof(T));
-        GlobalMannager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
+        GlobalManager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
         list = (ObservableCollection<string>)obj;
     }
 
