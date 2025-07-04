@@ -1,6 +1,7 @@
 ﻿using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Service.UserDefined.Interface;
 using Pkn_HostSystem.Static;
 using System.Net.Sockets;
 
@@ -13,7 +14,7 @@ namespace Pkn_HostSystem.Service.UserDefined
 
         public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts)
         {
-            var netWorkPoJoes = GlobalMannager.NetWorkDictionary.Items.ToList();
+            var netWorkPoJoes = GlobalManager.NetWorkDictionary.Items.ToList();
             NetWork netWork = null;
             foreach (var netWorkPoJo in netWorkPoJoes)
             {

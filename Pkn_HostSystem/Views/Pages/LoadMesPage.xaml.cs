@@ -66,7 +66,7 @@ namespace Pkn_HostSystem.Views.Pages
 
         private void ClearLog(object sender, RoutedEventArgs e)
         {
-            GlobalMannager.GlobalDictionary.TryGetValue("MesLogListBox", out var obj);
+            GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out var obj);
             ObservableCollection<string> list = (ObservableCollection<string>)obj;
             list.Clear();
         }

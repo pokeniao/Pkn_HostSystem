@@ -115,6 +115,27 @@ namespace Pkn_HostSystem.Views.Pages
         {
             showCloseCard(CameraBorder, "CloseCameraSelect");
         }
+
+        /// <summary>
+        /// 展开数据库卡片
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void JDBC_OnClick(object sender, RoutedEventArgs e)
+        {
+            showOpenCard(JDBC_Border, "JDBC_Open_Storyboard");
+        }
+
+        /// <summary>
+        /// 收起数据库卡片
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void JDBC_Close_OnClick(object sender, RoutedEventArgs e)
+        {
+            showCloseCard(JDBC_Border, "JDBC_Close_Storyboard");
+        }
+
         #endregion
 
         #region 卡片私有类
@@ -129,11 +150,13 @@ namespace Pkn_HostSystem.Views.Pages
             CA_ConnectPLC.Visibility = Visibility.Hidden;
             CA_pppOrderSelect.Visibility = Visibility.Hidden;
             CA_CameraSelect.Visibility = Visibility.Hidden;
+            JDBC_CardAction.Visibility = Visibility.Hidden;
 
             //二. 所有border消失,重新选择
             ConnectPLCBorder.Visibility = Visibility.Collapsed;
             OrderBorder.Visibility = Visibility.Collapsed;
             CameraBorder.Visibility = Visibility.Collapsed;
+            JDBC_Border.Visibility = Visibility.Collapsed;
             //三. 展示当前点击的
             border.Visibility = Visibility.Visible;
             Storyboard? storyboard = FindResource(storyboardName) as Storyboard;
@@ -159,6 +182,7 @@ namespace Pkn_HostSystem.Views.Pages
                         CA_ConnectPLC.Visibility = Visibility.Visible;
                         CA_pppOrderSelect.Visibility = Visibility.Visible;
                         CA_CameraSelect.Visibility = Visibility.Visible;
+                        JDBC_CardAction.Visibility = Visibility.Visible;
                     });
                 }
             );
@@ -232,7 +256,7 @@ namespace Pkn_HostSystem.Views.Pages
 
         private void ClearLog(object sender, RoutedEventArgs e)
         {
-            GlobalMannager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
+            GlobalManager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
             ObservableCollection<string> list = (ObservableCollection<string>)obj;
             list.Clear();
         }

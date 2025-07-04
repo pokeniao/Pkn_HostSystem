@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
+using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
@@ -19,10 +20,11 @@ public class LoadMesService
 
     private LogControl<LoadMesService> Log;
 
+
     public LoadMesService(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList)
     {
         this.mesPojoList = mesPojoList;
-        GlobalMannager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
+        GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
         Log = new LogControl<LoadMesService>((ObservableCollection<string>)value);
     }
 
@@ -52,7 +54,7 @@ public class LoadMesService
     /// <returns></returns>
     public string getNetKey(string ConnectName)
     {
-        var netWorkPoJoes = GlobalMannager.NetWorkDictionary.Items.ToList();
+        var netWorkPoJoes = GlobalManager.NetWorkDictionary.Items.ToList();
         foreach (var netWorkPoJo in netWorkPoJoes)
             if (netWorkPoJo.NetworkDetailed.Name == ConnectName)
                 return netWorkPoJo.NetWorkId;
@@ -106,12 +108,19 @@ public class LoadMesService
     #endregion
 
     #region 发送Http任务
+
     public async Task<(bool succeed, string? response)> SendHttp(LoadMesAddAndUpdateWindowModel item,
         string request,
         CancellationTokenSource cts)
     {
         //日志显示发送内容
         Log.InfoToLogList($"[{TraceContext.Name}]--发送内容: \r\n {request}");
+        //进行工位日志记录
+        if (item.NeedStationLog)
+        {
+            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
+                $"[{TraceContext.Name}]--发送内容: \r\n {request}");
+        }
 
         //创建连接
         var client = new RestClient(item.HttpPath);
@@ -171,6 +180,13 @@ public class LoadMesService
             //判断是否是JSON格式,如果是转成输出
             item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
             Log.InfoToLogList($"[{TraceContext.Name}]--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+            //进行工位日志记录
+            if (item.NeedStationLog)
+            {
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
+                    $"[{TraceContext.Name}]--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+            }
+
             return (true, item.Response);
         }
         else
@@ -186,6 +202,13 @@ public class LoadMesService
             item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
 
             Log.ErrorToLogList($"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+            //进行工位日志记录
+            if (item.NeedStationLog)
+            {
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
+                    $"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+            }
+
             return (false, item.Response);
         }
     }
@@ -229,6 +252,7 @@ public class LoadMesService
                         Log.Error($"[{TraceContext.Name}]--执行动态嵌入内容时发送错误:{value}");
                         return (false, null);
                     }
+
                     Log.Info($"[{TraceContext.Name}]--嵌入内容: \r\n{value}");
                     request = StaticMessage(request, itemKey, value);
                     break;
@@ -242,6 +266,7 @@ public class LoadMesService
                     break;
             }
         }
+
         return (true, request);
     }
 
@@ -291,6 +316,7 @@ public class LoadMesService
             var requestB = request.Substring(i + sumLen + 3);
             request = requestA + itemValue + requestB;
         }
+
         return request;
     }
 
@@ -310,7 +336,7 @@ public class LoadMesService
             return (false, null);
         }
 
-        var lookup = GlobalMannager.DynDictionary.Lookup(DynName);
+        var lookup = GlobalManager.DynDictionary.Lookup(DynName);
         if (!lookup.HasValue)
         {
             Log.Error($"[{TraceContext.Name}]--正在动态嵌入内容的时候,名为:{DynName},从动态字典GlobalMannager.DynDictionary找不到,返回空字符串");
@@ -376,7 +402,7 @@ public class LoadMesService
                         break;
                     case "Socket返回":
                         Log.Info($"[{TraceContext.Name}]--动态嵌入内容:执行Socket消息发送");
-                        (bool succeed, string tcp) = await ReadTcpMessageAsync(item,cts);
+                        (bool succeed, string tcp) = await ReadTcpMessageAsync(item, cts);
                         //判断
                         if (!succeed)
                         {
@@ -465,7 +491,7 @@ public class LoadMesService
                     Log.Info($"[{TraceContext.Name}]--解析 {httpObject.JsonKey}:\r\n {jToken}");
                     message = StaticMessageSon(message, itemKey, httpObject.Name, jToken);
                 }
-            } 
+            }
             else if (item.GetMessageType == "自定义")
             {
                 Type userDefined = item.UserDefined;
@@ -473,12 +499,12 @@ public class LoadMesService
                 var objInstance = Activator.CreateInstance(userDefined);
                 //获取方法
                 var method = userDefined.GetMethod("Main");
-             
+
                 //执行方法
-                var invoke =  method.Invoke(objInstance, [cts]);
+                var invoke = method.Invoke(objInstance, [cts]);
 
                 // 转换为具体元组类型
-                var (succeed, returnValue) =  await (Task<(bool Succeed, object Return)>)invoke;
+                var (succeed, returnValue) = await (Task<(bool Succeed, object Return)>)invoke;
 
                 if (succeed)
                 {
@@ -490,7 +516,6 @@ public class LoadMesService
                     return (false, returnValue?.ToString());
                 }
             }
-
         }
 
         return (true, message);
@@ -515,7 +540,7 @@ public class LoadMesService
                 //获得网络名
                 string netKey = getNetKey(forwardingName);
                 //获得网络
-                var netWork = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
+                var netWork = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
 
                 //判断当前转发的通讯是什么类型的
                 string networkDetailedNetMethod = netWork.NetworkDetailed.NetMethod;
@@ -557,7 +582,6 @@ public class LoadMesService
     }
 
     #endregion
-
 
     #endregion
 
@@ -855,7 +879,8 @@ public class LoadMesService
             if (dynSwitch.Case == message)
             {
                 return dynSwitch.Value;
-            } else if (dynSwitch.Case == "default")
+            }
+            else if (dynSwitch.Case == "default")
             {
                 return dynSwitch.Value;
             }
@@ -867,20 +892,22 @@ public class LoadMesService
     #endregion
 
     #region 套接字通讯获取内容
+
     /// <summary>
     /// Socket套接字
     /// </summary>
     /// <param name="item">动态</param>
     /// <param name="parentName">调用的父类名称,用于日志显示</param>
     /// <returns></returns>
-    public async Task<(bool succeed, string response)> ReadTcpMessageAsync(DynCondition item ,CancellationTokenSource cts)
+    public async Task<(bool succeed, string response)> ReadTcpMessageAsync(DynCondition item,
+        CancellationTokenSource cts)
     {
         //判断是走客户端发送,还是走服务器发送
         string itemConnectName = item.ConnectName;
         string netMethod = "";
         NetWork curNetWork = null;
         //遍历取出判断当前的网络是什么类型
-        foreach (var netWorkPoJo in GlobalMannager.NetWorkDictionary.Items)
+        foreach (var netWorkPoJo in GlobalManager.NetWorkDictionary.Items)
         {
             if (netWorkPoJo.NetworkDetailed.Name == itemConnectName)
             {
@@ -888,11 +915,13 @@ public class LoadMesService
                 curNetWork = netWorkPoJo;
             }
         }
+
         if (curNetWork == null)
         {
-            Log.Error($"[{TraceContext.Name}]--执行Socket时--遍历获取网络时,未获取到 GlobalMannager.NetWorkDictionary中不存在");
+            Log.Error($"[{TraceContext.Name}]--执行Socket时--遍历获取网络时,未获取到 GlobalManager.NetWorkDictionary中不存在");
             return (false, null);
         }
+
         string response = string.Empty;
         TcpTool tcpTool = curNetWork.TcpTool;
         //更具类型选择发送
@@ -900,26 +929,30 @@ public class LoadMesService
         {
             case "Tcp客户端":
                 Log.Info($"[{TraceContext.Name}]--执行Tcp客户端消息发送,并等待消息返回");
-                (bool succeed, response) = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage , cts);
+                (bool succeed, response) = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage, cts);
                 if (!succeed)
                 {
                     Log.Error($"[{TraceContext.Name}]--执行Tcp客户端消息发送,等待消息返回时发生错误");
                     return (false, response);
                 }
+
                 break;
             case "Tcp服务器":
                 Log.Info($"[{TraceContext.Name}]--执行Tcp服务器消息发送,并等待消息返回");
-                (bool succeed2, response) = await tcpTool.ServerSendWaitResponseOneToOne(item.SocketSendMessage,cts);
+                (bool succeed2, response) = await tcpTool.ServerSendWaitResponseOneToOne(item.SocketSendMessage, cts);
 
                 if (!succeed2)
                 {
                     Log.Error($"[{TraceContext.Name}]--执行Tcp服务器消息发送,等待消息返回时发生错误");
                     return (false, response);
                 }
+
                 break;
         }
+
         return (true, response);
     }
+
     #endregion
 
     #region 动态获取Modbus通讯内容
@@ -937,7 +970,7 @@ public class LoadMesService
         //获得网络,遍历获取对应的网络
         var netKey = getNetKey(itemConnectName);
         if (netKey == null) return (false, null);
-        var netWorkPoJo = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
+        var netWorkPoJo = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
         //获得modbus
         var modbusBase = netWorkPoJo.ModbusBase;
         try
@@ -967,7 +1000,7 @@ public class LoadMesService
         //获得网络,遍历获取对应的网络
         var netKey = getNetKey(itemConnectName);
         if (netKey == null) return (false, null);
-        var netWorkPoJo = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
+        var netWorkPoJo = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
         //获得modbus
         var modbusBase = netWorkPoJo.ModbusBase;
         var result = "";
@@ -1096,7 +1129,7 @@ public class LoadMesService
         //获得网络,遍历获取对应的网络
         var netKey = getNetKey(itemConnectName);
         if (netKey == null) return null;
-        var netWorkPoJo = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
+        var netWorkPoJo = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
         //获得keyenceHostLinkTool
         KeyenceHostLinkTool keyenceHostLinkTool = netWorkPoJo.KeyenceHostLinkTool;
         var result = "";
