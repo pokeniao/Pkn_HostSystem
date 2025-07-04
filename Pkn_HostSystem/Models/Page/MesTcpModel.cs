@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
-
-
 namespace Pkn_HostSystem.Models.Page;
 
 public partial class MesTcpModel : ObservableObject

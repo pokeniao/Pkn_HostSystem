@@ -5,11 +5,9 @@ using DynamicData.Binding;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Core.Interface;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Static;
-using Pkn_HostSystem.Stations;
-using System.Collections.ObjectModel;
-using System.Windows.Documents;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -22,6 +20,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         public SnackbarService SnackbarService { get; set; } = new();
 
         public LogBase<StationViewModel> Log { get; set; }
+
         public StationViewModel()
         {
             if (StationModel == null)
@@ -31,22 +30,11 @@ namespace Pkn_HostSystem.ViewModels.Page
                 {
                     Stations = new ObservableCollectionExtended<IEachStation>()
                 };
-
-                
-                GlobalMannager.StationDictionary.AddOrUpdate(new EachStation<Station1>()
-                {
-                    Header = "工位1",
-                });
-
-                GlobalMannager.StationDictionary.AddOrUpdate(new EachStation<Station2>()
-                {
-                    Header = "工位2",
-                });
-                GlobalMannager.StationDictionary.Connect().Bind(StationModel.Stations).Subscribe();
+                GlobalManager.StationDictionary.Connect().Bind(StationModel.Stations).Subscribe();
             }
             else
             {
-            
+
             }
             Log = new LogBase<StationViewModel>(SnackbarService);
         }

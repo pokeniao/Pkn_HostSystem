@@ -70,6 +70,18 @@
                             <ui:ToggleSwitch Margin="5"
                                              IsChecked="{Binding LoadMesAddAndUpdateWindowModel.TranspondNeed }" />
                         </WrapPanel>
+
+                        <WrapPanel  Margin="0,10,0,0">
+                            <TextBlock Text="选择工位" Margin="5" VerticalAlignment="Center" />
+                            <ComboBox 
+                                Margin="10,0"
+                                Width="170"
+                                ItemsSource="{Binding Stations}"
+                                DisplayMemberPath="Header"
+                                SelectedValuePath="Header"
+                                SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.Station}"/>
+                            <ui:ToggleSwitch OnContent="启用工位记录" OffContent="停用工位记录" IsChecked="{Binding LoadMesAddAndUpdateWindowModel.NeedStationLog }" />
+                        </WrapPanel>
                         <TabControl Margin="0,10,0,0">
                             <TabItem>
                                 <TabItem.Header>

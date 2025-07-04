@@ -12,69 +12,81 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// 名称
     /// </summary>
     [ObservableProperty] private string name;
+
     /// <summary>
     /// 请求方式
     /// </summary>
     [ObservableProperty] private string ajax;
+
     /// <summary>
     /// http路径
     /// </summary>
     [ObservableProperty] private string httpPath;
+
     /// <summary>
     /// 接口名称
     /// </summary>
     [ObservableProperty] private string api;
+
     /// <summary>
     /// 循环时间
     /// </summary>
     [ObservableProperty] private int cycTime;
+
     /// <summary>
     /// 请求体方式:JSON,XML等
     /// </summary>
-    [ObservableProperty] private string requestMethod ="JSON";
+    [ObservableProperty] private string requestMethod = "JSON";
+
     /// <summary>
     /// 请求内容
     /// </summary>
     [ObservableProperty] private string request;
+
     /// <summary>
     /// 嵌入条件集合
     /// </summary>
     [ObservableProperty] private ObservableCollection<LoadMesCondition> condition;
+
     /// <summary>
     /// 返回消息
     /// </summary>
     [ObservableProperty] private string response;
+
     /// <summary>
     /// 是否执行循环
     /// </summary>
     [ObservableProperty] private bool runCyc;
+
     /// <summary>
     /// 触发类型:循环,触发
     /// </summary>
-    [ObservableProperty] private string triggerType ="循环触发";
+    [ObservableProperty] private string triggerType = "循环触发";
+
     /// <summary>
     /// 站地址
     /// </summary>
-    [ObservableProperty] private string stationAddress="1";
+    [ObservableProperty] private string stationAddress = "1";
+
     /// <summary>
     /// 起始地址
     /// </summary>
-    [ObservableProperty] private string startAddress="0";
+    [ObservableProperty] private string startAddress = "0";
 
     /// <summary>
     /// 触发发送Http的消息内容
     /// </summary>
-    [ObservableProperty] private string triggerMessage="1";
+    [ObservableProperty] private string triggerMessage = "1";
 
     /// <summary>
     /// 触发后:成功返回消息
     /// </summary>
-    [ObservableProperty] private string successResponseMessage="2";
+    [ObservableProperty] private string successResponseMessage = "2";
 
     /// <summary>
     /// 触发后:失败返回消息
     /// </summary>
-    [ObservableProperty] private string failResponseMessage="3";
+    [ObservableProperty] private string failResponseMessage = "3";
 
     /// <summary>
     /// 是否需要本地保存
@@ -90,19 +102,24 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// 是否需要进行转发
     /// </summary>
     [ObservableProperty] private bool transpondNeed;
+
     /// <summary>
     /// 令牌 循环进程任务
     /// </summary>
-    [JsonIgnore] public CancellationTokenSource cts { get; set; }
+    [JsonIgnore]
+    public CancellationTokenSource cts { get; set; }
 
     /// <summary>
     /// 当前Http进程任务
     /// </summary>
-    [JsonIgnore] public Lazy<Task> Task { get; set; }
+    [JsonIgnore]
+    public Lazy<Task> Task { get; set; }
+
     /// <summary>
     /// 用于页面显示什么循环的形式
     /// </summary>
     [JsonIgnore] [ObservableProperty] private string cycText = "循环时间(s)";
+
     /// <summary>
     /// 用于绑定显示,已启动的通讯
     /// </summary>
@@ -123,21 +140,36 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// 转发ModbusTcp站地址
     /// </summary>
     [ObservableProperty] private string forWardingStationAddress = "1";
+
     /// <summary>
     /// 转发ModbusTcp起始地址
     /// </summary>
     [ObservableProperty] private string forWardingStartAddress = "0";
+
     /// <summary>
     /// 转发ModbusTcp长度
     /// </summary>
     [ObservableProperty] private string forWardingLen = "1";
+
     /// <summary>
     /// 转发对象名
     /// </summary>
     [ObservableProperty] private string forwardingName;
 
+    /// <summary>
+    /// 工位名称
+    /// </summary>
+    [ObservableProperty] private string station;
+
+    /// <summary>
+    /// 需要工位日志记录
+    /// </summary>
+    [ObservableProperty] private bool needStationLog;
     //维护一个集合,用于判断动态嵌入HTTP请求不会循环嵌套;
-    [JsonIgnore] public List<string> UseHttpList { get; set; } 
+    [JsonIgnore] public List<string> UseHttpList { get; set; }
+
+
+
     public override string ToString()
     {
         return string.Join(',',

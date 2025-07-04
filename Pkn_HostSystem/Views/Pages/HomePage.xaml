@@ -13,7 +13,7 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       mc:Ignorable="d"
       SizeChanged="HomePage_OnSizeChanged"
-    
+
       Title="HomePage">
     <Page.Resources>
 
@@ -384,6 +384,128 @@
                 <EasingThicknessKeyFrame KeyTime="00:00:00.3000000" Value="0,0,0,0" />
             </ThicknessAnimationUsingKeyFrames>
         </Storyboard>
+        <!-- 展开动画 -->
+        <!-- 收缩动画 -->
+        <Storyboard x:Key="JDBC_Open_Storyboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.255" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.833" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid3"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.4347826" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid3"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.33" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0.66" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>7,7,7,7</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>6,6,6,6</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>4,4,4,4</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>2,2,2,2</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="JDBC_Close_Storyboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.833" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid3"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid3"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.66" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.2" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="JDBC_Border"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>2</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>4</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>6</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>7</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
     </Page.Resources>
     <Grid Name="HomeGrid">
         <Grid Grid.Row="0" Height="674.5" VerticalAlignment="Top">
@@ -462,6 +584,7 @@
                                         CellEditEnding="SetConnectDg_OnCellEditEnding">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Header="连接名" Width="*" Binding="{Binding Name  }" />
+
                                             <DataGridTemplateColumn Width="0.8*" Header="配置">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
@@ -485,6 +608,7 @@
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
+
                                             <DataGridTemplateColumn Header="启动" Width="*">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
@@ -772,7 +896,7 @@
                                                   DropDownOpened="SelectPppOrderDown"
                                                   ItemsSource="{Binding HomePageModel.PppOrderLists}"
                                                   DisplayMemberPath="scheduleCode" />
-                                        <Button Content="选择" Margin="10,0" Click="SelectPppOrderButton"/>
+                                        <Button Content="选择" Margin="10,0" Click="SelectPppOrderButton" />
                                     </WrapPanel>
                                     <WrapPanel Margin="0,10,0,0">
                                         <TextBlock Text="HTTP请求:" Margin="10" />
@@ -839,7 +963,7 @@
                             CornerRadius="10"
                             Visibility="Collapsed"
                             Opacity="0"
-                            Height="102" BorderThickness="0" RenderTransformOrigin="0,0.3">
+                            Height="102" BorderThickness="0" RenderTransformOrigin="0,0.26">
                             <Border.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
@@ -884,8 +1008,157 @@
                             </Grid>
                         </Border>
                     </Grid>
+                    <Grid x:Name="grid4" Margin="20,5,20,0" RenderTransformOrigin="0.5,0.5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0*" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Grid.LayoutTransform>
+                        <Grid.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Grid.RenderTransform>
+                        <ui:CardAction
+                            Name="JDBC_CardAction"
+                            IsChevronVisible="False"
+                            VerticalAlignment="Stretch" Click="JDBC_OnClick" Grid.ColumnSpan="2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <ui:SymbolIcon Symbol="Database24" FontSize="40" />
+                                <ui:TextBlock Grid.Column="1" Text="数据库" VerticalAlignment="Center" />
+                            </Grid>
+                        </ui:CardAction>
+                        <Border
+                            x:Name="JDBC_Border"
+                            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                            CornerRadius="10"
+                            Visibility="Collapsed"
+                            Opacity="0"
+                            Height="102"
+                            BorderThickness="0"
+                            RenderTransformOrigin="0.93,0.26"
+                            Grid.ColumnSpan="2"
+                            Margin="0,4,0,4">
+                            <Border.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </Border.RenderTransform>
+                            <Grid x:Name="grid3" RenderTransformOrigin="0.5,0.5">
+                                <Grid.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </Grid.LayoutTransform>
+                                <Grid.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </Grid.RenderTransform>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.3*" />
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="0.3*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="数据库地址:" Margin="0,30,0,0"
+                                                       HorizontalAlignment="Center" TextAlignment="Center" />
+                                            <TextBox Grid.Column="1" Text="{Binding HomePageModel.ShowJdbcUrl}"
+                                                     Margin="0,30,0,0" IsReadOnly="True" Style="{x:Null}"
+                                                     Background="{x:Null}" BorderThickness="0"
+                                                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                        </Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="0.3*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="Server" Margin="0,30,0,0"
+                                                       HorizontalAlignment="Center" TextAlignment="Center" />
+                                            <TextBox Grid.Column="1" MinWidth="250" Margin="20"
+                                                     HorizontalAlignment="Left"
+                                                     Text="{Binding HomePageModel.JdbcUrl.Server}" />
+                                        </Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="0.3*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="DataBase" Margin="0,10,0,0"
+                                                       HorizontalAlignment="Center" TextAlignment="Center" />
+                                            <TextBox Grid.Column="1" MinWidth="250" Margin="20,10"
+                                                     HorizontalAlignment="Left"
+                                                     Text="{Binding HomePageModel.JdbcUrl.DataBase}" />
+                                        </Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="0.3*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="Uid" Margin="0,10,0,0"
+                                                       HorizontalAlignment="Center" TextAlignment="Center" />
+                                            <TextBox Grid.Column="1" MinWidth="250" Margin="20,10"
+                                                     HorizontalAlignment="Left"
+                                                     Text="{Binding HomePageModel.JdbcUrl.Uid}" />
+                                        </Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="0.3*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="Pwd" Margin="0,10,0,0"
+                                                       HorizontalAlignment="Center" TextAlignment="Center" />
+                                            <ui:PasswordBox
+                                                Name="PasswordBox"
+                                                Icon="{ui:SymbolIcon Password24}"
+                                                PlaceholderEnabled="True"
+                                                PlaceholderText="Password..." 
+                                                Grid.Column="1" MinWidth="250" Margin="20,10"
+                                                HorizontalAlignment="Left" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
+                                        <Button Content="设置" Width="100" Margin="15,0"
+                                                Command="{Binding SetJDBCCommand}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
+                                        <Button Content="收起" Width="100" Margin="15,0" Click="JDBC_Close_OnClick" />
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
                 </UniformGrid>
-
             </Grid>
             <Grid Grid.Row="0" Grid.Column="1" Cursor="Arrow">
                 <Grid>
@@ -918,9 +1191,8 @@
                                 Margin="10,0,0,0" />
                     </WrapPanel>
                 </Grid>
-
             </Grid>
-            <ui:SnackbarPresenter Grid.Column="0" Grid.Row="0"  Grid.ColumnSpan="2" Name="SnackbarPresenter" />
+            <ui:SnackbarPresenter Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Name="SnackbarPresenter" />
         </Grid>
     </Grid>
 </Page>

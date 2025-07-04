@@ -42,8 +42,8 @@ namespace Pkn_HostSystem.ViewModels.Page
 
             SnackbarService = new SnackbarService();
             Log = new LogBase<ProductiveViewModel>(SnackbarService);
-            GlobalMannager.NetWorkDictionary.Connect().Bind(ProductiveModel.ProducerList).Subscribe();
-            GlobalMannager.NetWorkDictionary.Connect().Bind(ProductiveModel.ConsumerList).Subscribe();
+            GlobalManager.NetWorkDictionary.Connect().Bind(ProductiveModel.ProducerList).Subscribe();
+            GlobalManager.NetWorkDictionary.Connect().Bind(ProductiveModel.ConsumerList).Subscribe();
         }
 
         #region 执行运行
@@ -114,8 +114,8 @@ namespace Pkn_HostSystem.ViewModels.Page
             NetWork netWorkConsumer;
             try
             {
-                netWorkProducer = GlobalMannager.NetWorkDictionary.Lookup(producerNetworkDetailed?.Id).Value;
-                netWorkConsumer = GlobalMannager.NetWorkDictionary.Lookup(consumerNetworkDetailed?.Id).Value;
+                netWorkProducer = GlobalManager.NetWorkDictionary.Lookup(producerNetworkDetailed?.Id).Value;
+                netWorkConsumer = GlobalManager.NetWorkDictionary.Lookup(consumerNetworkDetailed?.Id).Value;
             }
             catch (Exception e)
             {
@@ -183,7 +183,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 
                 try
                 {
-                    netWorkProducer = GlobalMannager.NetWorkDictionary.Lookup(producerNetworkDetailed?.Id).Value;
+                    netWorkProducer = GlobalManager.NetWorkDictionary.Lookup(producerNetworkDetailed?.Id).Value;
                 }
                 catch (Exception e)
                 {
@@ -194,7 +194,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 }
                 try
                 {
-                    netWorkConsumer = GlobalMannager.NetWorkDictionary.Lookup(consumerNetworkDetailed?.Id).Value;
+                    netWorkConsumer = GlobalManager.NetWorkDictionary.Lookup(consumerNetworkDetailed?.Id).Value;
                 }
                 catch (Exception e)
                 {
@@ -372,13 +372,11 @@ namespace Pkn_HostSystem.ViewModels.Page
         #endregion
 
         #region 保存程序
-
         [RelayCommand]
         public void Save()
         {
             AppJsonTool<ProductiveModel>.Save(ProductiveModel);
         }
-
         #endregion
     }
 }
