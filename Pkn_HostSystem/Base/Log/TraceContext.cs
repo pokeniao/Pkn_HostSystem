@@ -7,6 +7,16 @@
         /// </summary>
         private static AsyncLocal<string> _name = new AsyncLocal<string>();
 
+
+        private static AsyncLocal<dynamic?> _param = new AsyncLocal<dynamic?>();
+        public static dynamic? Param
+        {
+            get => _param.Value;
+            set => _param.Value = value;
+        }
+
+
+
         public static string Name
         {
             get => _name.Value ?? "NuLL";

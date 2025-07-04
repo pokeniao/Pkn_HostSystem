@@ -20,10 +20,10 @@ public class AppJsonTool<T> where T : class, new()
     // private static readonly string AppFolder =
     //     Path.Combine(
     //         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-    //         GlobalMannager.AssemblyName // 文件夹名
+    //         GlobalManager.AssemblyName // 文件夹名
     //     );
 
-    private static readonly string SaveFile = Path.Combine(GlobalMannager.AppFolder, "程序缓存");
+    private static readonly string SaveFile = Path.Combine(GlobalManager.AppFolder, "程序缓存");
     private static readonly string FilePath = Path.Combine(SaveFile, typeof(T).Name + ".json");
 
     private static LogBase<AppJsonTool<T>> log = new();

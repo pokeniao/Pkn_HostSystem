@@ -27,9 +27,9 @@ namespace Pkn_HostSystem.Views.Pages
         {
 
 
-            if (System.IO.Directory.Exists(GlobalMannager.AppFolder))
+            if (System.IO.Directory.Exists(GlobalManager.AppFolder))
             {
-                Process.Start("explorer.exe", GlobalMannager.AppFolder);
+                Process.Start("explorer.exe", GlobalManager.AppFolder);
             }
             else
             {

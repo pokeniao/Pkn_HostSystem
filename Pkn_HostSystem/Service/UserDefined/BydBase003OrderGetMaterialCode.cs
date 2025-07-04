@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Pojo;
+using Pkn_HostSystem.Service.UserDefined.Interface;
 using Pkn_HostSystem.ViewModels.Page;
 
 namespace Pkn_HostSystem.Service.UserDefined
@@ -8,7 +9,7 @@ namespace Pkn_HostSystem.Service.UserDefined
     public class PppBase003OrderGetMaterialCode :IUserDefined
     {
         public PppOrderList PppOrderList { get; set; }
-        public LogBase<PppBase003OrderGetMaterialCode> Log = new LogBase<PppBase003OrderGetMaterialCode>();
+        public LogBase<PppBase003OrderGetMaterialCode> Log = new();
 
         public PppBase003OrderGetMaterialCode()
         {

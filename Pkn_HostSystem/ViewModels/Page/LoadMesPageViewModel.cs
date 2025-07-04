@@ -36,16 +36,15 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         LoadMesPageModel = AppJsonTool<LoadMesPageModel>.Load();
         if (LoadMesPageModel == null)
         {
-            GlobalMannager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
+            GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
             LoadMesPageModel = new LoadMesPageModel()
             {
-                MesPojoList = [],
-                ReturnMessageList = (ObservableCollection<string>)value
+                MesPojoList = [], ReturnMessageList = (ObservableCollection<string>)value
             };
         }
         else
         {
-            GlobalMannager.GlobalDictionary["MesLogListBox"] = LoadMesPageModel.ReturnMessageList;
+            GlobalManager.GlobalDictionary["MesLogListBox"] = LoadMesPageModel.ReturnMessageList;
         }
 
         SnackbarService = new SnackbarService();
@@ -134,7 +133,18 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         item.cts = new CancellationTokenSource();
 
+        //保存堆栈信息
         TraceContext.Name = item.Name;
+        if (item.NeedStationLog)
+        {
+
+
+         
+        }
+
+  
+
+
         //进行一次数据组装
         (bool succeed, string? message) = await ExecutionCondition(item);
         if (succeed)
@@ -145,6 +155,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             Log.ErrorAndShowTask($"[{TraceContext.Name}]--手动执行失败,返回: {message}");
         }
+
         //清空
         TraceContext.Name = null;
     }
@@ -226,8 +237,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
     public async Task<(bool succeed, string? message)> ExecutionCondition(LoadMesAddAndUpdateWindowModel model)
     {
-
-
         Log.Info($"[{TraceContext.Name}]--开始执行ExecutionCondition");
         //从MesServer中取出绑定好的item
         LoadMesAddAndUpdateWindowModel item = LoadMesService.SelectByName(model.Name);
@@ -299,7 +308,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         //获得网络名
         string netKey = LoadMesService.getNetKey(forwardingName);
         //获得网络
-        var netWork = GlobalMannager.NetWorkDictionary.Lookup(netKey).Value;
+        var netWork = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
 
         //判断当前转发的通讯是什么类型的
         string networkDetailedNetMethod = netWork.NetworkDetailed.NetMethod;
@@ -348,6 +357,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             item.cts.Cancel();
         }
+
         item.cts = new CancellationTokenSource();
         item.Task = new Lazy<Task>(() => RunTrigger(item));
 
@@ -374,7 +384,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 {
                     if (detailed.Name == modelTriggerConnectName)
                     {
-                        var lookup = GlobalMannager.NetWorkDictionary.Lookup(detailed.Id);
+                        var lookup = GlobalManager.NetWorkDictionary.Lookup(detailed.Id);
                         if (lookup.HasValue == false)
                         {
                             Log.Error($"[{TraceContext.Name}]--无触发通讯对象,请检查通讯对象是否打开");
@@ -436,6 +446,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                     }
                                 }
                             }
+
                             break;
                         case "Socket":
                             break;
@@ -464,7 +475,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         //获取当前通讯对象
         LoadMesAddAndUpdateWindowModel item = LoadMesService.SelectByName(model.Name);
         string key = LoadMesService.getNetKey(item.TriggerConnectName);
-        var netWork = GlobalMannager.NetWorkDictionary.Lookup(key).Value;
+        var netWork = GlobalManager.NetWorkDictionary.Lookup(key).Value;
         //获得ModBase对象
         ModbusBase modbusBase = netWork.ModbusBase;
 
@@ -492,7 +503,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             //获取当前通讯对象
             LoadMesAddAndUpdateWindowModel item = LoadMesService.SelectByName(model.Name);
             string key = LoadMesService.getNetKey(item.TriggerConnectName);
-            var netWork = GlobalMannager.NetWorkDictionary.Lookup(key).Value;
+            var netWork = GlobalManager.NetWorkDictionary.Lookup(key).Value;
             //获得ModBase对象
             ModbusBase modbusBase = netWork.ModbusBase;
             if (succeed)
@@ -552,7 +563,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         string FilePath = Path.Combine(SaveFile, model.Name + lastName + ".csv");
         CsvHelper csvHelper = new CsvHelper(FilePath);
         csvHelper.Load();
-        json = AppJsonTool<object>.TryFormatJson(json,out bool isJson);
+        json = AppJsonTool<object>.TryFormatJson(json, out bool isJson);
         csvHelper.AddRowFromJson(json);
         csvHelper.Save(model.cts.Token);
         Log.Info($"[{TraceContext.Name}] --本地保存{model.Name}{lastName}.csv  成功");
