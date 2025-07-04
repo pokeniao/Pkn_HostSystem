@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Service.LoadMes.Interface;
 
 namespace Pkn_HostSystem.Models.Windows;
 
@@ -168,6 +169,8 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     //维护一个集合,用于判断动态嵌入HTTP请求不会循环嵌套;
     [JsonIgnore] public List<string> UseHttpList { get; set; }
 
+
+    [JsonIgnore] public ILoadMesService LoadMesService { get; set; }
 
 
     public override string ToString()

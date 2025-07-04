@@ -31,7 +31,10 @@ namespace Pkn_HostSystem.Views.Pages
             var rtb = sender as RichTextBox;
             if (rtb == null) return;
 
-            IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
+            IEachStation selectedItem = LogTabControl.SelectedItem as IEachStation;
+            if (selectedItem == null)
+            {return; }
+
             selectedItem.UserLog.richTextBox = rtb;
             rtb.Document = selectedItem.UserLog.flowDocument;
         }
@@ -40,7 +43,9 @@ namespace Pkn_HostSystem.Views.Pages
             var rtb = sender as RichTextBox;
             if (rtb == null) return;
 
-            IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
+            IEachStation selectedItem = LogTabControl.SelectedItem as IEachStation;
+            if (selectedItem == null)
+            { return; }
             selectedItem.DevLog.richTextBox = rtb;
             rtb.Document = selectedItem.DevLog.flowDocument;
         }
@@ -51,6 +56,8 @@ namespace Pkn_HostSystem.Views.Pages
             if (rtb == null) return;
 
             IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
+            if (selectedItem == null)
+            { return; }
             selectedItem.ErrorLog.richTextBox = rtb;
             rtb.Document = selectedItem.ErrorLog.flowDocument;
         }
@@ -69,6 +76,8 @@ namespace Pkn_HostSystem.Views.Pages
         private void ClearLog_OnClick(object sender, RoutedEventArgs e)
         {
             IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
+            if (selectedItem == null)
+            { return; }
             int selectedIndex = TabControl2.SelectedIndex;
             switch (selectedIndex)
             {
@@ -91,6 +100,8 @@ namespace Pkn_HostSystem.Views.Pages
         private void ScrollDown_OnClick(object sender, RoutedEventArgs e)
         {
             IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
+            if (selectedItem == null)
+            { return; }
             int selectedIndex = TabControl2.SelectedIndex;
             switch (selectedIndex)
             {
