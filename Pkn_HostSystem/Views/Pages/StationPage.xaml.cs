@@ -119,31 +119,31 @@ namespace Pkn_HostSystem.Views.Pages
 
         private void ClearLog_OnClick1(object sender, RoutedEventArgs e)
         {
-            ScanQR scanQr = new ScanQR();
-            scanQr.id = new SnowflakeIdGenerator(1, 1).GetId();
-            scanQr.qr_code = "12345";
-            scanQr.orderCode = "123";
-            scanQr.materialCode = "123";
-            scanQr.CT = "12";
-            scanQr.Pass = 'Y';
-
-            int insert = scanQr.insert(scanQr);
-            if (insert != 0)
-            {
-                ViewModel.Log.SuccessAndShow($"添加成功{insert}");
-            }
+            // ScanQR scanQr = new ScanQR();
+            // scanQr.id = new SnowflakeIdGenerator(1, 1).GetId();
+            // scanQr.qr_code = "12345";
+            // scanQr.orderCode = "123";
+            // scanQr.materialCode = "123";
+            // scanQr.CT = "12";
+            // scanQr.Pass = 'Y';
+            //
+            // int insert = scanQr.insert(scanQr);
+            // if (insert != 0)
+            // {
+            //     ViewModel.Log.SuccessAndShow($"添加成功{insert}");
+            // }
 
 
 
             // var value = GlobalManager.StationDictionary.Lookup("生产信息上传").Value as EachStation<Station2>;
-            dynamic value = GlobalManager.StationDictionary.Lookup("扫码过站").Value;
-
-            value.AddItem(new Station1() { CT = "1" });
-            var observableCollection = value.Items[2];
-            observableCollection.合格 = "123";
-            value.Items[2] = observableCollection;
-
-            value.UserLog.InfoToRichTextBox("添加一行");
+            // dynamic value = GlobalManager.StationDictionary.Lookup("扫码过站").Value;
+            //
+            // value.AddItem(new Station1() { CT = "1" });
+            // var observableCollection = value.Items[2];
+            // observableCollection.合格 = "123";
+            // value.Items[2] = observableCollection;
+            //
+            // value.UserLog.InfoToRichTextBox("添加一行");
         }
     }
 }
