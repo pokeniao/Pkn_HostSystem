@@ -9,6 +9,7 @@ using Pkn_HostSystem.Static;
 using RestSharp;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -21,9 +22,12 @@ public class LoadMesService: ILoadMesService
     private LogControl<LoadMesService> Log;
 
 
-    public  LoadMesService(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList)
+    public ILoadMesService _self { get; set; } 
+
+    public  LoadMesService(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList )
     {
         this.mesPojoList = mesPojoList;
+        _self = this;
         GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
         Log = new LogControl<LoadMesService>((ObservableCollection<string>)value);
     }
@@ -52,7 +56,7 @@ public class LoadMesService: ILoadMesService
     /// 循环遍历获取网络ID
     /// </summary>
     /// <returns></returns>
-    public string getNetKey(string ConnectName)
+    public string GetNetKey(string ConnectName)
     {
         var netWorkPoJoes = GlobalManager.NetWorkDictionary.Items.ToList();
         foreach (var netWorkPoJo in netWorkPoJoes)
@@ -76,9 +80,9 @@ public class LoadMesService: ILoadMesService
     {
         Log.Info($"[{TraceContext.Name}]--执行发送一次Http请求");
         //获取当前Name的行数据
-        LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
+        LoadMesAddAndUpdateWindowModel item = _self.SelectByName(Name);
         //得到消息体
-        var (succeed, request) = await PackRequest(item?.Name, cts);
+        var (succeed, request) = await _self.PackRequest(item?.Name, cts);
         if (!succeed)
         {
             Log.Error($"[{TraceContext.Name}]--执行发送HTTP任务,消息体组装失败");
@@ -86,7 +90,7 @@ public class LoadMesService: ILoadMesService
         }
 
         //得到消息体
-        return await SendHttp(item, request, cts);
+        return await _self.SendHttp(item, request, cts);
     }
 
     /// <summary>
@@ -100,9 +104,9 @@ public class LoadMesService: ILoadMesService
     {
         Log.Info($"[{TraceContext.Name}]--执行发送一次Http请求");
         //获取当前Name的行数据
-        LoadMesAddAndUpdateWindowModel item = SelectByName(Name);
+        LoadMesAddAndUpdateWindowModel item = _self.SelectByName(Name);
         //得到消息体
-        return await SendHttp(item, request, cts);
+        return await _self.SendHttp(item, request, cts);
     }
 
     #endregion
@@ -121,12 +125,7 @@ public class LoadMesService: ILoadMesService
     {
         //日志显示发送内容
         Log.InfoToLogList($"[{TraceContext.Name}]--发送内容: \r\n {request}");
-        //进行工位日志记录
-        if (item.NeedStationLog)
-        {
-            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
-                $"[{TraceContext.Name}]--发送内容: \r\n {request}");
-        }
+
 
         //创建连接
         var client = new RestClient(item.HttpPath);
@@ -186,12 +185,7 @@ public class LoadMesService: ILoadMesService
             //判断是否是JSON格式,如果是转成输出
             item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
             Log.InfoToLogList($"[{TraceContext.Name}]--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
-            //进行工位日志记录
-            if (item.NeedStationLog)
-            {
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
-                    $"[{TraceContext.Name}]--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
-            }
+      
 
             return (true, item.Response);
         }
@@ -208,12 +202,7 @@ public class LoadMesService: ILoadMesService
             item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
 
             Log.ErrorToLogList($"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
-            //进行工位日志记录
-            if (item.NeedStationLog)
-            {
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
-                    $"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
-            }
+      
 
             return (false, item.Response);
         }
@@ -230,7 +219,7 @@ public class LoadMesService: ILoadMesService
     public virtual async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
     {
         //获得当前行的数据
-        var loadMesAddAndUpdateWindowModel = SelectByName(httpName);
+        var loadMesAddAndUpdateWindowModel = _self.SelectByName(httpName);
         if (loadMesAddAndUpdateWindowModel == null) return (false, null);
 
         //获得当前行的条件  将   ObservableCollection<> 转成List
@@ -252,7 +241,7 @@ public class LoadMesService: ILoadMesService
                 case "动态获取":
                     //获取动态的值
                     Log.Info($"[{TraceContext.Name}]--正在动态嵌入内容");
-                    var (succeed, value) = await DynMessage(request, itemValue, cts);
+                    var (succeed, value) = await _self.DynMessage(request, itemValue, cts);
                     if (!succeed)
                     {
                         Log.Error($"[{TraceContext.Name}]--执行动态嵌入内容时发送错误:{value}");
@@ -260,15 +249,15 @@ public class LoadMesService: ILoadMesService
                     }
 
                     Log.Info($"[{TraceContext.Name}]--嵌入内容: \r\n{value}");
-                    request = StaticMessage(request, itemKey, value);
+                    request = _self.StaticMessage(request, itemKey, value);
                     break;
                 case "常量":
                     //直接嵌入常量
-                    request = StaticMessage(request, itemKey, itemValue);
+                    request = _self.StaticMessage(request, itemKey, itemValue);
                     break;
                 case "方法集":
-                    var value2 = await MethodMessage(request, itemValue, itemMethodOtherValue);
-                    request = StaticMessage(request, itemKey, value2);
+                    var value2 = await _self.MethodMessage(request, itemValue, itemMethodOtherValue);
+                    request = _self.StaticMessage(request, itemKey, value2);
                     break;
             }
         }
@@ -374,7 +363,7 @@ public class LoadMesService: ILoadMesService
                 {
                     case "读寄存器":
                         Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读寄存器中");
-                        (bool succeed1, string readReg) = await ReadReg(item);
+                        (bool succeed1, string readReg) = await _self.ReadReg(item);
                         if (!succeed1)
                         {
                             Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--读寄存器地址{item.StartAddress}失败");
@@ -384,14 +373,14 @@ public class LoadMesService: ILoadMesService
                         if (isSwitch)
                         {
                             Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}--进行Switch映射");
-                            readReg = SwitchGetMessage(readReg, item);
+                            readReg = _self.SwitchGetMessage(readReg, item);
                         }
 
-                        message = StaticMessage(message, itemKey, readReg);
+                        message = _self.StaticMessage(message, itemKey, readReg);
                         break;
                     case "读线圈":
                         Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读线圈中");
-                        (bool succeed2, string readCoid) = await ReadCoid(item);
+                        (bool succeed2, string readCoid) = await _self.ReadCoid(item);
                         if (!succeed2)
                         {
                             Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--读线圈地址{item.StartAddress}失败");
@@ -401,14 +390,14 @@ public class LoadMesService: ILoadMesService
                         if (isSwitch)
                         {
                             Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}--进行Switch映射");
-                            readCoid = SwitchGetMessage(readCoid, item);
+                            readCoid = _self.SwitchGetMessage(readCoid, item);
                         }
 
-                        message = StaticMessage(message, itemKey, readCoid);
+                        message = _self.StaticMessage(message, itemKey, readCoid);
                         break;
                     case "Socket返回":
                         Log.Info($"[{TraceContext.Name}]--动态嵌入内容:执行Socket消息发送");
-                        (bool succeed, string tcp) = await ReadTcpMessageAsync(item, cts);
+                        (bool succeed, string tcp) = await _self.ReadTcpMessageAsync(item, cts);
                         //判断
                         if (!succeed)
                         {
@@ -420,7 +409,7 @@ public class LoadMesService: ILoadMesService
                         if (isSwitch)
                         {
                             Log.Info($"[{TraceContext.Name}]--Socket需要进行消息转换Switch映射");
-                            tcp = SwitchGetMessage(tcp, item);
+                            tcp = _self.SwitchGetMessage(tcp, item);
                         }
 
                         //进行校验
@@ -429,7 +418,7 @@ public class LoadMesService: ILoadMesService
                             Log.Info($"[{TraceContext.Name}]---Socket需要进行消息校验");
                             foreach (var dynVerify in item.VerifyList)
                             {
-                                if (!VerityMessage(tcp, dynVerify))
+                                if (!_self.VerityMessage(tcp, dynVerify))
                                 {
                                     Log.Error($"[{TraceContext.Name}]--校验到不匹配,撤回发送");
                                     return (false, null);
@@ -440,7 +429,7 @@ public class LoadMesService: ILoadMesService
                         if (ResultTranspond)
                         {
                             Log.Info($"[{TraceContext.Name}]--需要对当前结果进行转发");
-                            (bool succeed3, string message1) = await Transpond(item, tcp);
+                            (bool succeed3, string message1) = await _self.Transpond(item, tcp);
                             if (!succeed3)
                             {
                                 Log.Info($"[{TraceContext.Name}]--转发失败");
@@ -448,18 +437,18 @@ public class LoadMesService: ILoadMesService
                             }
                         }
 
-                        message = StaticMessage(message, itemKey, tcp);
+                        message = _self.StaticMessage(message, itemKey, tcp);
                         break;
                     case "读DM寄存器":
                         Log.Info($"[{TraceContext.Name}]--执行读DM寄存器");
-                        string readDm = await KeyenceReadDM(item);
+                        string readDm = await _self.KeyenceReadDM(item);
                         if (isSwitch)
                         {
                             Log.Info($"[{TraceContext.Name}]--读DM寄存器需要进行消息转换Switch映射");
-                            readDm = SwitchGetMessage(readDm, item);
+                            readDm = _self.SwitchGetMessage(readDm, item);
                         }
 
-                        message = StaticMessage(message, itemKey, readDm);
+                        message = _self.StaticMessage(message, itemKey, readDm);
                         break;
                     case "读R线圈状态":
                         Log.Info($"[{TraceContext.Name}]--执行读R线圈状态");
@@ -472,7 +461,7 @@ public class LoadMesService: ILoadMesService
 
 
                 //执行发送HTTP
-                (bool succeed, string? response) = await RunOne(item.HttpName, cts);
+                (bool succeed, string? response) = await _self.RunOne(item.HttpName, cts);
                 //需要判断返回结果一下是否是Json格式
                 AppJsonTool<Object>.TryFormatJson(response, out bool isJson);
                 JObject jObject;
@@ -495,7 +484,7 @@ public class LoadMesService: ILoadMesService
                     string jToken = jObject.SelectToken(JsonKey).ToString();
 
                     Log.Info($"[{TraceContext.Name}]--解析 {httpObject.JsonKey}:\r\n {jToken}");
-                    message = StaticMessageSon(message, itemKey, httpObject.Name, jToken);
+                    message = _self.StaticMessageSon(message, itemKey, httpObject.Name, jToken);
                 }
             }
             else if (item.GetMessageType == "自定义")
@@ -515,7 +504,7 @@ public class LoadMesService: ILoadMesService
                 if (succeed)
                 {
                     //静态嵌入
-                    message = StaticMessage(message, itemKey, returnValue.ToString());
+                    message = _self.StaticMessage(message, itemKey, returnValue.ToString());
                 }
                 else
                 {
@@ -544,7 +533,7 @@ public class LoadMesService: ILoadMesService
                 //通过名字搜索id
                 string forwardingName = model.TranspondModbusDetailed.ConnectName;
                 //获得网络名
-                string netKey = getNetKey(forwardingName);
+                string netKey = _self.GetNetKey(forwardingName);
                 //获得网络
                 var netWork = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
 
@@ -759,7 +748,7 @@ public class LoadMesService: ILoadMesService
             return null;
         }
 
-        DateTime dateTime = DateTimeDispose(itemMethodOtherValue);
+        DateTime dateTime = _self.DateTimeDispose(itemMethodOtherValue);
         switch (itemValue)
         {
             case "当前时间(yyyy-MM-dd HH:mm:ss)":
@@ -800,7 +789,6 @@ public class LoadMesService: ILoadMesService
         int addIndex = itemMethodOtherValue.IndexOf("+");
 
         DateTime time = DateTime.Now;
-
 
         foreach (var s in strings)
         {
@@ -877,7 +865,6 @@ public class LoadMesService: ILoadMesService
                 }
             }
         }
-
         return time;
     }
 
@@ -967,10 +954,8 @@ public class LoadMesService: ILoadMesService
                     Log.Error($"[{TraceContext.Name}]--执行Tcp服务器消息发送,等待消息返回时发生错误");
                     return (false, response);
                 }
-
                 break;
         }
-
         return (true, response);
     }
 
@@ -989,7 +974,7 @@ public class LoadMesService: ILoadMesService
         var itemConnectName = item.ConnectName;
         var methodName = item.MethodName;
         //获得网络,遍历获取对应的网络
-        var netKey = getNetKey(itemConnectName);
+        var netKey = _self.GetNetKey(itemConnectName);
         if (netKey == null) return (false, null);
         var netWorkPoJo = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
         //获得modbus
@@ -1019,7 +1004,7 @@ public class LoadMesService: ILoadMesService
         var itemConnectName = item.ConnectName;
         var methodName = item.MethodName;
         //获得网络,遍历获取对应的网络
-        var netKey = getNetKey(itemConnectName);
+        var netKey = _self.GetNetKey(itemConnectName);
         if (netKey == null) return (false, null);
         var netWorkPoJo = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
         //获得modbus
@@ -1152,7 +1137,7 @@ public class LoadMesService: ILoadMesService
         var itemConnectName = item.ConnectName;
         var methodName = item.MethodName;
         //获得网络,遍历获取对应的网络
-        var netKey = getNetKey(itemConnectName);
+        var netKey = _self.GetNetKey(itemConnectName);
         if (netKey == null) return null;
         var netWorkPoJo = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
         //获得keyenceHostLinkTool
