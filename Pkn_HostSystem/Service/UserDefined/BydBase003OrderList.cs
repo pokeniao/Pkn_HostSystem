@@ -65,7 +65,9 @@ namespace Pkn_HostSystem.Service.UserDefined
 
 
 
-            LoadMesService loadMesService = new LoadMesService(loadMesPageViewModel.LoadMesPageModel.MesPojoList);
+            LoadMesService loadMesService = new LoadMesService(loadMesPageViewModel.LoadMesPageModel.MesPojoList );
+            
+
             (bool sueeced, string? response) = await loadMesService.RunOne(Name, cts);
 
             //判断返回的是否是JSON

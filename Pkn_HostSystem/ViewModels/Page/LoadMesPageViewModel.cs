@@ -311,7 +311,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         //通过名字搜索id
         string forwardingName = model.ForwardingName;
         //获得网络名
-        string netKey = model.LoadMesService.getNetKey(forwardingName);
+        string netKey = model.LoadMesService.GetNetKey(forwardingName);
         //获得网络
         var netWork = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
 
@@ -480,7 +480,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     {
         //获取当前通讯对象
         LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
-        string key = model.LoadMesService.getNetKey(item.TriggerConnectName);
+        string key = model.LoadMesService.GetNetKey(item.TriggerConnectName);
         var netWork = GlobalManager.NetWorkDictionary.Lookup(key).Value;
         //获得ModBase对象
         ModbusBase modbusBase = netWork.ModbusBase;
@@ -508,7 +508,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             //获取当前通讯对象
             LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
-            string key = model.LoadMesService.getNetKey(item.TriggerConnectName);
+            string key = model.LoadMesService.GetNetKey(item.TriggerConnectName);
             var netWork = GlobalManager.NetWorkDictionary.Lookup(key).Value;
             //获得ModBase对象
             ModbusBase modbusBase = netWork.ModbusBase;

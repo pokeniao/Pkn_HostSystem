@@ -1,6 +1,10 @@
-﻿using Pkn_HostSystem.Models.Core;
+﻿using Azure;
+using Pkn_HostSystem.Base.Enum;
+using Pkn_HostSystem.Base.Log;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Service.LoadMes.Interface;
+using Pkn_HostSystem.Static;
 using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.Service.LoadMes.Decorator
@@ -16,7 +20,14 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
         public Station1LoadMesServiceDecorator(ILoadMesService loadMesService ) 
         {
             _loadMesService = loadMesService;
+            
+            if (loadMesService is LoadMesService concrete)
+            {
+                concrete._self = this;
+            }
         }
+
+
 
         //对需要装饰的方法进行重写,其他方法不需要重写
 
@@ -25,9 +36,9 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return _loadMesService.SelectByName(Name);
         }
 
-        public string getNetKey(string ConnectName)
+        public string GetNetKey(string ConnectName)
         {
-            return _loadMesService.getNetKey(ConnectName);
+            return _loadMesService.GetNetKey(ConnectName);
         }
 
         public async Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts)
@@ -42,7 +53,36 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
 
         public async Task<(bool succeed, string? response)> SendHttp(LoadMesAddAndUpdateWindowModel item, string request, CancellationTokenSource cts)
         {
-            return await _loadMesService.SendHttp(item, request, cts);
+            //进行工位日志记录
+            if (item.NeedStationLog)
+            {
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
+                    $"[{TraceContext.Name}]--发送内容: \r\n {request}");
+            }
+
+            (bool succeed, string? response)  = await _loadMesService.SendHttp(item, request, cts);
+
+            if (succeed)
+            {
+                //进行工位日志记录
+                if (item.NeedStationLog)
+                {
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
+                        $"[{TraceContext.Name}]--返回消息--成功--消息体:\r\n{item.Response}");
+                }
+            }
+            else
+            {
+                //进行工位日志记录
+                if (item.NeedStationLog)
+                {
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
+                        $"[{TraceContext.Name}]--返回消息--失败--消息体:\r\n{item.Response}");
+                }
+            }
+
+          
+            return ( succeed, response);
         }
 
         public async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
