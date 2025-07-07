@@ -152,6 +152,8 @@ namespace Pkn_HostSystem
         {
             // SettingsPageViewModel viewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
             // viewModel.Save();
+            //通知 log4net 停止所有日志写入 ,避免程序关闭太快导致缓冲区未刷新
+            log4net.LogManager.Shutdown();
             _mutex.Dispose();
             base.OnExit(e);
         }
