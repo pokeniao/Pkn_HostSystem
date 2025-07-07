@@ -64,44 +64,54 @@ namespace Pkn_HostSystem.Service.Stations
         /// 主入口
         /// </summary>
         /// <returns></returns>
-        public async Task<(bool Succeed, object Return)> Main(string station,CancellationTokenSource cts)
+        public async Task<(bool Succeed, object Return)> Main(Object Param ,CancellationTokenSource cts)
         {
-            var eachStation = GlobalManager.StationDictionary.Lookup(station).Value as EachStation<Station1>;
+            var eachStation = TraceContext.Param;
             step++;
-           
 
-            switch (step)
+            try
             {
-                case 1:
-                    start = DateTime.Now;
-                    //解析JSON
-                    JObject jObject = JObject.Parse(TraceContext.Param?.ToString());
-                    Station1 station1 = new Station1();
-                    station1.工单编码 = jObject["orderCode"].ToString();
-                    station1.排程编码 = jObject["scheduleCode"].ToString();
-                    station1.条码 = jObject["snNumber"].ToString();
-                    eachStation.AddItem(station1);
-                    curIndex = eachStation.Items.Count;
-                    break;
-                case 2:
-                    Station1 eachStationItem = eachStation.Items[curIndex-1];
-                    TimeSpan t = DateTime.Now - start;
-                    eachStationItem.CT = t.Seconds.ToString();
-                    //解析JSON
-                    JObject jObject2 = JObject.Parse(TraceContext.Param?.ToString());
-                    string success = jObject2["success"].ToString();
-                    string fail = jObject2["fail"].ToString();
-                    string code = jObject2["code"].ToString();
-                    if (success == "true" && fail =="false" && code == "000000")
-                    {
-                        eachStationItem.合格 = "Y";
-                    }
-                    else
-                    {
-                        eachStationItem.合格 = "N";
-                    }
-                    step = 0;
-                    break;
+                switch (step)
+                {
+                    case 1:
+                        start = DateTime.Now;
+                        //解析JSON
+                        JObject jObject = JObject.Parse(Param.ToString());
+                        Station1 station1 = new Station1();
+                        station1.工单编码 = jObject["workOrderNumber"]?.ToString();
+                        station1.排程编码 = jObject["scheduleNumber"]?.ToString();
+                        station1.条码 = jObject["snNumber"]?.ToString();
+                        eachStation.AddItem(station1);
+                        curIndex = eachStation.Items.Count;
+                        break;
+                    case 2:
+                        Station1 eachStationItem = eachStation.Items[curIndex-1];
+                        TimeSpan t = DateTime.Now - start;
+                        eachStationItem.CT = t.Seconds.ToString();
+                        //解析JSON
+                        JObject jObject2 = JObject.Parse(Param.ToString());
+                        string success = jObject2["success"]?.ToString();
+                        string fail = jObject2["fail"]?.ToString();
+                        string code = jObject2["code"]?.ToString();
+                        if (success == "true" && fail =="false" && code == "000000")
+                        {
+                            eachStationItem.合格 = "Y";
+                        }
+                        else
+                        {
+                            eachStationItem.合格 = "N";
+                        }
+                        step = 0;
+                        break;
+                    default:
+                        step = 0;
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+               
+                throw;
             }
 
             return (false, null);
