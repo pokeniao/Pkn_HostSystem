@@ -6,6 +6,6 @@
         /// 主入口
         /// </summary>
         /// <returns></returns>
-        Task<(bool Succeed, object Return)> Main(string station, CancellationTokenSource cts);
+        Task<(bool Succeed, object Return)> Main(Object Param , CancellationTokenSource cts);
     }
 }

@@ -38,7 +38,7 @@ namespace Pkn_HostSystem.Service.Stations
         /// 主入口
         /// </summary>
         /// <returns></returns>
-        public async Task<(bool Succeed, object Return)> Main(string station, CancellationTokenSource cts)
+        public async Task<(bool Succeed, object Return)> Main(Object Param ,CancellationTokenSource cts)
         {
             return (false, null);
         }
