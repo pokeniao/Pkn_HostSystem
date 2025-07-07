@@ -14,6 +14,10 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
         public Station2LoadMesServiceDecorator(ILoadMesService loadMesService) 
         {
             _loadMesService = loadMesService;
+            if (loadMesService is LoadMesService concrete)
+            {
+                concrete._self = this;
+            }
         }
         //对需要装饰的方法进行重写,其他方法不需要重写
         public LoadMesAddAndUpdateWindowModel SelectByName(string Name)
@@ -21,9 +25,9 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return _loadMesService.SelectByName(Name);
         }
 
-        public string getNetKey(string ConnectName)
+        public string GetNetKey(string ConnectName)
         {
-            return _loadMesService.getNetKey(ConnectName);
+            return _loadMesService.GetNetKey(ConnectName);
         }
 
         public async Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts)

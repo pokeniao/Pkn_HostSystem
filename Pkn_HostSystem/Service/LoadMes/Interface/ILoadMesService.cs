@@ -3,9 +3,7 @@ using Pkn_HostSystem.Models.Windows;
 
 namespace Pkn_HostSystem.Service.LoadMes.Interface
 {
-    /// <summary>
-    /// 
-    /// </summary>
+
     public interface ILoadMesService
     {
         /// <summary>
@@ -19,7 +17,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// 循环遍历获取网络ID
         /// </summary>
         /// <returns></returns>
-        string getNetKey(string ConnectName);
+        string GetNetKey(string ConnectName);
 
         /// <summary>
         ///  触发单个请求
