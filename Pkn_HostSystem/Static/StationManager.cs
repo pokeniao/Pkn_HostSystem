@@ -11,7 +11,6 @@ namespace Pkn_HostSystem.Static
     public static class StationManager
     {
 
-
         public static void InitStation()
         {
             GlobalManager.StationDictionary.AddOrUpdate(new EachStation<Station1>() { Header = "扫码过站",CreateDecoratorFunc = (loadMesService) => new Station1LoadMesServiceDecorator(loadMesService ) });
@@ -81,7 +80,6 @@ namespace Pkn_HostSystem.Static
                     break;
             }
         }
-
 
         public static void TraceContextStart(string station)
         {

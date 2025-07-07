@@ -59,7 +59,10 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
                 StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
                     $"[{TraceContext.Name}]--发送内容: \r\n {request}");
             }
+            StationManager.TraceContextStart(item.Station);
+            dynamic eachStation = TraceContext.Param;
 
+            eachStation.Station.Main(request, cts);
             (bool succeed, string? response)  = await _loadMesService.SendHttp(item, request, cts);
 
             if (succeed)
@@ -80,8 +83,8 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
                         $"[{TraceContext.Name}]--返回消息--失败--消息体:\r\n{item.Response}");
                 }
             }
+            eachStation.Station.Main(request, cts);
 
-          
             return ( succeed, response);
         }
 
