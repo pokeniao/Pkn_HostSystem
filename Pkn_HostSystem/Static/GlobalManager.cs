@@ -1,5 +1,6 @@
 ﻿using DynamicData;
 using Pkn_HostSystem.Base;
+using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Core.Interface;
 using Pkn_HostSystem.Models.Page;
@@ -25,9 +26,9 @@ public static class GlobalManager
     public static string AssemblyVersion =
         Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
 
-
     public static string? AssemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
 
+    public static UserLoginEnum CurLoginState { get; set; } 
 
     /// <summary>
     /// 获得当前项目集
@@ -71,6 +72,9 @@ public static class GlobalManager
 
     static GlobalManager()
     {
+        //登入状态
+        CurLoginState = UserLoginEnum.NoLogged;
+
         //向静态字典添加东西
         GlobalDictionary = new ConcurrentDictionary<string, object>();
         GlobalDictionary.TryAdd("LogListBox", new ObservableCollection<string>());

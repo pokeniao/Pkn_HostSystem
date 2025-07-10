@@ -3,11 +3,13 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using Pkn_HostSystem.Base;
+using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
+using Pkn_HostSystem.Views.Windows;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +21,9 @@ namespace Pkn_HostSystem.ViewModels.Page;
 
 public partial class HomePageViewModel : ObservableRecipient
 {
+
+    [ObservableProperty] private UserLoginEnum curLoginState ;
+
     private LogBase<HomePageViewModel> Log;
 
     public HomePageModel HomePageModel { get; set; } = AppJsonTool<HomePageModel>.Load();
@@ -51,6 +56,7 @@ public partial class HomePageViewModel : ObservableRecipient
 
         HomePageModel.CameraList = Ioc.Default.GetRequiredService<VisionPageViewModel>().VisionPageModel.CameraList;
         Log = new LogBase<HomePageViewModel>(SnackbarService);
+
     }
 
     #region 弹窗SnackbarService
@@ -450,6 +456,18 @@ public partial class HomePageViewModel : ObservableRecipient
     }
 
     #endregion
+
+    #region 登入
+
+    [RelayCommand]
+    public void Login()
+    {
+        LoginWindow loginWindow = new LoginWindow();
+        loginWindow.ShowDialog();
+    }
+
+    #endregion
+
 
     [RelayCommand]
     public void Save()

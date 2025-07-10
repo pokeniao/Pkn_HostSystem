@@ -6,6 +6,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
+      xmlns:enums="clr-namespace:Pkn_HostSystem.Base.Enum"
       d:DataContext="{d:DesignInstance page:HomePageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -13,11 +14,11 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       mc:Ignorable="d"
       SizeChanged="HomePage_OnSizeChanged"
-
       Title="HomePage">
     <Page.Resources>
+        <converter:NewRowAllowButtonConverter x:Key="NewRowAllowButtonConverter" />
 
-        <converter:NewRowAllowButtonConverter x:Key="HomePageRunButtonConverter" />
+        <converter:LoginVisibilityConverter x:Key="LoginVisibilityConverter" />
         <!-- 展开动画 -->
         <!-- 收缩动画 -->
         <Storyboard x:Key="OPENcontentPLC">
@@ -507,8 +508,79 @@
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
     </Page.Resources>
+
     <Grid Name="HomeGrid">
-        <Grid Grid.Row="0" Height="674.5" VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" ColumnSpan="2">
+            <ui:CardControl Margin="5">
+                <ui:CardControl.Content>
+                    <Grid>
+                        <Grid Margin="8,0" Visibility="{Binding CurLoginState ,Converter={StaticResource LoginVisibilityConverter} ,ConverterParameter={x:Static enums:LoginPermissionEnum.UnLogIn}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="1" Orientation="Horizontal">
+
+                                <ui:Button Margin="3" Content="登入" Width="100" Appearance="Primary" Command="{Binding LoginCommand}">
+                                    <ui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="ContactCard24" FontSize="25" />
+                                    </ui:Button.Icon>
+                                </ui:Button>
+                            </StackPanel>
+
+                        </Grid>
+                        <Grid Margin="8,0" Visibility="{Binding CurLoginState , Converter={StaticResource LoginVisibilityConverter} , ConverterParameter= {x:Static enums:LoginPermissionEnum.LogIn}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Ellipse
+                                x:Name="Ellipse"
+                                Grid.RowSpan="2"
+                                Width="32"
+                                Height="32"
+                                Margin="6"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Fill="{ui:ThemeResource ControlStrongStrokeColorDefaultBrush}" />
+                            <StackPanel Grid.Row="0"
+                                        Grid.Column="1" Orientation="Horizontal">
+                                <TextBlock
+                                    Margin="12,6,0,0"
+                                    FontWeight="Bold"
+                                    Text="管理员" />
+                                <ui:Button Margin="3" Opacity="0.5 " ToolTipService.ToolTip="切换登入">
+                                    <ui:SymbolIcon Symbol="ChevronDown24" FontSize="10" />
+                                </ui:Button>
+                            </StackPanel>
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="12,0,0,6"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                Text="pokeniao" />
+                        </Grid>
+                    </Grid>
+
+
+                </ui:CardControl.Content>
+            </ui:CardControl>
+        </Grid>
+        <Grid Grid.Row="1" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="*" />
@@ -583,8 +655,7 @@
                                         AutoGenerateColumns="False"
                                         CellEditEnding="SetConnectDg_OnCellEditEnding">
                                         <DataGrid.Columns>
-                                            <DataGridTextColumn Header="连接名" Width="*" Binding="{Binding Name  }" />
-
+                                            <DataGridTextColumn Header="连接名" Width="*" Binding="{Binding Name}" />
                                             <DataGridTemplateColumn Width="0.8*" Header="配置">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
@@ -594,7 +665,7 @@
                                                                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }">
                                                                 <Button.IsEnabled>
                                                                     <MultiBinding
-                                                                        Converter="{StaticResource HomePageRunButtonConverter}">
+                                                                        Converter="{StaticResource NewRowAllowButtonConverter}">
                                                                         <!-- 绑定 IsNewItem -->
                                                                         <Binding
                                                                             RelativeSource="{RelativeSource AncestorType=DataGridRow}"
@@ -621,7 +692,7 @@
 
                                                                 <ui:ToggleSwitch.IsEnabled>
                                                                     <MultiBinding
-                                                                        Converter="{StaticResource HomePageRunButtonConverter}">
+                                                                        Converter="{StaticResource NewRowAllowButtonConverter}">
                                                                         <Binding
                                                                             RelativeSource="{RelativeSource AncestorType=DataGridRow}"
                                                                             Path="IsNewItem" />
@@ -643,7 +714,7 @@
                                                                 CommandParameter="{Binding  RelativeSource={RelativeSource AncestorType=Page} }">
                                                                 <CheckBox.IsEnabled>
                                                                     <MultiBinding
-                                                                        Converter="{StaticResource HomePageRunButtonConverter}">
+                                                                        Converter="{StaticResource NewRowAllowButtonConverter}">
                                                                         <Binding
                                                                             RelativeSource="{RelativeSource AncestorType=DataGridRow}"
                                                                             Path="IsNewItem" />
@@ -1095,7 +1166,7 @@
                                             <TextBox Grid.Column="1" Text="{Binding HomePageModel.ShowJdbcUrl}"
                                                      Margin="0,30,0,0" IsReadOnly="True" Style="{x:Null}"
                                                      Background="{x:Null}" BorderThickness="0"
-                                                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                     Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
                                         </Grid>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -1141,7 +1212,7 @@
                                                 Name="PasswordBox"
                                                 Icon="{ui:SymbolIcon Password24}"
                                                 PlaceholderEnabled="True"
-                                                PlaceholderText="Password..." 
+                                                PlaceholderText="Password..."
                                                 Grid.Column="1" MinWidth="250" Margin="20,10"
                                                 HorizontalAlignment="Left" />
                                         </Grid>

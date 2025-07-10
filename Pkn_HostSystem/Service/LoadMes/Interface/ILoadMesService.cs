@@ -1,4 +1,5 @@
-﻿using Pkn_HostSystem.Models.Core;
+﻿using Pkn_HostSystem.Base.Log;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 
 namespace Pkn_HostSystem.Service.LoadMes.Interface
@@ -6,6 +7,9 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
 
     public interface ILoadMesService
     {
+
+        public LogControl<LoadMesService> Log { get; set; }
+
         /// <summary>
         /// 循环查找当前行是否存在
         /// </summary>
