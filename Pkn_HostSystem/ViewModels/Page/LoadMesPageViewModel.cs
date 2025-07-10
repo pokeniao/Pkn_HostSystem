@@ -239,7 +239,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     #endregion
 
     #region 触发和循环共同的代码
-
     public async Task<(bool succeed, string? message)> ExecutionCondition(LoadMesAddAndUpdateWindowModel model)
     {
         Log.Info($"[{TraceContext.Name}]--开始执行触发和循环共同的代码");
@@ -286,7 +285,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 LocalSave(model, response, "-response");
             }
         }
-
         //判断一下是否需要转发
         if (model.TranspondNeed)
         {

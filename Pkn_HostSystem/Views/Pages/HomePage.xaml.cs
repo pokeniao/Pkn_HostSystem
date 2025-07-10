@@ -311,11 +311,8 @@ namespace Pkn_HostSystem.Views.Pages
         /// <exception cref="NotImplementedException"></exception>
         private void HomePage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            LogListBorder.MaxHeight = e.NewSize.Height - 100;
-            LogListBox.Height = e.NewSize.Height - 100;
+            LogListBorder.MaxHeight = e.NewSize.Height - 150;
+            LogListBox.Height = e.NewSize.Height - 150;
         }
-
-
-
     }
 }

@@ -40,6 +40,7 @@ namespace Pkn_HostSystem
             // // Loaded += (_, _) => RootNavigation.Navigate(typeof(HomePage));
             Loaded += (_, _) =>
             {
+                //路由到Ioc的实例化对象
                 var navigation = Ioc.Default.GetRequiredService<INavigationService>();
                 navigation.SetNavigationControl(RootNavigation);
 

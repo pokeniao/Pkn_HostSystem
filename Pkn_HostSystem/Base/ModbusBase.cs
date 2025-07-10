@@ -31,7 +31,15 @@ namespace Pkn_HostSystem.Base
 
         private readonly object _lock = new object();
 
+        /// <summary>
+        /// 通知任务事件
+        /// </summary>
         private TaskCompletionSource<bool> _connectTcs = new TaskCompletionSource<bool>();
+        /// <summary>
+        /// 避免并发访问
+        /// </summary>
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
 
 
         #region 判断是否连接上
@@ -302,6 +310,8 @@ namespace Pkn_HostSystem.Base
                 throw new TimeoutException("ReadCoils_01 连接建立超时");
             }
 
+            //SemaphoreSlim 线程流量控制
+            await _semaphore.WaitAsync();
             try
             {
                 return await modbusMaster.ReadCoilsAsync(slaveAddress, startAddress, ReadCount);
@@ -310,18 +320,21 @@ namespace Pkn_HostSystem.Base
             {
                 throw e;
             }
+            finally
+            {
+                _semaphore.Release();
+            }
+
         }
         #endregion
 
         #region 02读输入状态
-
         /// <summary>
         /// 02读输入状态
         /// </summary>
         /// <param name="slaveAddress">站地址</param>
         /// <param name="startAddress">起始地址</param>
         /// <param name="ReadCount">数量</param>
-        /// <returns></returns>
         public async Task<bool[]> ReadInputs_02(byte slaveAddress, ushort startAddress, ushort ReadCount)
         {
             // 等待连接真正建立好，最多等3秒
@@ -332,7 +345,8 @@ namespace Pkn_HostSystem.Base
             {
                 throw new TimeoutException("ReadInputs_02 连接建立超时");
             }
-
+            //SemaphoreSlim 线程流量控制
+            await _semaphore.WaitAsync();
             try
             {
                 return await modbusMaster.ReadInputsAsync(slaveAddress, startAddress, ReadCount);
@@ -341,8 +355,11 @@ namespace Pkn_HostSystem.Base
             {
                 throw e;
             }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
-
         #endregion
 
         #region 03读保存寄存器
@@ -364,6 +381,8 @@ namespace Pkn_HostSystem.Base
             {
                 throw new TimeoutException("ReadHoldingRegisters_03 连接建立超时");
             }
+            //SemaphoreSlim 线程流量控制
+            await _semaphore.WaitAsync();
             try
             {
                 return await modbusMaster.ReadHoldingRegistersAsync(slaveAddress, startAddress, ReadCount);
@@ -372,8 +391,11 @@ namespace Pkn_HostSystem.Base
             {
                 throw e;
             }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
-
         #endregion
 
         #region 04读取输入寄存器
@@ -394,6 +416,8 @@ namespace Pkn_HostSystem.Base
             {
                 throw new TimeoutException("ReadInputRegisters_04 连接建立超时");
             }
+            //SemaphoreSlim 线程流量控制
+            await _semaphore.WaitAsync();
             try
             {
                 return await modbusMaster.ReadInputRegistersAsync(slaveAddress, startAddress, ReadCount);
@@ -401,6 +425,10 @@ namespace Pkn_HostSystem.Base
             catch (Exception e)
             {
                 throw e;
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
         #endregion
@@ -423,7 +451,8 @@ namespace Pkn_HostSystem.Base
             {
                 throw new TimeoutException("WriteCoil_05 连接建立超时");
             }
-
+            //SemaphoreSlim 线程流量控制
+            await _semaphore.WaitAsync();
             try
             {
                 await modbusMaster.WriteSingleCoilAsync(slaveAddress, coilAddress, value);
@@ -431,6 +460,10 @@ namespace Pkn_HostSystem.Base
             catch (Exception e)
             {
                 throw e;
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
@@ -455,7 +488,8 @@ namespace Pkn_HostSystem.Base
             {
                 throw new TimeoutException("WriteRegister_06 连接建立超时");
             }
-
+            //SemaphoreSlim 线程流量控制
+            await _semaphore.WaitAsync();
             try
             {
                 await modbusMaster.WriteSingleRegisterAsync(slaveAddress, registerAddress, value);
@@ -463,6 +497,10 @@ namespace Pkn_HostSystem.Base
             catch (Exception e)
             {
                 throw e;
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
@@ -487,6 +525,8 @@ namespace Pkn_HostSystem.Base
             {
                 throw new TimeoutException("WriteCoils_0F 连接建立超时");
             }
+            //SemaphoreSlim 线程流量控制
+            await _semaphore.WaitAsync();
             try
             {
                 await modbusMaster.WriteMultipleCoilsAsync(slaveAddress, startAddress, values);
@@ -494,6 +534,10 @@ namespace Pkn_HostSystem.Base
             catch (Exception e)
             {
                 throw e;
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
@@ -517,7 +561,8 @@ namespace Pkn_HostSystem.Base
             {
                 throw new TimeoutException("WriteRegisters_10 连接建立超时");
             }
-
+            //SemaphoreSlim 线程流量控制
+            await _semaphore.WaitAsync();
             try
             {
                 await modbusMaster.WriteMultipleRegistersAsync(slaveAddress, startAddress, values);
@@ -525,6 +570,10 @@ namespace Pkn_HostSystem.Base
             catch (Exception e)
             {
                 throw e;
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
