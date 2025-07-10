@@ -1,10 +1,14 @@
 ﻿using Azure;
+using log4net;
+using Newtonsoft.Json.Linq;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Service.LoadMes.Interface;
 using Pkn_HostSystem.Static;
+using RestSharp;
 using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.Service.LoadMes.Decorator
@@ -25,11 +29,14 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             {
                 concrete._self = this;
             }
+
+
         }
 
 
 
         //对需要装饰的方法进行重写,其他方法不需要重写
+        public LogControl<LoadMesService> Log { get; set; }
 
         public LoadMesAddAndUpdateWindowModel SelectByName(string Name)
         {
@@ -63,29 +70,118 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             dynamic eachStation = TraceContext.Param;
 
             eachStation.Station.Main(request, cts);
-            (bool succeed, string? response)  = await _loadMesService.SendHttp(item, request, cts);
+            //日志显示发送内容
+            _loadMesService.Log.InfoToLogList($"[{TraceContext.Name}]--发送内容: \r\n {request}");
 
-            if (succeed)
+
+            //创建连接
+            var client = new RestClient(item.HttpPath);
+            RestRequest requestBody;
+            //创建请求
+            switch (item.Ajax)
             {
+                case "POST":
+                    requestBody = new RestRequest(item.Api, Method.Post);
+                    break;
+                case "GET":
+                    requestBody = new RestRequest(item.Api, Method.Get);
+                    break;
+                case "DELETE":
+                    requestBody = new RestRequest(item.Api, Method.Delete);
+                    break;
+                case "PUT":
+                    requestBody = new RestRequest(item.Api, Method.Put);
+                    break;
+                default:
+                    requestBody = new RestRequest();
+                    break;
+            }
+
+            //添加请求头
+            foreach (var header in item.HttpHeaders)
+            {
+                requestBody.AddHeader(header.Key, header.Value);
+            }
+
+            //添加请求体
+            switch (item.RequestMethod)
+            {
+                case "JSON":
+                    //会自动设置 Content-Type: application/json，并把内容当作 JSON 处理。
+                    requestBody.AddStringBody(request, DataFormat.Json);
+                    break;
+                case "XML":
+                    //表示数据格式是 XML。
+                    requestBody.AddStringBody(request, DataFormat.Xml);
+                    break;
+                case "TEXT":
+                    //一般用于你想自己完全控制请求内容或用于 GET 请求等不带 body 的请求。
+                    requestBody.AddStringBody(request, DataFormat.None);
+                    break;
+                default:
+                    requestBody.AddStringBody(request, DataFormat.None);
+                    break;
+            }
+
+            //发送请求
+            RestResponse response = await client.ExecuteAsync(requestBody, cts.Token);
+            //判断
+            if (response.IsSuccessStatusCode)
+            {
+                item.Response = response.Content;
+                //判断是否是JSON格式,如果是转成输出
+                item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
+                _loadMesService.Log.InfoToLogList($"[{TraceContext.Name}]--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
                 //进行工位日志记录
                 if (item.NeedStationLog)
                 {
                     StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
                         $"[{TraceContext.Name}]--返回消息--成功--消息体:\r\n{item.Response}");
                 }
+                eachStation.Station.Main(request, cts);
+                return (true, item.Response);
             }
             else
             {
+                //尝试从错误消息中获取,获取不到就从消息内容中获取
+                item.Response = response.ErrorMessage;
+                if (item.Response == null)
+                {
+                    item.Response = response.Content;
+                }
+
+                //判断是否是JSON格式,如果是转成输出
+                item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
+
+
+                //拦截工位错误
+                JObject jObject = JObject.Parse(item.Response);
+                string? s = jObject["data"]?.ToString();
+                if (s == "Post接口请求接口http://hf-mes-fdkj2.ppp.com/api/mes-opm/snChangeFromMesOpenPlatform/snStageChange发生错误:I/O error on POST request for \"http://hf-mes-fdkj2.ppp.com/api/mes-opm/snChangeFromMesOpenPlatform/snStageChange\": Connection reset; nested exception is java.net.SocketException: Connection reset")
+                {
+                    _loadMesService.Log.InfoToLogList($"[{TraceContext.Name}]--返回消息--成功(拦截)--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+                    //进行工位日志记录
+                    if (item.NeedStationLog)
+                    {
+                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
+                            $"[{TraceContext.Name}]--返回消息--成功(拦截)--消息体:\r\n{item.Response}");
+                    }
+                    eachStation.Station.Main(request, cts);
+                    return (true, item.Response);
+                }
+
+                
+                _loadMesService.Log.ErrorToLogList($"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
                 //进行工位日志记录
                 if (item.NeedStationLog)
                 {
                     StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
                         $"[{TraceContext.Name}]--返回消息--失败--消息体:\r\n{item.Response}");
                 }
+                eachStation.Station.Main(request, cts);
+                return (false, item.Response);
             }
-            eachStation.Station.Main(request, cts);
 
-            return ( succeed, response);
         }
 
         public async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)

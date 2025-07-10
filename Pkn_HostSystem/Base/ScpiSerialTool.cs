@@ -15,19 +15,56 @@ namespace Pkn_HostSystem.Base
         /// 判断是否打开
         /// </summary>
         public bool IsOpen => serialPort?.IsOpen ?? false;
+        
+
         private TaskCompletionSource<bool> _connectTcs = new TaskCompletionSource<bool>();
 
         private LogBase<ScpiSerialTool> Log =new LogBase<ScpiSerialTool>();
+
+
+        /// <summary>
+        /// 获取COM端口
+        /// </summary>
+        public static List<string> GetCOM()
+        {
+            return SerialPort.GetPortNames().ToList();
+        }
+
+        /// <summary>
+        /// 获取波特率
+        /// </summary>
+        public static List<string> BaudRates = ["9600", "14400", "19200"];
+
+        /// <summary>
+        /// 获取数据位
+        /// </summary>
+        public static List<string> DataBits = ["8", "7"];
+
+        /// <summary>
+        /// 获取停止位
+        /// </summary>
+        public static List<StopBits> StopBitsList = System.Enum.GetValues(typeof(StopBits)).Cast<StopBits>().ToList();
+
+        /// <summary>
+        /// 获取校验位
+        /// </summary>
+        public static List<Parity> Parities = System.Enum.GetValues(typeof(Parity)).Cast<Parity>().ToList();
+
+
+        public static Dictionary<string, string> NewLines  = new Dictionary<string, string>() { ["\\r"]="\r", ["\\r\\n"] = "\r\n", ["空"] = "" };
+
+
+
         /// <summary>
         /// 开启串口通讯
         /// </summary>
-        /// <param name="portName"></param>
-        /// <param name="baudRate"></param>
-        /// <param name="parity"></param>
+        /// <param name="portName">COM端口</param>
+        /// <param name="baudRate">波特率</param>
+        /// <param name="parity">校验位</param>
         /// <param name="dataBits"></param>
         /// <param name="stopBits"></param>
         /// <param name="readTimeout"></param>
-        /// <param name="newLine"></param>
+        /// <param name="newLine"> 定义结束换行字符, ReadLine() 和 WriteLine() 时非常重要</param>
         public void Open(string portName, int baudRate = 9600, Parity parity = Parity.None,
             int dataBits = 8, StopBits stopBits = StopBits.One, int readTimeout = 1000, string newLine = "\r")
         {
@@ -146,4 +183,7 @@ namespace Pkn_HostSystem.Base
         }
 
     }
+
+
+    
 }
