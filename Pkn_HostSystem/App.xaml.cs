@@ -8,7 +8,9 @@ using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Service.LoadMes;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
+using Pkn_HostSystem.ViewModels.Windows;
 using Pkn_HostSystem.Views.Pages;
+using Pkn_HostSystem.Views.Pages.LoginWindowPage;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -116,8 +118,16 @@ namespace Pkn_HostSystem
                     .AddSingleton<StationViewModel>()
                     .AddSingleton<TcpToolViewModel>()
                     .AddSingleton<LiveChartsTestViewModel>()
-                    
+                    .AddSingleton<LoginViewModel>()
+                    .AddSingleton<SerialToolViewModel>()
+
                     //页面单例 ,预加载
+                    // .AddSingleton<LoginWindowPage1>()
+                    // .AddSingleton<LoginWindowPage2>()
+                    // .AddSingleton<LoginWindowManagePage>()
+                    // .AddSingleton<LoginWindowRegisterPage>()
+
+                    .AddSingleton<SerialToolPage>()
                     .AddSingleton<StationPage>()
                     .AddSingleton<VisionPage>()
                     .AddSingleton<MesTcpPage>()

@@ -19,7 +19,7 @@ public class LoadMesService: ILoadMesService
 {
     private ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
 
-    private LogControl<LoadMesService> Log;
+    public LogControl<LoadMesService> Log { get; set; }
 
 
     public ILoadMesService _self { get; set; } 

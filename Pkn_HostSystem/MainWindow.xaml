@@ -19,7 +19,7 @@
                  WindowBackdropType="Mica"
                  WindowCornerPreference="Round"
                  SizeChanged="MainWindow_OnSizeChanged"
-               
+
                  Name="Pkn_HostSystemMainWindow">
 
     <!-- ApplicationBackgroundBrush → 全局背景色（深色模式/浅色模式切换）。 -->
@@ -113,8 +113,7 @@
                 <ui:NavigationViewItem
                     Content="队列传递"
                     NavigationCacheMode="Enabled"
-                    TargetPageType="{x:Type pages:ProductivePage}"
-                    >
+                    TargetPageType="{x:Type pages:ProductivePage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="ArrowRepeatAll24" />
                     </ui:NavigationViewItem.Icon>
@@ -123,8 +122,7 @@
                 <ui:NavigationViewItem
                     Content="视觉"
                     NavigationCacheMode="Enabled"
-                    TargetPageType="{x:Type pages:VisionPage}"
-                >
+                    TargetPageType="{x:Type pages:VisionPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Camera28" />
                     </ui:NavigationViewItem.Icon>
@@ -151,7 +149,14 @@
                                 <ui:SymbolIcon Symbol="Wrench16" />
                             </ui:NavigationViewItem.Icon>
                         </ui:NavigationViewItem>
-                       
+                        <ui:NavigationViewItem
+                            Content="串口测试工具"
+                            NavigationCacheMode="Enabled"
+                            TargetPageType="{x:Type pages:SerialToolPage}">
+                            <ui:NavigationViewItem.Icon>
+                                <ui:SymbolIcon Symbol="Wrench16" />
+                            </ui:NavigationViewItem.Icon>
+                        </ui:NavigationViewItem>
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
@@ -165,7 +170,6 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>
-
         </ui:NavigationView>
     </Grid>
 </ui:FluentWindow>

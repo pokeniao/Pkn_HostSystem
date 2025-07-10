@@ -91,7 +91,7 @@ public class AppJsonTool<T> where T : class, new()
     }
 
     /// <summary>
-    /// 尝试转换成JSON
+    /// 尝试格式化JSON输出换行,并且校验是否为JSON格式 ,成功返回格式化后的JSON string字符串 , 否则返回原本JSON
     /// </summary>
     /// <param name="response"></param>
     /// <param name="isJson"></param>
