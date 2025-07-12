@@ -1,4 +1,6 @@
-﻿namespace Pkn_HostSystem.Service.Stations.Interface
+﻿using Pkn_HostSystem.Models.Core;
+
+namespace Pkn_HostSystem.Service.Stations.Interface
 {
     public interface IStation
     {
@@ -6,6 +8,6 @@
         /// 主入口
         /// </summary>
         /// <returns></returns>
-        Task<(bool Succeed, object Return)> Main(Object Param , CancellationTokenSource cts);
+        Task<(bool succeed, string message)> Main(CancellationTokenSource cts);
     }
 }

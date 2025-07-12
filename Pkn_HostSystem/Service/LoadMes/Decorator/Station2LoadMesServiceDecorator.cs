@@ -20,8 +20,6 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
                 concrete._self = this;
             }
         }
-        //对需要装饰的方法进行重写,其他方法不需要重写
-        public LogControl<LoadMesService> Log { get; set; }
 
         public LoadMesAddAndUpdateWindowModel SelectByName(string Name)
         {

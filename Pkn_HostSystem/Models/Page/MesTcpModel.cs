@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
+
 namespace Pkn_HostSystem.Models.Page;
 
 public partial class MesTcpModel : ObservableObject
@@ -56,10 +57,12 @@ public partial class MesTcpModel : ObservableObject
     [ObservableProperty] private ObservableCollection<DynSwitch> switchList;
 
     #region 用于点击后显示页面的bool
+
     /// <summary>
     /// 用于显示设置的页面
     /// </summary>
     private bool veritySet;
+
     [JsonIgnore]
     public bool VeritySet
     {
@@ -69,10 +72,12 @@ public partial class MesTcpModel : ObservableObject
             SetProperty(ref veritySet, value);
         }
     }
+
     /// <summary>
     /// 用于显示设置的页面
     /// </summary>
     private bool httpSet;
+
     [JsonIgnore]
     public bool HttpSet
     {
@@ -86,7 +91,8 @@ public partial class MesTcpModel : ObservableObject
     /// <summary>
     /// 用于显示switch页面
     /// </summary>
-     private bool showSwitchSet;
+    private bool showSwitchSet;
+
     [JsonIgnore]
     public bool ShowSwitchSet
     {
@@ -96,6 +102,7 @@ public partial class MesTcpModel : ObservableObject
             SetProperty(ref showSwitchSet, value);
         }
     }
+
     #endregion
 
     /// <summary>
@@ -113,6 +120,7 @@ public partial class MesTcpModel : ObservableObject
     /// </summary>
     [ObservableProperty] private string transpondSetName;
 
+
     /// <summary>
     /// 用于显示当前转发的连接名
     /// </summary>
@@ -122,7 +130,17 @@ public partial class MesTcpModel : ObservableObject
     /// <summary>
     /// 用于显示当前转发的页面
     /// </summary>
-    [ObservableProperty] private bool transpondSet;
+    private bool transpondSet;
+
+    [JsonIgnore]
+    public bool TranspondSet
+    {
+        get => transpondSet;
+        set
+        {
+            SetProperty(ref transpondSet, value);
+        }
+    }
 
 
     /// <summary>
