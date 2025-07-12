@@ -88,6 +88,7 @@ namespace Pkn_HostSystem
                 if (mesPojo.RunCyc)
                 {
                     TraceContext.Name = mesPojo.Name;
+                    TraceContext.Param = new Dictionary<string, dynamic>();
                     loadMesPageViewModel.IsRun(mesPojo);
                     TraceContext.Name = null;
                 }
