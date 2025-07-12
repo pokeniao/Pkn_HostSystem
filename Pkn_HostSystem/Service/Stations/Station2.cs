@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Service.Stations.Interface;
 
 namespace Pkn_HostSystem.Service.Stations
@@ -38,9 +39,9 @@ namespace Pkn_HostSystem.Service.Stations
         /// 主入口
         /// </summary>
         /// <returns></returns>
-        public async Task<(bool Succeed, object Return)> Main(Object Param ,CancellationTokenSource cts)
+        public async Task<(bool succeed, string message)> Main(CancellationTokenSource cts)
         {
-            return (false, null);
+            return (false,null);
         }
     }
 }

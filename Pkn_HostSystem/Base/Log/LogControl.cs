@@ -8,10 +8,8 @@ using System.Windows.Media;
 
 namespace Pkn_HostSystem.Base.Log
 {
-    public class LogControl<T> : LogBase<T>,ILogControl
+    public class LogControl<T> : LogBase<T>, ILogControl
     {
-
-        
         public ObservableCollection<string>? list { get; set; }
 
         public FlowDocument flowDocument { get; set; }
@@ -32,14 +30,16 @@ namespace Pkn_HostSystem.Base.Log
         {
             this.list = list;
         }
+
         #region 记录日志通过List
+
         public void InfoToLogList(string message)
         {
             LogListAdd(message);
 
             base.Info(message);
-            
         }
+
         public void ErrorToLogList(string message)
         {
             LogListAdd(message);
@@ -56,22 +56,27 @@ namespace Pkn_HostSystem.Base.Log
             });
         }
 
-
         #endregion
 
 
         #region 通过富文本记录日志
 
-        public void InfoToRichTextBox(string message)
+        public void InfoToRichTextBox(string message, bool baseNeed = true)
         {
             LogRichTextBoxAdd("Info", message);
-            base.Info(message);
+            if (baseNeed)
+            {
+                base.Info(message);
+            }
         }
 
-        public void ErrorToRichTextBox(string message)
+        public void ErrorToRichTextBox(string message, bool baseNeed = true)
         {
-           LogRichTextBoxAdd("Error",message);
-            base.Error(message);
+            LogRichTextBoxAdd("Error", message);
+            if (baseNeed)
+            {
+                base.Error(message);
+            }
         }
 
 
@@ -79,7 +84,6 @@ namespace Pkn_HostSystem.Base.Log
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-
                 var paragraph = new Paragraph();
                 var color = type switch
                 {
@@ -89,23 +93,22 @@ namespace Pkn_HostSystem.Base.Log
                     _ => Brushes.Gray
                 };
                 paragraph.Inlines.Add(new Run($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} ") { Foreground = Brushes.Green });
-                paragraph.Inlines.Add(new Run($"[{type}] "){Foreground = color});
+                paragraph.Inlines.Add(new Run($"[{type}] ") { Foreground = color });
                 paragraph.Inlines.Add(new Run(message));
                 //添加到flowDocument中
                 flowDocument.Blocks.Add(paragraph);
 
                 // 限制行数
                 if (flowDocument.Blocks.Count > 300)
-                    flowDocument.Blocks.Remove(flowDocument.Blocks.FirstBlock);//移除到首行
+                    flowDocument.Blocks.Remove(flowDocument.Blocks.FirstBlock); //移除到首行
 
                 //滑动到底部
-                if (richTextBox!= null)
+                if (richTextBox != null)
                 {
                     if (!richTextBox.IsKeyboardFocusWithin)
                     {
                         richTextBox.ScrollToEnd();
                     }
-                  
                 }
             });
         }

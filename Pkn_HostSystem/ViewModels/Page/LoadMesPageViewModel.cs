@@ -151,6 +151,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         //保存堆栈信息
         TraceContext.Name = item.Name;
+        TraceContext.Param = new Dictionary<string, dynamic>();
+
         //进行一次数据组装
         (bool succeed, string? message) = await ExecutionCondition(item);
         if (succeed)
@@ -171,7 +173,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     {
         //1. 选中当前行数据
         LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
+
         TraceContext.Name = item.Name;
+        TraceContext.Param = new Dictionary<string, dynamic>();
         //2. 判断是否循环触发,还是消息触发的方式
         IsRun(item);
         TraceContext.Name = null;

@@ -7,9 +7,6 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
 
     public interface ILoadMesService
     {
-
-        public LogControl<LoadMesService> Log { get; set; }
-
         /// <summary>
         /// 循环查找当前行是否存在
         /// </summary>
