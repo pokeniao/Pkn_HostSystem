@@ -78,8 +78,9 @@ namespace Pkn_HostSystem.Views.Pages
         /// <exception cref="NotImplementedException"></exception>
         private void LoadMesPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            DataGrid.MaxHeight = e.NewSize.Height-100;
-            HttpLogListBoxBorder.MaxHeight = e.NewSize.Height -100;
+            double newHeight = Math.Max(50, e.NewSize.Height - 100); // 50为最小高度
+            DataGrid.Height = newHeight;
+            HttpLogListBoxBorder.Height = newHeight;
         }
     }
 }

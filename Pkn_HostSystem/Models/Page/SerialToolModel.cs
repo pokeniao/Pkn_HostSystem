@@ -18,20 +18,30 @@ namespace Pkn_HostSystem.Models.Page
 
         public Dictionary<string,string> NewLines { get; set; } = ScpiSerialTool.NewLines;
 
+        [ObservableProperty] private string sendMessageText;
 
+        [ObservableProperty] private string acceptMessageText;
+
+        [ObservableProperty] private string connectButton = "连接";
+
+        [ObservableProperty] private string whileReadButton = "循环读取";
 
         [ObservableProperty] private string com;
 
-        [ObservableProperty] private string baudRate;
+        [ObservableProperty] private string baudRate = "9600";
 
-        [ObservableProperty] private string dataBits;
+        [ObservableProperty] private string dataBits = "8";
         
 
-        [ObservableProperty] private StopBits stopBits;
+        [ObservableProperty] private StopBits stopBits =StopBits.One;
 
-        [ObservableProperty] private Parity paritie;
+        [ObservableProperty] private Parity paritie = Parity.None;
 
-        [ObservableProperty] private string newLine;
+        [ObservableProperty] private int timeOut = 1000;
+
+        [ObservableProperty] private string newLine = "\n";
+
+        [ObservableProperty] private int writeTimeOut = 1000;
 
     }
 }

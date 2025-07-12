@@ -44,13 +44,13 @@ namespace Pkn_HostSystem.Static
                 case StationLogEnum.UserLog:
                     if (logInfoAndErrorEnum == InfoAndErrorEnum.Info)
                     {
-                        value.UserLog.InfoToRichTextBox(message);
+                        value.UserLog.InfoToRichTextBox(message,false);
                         value.DevLog.InfoToRichTextBox(message);
                     }
                     else
                     {
-                        value.UserLog.ErrorToRichTextBox(message);
-                        value.ErrorLog.ErrorToRichTextBox(message);
+                        value.UserLog.ErrorToRichTextBox(message,false);
+                        value.ErrorLog.ErrorToRichTextBox(message,false);
                         value.DevLog.ErrorToRichTextBox(message);
                     }
 
@@ -62,7 +62,7 @@ namespace Pkn_HostSystem.Static
                     }
                     else
                     {
-                        value.ErrorLog.ErrorToRichTextBox(message);
+                        value.ErrorLog.ErrorToRichTextBox(message, false);
                         value.DevLog.ErrorToRichTextBox(message);
                     }
 
@@ -74,7 +74,7 @@ namespace Pkn_HostSystem.Static
                     }
                     else
                     {
-                        value.ErrorLog.ErrorToRichTextBox(message);
+                        value.ErrorLog.ErrorToRichTextBox(message, false);
                         value.DevLog.ErrorToRichTextBox(message);
                     }
                     break;
@@ -94,7 +94,7 @@ namespace Pkn_HostSystem.Static
                 return;
             }
             dynamic value = GlobalManager.StationDictionary.Lookup(station).Value;
-            TraceContext.Param = value;
+            TraceContext.UpdateParam("EachStation", value);
         }
     }
 }
