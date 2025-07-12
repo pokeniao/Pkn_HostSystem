@@ -8,19 +8,53 @@
         private static AsyncLocal<string> _name = new AsyncLocal<string>();
 
 
-        private static AsyncLocal<dynamic?> _param = new AsyncLocal<dynamic?>();
-        public static dynamic? Param
+        private static AsyncLocal<Dictionary<string , dynamic>> _param = new AsyncLocal<Dictionary<string, dynamic>>();
+
+
+        // static TraceContext()
+        // {
+        //     Param = new Dictionary<string, dynamic>();
+        // }
+
+        public static Dictionary<string, dynamic>? Param
         {
             get => _param.Value;
             set => _param.Value = value;
         }
 
 
-
         public static string Name
         {
             get => _name.Value ?? "NuLL";
             set => _name.Value = value;
+        }
+
+        public static dynamic GetParam(string key)
+        {
+            bool tryGetValue = TraceContext.Param.TryGetValue(key, out dynamic value);
+
+            if (tryGetValue)
+            {
+                return value;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static void UpdateParam(string key , object value)
+        {
+            bool tryGetValue = TraceContext.Param.TryGetValue(key, out _);
+
+            if (tryGetValue)
+            {
+                TraceContext.Param[key] = value;
+            }
+            else
+            {
+                TraceContext.Param.TryAdd(key, value);
+            }
         }
     }
 }

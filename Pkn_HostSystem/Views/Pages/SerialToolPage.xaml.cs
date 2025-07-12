@@ -31,5 +31,12 @@ namespace Pkn_HostSystem.Views.Pages
             DataContext = ViewModel;
             ViewModel.setSnackbarPresenter(SnackbarPresenter);
         }
+
+        private void SerialToolPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double newHeight = Math.Max(50, e.NewSize.Height / 2 - 100); // 50为最小高度
+            AcceptMessageTextBox.Height = newHeight;
+            SendMessageTextBox.Height = newHeight;
+        }
     }
 }

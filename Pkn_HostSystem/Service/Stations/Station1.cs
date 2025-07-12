@@ -7,7 +7,7 @@ using Pkn_HostSystem.Static;
 
 namespace Pkn_HostSystem.Service.Stations
 {
-    public partial class Station1 :ObservableObject,IStation
+    public partial class Station1 : ObservableObject, IStation
     {
         private string _条码;
 
@@ -29,7 +29,6 @@ namespace Pkn_HostSystem.Service.Stations
             {
                 SetProperty(ref _工单编码, value);
             }
-
         }
 
         private string _排程编码;
@@ -41,12 +40,12 @@ namespace Pkn_HostSystem.Service.Stations
             {
                 SetProperty(ref _排程编码, value);
             }
-
         }
-        
+
         [ObservableProperty] private string cT;
 
         private string _合格;
+
         public string 合格
         {
             get => _合格;
@@ -56,65 +55,74 @@ namespace Pkn_HostSystem.Service.Stations
             }
         }
 
-        private int step = 0;
-        private DateTime start ;
 
-        private int curIndex;
         /// <summary>
         /// 主入口
         /// </summary>
         /// <returns></returns>
-        public async Task<(bool Succeed, object Return)> Main(Object Param ,CancellationTokenSource cts)
+        public async Task<(bool succeed , string message)> Main(CancellationTokenSource cts)
         {
-            var eachStation = TraceContext.Param;
-            step++;
-
             try
             {
+                var eachStation = TraceContext.GetParam("EachStation");
+                int step = TraceContext.GetParam("step");
+
+                if (step == null)
+                {
+                    TraceContext.UpdateParam("step", 1);
+                }
+
                 switch (step)
                 {
                     case 1:
-                        start = DateTime.Now;
+                        TraceContext.UpdateParam("start", DateTime.Now);
                         //解析JSON
-                        JObject jObject = JObject.Parse(Param.ToString());
+                        JObject jObject = JObject.Parse(TraceContext.GetParam("response")); 
                         Station1 station1 = new Station1();
                         station1.工单编码 = jObject["workOrderNumber"]?.ToString();
                         station1.排程编码 = jObject["scheduleNumber"]?.ToString();
                         station1.条码 = jObject["snNumber"]?.ToString();
                         eachStation.AddItem(station1);
-                        curIndex = eachStation.Items.Count;
-                        break;
+                        TraceContext.UpdateParam("curIndex", eachStation.Items.Count);
+                        TraceContext.UpdateParam("step", 2);
+                        return (true,null);
+
                     case 2:
-                        Station1 eachStationItem = eachStation.Items[curIndex-1];
-                        TimeSpan t = DateTime.Now - start;
+                        Station1 eachStationItem = eachStation.Items[TraceContext.GetParam("curIndex") - 1];
+                        TimeSpan t = DateTime.Now - TraceContext.GetParam("start");
                         eachStationItem.CT = t.Seconds.ToString();
                         //解析JSON
-                        JObject jObject2 = JObject.Parse(Param.ToString());
-                        string success = jObject2["success"]?.ToString();
-                        string fail = jObject2["fail"]?.ToString();
-                        string code = jObject2["code"]?.ToString();
-                        if (success == "true" && fail =="false" && code == "000000")
+                        JObject jObject2 = JObject.Parse(TraceContext.GetParam("response"));
+                        string? success = jObject2["success"]?.ToString();
+                        string? fail = jObject2["fail"]?.ToString();
+                        string? code = jObject2["code"]?.ToString();
+                        if (success == "True" && fail == "False" && code == "000000")
                         {
-                            eachStationItem.合格 = "Y";
+                            eachStationItem.合格 = "True";
                         }
                         else
                         {
-                            eachStationItem.合格 = "N";
+                            eachStationItem.合格 = "False";
                         }
-                        step = 0;
-                        break;
+
+                        TraceContext.UpdateParam("step", 0);
+                        return (true,null);
+
+                    case 3:
+                        Station1 eachStationItem2 = eachStation.Items[TraceContext.GetParam("curIndex") - 1];
+                        TimeSpan t2 = DateTime.Now - TraceContext.GetParam("start");
+                        eachStationItem2.CT = t2.Seconds.ToString();
+                        eachStationItem2.合格 = "False";
+                        return (true,null);
                     default:
-                        step = 0;
-                        break;
+                        TraceContext.UpdateParam("step", 0);
+                        return (false, "流程步走到default中");
                 }
             }
             catch (Exception e)
             {
-               
-                throw;
+                return (false , $"扫码工位Main函数中出现异常: {e}");
             }
-
-            return (false, null);
         }
     }
 }
