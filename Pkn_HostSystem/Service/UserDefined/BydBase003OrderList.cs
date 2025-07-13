@@ -73,7 +73,7 @@ namespace Pkn_HostSystem.Service.UserDefined
             //判断返回的是否是JSON
             if (sueeced)
             {
-                AppJsonTool<object>.TryFormatJson(response, out bool isJson);
+                JsonTool<object>.TryFormatJson(response, out bool isJson);
                 if (!isJson)
                 {
                     Log.Info("PppBase003OrderList--请求HTTP返回Json格式错误");

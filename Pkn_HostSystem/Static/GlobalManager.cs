@@ -87,7 +87,7 @@ public static class GlobalManager
         //初始化工位字典
         StationDictionary = new SourceCache<IEachStation, string>(n => n.Header);
         //数据库JDBC路径赋值
-        jdbcPath = AppJsonTool<HomePageModel>.Load()?.RealJdbcUrl;
+        jdbcPath = JsonTool<HomePageModel>.Load()?.RealJdbcUrl;
         //初始化工位信息
         StationManager.InitStation();
     }

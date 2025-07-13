@@ -21,42 +21,46 @@ namespace Pkn_HostSystem.ViewModels.Page;
 
 public partial class HomePageViewModel : ObservableRecipient
 {
-
-    [ObservableProperty] private UserLoginEnum curLoginState ;
+    [ObservableProperty] private UserLoginEnum curLoginState;
 
     private LogBase<HomePageViewModel> Log;
 
-    public HomePageModel HomePageModel { get; set; } = AppJsonTool<HomePageModel>.Load();
+    public HomePageModel HomePageModel { get; set; } = JsonTool<HomePageModel>.Load();
 
-    public ModbusToolModel ModbusToolModel { get; set; } = new();
+    // public ModbusToolModel ModbusToolModel { get; set; } = new();
 
+    public HomeSetConnectModel HomeSetConnectModel { get; set; } = new();
     public SnackbarService SnackbarService { get; set; } = new();
 
-    public List<string> NetMethod { get; set; } = ["ModbusTcp", "ModbusRtu", "Tcp客户端", "Tcp服务器", "基恩士上位链路通讯"];
+    public List<string> NetMethod { get; set; } =
+        ["ModbusTcp", "ModbusRtu", "Tcp客户端", "Tcp服务器", "基恩士上位链路通讯", "串口232/485"];
+
 
     public HomePageViewModel()
     {
         if (HomePageModel == null)
         {
-            //全局的
+            //全局字典中获取到记录日志的ListBox的绑定对象ObservableCollection
             GlobalManager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
             HomePageModel = new HomePageModel()
             {
-                LogListBox = (ObservableCollection<string>)obj,
-                SetConnectDg = new ObservableCollection<NetworkDetailed>()
+                LogListBox = (ObservableCollection<string>)obj, // 将其与HomePageModel中的ObservableCollection关联
+                SetConnectDg = new ObservableCollection<NetworkDetailed>() //创建 设置连接列表的DataGrid 绑定对象
             };
         }
         else
         {
+            //只用将LogListBox数据源将其与HomePageModel中的ObservableCollection关联
             HomePageModel.LogListBox = (ObservableCollection<string>)GlobalManager.GlobalDictionary["LogListBox"];
         }
 
+        //获取到 HTTP的集合 引用类型并且绑定到HomePageModel.HttpLists
         var vm = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
         HomePageModel.HttpLists = vm.LoadMesPageModel.MesPojoList;
 
+        //获取到 连接相机的集合 引用类型并且绑定到HomePageModel.CameraList
         HomePageModel.CameraList = Ioc.Default.GetRequiredService<VisionPageViewModel>().VisionPageModel.CameraList;
         Log = new LogBase<HomePageViewModel>(SnackbarService);
-
     }
 
     #region 弹窗SnackbarService
@@ -96,6 +100,7 @@ public partial class HomePageViewModel : ObservableRecipient
 
     public async Task StartConnect(NetworkDetailed networkDetailed)
     {
+        //1. 获取到当前网络连接的细节
         var key = networkDetailed.Id;
         var Name = networkDetailed.Name;
         Log.Info($"[{TraceContext.Name}]--正在启动.");
@@ -105,33 +110,40 @@ public partial class HomePageViewModel : ObservableRecipient
             return;
         }
 
+        //2. 从静态网络连接池中获取对应的 网络对象类
         var lookup = GlobalManager.NetWorkDictionary.Lookup(key);
+
+        //2.1 能获取到网络对象类
         if (lookup.HasValue)
         {
             var netWorkPoJo = lookup.Value;
             //不存在需要创建
             if (netWorkPoJo.Task == null)
             {
-                var cts = new CancellationTokenSource();
-                netWorkPoJo.CancellationTokenSource = cts;
-                netWorkPoJo.ModbusBase = new ModbusBase();
-                netWorkPoJo.TcpTool = new TcpTool();
-                netWorkPoJo.KeyenceHostLinkTool = new KeyenceHostLinkTool();
-
+                var cts = new CancellationTokenSource(); // 创建新的CTS令牌, 控制流程
+                netWorkPoJo.CancellationTokenSource = cts; //将令牌给入 网络对象类 ,方便获取
+                netWorkPoJo.ModbusBase = new ModbusBase(); //创建Modbus通讯类
+                netWorkPoJo.TcpTool = new TcpTool(); //创建Tcp通讯类
+                netWorkPoJo.KeyenceHostLinkTool = new KeyenceHostLinkTool(); //创建基恩士通讯类
+                netWorkPoJo.ScpiSerialTool = new ScpiSerialTool(); //创建SCPI通讯类
+                //赋值一个单例懒加载的任务,用于连接和重连
                 netWorkPoJo.Task = new Lazy<Task>(() => RunAndReconnection(cts, netWorkPoJo));
 
+                //更新到静态全局网络字典中进行管理
                 GlobalManager.NetWorkDictionary.AddOrUpdate(netWorkPoJo);
             }
 
+            //执行RunAndReconnection用于连接和重连的任务
             await netWorkPoJo.Task.Value;
         }
         else
         {
-            //令牌生成
-            var cts = new CancellationTokenSource();
-            var modbusBase = new ModbusBase();
-            var tcpTool = new TcpTool();
-            var keyenceHostLinkTool = new KeyenceHostLinkTool();
+            //2.2 不能获取到网络对象类
+            var cts = new CancellationTokenSource(); // 创建新的CTS令牌, 控制流程
+            var modbusBase = new ModbusBase(); //创建Modbus通讯类
+            var tcpTool = new TcpTool(); //创建Tcp通讯类
+            var keyenceHostLinkTool = new KeyenceHostLinkTool(); //创建基恩士通讯类
+            ScpiSerialTool scpiSerialTool = new ScpiSerialTool(); //创建SCPI通讯类
             var workPoJo = new NetWork()
             {
                 NetWorkId = key,
@@ -139,12 +151,14 @@ public partial class HomePageViewModel : ObservableRecipient
                 ModbusBase = modbusBase,
                 TcpTool = tcpTool,
                 NetworkDetailed = networkDetailed,
-                KeyenceHostLinkTool = keyenceHostLinkTool
+                KeyenceHostLinkTool = keyenceHostLinkTool,
+                ScpiSerialTool = scpiSerialTool
             };
-            var lazy = new Lazy<Task>(() => RunAndReconnection(cts, workPoJo));
-            //创建网络连接
-            workPoJo.Task = lazy;
+            //赋值一个单例懒加载的任务,用于连接和重连
+            workPoJo.Task = new Lazy<Task>(() => RunAndReconnection(cts, workPoJo));
+            //添加到静态全局网络字典中进行管理
             GlobalManager.NetWorkDictionary.AddOrUpdate(workPoJo);
+            //执行RunAndReconnection用于连接和重连的任务
             await workPoJo.Task.Value;
         }
     }
@@ -168,15 +182,6 @@ public partial class HomePageViewModel : ObservableRecipient
         var cts = netWork.CancellationTokenSource;
 
         cts?.Cancel();
-        //创建新密钥
-        cts = new CancellationTokenSource();
-
-        //更新网络连接
-        netWork.CancellationTokenSource = cts;
-        netWork.Task = new Lazy<Task>(() => Task.Run(() => RunAndReconnection(cts, netWork)));
-
-        //更新网络体
-        GlobalManager.NetWorkDictionary.AddOrUpdate(netWork);
 
         if (netWork.ModbusBase.IsTCPConnect())
         {
@@ -211,6 +216,12 @@ public partial class HomePageViewModel : ObservableRecipient
             Log.SuccessAndShowTask($"[{TraceContext.Name}]--上位链路通讯连接断开");
         }
 
+        if (netWork.ScpiSerialTool.IsOpen)
+        {
+            netWork.ScpiSerialTool.Close();
+            Log.SuccessAndShowTask($"[{TraceContext.Name}]--串口232/485断开");
+        }
+
         //从全局变量中移除
         GlobalManager.NetWorkDictionary.Remove(netWork);
     }
@@ -239,15 +250,40 @@ public partial class HomePageViewModel : ObservableRecipient
                 case "基恩士上位链路通讯":
                     await KeyneceHostLinkConnect(netWork);
                     break;
+                case "串口232/485":
+                    await ScpiSerialConnect(netWork);
+                    break;
             }
-            //五秒检查一次
 
+            //五秒检查一次
             try
             {
                 await Task.Delay(whileTime, cts.Token);
             }
             catch (Exception e)
             {
+            }
+        }
+    }
+
+    public async Task ScpiSerialConnect(NetWork netWork)
+    {
+        if (!netWork.ScpiSerialTool.IsOpen)
+        {
+            bool open = netWork.ScpiSerialTool.Open(netWork.NetworkDetailed.Com,
+                int.Parse(netWork.NetworkDetailed.BaudRate),
+                netWork.NetworkDetailed.Parity,
+                int.Parse(netWork.NetworkDetailed.DataBits),
+                netWork.NetworkDetailed.StopBits,
+                netWork.NetworkDetailed.TimeOut,
+                netWork.NetworkDetailed.NewLine);
+            if (open)
+            {
+                Log.SuccessAndShowTask($"[{TraceContext.Name}]--串口232/485打开成功");
+            }
+            else
+            {
+                Log.WarningAndShowTask($"[{TraceContext.Name}]--串口232/485打开失败");
             }
         }
     }
@@ -403,19 +439,21 @@ public partial class HomePageViewModel : ObservableRecipient
 
         if (item.IP != null)
         {
-            ModbusToolModel.ModbusTcp_Ip_select = item.IP;
-            ModbusToolModel.ModbusTcp_Port = item.Port;
-            ModbusToolModel.TcpServerNeedListen = item.IsServerListen;
+            HomeSetConnectModel.Ip = item.IP;
+            HomeSetConnectModel.Port = item.Port;
+            HomeSetConnectModel.TcpServerNeedListen = item.IsServerListen;
         }
 
         if (item.Com != null)
         {
-            ModbusToolModel.ModbusRtu_COM_select = item.Com;
-            ModbusToolModel.ModbusRtu_baudRate_select = item.BaudRate;
-            ModbusToolModel.ModbusRtu_dataBits_select = item.DataBits;
-            ModbusToolModel.ModbusRtu_parity_select = item.Parity;
-            ModbusToolModel.ModbusRtu_stopBits_select = item.StopBits;
-            ModbusToolModel.NetMethod_select = item.NetMethod;
+            HomeSetConnectModel.Com = item.Com;
+            HomeSetConnectModel.BaudRate = item.BaudRate;
+            HomeSetConnectModel.DataBit = item.DataBits;
+            HomeSetConnectModel.Parity = item.Parity;
+            HomeSetConnectModel.StopBits = item.StopBits;
+            HomeSetConnectModel.NetMethod = item.NetMethod;
+            HomeSetConnectModel.TimeOut = item.TimeOut;
+            HomeSetConnectModel.NewLine = item.NewLine;
         }
     }
 
@@ -425,15 +463,17 @@ public partial class HomePageViewModel : ObservableRecipient
         var item = page.setConnectDg.SelectedItem as NetworkDetailed;
 
         page.IpSet.Visibility = Visibility.Collapsed;
-        item.IP = ModbusToolModel.ModbusTcp_Ip_select;
-        item.Port = ModbusToolModel.ModbusTcp_Port;
-        item.Com = ModbusToolModel.ModbusRtu_COM_select;
-        item.BaudRate = ModbusToolModel.ModbusRtu_baudRate_select;
-        item.DataBits = ModbusToolModel.ModbusRtu_dataBits_select;
-        item.Parity = ModbusToolModel.ModbusRtu_parity_select;
-        item.StopBits = ModbusToolModel.ModbusRtu_stopBits_select;
-        item.NetMethod = ModbusToolModel.NetMethod_select;
-        item.IsServerListen = ModbusToolModel.TcpServerNeedListen;
+        item.IP = HomeSetConnectModel.Ip;
+        item.Port = HomeSetConnectModel.Port;
+        item.Com = HomeSetConnectModel.Com;
+        item.BaudRate = HomeSetConnectModel.BaudRate;
+        item.DataBits = HomeSetConnectModel.DataBit;
+        item.Parity = HomeSetConnectModel.Parity;
+        item.StopBits = HomeSetConnectModel.StopBits;
+        item.NetMethod = HomeSetConnectModel.NetMethod;
+        item.IsServerListen = HomeSetConnectModel.TcpServerNeedListen;
+        item.TimeOut = HomeSetConnectModel.TimeOut;
+        item.NewLine = HomeSetConnectModel.NewLine;
     }
 
     #endregion
@@ -450,7 +490,8 @@ public partial class HomePageViewModel : ObservableRecipient
 
         string showPwd = new string('*', HomePageModel.JdbcUrl.Pwd.Length);
 
-        HomePageModel.ShowJdbcUrl = $"Server={HomePageModel.JdbcUrl.Server};DataBase={HomePageModel.JdbcUrl.DataBase};Uid={HomePageModel.JdbcUrl.Uid};Pwd={showPwd};TrustServerCertificate=True;";
+        HomePageModel.ShowJdbcUrl =
+            $"Server={HomePageModel.JdbcUrl.Server};DataBase={HomePageModel.JdbcUrl.DataBase};Uid={HomePageModel.JdbcUrl.Uid};Pwd={showPwd};TrustServerCertificate=True;";
         HomePageModel.RealJdbcUrl = path;
         GlobalManager.jdbcPath = path;
     }
@@ -472,6 +513,6 @@ public partial class HomePageViewModel : ObservableRecipient
     [RelayCommand]
     public void Save()
     {
-        AppJsonTool<HomePageModel>.Save(HomePageModel);
+        JsonTool<HomePageModel>.Save(HomePageModel);
     }
 }

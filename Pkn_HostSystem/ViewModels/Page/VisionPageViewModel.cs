@@ -30,7 +30,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         private bool IsFirstGrab { get; set; } = true;
         public VisionPageViewModel()
         {
-            VisionPageModel = AppJsonTool<VisionPageModel>.Load();
+            VisionPageModel = JsonTool<VisionPageModel>.Load();
             if (VisionPageModel == null)
             {
                 //Model初始化
@@ -160,7 +160,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public void Save()
         {
-            AppJsonTool<VisionPageModel>.Save(VisionPageModel);
+            JsonTool<VisionPageModel>.Save(VisionPageModel);
         }
 
         #endregion

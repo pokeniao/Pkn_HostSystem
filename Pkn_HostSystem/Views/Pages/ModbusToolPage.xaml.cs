@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Models.Core;
 using ModbusToolViewModel = Pkn_HostSystem.ViewModels.Page.ModbusToolViewModel;
 
@@ -25,12 +26,12 @@ namespace Pkn_HostSystem.Views.Pages
 
         private void ComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            viewModel.ModbusToolModel.ModbusRtu_COM = viewModel.ModbusBase.getCOM().ToList();
+            viewModel.ModbusToolModel.ModbusRtu_COM = ModbusBase.GetCOM().ToList();
         }
 
         private void ComboBox_DropDownOpened_1(object sender, EventArgs e)
         {
-            viewModel.ModbusToolModel.ModbusTcp_Ip = viewModel.ModbusBase.getIpAddress().ToList();
+            viewModel.ModbusToolModel.ModbusTcp_Ip = ModbusBase.GetIpAddress().ToList();
         }
 
 

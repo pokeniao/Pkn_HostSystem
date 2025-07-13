@@ -37,7 +37,8 @@
                             <WrapPanel>
                                 <TextBlock Text="端口号" Margin="10" />
                                 <ComboBox Width="120" ItemsSource="{Binding SerialToolModel.ComList}"
-                                          SelectedValue="{Binding SerialToolModel.Com}" />
+                                          SelectedValue="{Binding SerialToolModel.Com}" 
+                                          DropDownOpened="ComboBox_OnDropDownOpened"/>
                             </WrapPanel>
                             <WrapPanel>
                                 <TextBlock Text="波特率" Margin="10" />
@@ -65,6 +66,7 @@
                             <WrapPanel>
                                 <TextBlock Text="超时时间" Margin="10" />
                                 <ui:NumberBox Width="170"
+                                              Minimum="10"
                                               Value="{Binding SerialToolModel.TimeOut ,UpdateSourceTrigger=PropertyChanged}" />
                             </WrapPanel>
                             <WrapPanel>
@@ -78,6 +80,7 @@
                             <WrapPanel>
                                 <TextBlock Text="发送并等待超时时间(可填)" Margin="10" />
                                 <ui:NumberBox Width="170"
+                                              Minimum="10"
                                               Value="{Binding SerialToolModel.WriteTimeOut ,UpdateSourceTrigger=PropertyChanged}" />
                             </WrapPanel>
 

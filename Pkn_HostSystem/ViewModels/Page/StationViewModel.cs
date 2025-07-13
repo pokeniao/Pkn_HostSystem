@@ -15,7 +15,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 {
     public partial class StationViewModel : ObservableRecipient
     {
-        public StationModel StationModel { get; set; } = AppJsonTool<StationModel>.Load();
+        public StationModel StationModel { get; set; } = JsonTool<StationModel>.Load();
 
         public SnackbarService SnackbarService { get; set; } = new();
 
@@ -48,7 +48,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public void Save()
         {
-            AppJsonTool<StationModel>.Save(StationModel);
+            JsonTool<StationModel>.Save(StationModel);
         }
     }
 }
