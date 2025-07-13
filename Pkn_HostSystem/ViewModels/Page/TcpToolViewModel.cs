@@ -13,7 +13,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 {
     public partial class TcpToolViewModel : ObservableRecipient
     {
-        public TcpToolModel TcpToolModel { get; set; } = AppJsonTool<TcpToolModel>.Load();
+        public TcpToolModel TcpToolModel { get; set; } = JsonTool<TcpToolModel>.Load();
 
         private LogBase<TcpToolViewModel> Log;
 
@@ -256,7 +256,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public void Save()
         {
-            AppJsonTool<TcpToolModel>.Save(TcpToolModel);
+            JsonTool<TcpToolModel>.Save(TcpToolModel);
         }
 
         #endregion

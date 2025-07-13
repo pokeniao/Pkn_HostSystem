@@ -160,8 +160,12 @@ namespace Pkn_HostSystem
         /// <param name="e"></param>
         protected override void OnExit(ExitEventArgs e)
         {
-            // SettingsPageViewModel viewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
-            // viewModel.Save();
+            SettingsPageViewModel viewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
+            if (viewModel.SettingsPageModel.OffSave)
+            {
+                viewModel.SaveAll();
+            }
+
             //通知 log4net 停止所有日志写入 ,避免程序关闭太快导致缓冲区未刷新
             log4net.LogManager.Shutdown();
             _mutex.Dispose();

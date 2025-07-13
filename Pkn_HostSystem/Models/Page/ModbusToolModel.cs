@@ -8,9 +8,6 @@ namespace Pkn_HostSystem.Models.Page
 {
     public partial class ModbusToolModel : ObservableObject
     {
-
-
-        public static ModbusBase modbusBase = new ModbusBase();
         /// <summary>
         /// modbusTcp和ModbusRtu需要显示的参数
         /// </summary>
@@ -19,15 +16,17 @@ namespace Pkn_HostSystem.Models.Page
         [ObservableProperty]
         private int modbusTcp_Port = int.Parse("502");
         [ObservableProperty]
-        private List<string> modbusRtu_COM  = modbusBase.getCOM().ToList();
+        private List<string> modbusRtu_COM  = ScpiSerialTool.GetCOM();
 
-        [ObservableProperty] private List<string> modbusRtu_baudRate = new() { "9600", "14400", "19200" };
+        [ObservableProperty] private List<string> modbusRtu_baudRate = ScpiSerialTool.BaudRates;
         [ObservableProperty]
-        private List<string> modbusRtu_dataBits = new() { "8", "7" };
+        private List<string> modbusRtu_dataBits = ScpiSerialTool.DataBits;
         [ObservableProperty]
-        private List<StopBits> modbusRtu_stopBits = Enum.GetValues(typeof(StopBits)).Cast<StopBits>().ToList();
+        private List<StopBits> modbusRtu_stopBits = ScpiSerialTool.StopBitsList;
         [ObservableProperty]
-        private List<Parity> modbusRtu_parity = Enum.GetValues(typeof(Parity)).Cast<Parity>().ToList();
+        private List<Parity> modbusRtu_parity = ScpiSerialTool.Parities;
+
+
 
         #region 暂时先放在这里
 
@@ -59,12 +58,14 @@ namespace Pkn_HostSystem.Models.Page
         [ObservableProperty] private string netMethod_select;
         [ObservableProperty] private string modbusTcp_Ip_select;
         [ObservableProperty] private string funtionCode_select;
-        [ObservableProperty] private string modbusRtu_COM_select = modbusBase.getCOM().Length > 0 ? modbusBase.getCOM()[0] : null;
+        [ObservableProperty] private string modbusRtu_COM_select = ModbusBase.GetCOM().Length > 0 ? ModbusBase.GetCOM()[0] : null;
         [ObservableProperty] private string modbusRtu_baudRate_select = "9600";
         [ObservableProperty] private string modbusRtu_dataBits_select = "8";
         [ObservableProperty] private StopBits modbusRtu_stopBits_select = StopBits.One;
         [ObservableProperty] private Parity modbusRtu_parity_select;
-       
+        [ObservableProperty] private int timeOut = 1000;
+        [ObservableProperty] private string newLine = "\n";
+
         /// <summary>
         /// 读写的列表,用于显示
         /// </summary>

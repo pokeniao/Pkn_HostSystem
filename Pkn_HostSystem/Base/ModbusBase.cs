@@ -119,7 +119,7 @@ namespace Pkn_HostSystem.Base
         /// 获取IP
         /// </summary>
         /// <returns></returns>
-        public string[] getIpAddress()
+        public static string[] GetIpAddress()
         {
             var ips = new List<string>();
             foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
@@ -284,7 +284,7 @@ namespace Pkn_HostSystem.Base
         /// 获取端口
         /// </summary>
         /// <returns></returns>
-        public string[] getCOM()
+        public static string[] GetCOM()
         {
             return SerialPort.GetPortNames();
         }

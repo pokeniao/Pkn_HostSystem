@@ -24,7 +24,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         public ProductiveViewModel()
         {
-            ProductiveModel = AppJsonTool<ProductiveModel>.Load();
+            ProductiveModel = JsonTool<ProductiveModel>.Load();
 
             if (ProductiveModel == null)
             {
@@ -375,7 +375,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public void Save()
         {
-            AppJsonTool<ProductiveModel>.Save(ProductiveModel);
+            JsonTool<ProductiveModel>.Save(ProductiveModel);
         }
         #endregion
     }

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
@@ -194,12 +195,12 @@ namespace Pkn_HostSystem.Views.Pages
 
         private void ComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            HomePageViewModel.ModbusToolModel.ModbusRtu_COM = ModbusToolModel.modbusBase.getCOM().ToList();
+            HomePageViewModel.HomeSetConnectModel.Coms = ModbusBase.GetCOM().ToList();
         }
 
         private void ComboBox_DropDownOpened_1(object sender, EventArgs e)
         {
-            HomePageViewModel.ModbusToolModel.ModbusTcp_Ip = ModbusToolModel.modbusBase.getIpAddress().ToList();
+            HomePageViewModel.HomeSetConnectModel.Ips = ModbusBase.GetIpAddress().ToList();
         }
 
         #endregion
