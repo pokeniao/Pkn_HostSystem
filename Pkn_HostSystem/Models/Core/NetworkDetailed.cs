@@ -53,5 +53,17 @@ public class NetworkDetailed
     /// </summary>
     public Parity Parity { get; set; }
 
+    /// <summary>
+    /// 串口超时时间
+    /// </summary>
+    public int TimeOut { get; set; }
+    /// <summary>
+    /// 串口换行符
+    /// </summary>
+    public string NewLine { get; set; }
+
+    /// <summary>
+    /// 服务器是否是监听模式
+    /// </summary>
     public bool IsServerListen { get; set; }
 }

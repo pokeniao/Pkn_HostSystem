@@ -13,15 +13,17 @@ namespace Pkn_HostSystem.Base
     public class ScpiSerialTool : IDisposable
     {
         public SerialPort serialPort;
+
         /// <summary>
         /// 判断是否打开
         /// </summary>
         public bool IsOpen => serialPort?.IsOpen ?? false;
-        
+
 
         private TaskCompletionSource<bool> _connectTcs = new TaskCompletionSource<bool>();
 
-        private LogBase<ScpiSerialTool> Log =new LogBase<ScpiSerialTool>();
+        private LogBase<ScpiSerialTool> Log = new LogBase<ScpiSerialTool>();
+
         /// <summary>
         /// 接收消息事件
         /// </summary>
@@ -56,7 +58,9 @@ namespace Pkn_HostSystem.Base
         public static List<Parity> Parities = System.Enum.GetValues(typeof(Parity)).Cast<Parity>().ToList();
 
 
-        public static Dictionary<string, string> NewLines  = new Dictionary<string, string>() { ["\\n"] = "\n", ["\\r"]="\r", ["\\r\\n"] = "\r\n"};
+        public static Dictionary<string, string> NewLines =
+            new Dictionary<string, string>() { ["\\n"] = "\n", ["\\r"] = "\r", ["\\r\\n"] = "\r\n" };
+
         /// <summary>
         /// 设置的字符
         /// </summary>
@@ -80,33 +84,43 @@ namespace Pkn_HostSystem.Base
         /// <param name="stopBits"></param>
         /// <param name="readTimeout"></param>
         /// <param name="newLine"> 定义结束换行字符, ReadLine() 和 WriteLine() 时非常重要</param>
-        public void Open(string portName, int baudRate = 9600, Parity parity = Parity.None,
+        public bool Open(string portName, int baudRate = 9600, Parity parity = Parity.None,
             int dataBits = 8, StopBits stopBits = StopBits.One, int readTimeout = 1000, string newLine = "\r")
         {
-            if (serialPort!=null && serialPort.IsOpen)
+            if (serialPort != null && serialPort.IsOpen)
             {
-                return;
+                return false;
             }
 
-            setNewLine = newLine;
-            serialPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits)
+            try
             {
-                Encoding = System.Text.Encoding.ASCII,
-                ReadTimeout = readTimeout,
-                WriteTimeout = 500,
-                NewLine = newLine  //通常以 CR（\r）结束响应
-            };
-            
-            if (serialPort != null && !serialPort.IsOpen)
+                setNewLine = newLine;
+                serialPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits)
+                {
+                    Encoding = Encoding.ASCII,
+                    ReadTimeout = readTimeout,
+                    WriteTimeout = 500,
+                    NewLine = newLine //通常以 CR（\r）结束响应
+                };
+
+                if (serialPort != null && !serialPort.IsOpen)
+                {
+                    serialPort.Open();
+                    // 清空可能残留的数据
+                    serialPort.DiscardInBuffer();
+                    serialPort.DiscardOutBuffer();
+                }
+
+                // 连接成功，通知所有等待者
+                _connectTcs.TrySetResult(true);
+                return true;
+            }
+            catch (Exception e)
             {
-                serialPort.Open();
-                // 清空可能残留的数据
-                serialPort.DiscardInBuffer();
-                serialPort.DiscardOutBuffer();
-            }   
-            // 连接成功，通知所有等待者
-            _connectTcs.TrySetResult(true);
+                return false;
+            }
         }
+
         /// <summary>
         /// 关闭串口通讯
         /// </summary>
@@ -124,9 +138,11 @@ namespace Pkn_HostSystem.Base
             serialPort.Close();
             serialPort.Dispose();
         }
+
         #endregion
 
         #region WriteLine
+
         /// <summary>
         /// 写入串口WriteLine
         /// </summary>
@@ -144,7 +160,7 @@ namespace Pkn_HostSystem.Base
 
             byte[] bytes = System.Text.Encoding.ASCII.GetBytes(command);
 
-            serialPort.Write(bytes,0,bytes.Length);
+            serialPort.Write(bytes, 0, bytes.Length);
         }
 
         /// <summary>
@@ -174,33 +190,39 @@ namespace Pkn_HostSystem.Base
                 }
 
                 // 检查是否有数据可读
-                try
+
+                string? readLine = await Task.Run(() =>
                 {
-                    string readLine = serialPort.ReadLine();
-                    if (!string.IsNullOrEmpty(readLine))
+                    try
                     {
-                        Log.Info($"[{TraceContext.Name}]--串口通讯,收到消息: {readLine}");
-                        return (true, readLine);
+                        return serialPort.ReadLine();
                     }
-                }
-                catch (TimeoutException)
+                    catch (TimeoutException)
+                    {
+                        // 串口设置的 ReadTimeout 到时间，但数据还没来，继续等待,  ReadTimeout 在serialPort.ReadLine(); 没有读取到东西,过一段时间就会超时,所以需要跳过这个
+                        return null;
+                    }
+                });
+                if (!string.IsNullOrEmpty(readLine))
                 {
-                    // 串口设置的 ReadTimeout 到时间，但数据还没来，继续等待,  ReadTimeout 在serialPort.ReadLine(); 没有读取到东西,过一段时间就会超时,所以需要跳过这个
+                    Log.Info($"[{TraceContext.Name}]--串口通讯,收到消息: {readLine}");
+                    return (true, readLine);
                 }
+
                 // 没数据，休息一下再看
                 await Task.Delay(100);
             }
         }
 
-
         #endregion
 
         #region ReadLine
+
         /// <summary>
         /// 读取串口消息 ,serialPort.ReadLine() 是一个阻塞调用，它会等到接收到 NewLine 才返回，否则会等待到超时。
         /// </summary>
         /// <returns></returns>
-        public async Task<(bool succeed ,string response)> ReadLine()
+        public async Task<(bool succeed, string response)> ReadLine()
         {
             try
             {
@@ -224,7 +246,7 @@ namespace Pkn_HostSystem.Base
         /// <returns></returns>
         public async Task ReadLineEvenTask(CancellationTokenSource cts)
         {
-            if (serialPort ==null)
+            if (serialPort == null)
             {
                 return;
             }
@@ -275,8 +297,11 @@ namespace Pkn_HostSystem.Base
                 Log.Error($"[{TraceContext.Name}] -- 串口通讯, 循环读取事件出现异常: {e}");
             }
         }
+
         #endregion
+
         #region 私有方法
+
         /// <summary>
         /// 检验连接是否已经处于打开状态
         /// </summary>
@@ -292,13 +317,6 @@ namespace Pkn_HostSystem.Base
             }
         }
 
-
-
         #endregion
-
-
     }
-
-
-
 }

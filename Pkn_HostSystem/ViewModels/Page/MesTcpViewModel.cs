@@ -36,7 +36,7 @@ public partial class MesTcpViewModel : ObservableRecipient
         SnackbarService = new SnackbarService();
 
 
-        MesTcpModel = AppJsonTool<MesTcpModel>.Load();
+        MesTcpModel = JsonTool<MesTcpModel>.Load();
         if (MesTcpModel == null)
         {
             //Model初始化
@@ -140,6 +140,6 @@ public partial class MesTcpViewModel : ObservableRecipient
     [RelayCommand]
     public void Save()
     {
-        AppJsonTool<MesTcpModel>.Save(MesTcpModel);
+        JsonTool<MesTcpModel>.Save(MesTcpModel);
     }
 }

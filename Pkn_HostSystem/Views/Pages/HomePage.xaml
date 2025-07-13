@@ -518,7 +518,8 @@
             <ui:CardControl Margin="5">
                 <ui:CardControl.Content>
                     <Grid>
-                        <Grid Margin="8,0" Visibility="{Binding CurLoginState ,Converter={StaticResource LoginVisibilityConverter} ,ConverterParameter={x:Static enums:LoginPermissionEnum.UnLogIn}}">
+                        <Grid Margin="8,0"
+                              Visibility="{Binding CurLoginState ,Converter={StaticResource LoginVisibilityConverter} ,ConverterParameter={x:Static enums:LoginPermissionEnum.UnLogIn}}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="*" />
@@ -531,7 +532,8 @@
                             <StackPanel Grid.Row="0"
                                         Grid.Column="1" Orientation="Horizontal">
 
-                                <ui:Button Margin="3" Content="登入" Width="100" Appearance="Primary" Command="{Binding LoginCommand}">
+                                <ui:Button Margin="3" Content="登入" Width="100" Appearance="Primary"
+                                           Command="{Binding LoginCommand}">
                                     <ui:Button.Icon>
                                         <ui:SymbolIcon Symbol="ContactCard24" FontSize="25" />
                                     </ui:Button.Icon>
@@ -539,7 +541,8 @@
                             </StackPanel>
 
                         </Grid>
-                        <Grid Margin="8,0" Visibility="{Binding CurLoginState , Converter={StaticResource LoginVisibilityConverter} , ConverterParameter= {x:Static enums:LoginPermissionEnum.LogIn}}">
+                        <Grid Margin="8,0"
+                              Visibility="{Binding CurLoginState , Converter={StaticResource LoginVisibilityConverter} , ConverterParameter= {x:Static enums:LoginPermissionEnum.LogIn}}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="*" />
@@ -757,7 +760,7 @@
                                                 <WrapPanel>
                                                     <TextBlock Text="当前选择的通讯" Margin="10" TextAlignment="Center" />
                                                     <ComboBox Width="150" ItemsSource="{Binding NetMethod}"
-                                                              SelectedValue="{Binding ModbusToolModel.NetMethod_select}" />
+                                                              SelectedValue="{Binding HomeSetConnectModel.NetMethod}" />
                                                     <Button Content="设置" HorizontalAlignment="Right" Margin="20,5"
                                                             Command="{Binding CommitConfigCommand}"
                                                             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }" />
@@ -783,9 +786,9 @@
                                                             </Border>
                                                             <ComboBox Name="cbb_modbus_tpc_ip" Width="250"
                                                                       IsEditable="True"
-                                                                      ItemsSource="{Binding ModbusToolModel.ModbusTcp_Ip}"
+                                                                      ItemsSource="{Binding HomeSetConnectModel.Ips}"
                                                                       SelectedIndex="0"
-                                                                      Text="{Binding ModbusToolModel.ModbusTcp_Ip_select}"
+                                                                      Text="{Binding HomeSetConnectModel.Ip}"
                                                                       DropDownOpened="ComboBox_DropDownOpened_1" />
                                                         </WrapPanel>
                                                         <WrapPanel Grid.Row="1" Margin="5">
@@ -795,8 +798,9 @@
                                                                            VerticalAlignment="Center" />
                                                             </Border>
                                                             <ui:NumberBox Width="250"
-                                                                          Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
-                                                                          Minimum="0" Maximum="65535" />
+                                                                          Value="{Binding HomeSetConnectModel.Port,UpdateSourceTrigger=PropertyChanged}"
+                                                                          Minimum="1"
+                                                                          Maximum="65535" />
                                                         </WrapPanel>
                                                     </Grid>
                                                 </TabItem>
@@ -804,74 +808,111 @@
                                                     <TabItem.Header>
                                                         <TextBlock FontWeight="Bold" FontSize="13" Text="串口通讯设置" />
                                                     </TabItem.Header>
-                                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                        <WrapPanel>
-                                                            <StackPanel Orientation="Horizontal" Margin="0 5">
-                                                                <Border VerticalAlignment="Center" Width="58">
-                                                                    <TextBlock Text="端口号" HorizontalAlignment="Right"
-                                                                               Margin="5" />
-                                                                </Border>
-                                                                <ComboBox Margin="0 0 10 0" Width="90"
-                                                                          ItemsSource="{Binding ModbusToolModel.ModbusRtu_COM}"
-                                                                          SelectedIndex="0"
-                                                                          DropDownOpened="ComboBox_DropDownOpened"
-                                                                          Text="{Binding ModbusToolModel.ModbusRtu_COM_select}" />
-                                                            </StackPanel>
-                                                            <StackPanel Orientation="Horizontal" Margin="0 5">
 
-                                                                <Border HorizontalAlignment="Center" Width="58"
-                                                                        VerticalAlignment="Center">
-                                                                    <TextBlock Text="波特率" Margin="5"
-                                                                               HorizontalAlignment="Right" />
-                                                                </Border>
-                                                                <ComboBox Margin="0 0 10 0" Width="90"
-                                                                          ItemsSource="{Binding ModbusToolModel.ModbusRtu_baudRate}"
-                                                                          SelectedIndex="0"
-                                                                          Text="{Binding ModbusToolModel.ModbusRtu_baudRate_select}" />
-                                                            </StackPanel>
+                                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                        <StackPanel VerticalAlignment="Center"
+                                                                    HorizontalAlignment="Center">
+                                                            <WrapPanel>
+                                                                <StackPanel Orientation="Horizontal" Margin="0 5">
+                                                                    <Border VerticalAlignment="Center" Width="58">
+                                                                        <TextBlock Text="端口号"
+                                                                            HorizontalAlignment="Right"
+                                                                            Margin="5" />
+                                                                    </Border>
+                                                                    <ComboBox Margin="0 0 10 0" Width="100"
+                                                                              ItemsSource="{Binding HomeSetConnectModel.Coms}"
+                                                                              SelectedIndex="0"
+                                                                              DropDownOpened="ComboBox_DropDownOpened"
+                                                                              Text="{Binding HomeSetConnectModel.Com}" />
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal" Margin="0 5">
 
-                                                        </WrapPanel>
-                                                        <WrapPanel>
-                                                            <StackPanel Orientation="Horizontal" Margin="0 5">
-                                                                <Border HorizontalAlignment="Center"
-                                                                        VerticalAlignment="Center"
-                                                                        Width="58">
-                                                                    <TextBlock Text="数据位" HorizontalAlignment="Right"
-                                                                               Margin="5" />
-                                                                </Border>
-                                                                <ComboBox Margin="0 0 10 0" Width="90"
-                                                                          ItemsSource="{Binding ModbusToolModel.ModbusRtu_dataBits}"
-                                                                          SelectedIndex="0"
-                                                                          Text="{Binding ModbusToolModel.ModbusRtu_dataBits_select}" />
-                                                            </StackPanel>
-                                                            <StackPanel Orientation="Horizontal" Margin="0 5">
+                                                                    <Border HorizontalAlignment="Center" Width="58"
+                                                                            VerticalAlignment="Center">
+                                                                        <TextBlock Text="波特率" Margin="5"
+                                                                            HorizontalAlignment="Right" />
+                                                                    </Border>
+                                                                    <ComboBox Margin="0 0 10 0" Width="100"
+                                                                              ItemsSource="{Binding HomeSetConnectModel.BaudRates}"
+                                                                              SelectedIndex="0"
+                                                                              Text="{Binding HomeSetConnectModel.BaudRate}" />
+                                                                </StackPanel>
 
-                                                                <Border HorizontalAlignment="Center" Width="58"
-                                                                        VerticalAlignment="Center">
-                                                                    <TextBlock Text="停止位" Margin="5"
-                                                                               HorizontalAlignment="Right" />
-                                                                </Border>
-                                                                <ComboBox Width="90"
-                                                                          ItemsSource="{Binding ModbusToolModel.ModbusRtu_stopBits}"
-                                                                          Text="{Binding ModbusToolModel.ModbusRtu_stopBits_select}" />
-                                                            </StackPanel>
-                                                        </WrapPanel>
-                                                        <WrapPanel>
-                                                            <StackPanel Orientation="Horizontal" Margin="0 5">
+                                                            </WrapPanel>
+                                                            <WrapPanel>
+                                                                <StackPanel Orientation="Horizontal" Margin="0 5">
+                                                                    <Border HorizontalAlignment="Center"
+                                                                            VerticalAlignment="Center"
+                                                                            Width="58">
+                                                                        <TextBlock Text="数据位"
+                                                                            HorizontalAlignment="Right"
+                                                                            Margin="5" />
+                                                                    </Border>
+                                                                    <ComboBox Margin="0 0 10 0" Width="100"
+                                                                              ItemsSource="{Binding HomeSetConnectModel.DataBits}"
+                                                                              SelectedIndex="0"
+                                                                              Text="{Binding HomeSetConnectModel.DataBit}" />
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal" Margin="0 5">
 
-                                                                <Border HorizontalAlignment="Center"
-                                                                        VerticalAlignment="Center"
-                                                                        Width="58">
-                                                                    <TextBlock Text="校验位" HorizontalAlignment="Right"
-                                                                               Margin="5" />
-                                                                </Border>
-                                                                <ComboBox Margin="0 0 5 0" Width="90"
-                                                                          ItemsSource="{Binding ModbusToolModel.ModbusRtu_parity}"
-                                                                          SelectedIndex="0"
-                                                                          Text="{Binding ModbusToolModel.ModbusRtu_parity_select}" />
-                                                            </StackPanel>
-                                                        </WrapPanel>
-                                                    </StackPanel>
+                                                                    <Border HorizontalAlignment="Center" Width="58"
+                                                                            VerticalAlignment="Center">
+                                                                        <TextBlock Text="停止位" Margin="5"
+                                                                            HorizontalAlignment="Right" />
+                                                                    </Border>
+                                                                    <ComboBox Width="100"
+                                                                              ItemsSource="{Binding HomeSetConnectModel.StopBitsList}"
+                                                                              Text="{Binding HomeSetConnectModel.StopBits}" />
+                                                                </StackPanel>
+                                                            </WrapPanel>
+                                                            <WrapPanel>
+                                                                <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                                                    <Border HorizontalAlignment="Center"
+                                                                            VerticalAlignment="Center"
+                                                                            Width="58">
+                                                                        <TextBlock Text="校验位"
+                                                                            HorizontalAlignment="Right"
+                                                                            Margin="5" />
+                                                                    </Border>
+                                                                    <ComboBox Margin="0 0 10 0" Width="100"
+                                                                              ItemsSource="{Binding HomeSetConnectModel.Parities}"
+                                                                              SelectedIndex="0"
+                                                                              Text="{Binding HomeSetConnectModel.Parity}" />
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                                                    <Border HorizontalAlignment="Center"
+                                                                            VerticalAlignment="Center"
+                                                                            Width="58">
+                                                                        <TextBlock Text="结束符"
+                                                                            HorizontalAlignment="Right"
+                                                                            Margin="5" />
+                                                                    </Border>
+                                                                    <ComboBox Margin="0 0 10 0" Width="100"
+                                                                              ItemsSource="{Binding HomeSetConnectModel.NewLines}"
+                                                                              DisplayMemberPath="Key"
+                                                                              SelectedValuePath="Value"
+                                                                              SelectedIndex="0"
+                                                                              SelectedValue="{Binding HomeSetConnectModel.NewLine}" />
+                                                                </StackPanel>
+                                                            </WrapPanel>
+                                                            <WrapPanel>
+                                                                <StackPanel Orientation="Horizontal" Margin="0 5">
+
+                                                                    <Border HorizontalAlignment="Center"
+                                                                            VerticalAlignment="Center"
+                                                                            Width="128">
+                                                                        <TextBlock Text="请求超时时长(ms)"
+                                                                            HorizontalAlignment="Right"
+                                                                            Margin="5" />
+                                                                    </Border>
+                                                                    <ui:NumberBox Margin="0 0 10 0" Width="125"
+                                                                        Value="{Binding HomeSetConnectModel.TimeOut , UpdateSourceTrigger= PropertyChanged}"/>
+                                                                </StackPanel>
+                                                            </WrapPanel>
+                                                        </StackPanel>
+                                                    </ScrollViewer>
                                                 </TabItem>
                                                 <TabItem Width="130">
                                                     <TabItem.Header>
@@ -885,8 +926,9 @@
                                                                            VerticalAlignment="Center" />
                                                             </Border>
                                                             <ui:NumberBox Width="150"
-                                                                          Value="{Binding ModbusToolModel.ModbusTcp_Port,UpdateSourceTrigger=PropertyChanged}"
-                                                                          Minimum="0" Maximum="65535" />
+                                                                          Value="{Binding HomeSetConnectModel.Port,UpdateSourceTrigger=PropertyChanged}"
+                                                                          Minimum="1"
+                                                                          Maximum="65535"/>
                                                         </WrapPanel>
                                                         <WrapPanel Margin="5">
                                                             <Border Margin="5">
@@ -895,7 +937,7 @@
                                                                            VerticalAlignment="Center" />
                                                             </Border>
                                                             <ui:ToggleSwitch OnContent="开启" OffContent="关闭"
-                                                                             IsChecked="{Binding ModbusToolModel.TcpServerNeedListen}" />
+                                                                             IsChecked="{Binding HomeSetConnectModel.TcpServerNeedListen}" />
                                                         </WrapPanel>
                                                     </StackPanel>
                                                 </TabItem>

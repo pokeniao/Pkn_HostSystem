@@ -140,7 +140,7 @@
                                         <TextBlock Text="{Binding HttpName}"
                                                    Visibility="{Binding showHttpName ,Converter={StaticResource BooleanVisibilityConverter}}" />
                                         <TextBlock Text="{Binding MethodName}"
-                                                   Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                                   Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -154,8 +154,7 @@
                                             DisplayMemberPath="NetworkDetailed.Name"
                                             Text="{Binding ConnectName,UpdateSourceTrigger=PropertyChanged}"
                                             SelectedValue="{Binding NetWork,UpdateSourceTrigger=PropertyChanged}"
-                                            SelectionChanged="Selector_OnSelectionChanged"
-                                            />
+                                            SelectionChanged="Selector_OnSelectionChanged" />
                                         <ComboBox
                                             Visibility="{Binding showHttpName ,Converter={StaticResource BooleanVisibilityConverter}}"
                                             ItemsSource="{Binding DataContext.MesTcpModel.HttpList,  RelativeSource={RelativeSource AncestorType=Page}}"
@@ -165,7 +164,7 @@
                                             SelectionChanged="HttpSelectChange" />
 
                                         <TextBlock Text="{Binding MethodName}"
-                                                   Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                                   Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
@@ -189,7 +188,7 @@
                                         <TextBlock Text="{Binding MethodName}"
                                                    Visibility="{Binding showHttpName ,Converter={StaticResource BooleanVisibilityConverter}}" />
                                         <TextBlock Text="{Binding MethodName}"
-                                                   Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}"/>
+                                                   Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
@@ -206,24 +205,80 @@
                             <DataGridTemplateColumn.CellEditingTemplate>
                                 <DataTemplate>
                                     <Grid>
+                                        <!-- 串口232/485 -->
+                                        <Grid
+                                            Visibility="{Binding showSerial ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Grid.Row="0" >
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <TextBlock Text="发送内容" VerticalAlignment="Center" />
+                                                    <TextBox
+                                                        Text="{Binding SerialSendMessage,UpdateSourceTrigger=PropertyChanged}"
+                                                        Width="150"
+                                                        Margin="5" />
+
+                                                </StackPanel>
+                                                <StackPanel  Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <TextBlock Text="等待接收超时(ms)" VerticalAlignment="Center" />
+                                                    <ui:NumberBox Width="130" Value="{Binding SendTimeOut,UpdateSourceTrigger=PropertyChanged}"/> 
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <UniformGrid Grid.Row="1"
+                                                         Rows="3"
+                                                         Columns="2">
+                                                <ui:ToggleSwitch
+                                                    OffContent="关闭校验" OnContent="启动校验"
+                                                    IsChecked="{Binding OpenVerify}" />
+                                                <Button
+                                                    Margin="5,5,0,0"
+                                                    Content="校验"
+                                                    Click="SetVerify"
+                                                    Width="100" />
+                                                <ui:ToggleSwitch
+                                                    OnContent="启用switch" OffContent="关闭switch"
+                                                    IsChecked="{Binding OpenSwitch}" />
+                                                <Button
+                                                    Margin="5,5,0,0"
+                                                    Content="编辑switch"
+                                                    Click="ButtonBase_OnClick"
+                                                    Width="100" />
+
+                                                <ui:ToggleSwitch
+                                                    OnContent="打开结果转发" OffContent="关闭结果转发"
+                                                    IsChecked="{Binding ResultTranspond}" />
+                                                <Button
+                                                    Margin="5,5,0,0"
+                                                    Content="编辑转发"
+                                                    Width="100"
+                                                    Click="ResultTranspond_OnClick" />
+                                            </UniformGrid>
+
+                                        </Grid>
+                                        <!-- 读Modbus线圈 -->
                                         <Grid
                                             Visibility="{Binding showReadCoil ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <WrapPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,5">
                                                     <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
                                                     <ui:NumberBox
+                                                        Minimum="1"
                                                         Text="{Binding StationAddress ,UpdateSourceTrigger=PropertyChanged}"
                                                         Width="150" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,5">
                                                     <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
                                                     <ui:NumberBox
+                                                        Minimum="0"
                                                         Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
                                                         Width="150" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                                     <TextBlock Text="读取数量" Margin="5" TextAlignment="Center" />
                                                     <ui:NumberBox
+                                                        Minimum="1"
                                                         Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
                                                         Width="150" />
                                                 </StackPanel>
@@ -234,6 +289,7 @@
                                                 </StackPanel>
                                             </WrapPanel>
                                         </Grid>
+                                        <!-- 读Modbus寄存器 -->
                                         <Grid
                                             Visibility="{Binding showReadReg ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <WrapPanel>
@@ -241,18 +297,21 @@
                                                     <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
                                                     <ui:NumberBox
                                                         Text="{Binding StationAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Minimum="1"
                                                         Width="150" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,5">
                                                     <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
                                                     <ui:NumberBox
                                                         Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Minimum="0"
                                                         Width="150" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                                     <TextBlock Text="读取数量" Margin="5" TextAlignment="Center" />
                                                     <ui:NumberBox
                                                         Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Minimum="1"
                                                         Width="150" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -260,7 +319,7 @@
                                                     <ComboBox
                                                         SelectedValue="{Binding BitNet ,UpdateSourceTrigger=PropertyChanged}"
                                                         ItemsSource="{Binding DataContext.MesTcpModel.BitNet, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                        Width="150" />
+                                                        Width="200" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                                     <ui:ToggleSwitch OffContent="关闭校验" OnContent="启动校验" Margin="5"
@@ -272,9 +331,19 @@
                                                                      IsChecked="{Binding OpenSwitch}" />
                                                     <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
                                                 </StackPanel>
-
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch
+                                                        OnContent="打开结果转发" OffContent="关闭结果转发"
+                                                        IsChecked="{Binding ResultTranspond}" />
+                                                    <Button
+                                                        Margin="5,5,0,0"
+                                                        Content="编辑转发"
+                                                        Width="100"
+                                                        Click="ResultTranspond_OnClick" />
+                                                </StackPanel>
                                             </WrapPanel>
                                         </Grid>
+                                        <!-- TCP套接字通讯参数 -->
                                         <Grid
                                             Visibility="{Binding showSocket ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <Grid.RowDefinitions>
@@ -321,6 +390,7 @@
                                             </UniformGrid>
 
                                         </Grid>
+                                        <!-- 上链路协议读寄存器参数 -->
                                         <Grid
                                             Visibility="{Binding showHostLinkReadReg ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <StackPanel>
@@ -328,6 +398,7 @@
                                                     <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
                                                     <ui:NumberBox
                                                         Value="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Minimum="0"
                                                         Width="150" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,5">
@@ -344,6 +415,7 @@
                                                 </StackPanel>
                                             </StackPanel>
                                         </Grid>
+                                        <!-- 上链路协议读线圈参数 -->
                                         <Grid
                                             Visibility="{Binding showHostLinkReadCoid ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <StackPanel>
@@ -351,6 +423,7 @@
                                                     <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
                                                     <ui:NumberBox
                                                         Value="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                        Minimum="0"
                                                         Width="150" />
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -360,23 +433,26 @@
                                                 </StackPanel>
                                             </StackPanel>
                                         </Grid>
+                                        <!-- HTTP请求参数 -->
                                         <Grid
                                             HorizontalAlignment="Center"
                                             Visibility="{Binding showHttpName ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <Button Content="设置需要解析的Json" Click="SetHttpGetObject" />
                                         </Grid>
+                                        <!-- 自定义参数 -->
                                         <Grid
                                             HorizontalAlignment="Center"
                                             Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <StackPanel>
-                                                <ComboBox ItemsSource="{Binding DataContext.UserDefinedList ,RelativeSource={RelativeSource AncestorType=Page}}"
-                                                          DisplayMemberPath ="Name"
-                                                          Width="200"
-                                                          SelectedValue="{Binding UserDefined}"/>
+                                                <ComboBox
+                                                    ItemsSource="{Binding DataContext.UserDefinedList ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                    DisplayMemberPath="Name"
+                                                    Width="200"
+                                                    SelectedValue="{Binding UserDefined}" />
                                                 <StackPanel Orientation="Horizontal">
                                                 </StackPanel>
                                             </StackPanel>
-                                            
+
                                         </Grid>
                                     </Grid>
                                 </DataTemplate>
@@ -400,7 +476,8 @@
                             <GroupBox.Header>
                                 <WrapPanel>
                                     <TextBlock Text="{Binding MesTcpModel.SetSwitchSetName}" Margin="5" />
-                                    <ui:SymbolIcon Symbol="ChatWarning20" ToolTip="Case:为返回原内容,Value:为替换后内容,替换后进行嵌入 , Case中写入default为默认值" />
+                                    <ui:SymbolIcon Symbol="ChatWarning20"
+                                                   ToolTip="Case:为返回原内容,Value:为替换后内容,替换后进行嵌入 , Case中写入default为默认值" />
                                 </WrapPanel>
                             </GroupBox.Header>
                             <DataGrid

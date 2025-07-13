@@ -24,6 +24,11 @@ public class NetWork
     /// </summary>
     [JsonIgnore] public TcpTool TcpTool { get; set; }
 
+
+
+    [JsonIgnore] public ScpiSerialTool ScpiSerialTool { get; set; }
+
+
     /// <summary>
     /// 令牌 控制当前网络任务
     /// </summary>

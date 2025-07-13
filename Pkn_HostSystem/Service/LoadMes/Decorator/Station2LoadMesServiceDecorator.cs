@@ -6,9 +6,7 @@ using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.Service.LoadMes.Decorator
 {
-    /// <summary>
-    /// 
-    /// </summary>
+
     public class Station2LoadMesServiceDecorator :  ILoadMesService
     {
         private readonly ILoadMesService _loadMesService;
@@ -109,6 +107,11 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
         public async Task<string> KeyenceReadDM(DynCondition item)
         {
             return await _loadMesService.KeyenceReadDM(item);
+        }
+
+        public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response)
+        {
+            return await _loadMesService.LateProcess(item, response);
         }
     }
 }

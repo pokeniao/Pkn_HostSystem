@@ -24,7 +24,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 {
     public partial class LiveChartsTestViewModel : ObservableRecipient
     {
-        public LiveChartsTestModel LiveChartsTestModel { get; set; } = AppJsonTool<LiveChartsTestModel>.Load();
+        public LiveChartsTestModel LiveChartsTestModel { get; set; } = JsonTool<LiveChartsTestModel>.Load();
         public LogBase<LiveChartsTestViewModel> Log;
         public SnackbarService SnackbarService = new SnackbarService();
 
@@ -478,7 +478,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public void Save()
         {
-            AppJsonTool<LiveChartsTestModel>.Save(LiveChartsTestModel);
+            JsonTool<LiveChartsTestModel>.Save(LiveChartsTestModel);
         }
 
         #endregion

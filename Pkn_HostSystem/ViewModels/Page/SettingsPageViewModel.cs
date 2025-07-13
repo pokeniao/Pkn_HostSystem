@@ -30,7 +30,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
     public SettingsPageViewModel()
     {
 
-        SettingsPageModel = AppJsonTool<SettingsPageModel>.Load();
+        SettingsPageModel = JsonTool<SettingsPageModel>.Load();
         if (SettingsPageModel == null)
         {
             //Model初始化
@@ -239,12 +239,12 @@ public partial class SettingsPageViewModel : ObservableRecipient
 
     public void Reset()
     {
-        AppJsonTool<HomePageModel>.Reset();
-        AppJsonTool<LoadMesPageModel>.Reset();
-        AppJsonTool<MesTcpModel>.Reset();
-        AppJsonTool<ProductiveModel>.Reset();
-        AppJsonTool<SettingsPageModel>.Reset();
-        AppJsonTool<VisionPageModel>.Reset();
+        JsonTool<HomePageModel>.Reset();
+        JsonTool<LoadMesPageModel>.Reset();
+        JsonTool<MesTcpModel>.Reset();
+        JsonTool<ProductiveModel>.Reset();
+        JsonTool<SettingsPageModel>.Reset();
+        JsonTool<VisionPageModel>.Reset();
     }
 
     #region 保存程序
@@ -252,7 +252,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
     [RelayCommand]
     public void Save()
     {
-        AppJsonTool<SettingsPageModel>.Save(SettingsPageModel);
+        JsonTool<SettingsPageModel>.Save(SettingsPageModel);
       
     }
     #endregion

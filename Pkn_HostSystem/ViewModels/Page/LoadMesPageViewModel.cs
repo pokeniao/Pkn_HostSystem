@@ -35,7 +35,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
     public LoadMesPageViewModel()
     {
-        LoadMesPageModel = AppJsonTool<LoadMesPageModel>.Load();
+        LoadMesPageModel = JsonTool<LoadMesPageModel>.Load();
         if (LoadMesPageModel == null)
         {
             GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
@@ -474,6 +474,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         }
         finally
         {
+            model.RunCyc = false;
             Log.Info($"[{TraceContext.Name}]--退出循环触发");
         }
     }
@@ -571,7 +572,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         string FilePath = Path.Combine(SaveFile, model.Name + lastName + ".csv");
         CsvHelper csvHelper = new CsvHelper(FilePath);
         csvHelper.Load();
-        json = AppJsonTool<object>.TryFormatJson(json, out bool isJson);
+        json = JsonTool<object>.TryFormatJson(json, out bool isJson);
         csvHelper.AddRowFromJson(json);
         csvHelper.Save(model.cts.Token);
         Log.Info($"[{TraceContext.Name}] --本地保存{model.Name}{lastName}.csv  成功");
@@ -611,7 +612,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     [RelayCommand]
     public void Save()
     {
-        AppJsonTool<LoadMesPageModel>.Save(LoadMesPageModel);
+        JsonTool<LoadMesPageModel>.Save(LoadMesPageModel);
     }
 
     #endregion
