@@ -52,6 +52,7 @@
                         <WrapPanel Margin="0,10,0,0">
                             <TextBlock Text="{Binding LoadMesAddAndUpdateWindowModel.CycText}" Margin="5" />
                             <ui:NumberBox
+                                Minimum="10"
                                 Value="{Binding LoadMesAddAndUpdateWindowModel.CycTime ,UpdateSourceTrigger=PropertyChanged ,Mode=TwoWay }"
                                 Width="120" />
                             <TextBlock Text="触发类型" Margin="5" TextAlignment="Center" />

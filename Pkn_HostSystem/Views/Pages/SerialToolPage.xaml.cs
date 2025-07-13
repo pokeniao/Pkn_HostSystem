@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.ViewModels.Page;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,11 @@ namespace Pkn_HostSystem.Views.Pages
             double newHeight = Math.Max(50, e.NewSize.Height / 2 - 100); // 50为最小高度
             AcceptMessageTextBox.Height = newHeight;
             SendMessageTextBox.Height = newHeight;
+        }
+
+        private void ComboBox_OnDropDownOpened(object? sender, EventArgs e)
+        {
+            ViewModel.SerialToolModel.ComList = ScpiSerialTool.GetCOM();
         }
     }
 }

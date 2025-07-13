@@ -151,5 +151,13 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <param name="item"></param>
         /// <returns></returns>
         Task<string> KeyenceReadDM(DynCondition item);
+
+        /// <summary>
+        /// 执行可选后期处理
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        Task<(bool succeed, string message)> LateProcess(DynCondition item, string response);
     }
 }

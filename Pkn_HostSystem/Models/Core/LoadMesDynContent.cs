@@ -79,7 +79,23 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showHttpName));
             OnPropertyChanged(nameof(showHttp));
             OnPropertyChanged(nameof(showUserDefined));
+            OnPropertyChanged(nameof(showSerial));
         }
+    }
+
+    /// <summary>
+    /// 串口发送超时
+    /// </summary>
+    private int sendTimeOut;
+
+    public int SendTimeOut
+    {
+        get => sendTimeOut;
+        set
+        {
+            SetProperty(ref sendTimeOut, value);
+        }
+
     }
 
     /// <summary>
@@ -178,14 +194,22 @@ public class DynCondition : ObservableObject
                 case "自定义(无法填写)":
                     value = $"{UserDefined?.Name}";
                     break;
+                case "串口通讯":
+                    value = $"发送内容: {SerialSendMessage}";
+                    break;
             }
 
             return value;
         }
     }
+    /// <summary>
+    /// TCP套接字发送内容
+    /// </summary>
     public string SocketSendMessage { get; set; }
-
-
+    /// <summary>
+    /// 串口发送内容
+    /// </summary>
+    public string SerialSendMessage { get; set; }
     /// <summary>
     /// 用于显示[请求类型]
     /// </summary>
@@ -207,6 +231,7 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showHttpName));
             OnPropertyChanged(nameof(showHttp));
             OnPropertyChanged(nameof(showUserDefined));
+            OnPropertyChanged(nameof(showSerial));
         }
     }
 
@@ -255,6 +280,8 @@ public class DynCondition : ObservableObject
     public bool showHostLinkReadCoid => MethodName == "读R线圈状态";
 
     public bool showHttp => MethodName == "Http";
+
+    public bool showSerial => MethodName == "串口通讯";
 
 
     /// <summary>

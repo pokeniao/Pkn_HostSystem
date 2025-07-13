@@ -172,6 +172,9 @@ namespace Pkn_HostSystem.Views.Pages
                     viewModel.MesTcpModel.BitNet =
                         ["单寄存器(无符号)", "单寄存器(有符号)", "双寄存器(无符号)", "双寄存器(有符号)", "32位浮点数", "ASCII字符串"];
                     break;
+                case "串口232/485":
+                    viewModel.MesTcpModel.MethodName = ["串口通讯"];
+                    break;
             }
         }
 
@@ -195,6 +198,9 @@ namespace Pkn_HostSystem.Views.Pages
                     break;
                 case "基恩士上位链路通讯":
                     dynCondition.MethodName = "读DM寄存器";
+                    break;
+                case "串口232/485":
+                    dynCondition.MethodName = "串口通讯";
                     break;
             }
         }
