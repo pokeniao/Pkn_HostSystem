@@ -108,14 +108,6 @@ namespace Pkn_HostSystem
                     TraceContext.Name = null;
                 }
             }
-
-            //执行每隔5分钟进行一次自动保存
-            Task.Run(async () =>
-            {
-                await Task.Delay(300 * 1000);
-                var settingsPageViewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
-                settingsPageViewModel.Save();
-            });
         }
 
         #region 自动伸缩的Navigation

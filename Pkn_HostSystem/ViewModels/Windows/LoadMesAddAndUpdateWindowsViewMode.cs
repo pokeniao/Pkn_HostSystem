@@ -74,7 +74,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
         //原地址
         LoadMesAddAndUpdateWindowModelBefore = loadMesAddAndUpdateWindowModel;
         //深拷贝一份进行修改
-        LoadMesAddAndUpdateWindowModel = AppJsonTool<LoadMesAddAndUpdateWindowModel>.DeepClone(loadMesAddAndUpdateWindowModel);
+        LoadMesAddAndUpdateWindowModel = JsonTool<LoadMesAddAndUpdateWindowModel>.DeepClone(loadMesAddAndUpdateWindowModel);
 
         Log = new LogBase<LoadMesAddAndUpdateWindowsViewModel>(SnackbarService);
         add = false;
@@ -109,7 +109,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
                 return;
             }
             //提交修改后的
-            AppJsonTool<LoadMesAddAndUpdateWindowModel>.ApplyPartialJson(LoadMesAddAndUpdateWindowModel,
+            JsonTool<LoadMesAddAndUpdateWindowModel>.PopulateObject(LoadMesAddAndUpdateWindowModel,
                 LoadMesAddAndUpdateWindowModelBefore);
         }
 

@@ -191,7 +191,7 @@
                                 </TextBlock>
                                 <ui:NumberBox Width="150"
                                               Value="{Binding ModbusToolModel.SlaveAddress , UpdateSourceTrigger=PropertyChanged}"
-                                              ValueChanged="NumberBox_ValueChanged" Minimum="0" Maximum="100">
+                                              ValueChanged="NumberBox_ValueChanged" Minimum="1" Maximum="100">
                                 </ui:NumberBox>
                             </StackPanel>
                         </WrapPanel>
@@ -213,7 +213,7 @@
                                 </TextBlock>
                                 <ui:NumberBox Name="NumberBox_count" Width="150"
                                               Value="{Binding ModbusToolModel.ReadCount,UpdateSourceTrigger=PropertyChanged}"
-                                              ValueChanged="NumberBox_ValueChanged" Minimum="0" Maximum="10000">
+                                              ValueChanged="NumberBox_ValueChanged" Minimum="1" Maximum="10000">
                                 </ui:NumberBox>
                             </StackPanel>
                         </WrapPanel>

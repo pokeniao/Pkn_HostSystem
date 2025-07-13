@@ -1,6 +1,4 @@
-﻿using Azure;
-using log4net;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
@@ -9,9 +7,6 @@ using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Service.LoadMes.Interface;
 using Pkn_HostSystem.Static;
 using RestSharp;
-using System.Collections.ObjectModel;
-using System.IO;
-using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace Pkn_HostSystem.Service.LoadMes.Decorator
 {
@@ -79,7 +74,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
 
             try
             {
-            
+
                 //创建连接
                 var client = new RestClient(item.HttpPath);
                 RestRequest requestBody;
@@ -136,7 +131,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
                 {
                     item.Response = response.Content;
                     //判断是否是JSON格式,如果是转成输出
-                    item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
+                    item.Response = JsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
 
                     StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
                         $"[{TraceContext.Name}]--返回消息--成功--消息体:\r\n{item.Response}");
@@ -162,7 +157,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
                     }
 
                     //判断是否是JSON格式,如果是转成输出
-                    item.Response = AppJsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
+                    item.Response = JsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
 
 
                     //拦截工位错误
@@ -304,6 +299,11 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
         public async Task<string> KeyenceReadDM(DynCondition item)
         {
             return await _loadMesService.KeyenceReadDM(item);
+        }
+
+        public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response)
+        {
+            return await _loadMesService.LateProcess(item, response);
         }
     }
 }
