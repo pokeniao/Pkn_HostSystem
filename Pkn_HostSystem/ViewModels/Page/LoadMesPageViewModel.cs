@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using NModbus.Logging;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
@@ -127,6 +128,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
     #region 手动触发发送 与 开启Http
 
+
+
+
     [RelayCommand]
     public async Task JogHttpButton(LoadMesPage page)
     {
@@ -145,7 +149,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             return;
         }
 
-  
+
         //初始化
         InitRun(item);
 
@@ -176,7 +180,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         TraceContext.Name = item.Name;
         TraceContext.Param = new Dictionary<string, dynamic>();
-        //2. 判断是否循环触发,还是消息触发的方式
+        //2. 判断是否循环触发,还是通讯触发的方式
         IsRun(item);
         TraceContext.Name = null;
     }
@@ -190,7 +194,10 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 case "循环触发":
                     OpenCyc(item);
                     break;
-                case "消息触发":
+                case "通讯触发":
+                    TriggerCyc(item);
+                    break;
+                case "内部触发":
                     TriggerCyc(item);
                     break;
             }
@@ -221,6 +228,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             item.cts.Cancel();
         }
+
         //初始化
         InitRun(item);
         item.Task = new Lazy<Task>(() => RunHttpCyc(item));
@@ -232,17 +240,34 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
     public async Task RunHttpCyc(LoadMesAddAndUpdateWindowModel model)
     {
-        while (!model.cts.Token.IsCancellationRequested)
+        try
         {
-            //进行一次数据组装
-            await ExecutionCondition(model);
-            await Task.Delay(model.CycTime * 1000, model.cts.Token);
+            while (!model.cts.Token.IsCancellationRequested)
+            {
+                //进行一次数据组装
+                await ExecutionCondition(model);
+                await Task.Delay(model.CycTime * 1000, model.cts.Token);
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            Log.Info($"[{TraceContext.Name}]--触发任务被取消");
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"[{TraceContext.Name}]--触发任务出现异常: {ex}");
+        }
+        finally
+        {
+            model.RunCyc = false;
+            Log.Info($"[{TraceContext.Name}]--退出循环触发");
         }
     }
 
     #endregion
 
     #region 触发和循环共同的代码
+
     public async Task<(bool succeed, string? message)> ExecutionCondition(LoadMesAddAndUpdateWindowModel model)
     {
         Log.Info($"[{TraceContext.Name}]--开始执行触发和循环共同的代码");
@@ -289,12 +314,17 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 LocalSave(model, response, "-response");
             }
         }
+
         //判断一下是否需要转发
         if (model.TranspondNeed)
         {
             Transpond(model, response);
         }
 
+        if (response == null)
+        {
+            response = request;
+        }
         return (true, response);
     }
 
@@ -312,10 +342,13 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     {
         //通过名字搜索id
         string forwardingName = model.ForwardingName;
-        //获得网络名
-        string netKey = model.LoadMesService.GetNetKey(forwardingName);
         //获得网络
-        var netWork = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
+        var netWork = GlobalManager.GetNetWork(forwardingName);
+        if (netWork == null)
+        {
+            Log.Error($"[{TraceContext.Name}]--转发时,无法获取到网络");
+            return (false, null);
+        }
 
         //判断当前转发的通讯是什么类型的
         string networkDetailedNetMethod = netWork.NetworkDetailed.NetMethod;
@@ -352,7 +385,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
     #endregion
 
-    #region 消息触发
+    #region 通讯触发
 
     /// <summary>
     /// 触发型
@@ -367,7 +400,16 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         //初始化
         InitRun(item);
-        item.Task = new Lazy<Task>(() => RunTrigger(item));
+
+        switch (item?.TriggerType)
+        {
+            case "通讯触发":
+                item.Task = new Lazy<Task>(() => RunTrigger(item));
+                break;
+            case "内部触发":
+                item.Task = new Lazy<Task>(() => RunInteriorTrigger(item));
+                break;
+        }
 
         //运行
         Task task = item.Task.Value;
@@ -377,7 +419,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     public async Task RunTrigger(LoadMesAddAndUpdateWindowModel model)
     {
         Log.Info($"[{TraceContext.Name}]-- 进入循环触发");
-        //1.启动后消息触发循环
+        //1.启动后通讯触发循环
         try
         {
             while (!model.cts.Token.IsCancellationRequested)
@@ -396,6 +438,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                         if (lookup.HasValue == false)
                         {
                             Log.Error($"[{TraceContext.Name}]--无触发通讯对象,请检查通讯对象是否打开");
+                            await Task.Delay(500, model.cts.Token);
                         }
                         else
                         {
@@ -410,7 +453,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                     {
                         case "ModbusTcp":
                             //获取触发位
-                            string currentMessage1 = await ModbusTcpTrigger(model);
+                            string currentMessage1 = await ModbusTrigger(model);
                             //判断是否触发
                             if (IsTrigger(model.TriggerMessage, currentMessage1))
                             {
@@ -419,18 +462,64 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                 //完成后给触发位停止
                                 if (succeed)
                                 {
-                                    await ModbusTcpTriggerWrite(model, true);
+                                    //需要进行内部触发
+                                    if (model.NeedInteriorTrigger)
+                                    {
+                                        //进行寄存器触发
+                                        GlobalManager.Register[model.NeedInteriorTriggerIndex] = 1;
+                                        //等待寄存器响应
+                                        succeed = await Task.Run(async () =>
+                                        {
+                                            var startTime = Environment.TickCount; // 记录开始时间
+                                            while (!model.cts.Token.IsCancellationRequested)
+                                            {
+                                                var endTime = Environment.TickCount - startTime;
+
+                                                if (endTime > model.NeedInteriorTriggerTimeOut * 1000)
+                                                {
+                                                    Log.Error($"[{TraceContext.Name}]--等待内部触发返回超时,请检查内部触发对象是否运行,或是否响应时间超出设置时间");
+                                                    break;
+                                                }
+
+                                                if (GlobalManager.Register[model.NeedInteriorTriggerIndex] == 2)
+                                                {
+                                                    return true;
+                                                }
+
+                                                if (GlobalManager.Register[model.NeedInteriorTriggerIndex] == 3)
+                                                {
+                                                    return false;
+                                                }
+
+                                                await Task.Delay(100);
+                                            }
+
+                                            return false;
+                                        });
+                                        if (succeed)
+                                        {
+                                            await ModbusTriggerWrite(model, true);
+                                        }
+                                        else
+                                        {
+                                            await ModbusTriggerWrite(model, false);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        await ModbusTriggerWrite(model, true);
+                                    }
                                 }
                                 else
                                 {
-                                    await ModbusTcpTriggerWrite(model, false);
+                                    await ModbusTriggerWrite(model, false);
                                 }
                             }
 
                             break;
                         case "ModbusRtu":
                             //获取触发位
-                            string currentMessage2 = await ModbusTcpTrigger(model);
+                            string currentMessage2 = await ModbusTrigger(model);
                             //判断是否触发
                             if (IsTrigger(model.TriggerMessage, currentMessage2))
                             {
@@ -439,19 +528,16 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                 //完成后给触发位停止
                                 if (succeed)
                                 {
-                                    if (!await ModbusTcpTriggerWrite(model, true))
+                                    //需要进行内部触发
+                                    if (model.NeedInteriorTrigger)
                                     {
-                                        Log.Error(
-                                            $"[{TraceContext.Name}]--ModbusRtu写入成功触发消息:{model.SuccessResponseMessage} ,时发生失败");
                                     }
+
+                                    await ModbusTriggerWrite(model, true);
                                 }
                                 else
                                 {
-                                    if (!await ModbusTcpTriggerWrite(model, false))
-                                    {
-                                        Log.Error(
-                                            $"[{TraceContext.Name}]--ModbusRtu写入失败触发消息:{model.FailResponseMessage}.时发生失败");
-                                    }
+                                    await ModbusTriggerWrite(model, false);
                                 }
                             }
 
@@ -479,15 +565,24 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         }
     }
 
-    private async Task<string> ModbusTcpTrigger(LoadMesAddAndUpdateWindowModel model)
+    /// <summary>
+    /// ModbusTcp触发
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    private async Task<string> ModbusTrigger(LoadMesAddAndUpdateWindowModel model)
     {
         //获取当前通讯对象
         LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
-        string key = model.LoadMesService.GetNetKey(item.TriggerConnectName);
-        var netWork = GlobalManager.NetWorkDictionary.Lookup(key).Value;
+        var netWork = GlobalManager.GetNetWork(item.TriggerConnectName);
+        if (netWork == null)
+        {
+            Log.Error($"[{TraceContext.Name}]--循环读取ModbusTcp触发,GetNetWork未找到连接");
+            return string.Empty;
+        }
+
         //获得ModBase对象
         ModbusBase modbusBase = netWork.ModbusBase;
-
         //读取寄存器
         ushort[] readHoldingRegisters03 = null;
         try
@@ -505,26 +600,31 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         return readHoldingRegisters03[0].ToString();
     }
 
-    private async Task<bool> ModbusTcpTriggerWrite(LoadMesAddAndUpdateWindowModel model, bool succeed)
+    private async Task<bool> ModbusTriggerWrite(LoadMesAddAndUpdateWindowModel model, bool succeed)
     {
         try
         {
             //获取当前通讯对象
             LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
-            string key = model.LoadMesService.GetNetKey(item.TriggerConnectName);
-            var netWork = GlobalManager.NetWorkDictionary.Lookup(key).Value;
+            var netWork = GlobalManager.GetNetWork(item.TriggerConnectName);
+            if (netWork == null)
+            {
+                Log.Error($"[{TraceContext.Name}]--触发型Modbus写回时,GetNetWork获取不到网络");
+                return false;
+            }
+
             //获得ModBase对象
             ModbusBase modbusBase = netWork.ModbusBase;
             if (succeed)
             {
-                Log.Info($"[{TraceContext.Name}]--modbusTcp触发 返回成功触发消息:{model.SuccessResponseMessage}");
+                Log.Info($"[{TraceContext.Name}]--modbus触发 返回成功触发消息:{model.SuccessResponseMessage}");
                 await modbusBase.WriteRegister_06(
                     byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
                     ushort.Parse(model.SuccessResponseMessage));
             }
             else
             {
-                Log.Error($"[{TraceContext.Name}]--modbusTcp触发 返回失败触发消息:{model.FailResponseMessage}");
+                Log.Error($"[{TraceContext.Name}]--modbus触发 返回失败触发消息:{model.FailResponseMessage}");
                 await modbusBase.WriteRegister_06(
                     byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
                     ushort.Parse(model.FailResponseMessage));
@@ -532,7 +632,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         }
         catch (Exception e)
         {
-            Log.Error($"[{TraceContext.Name}]--触发型ModbusTcp写回失败 ,{e}");
+            Log.Error($"[{TraceContext.Name}]--触发型Modbus写回失败 ,{e}");
             return false;
         }
 
@@ -544,6 +644,56 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         if (triggerMessage == currentMessage)
             return true;
         return false;
+    }
+
+    #endregion
+
+    #region 内部触发
+
+    public async Task RunInteriorTrigger(LoadMesAddAndUpdateWindowModel model)
+    {
+        Log.Info($"[{TraceContext.Name}]-- 进入内部循环触发");
+        //1.启动后通讯触发循环
+        try
+        {
+            while (!model.cts.Token.IsCancellationRequested)
+            {
+                //获取触发位
+                int i = GlobalManager.Register[model.InteriorArrayIndex];
+
+                //判断是否触发
+                if (IsTrigger("1", i.ToString()))
+                {
+                    Log.Info($"[{TraceContext.Name}]--内部寄存器{model.InteriorArrayIndex}已被触发");
+                    (bool succeed, string? message) = await ExecutionCondition(model);
+                    //完成后给触发位停止
+                    if (succeed)
+                    {
+                        GlobalManager.Register[model.InteriorArrayIndex] = 2;
+                    }
+                    else
+                    {
+                        GlobalManager.Register[model.InteriorArrayIndex] = 3;
+                    }
+                }
+
+
+                await Task.Delay(model.CycTime, model.cts.Token);
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            Log.Info($"[{TraceContext.Name}]--触发任务被取消");
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"[{TraceContext.Name}]--触发任务出现异常: {ex}");
+        }
+        finally
+        {
+            model.RunCyc = false;
+            Log.Info($"[{TraceContext.Name}]--退出循环触发");
+        }
     }
 
     #endregion
@@ -619,7 +769,10 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
 
     #region private方法
-
+    /// <summary>
+    /// 主要初始化 令牌 和 LoadMesService
+    /// </summary>
+    /// <param name="item"></param>
     private void InitRun(LoadMesAddAndUpdateWindowModel item)
     {
         //1. 初始化令牌

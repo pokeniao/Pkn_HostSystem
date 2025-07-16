@@ -4,6 +4,7 @@ using Pkn_HostSystem.Models.Windows;
 using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
+using Image = System.Windows.Controls.Image;
 using MesTcpViewModel = Pkn_HostSystem.ViewModels.Page.MesTcpViewModel;
 
 namespace Pkn_HostSystem.Views.Pages
@@ -272,8 +273,8 @@ namespace Pkn_HostSystem.Views.Pages
             showSetPage();
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
             viewModel.MesTcpModel.HttpObjects = item.HttpObjects;
-
-            viewModel.MesTcpModel.SetHttpObjectName = $"Json映射 :{item.Name}";
+            viewModel.MesTcpModel.InteriorReturnMessage = item.InteriorTriggerReturnMessage;
+            viewModel.MesTcpModel.SetHttpObjectName = $"设置定义的返回内容 :{item.Name}";
         }
 
         /// <summary>

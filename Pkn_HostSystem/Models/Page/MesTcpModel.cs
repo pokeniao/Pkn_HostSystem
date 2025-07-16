@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
+using System.Text;
+
 
 namespace Pkn_HostSystem.Models.Page;
 
@@ -31,6 +33,11 @@ public partial class MesTcpModel : ObservableObject
 
     [ObservableProperty] private string message;
 
+
+    /// <summary>
+    /// 写入内部返回地址
+    /// </summary>
+    [ObservableProperty] private STRING interiorReturnMessage;
     /// <summary>
     /// 读取消息的方式,用于动态显示,如读写线圈等
     /// </summary>
