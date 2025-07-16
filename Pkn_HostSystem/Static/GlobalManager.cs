@@ -69,6 +69,7 @@ public static class GlobalManager
     /// </summary>
     public static string jdbcPath;
 
+    public static int[] Register = new int[100];
 
     static GlobalManager()
     {
@@ -92,7 +93,20 @@ public static class GlobalManager
         StationManager.InitStation();
     }
 
+    public static NetWork GetNetWork(string ConnectName)
+    {
+        var netWorkPoJoes = GlobalManager.NetWorkDictionary.Items.ToList();
+        foreach (var netWorkPoJo in netWorkPoJoes)
+        {
+            if (netWorkPoJo.NetworkDetailed.Name == ConnectName)
+            {
+                return netWorkPoJo;
+            }
+        }
 
+        return null;
+
+    }
 
 
     /// <summary>

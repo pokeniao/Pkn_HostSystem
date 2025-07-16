@@ -23,7 +23,7 @@ public class JsonTool<T> where T : class, new()
     //         GlobalManager.AssemblyName // 文件夹名
     //     );
 
-    private static readonly string SaveFile = Path.Combine(GlobalManager.AppFolder, "程序缓存");
+    private static readonly string SaveFile = Path.Combine(GlobalManager.AppFolder, "LocalCache");
     private static readonly string FilePath = Path.Combine(SaveFile, typeof(T).Name + ".json");
 
 

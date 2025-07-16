@@ -24,7 +24,7 @@ public partial class MesTcpViewModel : ObservableRecipient
 
     public MesTcpModel MesTcpModel { get; set; }
 
-    public List<string> VerifyType { get; set; } = ["字符长度检测=", "字符长度检测!=", "字符长度检测>", "字符长度检测<", "字符长度检测>=", "字符长度检测=<", "字符=", "字符!=", "正则表达式检测"];
+    public List<string> VerifyType { get; set; } = ["字符长度检测=", "字符长度检测!=", "字符长度检测>", "字符长度检测<", "字符长度检测>=", "字符长度检测=<", "字符=", "字符!=","数据>", "数据>=", "数据<", "数据<=", "数据=", "数据!=", "正则表达式检测"];
 
     public List<string> GetMessageType { get; set; } = ["HTTP", "通讯","自定义"];
 

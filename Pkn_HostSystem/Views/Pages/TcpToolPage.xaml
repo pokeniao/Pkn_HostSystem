@@ -180,6 +180,7 @@
                                 Style="{x:Null}"
                                 Name="ClientAcceptMessageTextBox"
                                 IsReadOnly="True"
+                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 Text="{Binding TcpToolModel.SelectClientTcpNet.AcceptMessage ,UpdateSourceTrigger=PropertyChanged}"
                                 HorizontalScrollBarVisibility="Visible"
@@ -194,6 +195,7 @@
                             <TextBox
                                 Style="{x:Null}"
                                 Name="ClientSendMessageTextBox"
+                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 Text="{Binding TcpToolModel.SelectClientTcpNet.SendMessage ,UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="Wrap"
@@ -236,6 +238,7 @@
                                 Style="{x:Null}"
                                 Name="ServerAcceptMessageTextBox"
                                 IsReadOnly="True"
+                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 Text="{Binding TcpToolModel.SelectServerTcpNet.AcceptMessage ,UpdateSourceTrigger=PropertyChanged}"
                                 HorizontalScrollBarVisibility="Auto"
@@ -248,6 +251,7 @@
                             <TextBox
                                 Style="{x:Null}"
                                 Name="ServerSendMessageTextBox"
+                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                 Text="{Binding TcpToolModel.SelectServerTcpNet.SendMessage ,UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="Wrap"
