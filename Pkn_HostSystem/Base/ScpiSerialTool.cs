@@ -240,7 +240,7 @@ namespace Pkn_HostSystem.Base
         }
 
         /// <summary>
-        /// 循环读取消息触发事件
+        /// 循环读取通讯触发事件
         /// </summary>
         /// <param name="cts"></param>
         /// <returns></returns>

@@ -35,7 +35,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public ObservableCollection<string> ReqMethodList { get; set; } = ["动态获取", "常量", "方法集"];
 
-    public ObservableCollection<string> TriggerType { get; set; } = ["循环触发", "消息触发"];
+    public ObservableCollection<string> TriggerType { get; set; } = ["循环触发", "通讯触发" , "内部触发"];
 
     public ObservableCollection<string> MethodCollection { get; set; } =
         ["当前时间(yyyy-MM-dd HH:mm:ss)", "当前时间(yyyy/MM/dd HH:mm:ss)", "当前时间(yyyy-MM-dd)", "当前时间(yyyy/MM/dd)"];
@@ -174,11 +174,11 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
             }
         }
 
-        if (verifyObject.TriggerType == "消息触发")
+        if (verifyObject.TriggerType == "通讯触发")
         {
             if (verifyObject.TriggerConnectName == null)
             {
-                Log.WarningAndShow("消息触发对象不能为空", "用户添加或修改时,消息触发未选择");
+                Log.WarningAndShow("通讯触发对象不能为空", "用户添加或修改时,通讯触发未选择");
                 return false;
             }
 

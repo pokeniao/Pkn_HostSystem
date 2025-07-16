@@ -47,6 +47,8 @@ public class DynCondition : ObservableObject
     public Type UserDefined { get; set; }
 
 
+
+
     /// <summary>
     /// 打开用户自定义逻辑的JSON映射
     /// </summary>
@@ -83,6 +85,11 @@ public class DynCondition : ObservableObject
         }
     }
 
+
+    /// <summary>
+    /// 内部的触发寄存器地址
+    /// </summary>
+    public int InteriorTrigger { get; set; } = 0;
     /// <summary>
     /// 串口发送超时
     /// </summary>
@@ -189,7 +196,7 @@ public class DynCondition : ObservableObject
                     value = $"起始地址:{StartAddress}";
                     break;
                 case "Http":
-                    value = "双击设置解析的Json";
+                    value = "双击设置参数";
                     break;
                 case "自定义(无法填写)":
                     value = $"{UserDefined?.Name}";
@@ -235,6 +242,19 @@ public class DynCondition : ObservableObject
         }
     }
 
+    /// <summary>
+    /// 触发返回的消息需要 重新定义
+    /// </summary>
+    public bool NeedInteriorTriggerUserSetReturn { get; set; }
+
+    /// <summary>
+    /// 触发是否返回自定义消息
+    /// </summary>
+    public STRING InteriorTriggerReturnMessage { get; set; } = new STRING();
+    /// <summary>
+    /// 触发是否返回
+    /// </summary>
+    public bool InteriorTriggerReturn { get; set; } = false;
 
     /// <summary>
     /// 打开Switch映射

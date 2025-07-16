@@ -14,11 +14,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <returns></returns>
         LoadMesAddAndUpdateWindowModel SelectByName(string Name);
 
-        /// <summary>
-        /// 循环遍历获取网络ID
-        /// </summary>
-        /// <returns></returns>
-        string GetNetKey(string ConnectName);
+
 
         /// <summary>
         ///  触发单个请求
