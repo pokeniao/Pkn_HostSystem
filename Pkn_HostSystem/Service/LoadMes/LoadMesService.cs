@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
@@ -6,6 +7,7 @@ using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Service.LoadMes.Interface;
 using Pkn_HostSystem.Static;
+using Pkn_HostSystem.ViewModels.Page;
 using RestSharp;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -34,7 +36,7 @@ public class LoadMesService : ILoadMesService
     }
 
 
-    #region 获取当前行 与获取网络Id方法
+    #region 获取当前行
 
     /// <summary>
     /// 循环查找当前行是否存在
@@ -49,23 +51,9 @@ public class LoadMesService : ILoadMesService
             if (Name == item.Name)
                 //返回当前行的数据
                 return item;
-
         return null;
     }
 
-    /// <summary>
-    /// 循环遍历获取网络ID
-    /// </summary>
-    /// <returns></returns>
-    public string GetNetKey(string ConnectName)
-    {
-        var netWorkPoJoes = GlobalManager.NetWorkDictionary.Items.ToList();
-        foreach (var netWorkPoJo in netWorkPoJoes)
-            if (netWorkPoJo.NetworkDetailed.Name == ConnectName)
-                return netWorkPoJo.NetWorkId;
-
-        return null;
-    }
 
     #endregion
 
@@ -239,6 +227,15 @@ public class LoadMesService : ILoadMesService
             var itemValue = item.Value;
             var itemMethodOtherValue = item.Method_OtherValue;
 
+            //检查是否存在
+            var i = request.IndexOf($"[{itemKey}]");
+
+            if (i == -1)
+            {
+                continue;
+            }
+
+
             switch (item.Method)
             {
                 case "动态获取":
@@ -281,7 +278,6 @@ public class LoadMesService : ILoadMesService
     /// <returns></returns>
     public virtual string StaticMessage(string request, string itemKey, string itemValue)
     {
-
         var i = request.IndexOf($"[{itemKey}]");
         if (i != -1)
         {
@@ -291,7 +287,7 @@ public class LoadMesService : ILoadMesService
             request = requestA + itemValue + requestB;
         }
 
-        return request.IndexOf($"[{itemKey}]")!= -1? StaticMessage( request,  itemKey,  itemValue) : request;
+        return request.IndexOf($"[{itemKey}]") != -1 ? StaticMessage(request, itemKey, itemValue) : request;
     }
 
     /// <summary>
@@ -438,6 +434,7 @@ public class LoadMesService : ILoadMesService
                             Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess3}");
                             return (false, null);
                         }
+
                         break;
                     case "读DM寄存器":
                         Log.Info($"[{TraceContext.Name}]--执行读DM寄存器");
@@ -453,6 +450,7 @@ public class LoadMesService : ILoadMesService
                             Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess4}");
                             return (false, null);
                         }
+
                         break;
                     case "读R线圈状态":
                         Log.Info($"[{TraceContext.Name}]--执行读R线圈状态");
@@ -465,6 +463,7 @@ public class LoadMesService : ILoadMesService
                             Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--串口发送返回失败");
                             return (false, null);
                         }
+
                         (bool b5, string? responseLateProcess5) = await _self.LateProcess(item, response);
 
                         if (b5)
@@ -476,6 +475,7 @@ public class LoadMesService : ILoadMesService
                             Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess5}");
                             return (false, null);
                         }
+
                         break;
                 }
             }
@@ -483,33 +483,64 @@ public class LoadMesService : ILoadMesService
             {
                 //检查是否循环嵌套
 
+                //获取到当前的HTTP
+
+                LoadMesPageViewModel loadMesPageViewModel = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
+                var loadMesAddAndUpdateWindowModels = loadMesPageViewModel.LoadMesPageModel.MesPojoList;
+                LoadMesAddAndUpdateWindowModel loadMesAddAndUpdateWindowModel =null;
+                foreach (var model in loadMesAddAndUpdateWindowModels)
+                {
+
+                    if (model.Name == item.HttpName)
+                    {
+                        loadMesAddAndUpdateWindowModel = model;
+                    }
+                }
+
+                if (loadMesAddAndUpdateWindowModel == null)
+                {
+                    return (false, $"[{TraceContext.Name}]--获取子程序的时候,程序为空!");
+                }
+
+                loadMesAddAndUpdateWindowModel.cts = cts;
+                loadMesAddAndUpdateWindowModel.LoadMesService = this;
+                (bool succeed, string? s) = await loadMesPageViewModel.ExecutionCondition(loadMesAddAndUpdateWindowModel);
+
+                if (item.InteriorTriggerReturn)
+                {
+                    message = _self.StaticMessage(message, itemKey, s);
+                }
+                else
+                {
+                    message = _self.StaticMessage(message, itemKey, String.Empty);
+                }
 
                 //执行发送HTTP
-                (bool succeed, string? response) = await _self.RunOne(item.HttpName, cts);
+                // (bool succeed, string? response) = await _self.RunOne(item.HttpName, cts);
                 //需要判断返回结果一下是否是Json格式
-                JsonTool<Object>.TryFormatJson(response, out bool isJson);
-                JObject jObject;
-                if (!isJson)
-                {
-                    Log.Error($"[{TraceContext.Name}]--返回的response 不是JSON格式");
-                    //如果不是JSON对象直接退出
-                    return (false, null);
-                }
-
-                //将Json转成对象
-                jObject = JObject.Parse(response);
-                //获取内容
-                foreach (var httpObject in item.HttpObjects)
-                {
-                    string JsonKey = httpObject.JsonKey;
-                    //判断是否是自定义的JsonKey
-
-                    //常规执行
-                    string jToken = jObject.SelectToken(JsonKey).ToString();
-
-                    Log.Info($"[{TraceContext.Name}]--解析 {httpObject.JsonKey}:\r\n {jToken}");
-                    message = _self.StaticMessageSon(message, itemKey, httpObject.Name, jToken);
-                }
+                // JsonTool<Object>.TryFormatJson(response, out bool isJson);
+                // JObject jObject;
+                // if (!isJson)
+                // {
+                //     Log.Error($"[{TraceContext.Name}]--返回的response 不是JSON格式");
+                //     //如果不是JSON对象直接退出
+                //     return (false, null);
+                // }
+                //
+                // //将Json转成对象
+                // jObject = JObject.Parse(response);
+                // //获取内容
+                // foreach (var httpObject in item.HttpObjects)
+                // {
+                //     string JsonKey = httpObject.JsonKey;
+                //     //判断是否是自定义的JsonKey
+                //
+                //     //常规执行
+                //     string jToken = jObject.SelectToken(JsonKey).ToString();
+                //
+                //     Log.Info($"[{TraceContext.Name}]--解析 {httpObject.JsonKey}:\r\n {jToken}");
+                //     message = _self.StaticMessageSon(message, itemKey, httpObject.Name, jToken);
+                // }
             }
             else if (item.GetMessageType == "自定义")
             {
@@ -610,9 +641,13 @@ public class LoadMesService : ILoadMesService
                 //通过名字搜索id
                 string forwardingName = model.TranspondModbusDetailed.ConnectName;
                 //获得网络名
-                string netKey = _self.GetNetKey(forwardingName);
+                var netWork = GlobalManager.GetNetWork(forwardingName);
                 //获得网络
-                var netWork = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
+                if (netWork == null)
+                {
+                    Log.Error($"[{TraceContext.Name}]--进行通讯转发时发送错误,GetNetWork无法获取到通讯");
+                    return (false, null);
+                }
 
                 //判断当前转发的通讯是什么类型的
                 string networkDetailedNetMethod = netWork.NetworkDetailed.NetMethod;
@@ -633,8 +668,8 @@ public class LoadMesService : ILoadMesService
 
                             ushort[] result = list.ToArray();
 
-                            await modbusBase.WriteRegisters_10(byte.Parse(model.TranspondModbusDetailed.SlaveAddress),
-                                ushort.Parse(model.TranspondModbusDetailed.StartAddress), result);
+                            await modbusBase.WriteRegisters_10(byte.Parse(model.TranspondModbusDetailed.SlaveAddress.ToString()),
+                                ushort.Parse(model.TranspondModbusDetailed.StartAddress.ToString()), result);
                         }
                         catch (Exception e)
                         {
@@ -667,109 +702,113 @@ public class LoadMesService : ILoadMesService
     /// <returns></returns>
     public virtual bool VerityMessage(string message, DynVerify verify)
     {
+        bool tryParse = false;
+        bool tryParse2 = false;
+        int len = 0;
+        int len2 = 0;
         switch (verify.Type)
         {
             case "字符长度检测=":
-                bool tryParse1 = int.TryParse(verify.Value, out int len1);
-                if (!tryParse1)
+                tryParse = int.TryParse(verify.Value, out len);
+                if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
-                if (message.Length == len1)
+                if (message.Length == len)
                 {
                     return true;
                 }
                 else
                 {
-                    Log.Error($"[{TraceContext.Name}]--校验失败,长度不等于{len1}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度不等于{len}");
                     return false;
                 }
             case "字符长度检测!=":
-                bool tryParse2 = int.TryParse(verify.Value, out int len2);
-                if (!tryParse2)
+                tryParse = int.TryParse(verify.Value, out len);
+                if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
-                if (message.Length != len2)
+                if (message.Length != len)
                 {
                     return true;
                 }
                 else
                 {
-                    Log.Error($"[{TraceContext.Name}]--校验失败,长度={len2}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度={len}");
                     return false;
                 }
 
             case "字符长度检测>":
-                bool tryParse3 = int.TryParse(verify.Value, out int len3);
-                if (!tryParse3)
+                tryParse = int.TryParse(verify.Value, out len);
+                if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
-                if (message.Length > len3)
+                if (message.Length > len)
                 {
                     return true;
                 }
                 else
                 {
-                    Log.Error($"[{TraceContext.Name}]--校验失败,长度<={len3}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度<={len}");
                     return false;
                 }
             case "字符长度检测<":
-                bool tryParse4 = int.TryParse(verify.Value, out int len4);
-                if (!tryParse4)
+                tryParse = int.TryParse(verify.Value, out len);
+                if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
-                if (message.Length < len4)
+                if (message.Length < len)
                 {
                     return true;
                 }
                 else
                 {
-                    Log.Error($"[{TraceContext.Name}]--校验失败,长度>={len4}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度>={len}");
                     return false;
                 }
             case "字符长度检测>=":
-                bool tryParse5 = int.TryParse(verify.Value, out int len5);
-                if (!tryParse5)
+                tryParse = int.TryParse(verify.Value, out len);
+                if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
-                if (message.Length >= len5)
+                if (message.Length >= len)
                 {
                     return true;
                 }
                 else
                 {
-                    Log.Error($"[{TraceContext.Name}]--校验失败,长度<{len5}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度<{len}");
                     return false;
                 }
             case "字符长度检测=<":
-                bool tryParse6 = int.TryParse(verify.Value, out int len6);
-                if (!tryParse6)
+                tryParse = int.TryParse(verify.Value, out len);
+                if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
                     return false;
                 }
 
-                if (message.Length <= len6)
+                if (message.Length <= len)
                 {
                     return true;
                 }
                 else
                 {
-                    Log.Error($"[{TraceContext.Name}]--校验失败,长度>{len6}");
+                    Log.Error($"[{TraceContext.Name}]--校验失败,长度>{len}");
                     return false;
                 }
 
@@ -804,9 +843,131 @@ public class LoadMesService : ILoadMesService
                     Log.Error($"[{TraceContext.Name}]--校验失败,不符合正则表达式");
                     return false;
                 }
-        }
+            case "数据>":
+                tryParse = int.TryParse(message, out len);
+                tryParse2 = int.TryParse(verify.Value, out len2);
+                if (tryParse && tryParse2)
+                {
+                    if (len > len2)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据>{verify.Value}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
+                    return false;
+                }
+            case "数据>=":
+                tryParse = int.TryParse(message, out len);
+                tryParse2 = int.TryParse(verify.Value, out len2);
+                if (tryParse && tryParse2)
+                {
+                    if (len >= len2)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据>={verify.Value}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
+                    return false;
 
+                }
+            case "数据<":
+                tryParse = int.TryParse(message, out len);
+                tryParse2 = int.TryParse(verify.Value, out len2);
+                if (tryParse && tryParse2)
+                {
+                    if (len < len2)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据<{verify.Value}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
+                    return false;
+                }
+            case "数据<=":
+                tryParse = int.TryParse(message, out len);
+                tryParse2 = int.TryParse(verify.Value, out len2);
+                if (tryParse && tryParse2)
+                {
+                    if (len <= len2)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据<={verify.Value}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
+                    return false;
+                }
+            case "数据=":
+                tryParse = int.TryParse(message, out len);
+                tryParse2 = int.TryParse(verify.Value, out len2);
+                if (tryParse && tryParse2)
+                {
+                    if (len == len2)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据=={verify.Value}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
+                    return false;
+                }
+            case "数据!=":
+                tryParse = int.TryParse(message, out len);
+                tryParse2 = int.TryParse(verify.Value, out len2);
+                if (tryParse && tryParse2)
+                {
+                    if (len != len2)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据!={verify.Value}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
+                    return false;
+                }
+        }
         return false;
+
+       
     }
 
     #endregion
@@ -1054,11 +1215,10 @@ public class LoadMesService : ILoadMesService
             var itemConnectName = item.ConnectName;
             var methodName = item.MethodName;
             //获得网络,遍历获取对应的网络
-            var netKey = _self.GetNetKey(itemConnectName);
-            if (netKey == null) return (false, null);
-            var netWorkPoJo = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
+            var netWork = GlobalManager.GetNetWork(itemConnectName);
+            if (netWork == null) return (false, null);
 
-            ScpiSerialTool scpiSerialTool = netWorkPoJo.ScpiSerialTool;
+            ScpiSerialTool scpiSerialTool = netWork.ScpiSerialTool;
 
             (bool b, string? response) =
                 await scpiSerialTool.WriteLineAndWaitResponse(item.SerialSendMessage,
@@ -1095,11 +1255,10 @@ public class LoadMesService : ILoadMesService
         var itemConnectName = item.ConnectName;
         var methodName = item.MethodName;
         //获得网络,遍历获取对应的网络
-        var netKey = _self.GetNetKey(itemConnectName);
-        if (netKey == null) return (false, null);
-        var netWorkPoJo = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
+        var netWork = GlobalManager.GetNetWork(itemConnectName);
+        if (netWork == null) return (false, null);
         //获得modbus
-        var modbusBase = netWorkPoJo.ModbusBase;
+        var modbusBase = netWork.ModbusBase;
         try
         {
             var bools = await modbusBase.ReadCoils_01((byte)item.StationAddress, (ushort)item.StartAddress,
@@ -1125,11 +1284,10 @@ public class LoadMesService : ILoadMesService
         var itemConnectName = item.ConnectName;
         var methodName = item.MethodName;
         //获得网络,遍历获取对应的网络
-        var netKey = _self.GetNetKey(itemConnectName);
-        if (netKey == null) return (false, null);
-        var netWorkPoJo = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
+        var netWork = GlobalManager.GetNetWork(itemConnectName);
+        if (netWork == null) return (false, null);
         //获得modbus
-        var modbusBase = netWorkPoJo.ModbusBase;
+        var modbusBase = netWork.ModbusBase;
         var result = "";
         try
         {
@@ -1259,11 +1417,11 @@ public class LoadMesService : ILoadMesService
         var itemConnectName = item.ConnectName;
         var methodName = item.MethodName;
         //获得网络,遍历获取对应的网络
-        var netKey = _self.GetNetKey(itemConnectName);
-        if (netKey == null) return null;
-        var netWorkPoJo = GlobalManager.NetWorkDictionary.Lookup(netKey).Value;
+        var netWork = GlobalManager.GetNetWork(itemConnectName);
+        if (netWork == null) return null;
+
         //获得keyenceHostLinkTool
-        KeyenceHostLinkTool keyenceHostLinkTool = netWorkPoJo.KeyenceHostLinkTool;
+        KeyenceHostLinkTool keyenceHostLinkTool = netWork.KeyenceHostLinkTool;
         var result = "";
         int startAddress = item.StartAddress;
         int num = item.EndAddress;

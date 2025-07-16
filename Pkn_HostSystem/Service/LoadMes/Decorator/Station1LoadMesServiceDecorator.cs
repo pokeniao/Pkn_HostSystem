@@ -32,10 +32,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return _loadMesService.SelectByName(Name);
         }
 
-        public string GetNetKey(string ConnectName)
-        {
-            return _loadMesService.GetNetKey(ConnectName);
-        }
+
 
         public async Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts)
         {

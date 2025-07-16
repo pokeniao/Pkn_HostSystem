@@ -55,7 +55,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             //1. 选中当前行数据
             Productive? item = page.PruAndConsumerDataGrid.SelectedItem as Productive;
 
-            //2. 判断是否循环触发,还是消息触发的方式
+            //2. 判断是否循环触发,还是通讯触发的方式
             if (item.Run)
             {
                 TriggerCyc(item);
@@ -78,7 +78,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         #endregion
 
-        #region 消息触发
+        #region 通讯触发
 
         /// <summary>
         /// 触发型
@@ -234,7 +234,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             string startAddress, string triggerValue, string triggerCyc, bool isProductive,
             ProductiveConsumerService productiveConsumerService)
         {
-            //1.启动后消息触发循环
+            //1.启动后通讯触发循环
             while (!cts.Token.IsCancellationRequested)
             {
                 //尝试判断是否连接,是否需要从连

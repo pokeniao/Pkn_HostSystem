@@ -172,6 +172,51 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
 
     [JsonIgnore] public ILoadMesService LoadMesService { get; set; }
 
+    /// <summary>
+    /// Http后需要内部触发调用超时
+    /// </summary>
+    [ObservableProperty] private int needInteriorTriggerTimeOut = 30;
+    /// <summary>
+    /// Http后需要内部触发调用
+    /// </summary>
+    [ObservableProperty] private bool needInteriorTrigger = false;
+    /// <summary>
+    /// Http后需要内部触发调用地址
+    /// </summary>
+    [ObservableProperty] private int needInteriorTriggerIndex = 0;
+    /// <summary>
+    /// 内部触发数组索引地址
+    /// </summary>
+    [ObservableProperty] private int interiorArrayIndex =0;
+    /// <summary>
+    /// 显示Http设置页面
+    /// </summary>
+    [ObservableProperty] private bool showHttpSet;
+    /// <summary>
+    /// 显示触发设置页面
+    /// </summary>
+    [ObservableProperty] private bool showTriggerSet;
+
+    /// <summary>
+    /// 显示内部触发设置页面
+    /// </summary>
+    [ObservableProperty] private bool showInteriorTriggerSet;
+    /// <summary>
+    /// 显示Modbus触发页面
+    /// </summary>
+    [ObservableProperty] private bool showModbusTriggerParam;
+    /// <summary>
+    /// 显示Tcp触发页面参数
+    /// </summary>
+    [ObservableProperty] private bool showTcpTriggerParam;
+    /// <summary>
+    /// 显示基恩士上链路通讯参数
+    /// </summary>
+    [ObservableProperty] private bool showKeyenceHostLinkParam;
+    /// <summary>
+    /// 显示串口通讯参数
+    /// </summary>
+    [ObservableProperty] private bool showSerialParam;
 
     public override string ToString()
     {
