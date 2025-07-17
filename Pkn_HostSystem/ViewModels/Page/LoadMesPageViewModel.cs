@@ -127,10 +127,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     #endregion
 
     #region 手动触发发送 与 开启Http
-
-
-
-
     [RelayCommand]
     public async Task JogHttpButton(LoadMesPage page)
     {
@@ -321,10 +317,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             Transpond(model, response);
         }
 
-        if (response == null)
-        {
-            response = request;
-        }
+        response ??= request; //如果response 为null 则赋值为request
         return (true, response);
     }
 
