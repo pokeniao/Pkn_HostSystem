@@ -86,7 +86,6 @@
                     BorderThickness="1"
                     CornerRadius="10">
                     <TextBox
-
                         Margin="5"
                         VerticalScrollBarVisibility="Auto"
                         HorizontalScrollBarVisibility="Auto"
@@ -579,7 +578,7 @@
                             </GroupBox.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="0.5*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
@@ -591,7 +590,7 @@
                                         MinWidth="150"
                                         BorderThickness="0"
                                         Height="150"
-                                        Text ="{Binding MesTcpModel.InteriorReturnMessage.Value  ,UpdateSourceTrigger= PropertyChanged ,Mode=TwoWay}"
+                                        Text="{Binding MesTcpModel.InteriorReturnMessage.Value  ,UpdateSourceTrigger= PropertyChanged ,Mode=TwoWay}"
                                         TextWrapping="Wrap"
                                         AcceptsReturn="True"
                                         HorizontalScrollBarVisibility="Auto"
@@ -599,7 +598,6 @@
                                 </GroupBox>
                                 <GroupBox Grid.Column="1" BorderThickness="0" Header="解析内容">
                                     <DataGrid
-
                                         Name="DynHttpDataGrid"
                                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
@@ -608,8 +606,56 @@
                                         ItemsSource="{Binding MesTcpModel.HttpObjects}"
                                         AutoGenerateColumns="False">
                                         <DataGrid.Columns>
-                                            <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
-                                            <DataGridTextColumn Header="JsonKey" Width="*" Binding="{Binding JsonKey}" />
+                                            <DataGridTextColumn Header="嵌入名" Width="0.5*" Binding="{Binding Name}" />
+                                            <DataGridTemplateColumn Header="方法" Width="0.5*">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <TextBlock Text="{Binding Method}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.CellEditingTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <ComboBox
+                                                                SelectedValue="{Binding Method ,UpdateSourceTrigger=PropertyChanged}"
+                                                                ItemsSource="{Binding viewModel.InteriorMethod  ,RelativeSource={RelativeSource  AncestorType=Page}}" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellEditingTemplate>
+                                            </DataGridTemplateColumn>
+
+                                            <DataGridTemplateColumn
+                                                Header="参数" Width="*">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <TextBlock Text="{Binding ParamShow }" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.CellEditingTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Grid
+                                                                Visibility="{Binding showMethod1 ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                                                <TextBox
+                                                                    Text="{Binding staticParam , UpdateSourceTrigger=PropertyChanged}" />
+                                                            </Grid>
+                                                            <Grid
+                                                                Visibility="{Binding showMethod2 ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                                                <TextBox
+                                                                    Text="{Binding JsonParam , UpdateSourceTrigger=PropertyChanged}" />
+                                                            </Grid>
+                                                            <Grid
+                                                                Visibility="{Binding showMethod3 ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                                                <TextBlock Text="{Binding ParamMethods}" />
+                                                            </Grid>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellEditingTemplate>
+                                            </DataGridTemplateColumn>
                                         </DataGrid.Columns>
                                     </DataGrid>
                                 </GroupBox>
