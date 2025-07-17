@@ -30,6 +30,8 @@ public partial class MesTcpViewModel : ObservableRecipient
 
     public ObservableCollection<string> ForwardingMethod { get; set; } = ["通讯", "队列"];
 
+    public List<string> InteriorMethod { get; set; } = ["常量", "结果Json解析","方法集"];
+
     public List<Type> UserDefinedList { get; set; } = GlobalManager.GetUserDefinedTypes();
     public MesTcpViewModel()
     {
