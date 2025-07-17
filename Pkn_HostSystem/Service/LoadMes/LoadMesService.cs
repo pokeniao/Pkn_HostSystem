@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using Azure.Identity;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
@@ -14,6 +16,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 
 namespace Pkn_HostSystem.Service.LoadMes;
@@ -53,7 +56,6 @@ public class LoadMesService : ILoadMesService
                 return item;
         return null;
     }
-
 
     #endregion
 
@@ -487,10 +489,9 @@ public class LoadMesService : ILoadMesService
 
                 LoadMesPageViewModel loadMesPageViewModel = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
                 var loadMesAddAndUpdateWindowModels = loadMesPageViewModel.LoadMesPageModel.MesPojoList;
-                LoadMesAddAndUpdateWindowModel loadMesAddAndUpdateWindowModel =null;
+                LoadMesAddAndUpdateWindowModel loadMesAddAndUpdateWindowModel = null;
                 foreach (var model in loadMesAddAndUpdateWindowModels)
                 {
-
                     if (model.Name == item.HttpName)
                     {
                         loadMesAddAndUpdateWindowModel = model;
@@ -504,16 +505,65 @@ public class LoadMesService : ILoadMesService
 
                 loadMesAddAndUpdateWindowModel.cts = cts;
                 loadMesAddAndUpdateWindowModel.LoadMesService = this;
-                (bool succeed, string? s) = await loadMesPageViewModel.ExecutionCondition(loadMesAddAndUpdateWindowModel);
+                (bool succeed, string? s) =
+                    await loadMesPageViewModel.ExecutionCondition(loadMesAddAndUpdateWindowModel);
 
-                if (item.InteriorTriggerReturn)
+                if (item.NeedInteriorTriggerUserSetReturn)
                 {
-                    message = _self.StaticMessage(message, itemKey, s);
+                    string InteriorMessage = item.InteriorTriggerReturnMessage.Value;
+
+                    foreach (var httpObject in item.HttpObjects)
+                    {
+                        int indexOf = InteriorMessage.IndexOf($"[{httpObject.Name}]");
+                        if (indexOf == -1)
+                        {
+                            continue;
+                        }
+
+                        string res = null;
+                        switch (httpObject.Method)
+                        {
+                            case "常量":
+                                res = httpObject.staticParam;
+                                break;
+                            case "结果Json解析":
+                                //判断是否为字符串格式
+                                JsonTool<object>.TryFormatJson(s, out bool isJson);
+                                if (isJson)
+                                {
+                                    JObject jObject = JObject.Parse(s);
+                                    if (httpObject.JsonParam !=null)
+                                    {
+                                        res = jObject[$"{httpObject.JsonParam}"].ToString();
+                                    }
+                                    else
+                                    {
+                                        Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析路径参数为NULL");
+                                        return (false, $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析路径参数为NULL");
+                                    }
+                                   
+                                }
+                                else
+                                {
+                                    Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,返回的不是Json字符串");
+                                    return (false, $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,返回的不是Json字符串");
+                                }
+                               
+                                break;
+                            case "方法集":
+                                res = String.Empty;
+                                break;
+                        }
+                        int length = httpObject.Name.Length;
+                        var requestA = InteriorMessage.Substring(0, indexOf);
+                        var requestB = InteriorMessage.Substring(indexOf + length + 2);
+                        InteriorMessage = requestA + res + requestB;
+                    }
+
+                    s = InteriorMessage;
                 }
-                else
-                {
-                    message = _self.StaticMessage(message, itemKey, String.Empty);
-                }
+
+                message = _self.StaticMessage(message, itemKey, item.InteriorTriggerReturn ? s : String.Empty);
 
                 //执行发送HTTP
                 // (bool succeed, string? response) = await _self.RunOne(item.HttpName, cts);
@@ -668,7 +718,8 @@ public class LoadMesService : ILoadMesService
 
                             ushort[] result = list.ToArray();
 
-                            await modbusBase.WriteRegisters_10(byte.Parse(model.TranspondModbusDetailed.SlaveAddress.ToString()),
+                            await modbusBase.WriteRegisters_10(
+                                byte.Parse(model.TranspondModbusDetailed.SlaveAddress.ToString()),
                                 ushort.Parse(model.TranspondModbusDetailed.StartAddress.ToString()), result);
                         }
                         catch (Exception e)
@@ -882,7 +933,6 @@ public class LoadMesService : ILoadMesService
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
                     return false;
-
                 }
             case "数据<":
                 tryParse = int.TryParse(message, out len);
@@ -965,9 +1015,8 @@ public class LoadMesService : ILoadMesService
                     return false;
                 }
         }
-        return false;
 
-       
+        return false;
     }
 
     #endregion
