@@ -83,7 +83,10 @@ namespace Pkn_HostSystem.Views.Pages
                     ChangeParam(selectedItem);
                     SetDefault(selectedItem);
                     break;
-                default:
+                case "内部":
+                    selectedItem.MethodName = selectedItem.InteriorName;
+                    break;
+               default:
                     selectedItem.MethodName = "";
                     break;
             }
@@ -115,6 +118,16 @@ namespace Pkn_HostSystem.Views.Pages
             item.MethodName = "Http";
         }
 
+        /// <summary>
+        /// 内部通讯下拉
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void InteriorSelectChange(object sender, SelectionChangedEventArgs e)
+        {
+            DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
+            item.MethodName = item.InteriorName;
+        }
         #endregion
 
         #region 请求方式
@@ -369,5 +382,6 @@ namespace Pkn_HostSystem.Views.Pages
             viewModel.MesTcpModel.SwitchList?.Remove(value);
         }
 
+    
     }
 }

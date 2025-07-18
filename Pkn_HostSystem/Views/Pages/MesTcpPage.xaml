@@ -140,6 +140,8 @@
                                                    Visibility="{Binding showHttpName ,Converter={StaticResource BooleanVisibilityConverter}}" />
                                         <TextBlock Text="{Binding MethodName}"
                                                    Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}" />
+                                        <TextBlock Text="{Binding InteriorName}"
+                                                   Visibility="{Binding showInterior ,Converter={StaticResource BooleanVisibilityConverter}}" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -161,6 +163,14 @@
                                             SelectedValuePath="Name"
                                             SelectedValue="{Binding HttpName,UpdateSourceTrigger=PropertyChanged}"
                                             SelectionChanged="HttpSelectChange" />
+
+
+                                        <ComboBox
+                                            Visibility="{Binding showInterior ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                            ItemsSource="{Binding DataContext.InteriorNames,  RelativeSource={RelativeSource AncestorType=Page}}"
+
+                                            SelectedValue="{Binding InteriorName,UpdateSourceTrigger=PropertyChanged}"
+                                            SelectionChanged="InteriorSelectChange" />
 
                                         <TextBlock Text="{Binding MethodName}"
                                                    Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}" />
@@ -188,6 +198,8 @@
                                                    Visibility="{Binding showHttpName ,Converter={StaticResource BooleanVisibilityConverter}}" />
                                         <TextBlock Text="{Binding MethodName}"
                                                    Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}" />
+                                        <TextBlock Text="{Binding MethodName}"
+                                                   Visibility="{Binding showInterior ,Converter={StaticResource BooleanVisibilityConverter}}" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
@@ -455,8 +467,38 @@
                                                     </Button>
                                                 </WrapPanel>
                                             </StackPanel>
-
-
+                                        </Grid>
+                                        <!-- 内部请求参数 集合 -->
+                                        <Grid
+                                            HorizontalAlignment="Center"
+                                            Visibility="{Binding showInteriorArrarySet ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                           <StackPanel>
+                                               <WrapPanel>
+                                                    <TextBlock Text="地址索引" VerticalAlignment="Center" Margin="5 0"/>
+                                                   <ui:NumberBox
+                                                       Minimum="0"
+                                                       ClearButtonEnabled="False"
+                                                       Width="110"
+                                                       Maximum="99"
+                                                       Value="{Binding InteriorArrayIndex ,UpdateSourceTrigger=PropertyChanged}" />
+                                                </WrapPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                        <!-- 内部请求参数 队列 -->
+                                        <Grid
+                                            HorizontalAlignment="Center"
+                                            Visibility="{Binding showInteriorQueueSet ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                            <StackPanel>
+                                                <WrapPanel>
+                                                    <TextBlock Text="地址索引" VerticalAlignment="Center" Margin="5 0"/>
+                                                    <ui:NumberBox 
+                                                        Minimum="0"
+                                                        Maximum="99"
+                                                        Width="110"
+                                                        ClearButtonEnabled="False"
+                                                        Value="{Binding InteriorQueueIndex , UpdateSourceTrigger= PropertyChanged}" />
+                                                </WrapPanel>
+                                            </StackPanel>
                                         </Grid>
                                         <!-- 自定义参数 -->
                                         <Grid
