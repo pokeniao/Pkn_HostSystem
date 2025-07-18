@@ -144,6 +144,9 @@ namespace Pkn_HostSystem.Views.Pages
             // value.Items[2] = observableCollection;
             //
             // value.UserLog.InfoToRichTextBox("添加一行");
+
+            // ⬇️ 触发一条测试日志，看能否写成功
+            Console.WriteLine("测试");
         }
     }
 }

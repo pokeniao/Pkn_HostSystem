@@ -1,16 +1,12 @@
 ﻿using AspectCore.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using LiveChartsCore;
-using LiveChartsCore.SkiaSharpView;
 using log4net.Config;
+using log4net.Repository.Hierarchy;
 using Microsoft.Extensions.DependencyInjection;
-using Pkn_HostSystem.Base;
-using Pkn_HostSystem.Service.LoadMes;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.ViewModels.Windows;
 using Pkn_HostSystem.Views.Pages;
-using Pkn_HostSystem.Views.Pages.LoginWindowPage;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -32,6 +28,7 @@ namespace Pkn_HostSystem
         {
             AppRunOn();
             LogConfig();
+        
             CreateIoc();
             LoadDll();
             base.OnStartup(e);
@@ -91,10 +88,23 @@ namespace Pkn_HostSystem
         /// </summary>
         private void LogConfig()
         {
+            string path = Path.Combine(GlobalManager.AppFolder, "Logs");
             // 设置 log4net 全局变量
-            log4net.GlobalContext.Properties["LOG_DIR"] = Path.Combine(GlobalManager.AppFolder, "Logs");
+            log4net.GlobalContext.Properties["LOG_DIR"] = path;
+
+            string path2 = Path.Combine(path, "log4net_debug");
+            // 确保目录存在
+            Directory.CreateDirectory(path2);
             // 开启 log4net 内部调试信息输出到控制台
             log4net.Util.LogLog.InternalDebugging = true;
+            //允许将这些内部信息输出到 Console.Error
+            log4net.Util.LogLog.EmitInternalMessages = true;
+            // 设置输出路径（仅限新版本）
+            var debugPath = Path.Combine(path2, $"log4net_debug_{DateTime.Now.ToString("yyyy-MM-dd")}.txt");
+            //这相当于把 Console.WriteLine() 的输出重定向到了文件，log4net 内部错误也会跟着输出进去。
+            //AutoFlush = true —— 保证每次写入立即刷到文件，不会缓存在内存里。
+            Console.SetOut(new StreamWriter(debugPath , append: true) { AutoFlush = true });
+
             XmlConfigurator.ConfigureAndWatch(new FileInfo("Config\\log4net.config"));
         }
 
@@ -138,7 +148,7 @@ namespace Pkn_HostSystem
                     .AddSingleton<ModbusToolPage>()
                     .AddSingleton<TcpToolPage>()
                     .AddTransient<LiveChartsTestPage>() //AddTransient每次导航会new 一个新对象
-                    // .BuildServiceProvider()  Microsoft.Extensions.DependencyInjection原生
+                                                        // .BuildServiceProvider()  Microsoft.Extensions.DependencyInjection原生
                     .BuildDynamicProxyProvider() //AspectCore中的Ioc,支持Aop
             );
         }
