@@ -78,7 +78,7 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <Button Content ="滑动到底部" Click="ScrollDown_OnClick" Margin="10, 0 0 5"/>
             <Button Content ="清空日志" Click="ClearLog_OnClick" Margin="10, 0 0 5"/>
-            <!-- <Button Content ="测试" Click="ClearLog_OnClick1"/> -->
+            <Button Content ="测试" Click="ClearLog_OnClick1"/>
         </StackPanel>
         <ui:SnackbarPresenter Name="SnackbarPresenter" />
     </Grid>

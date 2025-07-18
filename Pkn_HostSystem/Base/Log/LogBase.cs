@@ -36,13 +36,27 @@ public class LogBase<T>
 
     public virtual void Info(string message)
     {
-        log.Info(message);
+        try
+        {
+            log.Info(message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Info时发生错误:  {e}");
+        }
         LogListAdd(message);
     }
 
     public virtual void Error(string message)
     {
-        log.Error(message);
+        try
+        {
+            log.Error(message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Error时发生错误:  {e}");
+        }
         LogListAdd(message);
     }
 
@@ -50,7 +64,14 @@ public class LogBase<T>
 
     public void SuccessAndShow(string message)
     {
-        log.Info(message);
+        try
+        {
+            log.Info(message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Info时发生错误:  {e}");
+        }
 
         //判断一下有没有设置SnackbarPresenter , 没有不需要页面显示
         if (snackbarService.GetSnackbarPresenter() != null)
@@ -63,7 +84,14 @@ public class LogBase<T>
 
     public void WarningAndShow(string message)
     {
-        log.Info(message);
+        try
+        {
+            log.Info(message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Warn时发生错误:  {e}");
+        }
         //判断一下有没有设置SnackbarPresenter , 没有不需要页面显示
         if (snackbarService.GetSnackbarPresenter() != null)
         {
@@ -75,7 +103,14 @@ public class LogBase<T>
 
     public void ErrorAndShow(string message)
     {
-        log.Error(message);
+        try
+        {
+            log.Error(message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Error时发生错误:  {e}");
+        }
         //判断一下有没有设置SnackbarPresenter , 没有不需要页面显示
         if (snackbarService.GetSnackbarPresenter() != null)
         {
@@ -87,7 +122,15 @@ public class LogBase<T>
 
     public void SuccessAndShow(string message, string logMessage)
     {
-        log.Info(logMessage);
+        try
+        {
+            log.Info(logMessage);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Info时发生错误:  {e}");
+            throw;
+        }
         if (snackbarService.GetSnackbarPresenter() != null)
         {
             snackbarService.Show("提示", message, ControlAppearance.Success, new SymbolIcon(SymbolRegular.Checkmark16),
@@ -98,7 +141,14 @@ public class LogBase<T>
 
     public void WarningAndShow(string message, string logMessage)
     {
-        log.Info(logMessage);
+        try
+        {
+            log.Info(logMessage);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Warn时发生错误:  {e}");
+        }
         if (snackbarService.GetSnackbarPresenter() != null)
         {
             snackbarService.Show("提示", message, ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Alert24),
@@ -109,7 +159,14 @@ public class LogBase<T>
 
     public void ErrorAndShow(string message, string logMessage)
     {
-        log.Error(logMessage);
+        try
+        {
+            log.Error(logMessage);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Error时发生错误:  {e}");
+        }
         if (snackbarService.GetSnackbarPresenter() != null)
         {
             snackbarService.Show("提示", message, ControlAppearance.Danger,
@@ -125,7 +182,14 @@ public class LogBase<T>
 
     public void SuccessAndShowTask(string message)
     {
-        log.Info(message);
+        try
+        {
+            log.Info(message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Info时发生错误:  {e}");
+        }
         Application.Current.Dispatcher.Invoke(() =>
         {
             if (snackbarService.GetSnackbarPresenter() != null)
@@ -139,7 +203,14 @@ public class LogBase<T>
 
     public void WarningAndShowTask(string message)
     {
-        log.Info(message);
+        try
+        {
+            log.Info(message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Info时发生错误:  {e}");
+        }
         Application.Current.Dispatcher.Invoke(() =>
         {
             if (snackbarService.GetSnackbarPresenter() != null)
@@ -153,7 +224,14 @@ public class LogBase<T>
 
     public void ErrorAndShowTask(string message)
     {
-        log.Error(message);
+        try
+        {
+            log.Error(message);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Error时发生错误:  {e}");
+        }
         Application.Current.Dispatcher.Invoke(() =>
         {
             if (snackbarService.GetSnackbarPresenter() != null)
@@ -167,7 +245,14 @@ public class LogBase<T>
 
     public void SuccessAndShowTask(string message, string logMessage)
     {
-        log.Info(logMessage);
+        try
+        {
+            log.Info(logMessage);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Info时发生错误:  {e}");
+        }
         Application.Current.Dispatcher.Invoke(() =>
         {
             if (snackbarService.GetSnackbarPresenter() != null)
@@ -181,7 +266,14 @@ public class LogBase<T>
 
     public void WarningAndShowTask(string message, string logMessage)
     {
-        log.Info(logMessage);
+        try
+        {
+            log.Info(logMessage);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Info时发生错误:  {e}");
+        }
         Application.Current.Dispatcher.Invoke(() =>
         {
             if (snackbarService.GetSnackbarPresenter() != null)
@@ -195,7 +287,14 @@ public class LogBase<T>
 
     public void ErrorAndShowTask(string message, string logMessage)
     {
-        log.Error(logMessage);
+        try
+        {
+            log.Error(logMessage);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"log4net Error时发生错误:  {e}");
+        }
         Application.Current.Dispatcher.Invoke(() =>
         {
             if (snackbarService.GetSnackbarPresenter() != null)
