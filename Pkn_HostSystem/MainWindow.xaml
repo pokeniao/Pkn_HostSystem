@@ -111,7 +111,7 @@
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                    Content="队列传递"
+                    Content="内部寄存器"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:ProductivePage}">
                     <ui:NavigationViewItem.Icon>
