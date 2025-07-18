@@ -459,7 +459,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                     if (model.NeedInteriorTrigger)
                                     {
                                         //进行寄存器触发
-                                        GlobalManager.Register[model.NeedInteriorTriggerIndex] = 1;
+                                        Volatile.Write(ref GlobalManager.Register[model.NeedInteriorTriggerIndex] ,1);
+                                        
                                         //等待寄存器响应
                                         succeed = await Task.Run(async () =>
                                         {
@@ -473,13 +474,13 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                                     Log.Error($"[{TraceContext.Name}]--等待内部触发返回超时,请检查内部触发对象是否运行,或是否响应时间超出设置时间");
                                                     break;
                                                 }
-
-                                                if (GlobalManager.Register[model.NeedInteriorTriggerIndex] == 2)
+                                              
+                                                if (Volatile.Read(ref GlobalManager.Register[model.NeedInteriorTriggerIndex]) == 2)
                                                 {
                                                     return true;
                                                 }
 
-                                                if (GlobalManager.Register[model.NeedInteriorTriggerIndex] == 3)
+                                                if (Volatile.Read(ref GlobalManager.Register[model.NeedInteriorTriggerIndex]) == 3)
                                                 {
                                                     return false;
                                                 }
@@ -652,7 +653,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             while (!model.cts.Token.IsCancellationRequested)
             {
                 //获取触发位
-                int i = GlobalManager.Register[model.InteriorArrayIndex];
+
+                
+                int i = Volatile.Read(ref GlobalManager.Register[model.InteriorArrayIndex]);
 
                 //判断是否触发
                 if (IsTrigger("1", i.ToString()))
@@ -662,11 +665,12 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                     //完成后给触发位停止
                     if (succeed)
                     {
-                        GlobalManager.Register[model.InteriorArrayIndex] = 2;
+                        Volatile.Write(ref GlobalManager.Register[model.InteriorArrayIndex] ,2);
+
                     }
                     else
                     {
-                        GlobalManager.Register[model.InteriorArrayIndex] = 3;
+                        Volatile.Write(ref GlobalManager.Register[model.InteriorArrayIndex], 3);
                     }
                 }
 

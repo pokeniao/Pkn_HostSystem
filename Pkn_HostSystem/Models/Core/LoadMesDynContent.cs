@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Windows.Markup;
 
 namespace Pkn_HostSystem.Models.Core;
 
@@ -32,6 +33,18 @@ public class DynCondition : ObservableObject
     /// 当前连接的名称
     /// </summary>
     public string ConnectName { get; set; }
+    /// <summary>
+    /// 内部连接的名称(通讯方式 集合or队列)
+    /// </summary>
+    public string InteriorName { get; set; }
+    /// <summary>
+    /// 内部通讯数组地址
+    /// </summary>
+    public int InteriorArrayIndex { get; set; }
+    /// <summary>
+    /// 内部通讯队列地址
+    /// </summary>
+    public int InteriorQueueIndex { get; set; }
 
 
     public NetWork NetWork { get; set; }
@@ -39,15 +52,10 @@ public class DynCondition : ObservableObject
     /// 当前连接Http的名称
     /// </summary>
     public string HttpName { get; set; }
-
-
     /// <summary>
     /// 当前选中的用户自定义选项
     /// </summary>
     public Type UserDefined { get; set; }
-
-
-
 
     /// <summary>
     /// 打开用户自定义逻辑的JSON映射
@@ -82,6 +90,7 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showHttp));
             OnPropertyChanged(nameof(showUserDefined));
             OnPropertyChanged(nameof(showSerial));
+            OnPropertyChanged(nameof(showInterior));
         }
     }
 
@@ -204,8 +213,13 @@ public class DynCondition : ObservableObject
                 case "串口通讯":
                     value = $"发送内容: {SerialSendMessage}";
                     break;
+                case "集合":
+                    value = $"读取地址:{InteriorArrayIndex}";
+                    break;
+                case "队列":
+                    value = $"读取地址:{InteriorQueueIndex}";
+                    break;
             }
-
             return value;
         }
     }
@@ -239,6 +253,7 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showHttp));
             OnPropertyChanged(nameof(showUserDefined));
             OnPropertyChanged(nameof(showSerial));
+            OnPropertyChanged(nameof(showInterior));
         }
     }
 
@@ -303,6 +318,10 @@ public class DynCondition : ObservableObject
 
     public bool showSerial => MethodName == "串口通讯";
 
+    public bool showInteriorArrarySet => MethodName == "集合";
+
+    public bool showInteriorQueueSet => MethodName == "队列";
+
 
     /// <summary>
     /// 通讯名: 用于控制连接名显示
@@ -312,6 +331,8 @@ public class DynCondition : ObservableObject
     public bool showHttpName => GetMessageType == "HTTP";
 
     public bool showUserDefined => GetMessageType == "自定义";
+
+    public bool showInterior => GetMessageType == "内部";
 }
 
 public class DynSwitch
