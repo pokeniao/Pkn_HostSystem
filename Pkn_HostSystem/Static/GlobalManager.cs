@@ -68,14 +68,28 @@ public static class GlobalManager
     /// 数据库
     /// </summary>
     public static string jdbcPath;
-
+    /// <summary>
+    /// 内部触发寄存器
+    /// </summary>
     public static int[] Register = new int[100];
+
+    /// <summary>
+    /// 内部寄存器
+    /// </summary>
+    public static object[] ArrayRegister = new object[100];
+    /// <summary>
+    /// 内部队列 ,队列初始化器
+    /// </summary>
+    public static List<ConcurrentQueue<object>> QueueRegister = Enumerable
+        .Range(0, 100)
+        .Select(_ => new ConcurrentQueue<object>())
+        .ToList();
+
 
     static GlobalManager()
     {
         //登入状态
         CurLoginState = UserLoginEnum.NoLogged;
-
         //向静态字典添加东西
         GlobalDictionary = new ConcurrentDictionary<string, object>();
         GlobalDictionary.TryAdd("LogListBox", new ObservableCollection<string>());

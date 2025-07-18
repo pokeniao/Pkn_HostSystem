@@ -33,7 +33,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="生产者消费者列表" Margin="15,10" FontSize="18" HorizontalAlignment="Left" />
+            <TextBlock Grid.Row="0" Text="队列" Margin="15,10" FontSize="18" HorizontalAlignment="Left" />
             <DataGrid
                 Grid.Row="1"
                 Name="PruAndConsumerDataGrid"

@@ -26,11 +26,13 @@ public partial class MesTcpViewModel : ObservableRecipient
 
     public List<string> VerifyType { get; set; } = ["字符长度检测=", "字符长度检测!=", "字符长度检测>", "字符长度检测<", "字符长度检测>=", "字符长度检测=<", "字符=", "字符!=","数据>", "数据>=", "数据<", "数据<=", "数据=", "数据!=", "正则表达式检测"];
 
-    public List<string> GetMessageType { get; set; } = ["HTTP", "通讯","自定义"];
+    public List<string> GetMessageType { get; set; } = ["HTTP", "通讯","内部","自定义"];
 
     public ObservableCollection<string> ForwardingMethod { get; set; } = ["通讯", "队列"];
 
     public List<string> InteriorMethod { get; set; } = ["常量", "结果Json解析","方法集"];
+
+    public List<string> InteriorNames { get; set; } = ["集合","队列"];
 
     public List<Type> UserDefinedList { get; set; } = GlobalManager.GetUserDefinedTypes();
     public MesTcpViewModel()

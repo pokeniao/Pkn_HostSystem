@@ -532,7 +532,7 @@ public class LoadMesService : ILoadMesService
                                 if (isJson)
                                 {
                                     JObject jObject = JObject.Parse(s);
-                                    if (httpObject.JsonParam !=null)
+                                    if (httpObject.JsonParam != null)
                                     {
                                         res = jObject[$"{httpObject.JsonParam}"].ToString();
                                     }
@@ -541,14 +541,14 @@ public class LoadMesService : ILoadMesService
                                         Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析路径参数为NULL");
                                         return (false, $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析路径参数为NULL");
                                     }
-                                   
+
                                 }
                                 else
                                 {
                                     Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,返回的不是Json字符串");
                                     return (false, $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,返回的不是Json字符串");
                                 }
-                               
+
                                 break;
                             case "方法集":
                                 res = String.Empty;
@@ -616,6 +616,11 @@ public class LoadMesService : ILoadMesService
                     return (false, returnValue?.ToString());
                 }
             }
+            else if (item.GetMessageType == "内部")
+            {
+
+            }
+
         }
 
         return (true, message);
