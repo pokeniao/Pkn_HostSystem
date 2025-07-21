@@ -13,6 +13,9 @@ namespace WixSharp
         static string iconFile =
             @"..\..\..\..\Pkn_HostSystem\Assets\Pkn_Install128.ico";
 
+        static string iconFile2 =
+            @"..\..\..\..\Pkn_HostSystem\Assets\Pkn_Install128Delete.ico";
+
         static Guid upgradeCode = new Guid("F9A314C0-7F34-4A5D-ABF3-54C4C48B9F2C");
 
         static Guid productCode = new Guid("30854a0c-8c60-4957-8ba4-a0a57f14fa11");
@@ -65,6 +68,12 @@ namespace WixSharp
             var project = new Project("Pkn_HostSystem",
                 new Dir(@"%ProgramFiles%\Pokeniao\Pkn_HostSystem", //这是告诉 WixSharp 你想让这个目录作为安装根目录
                     new Files($@"{baseDir}\*.*")
+                    ,
+                    new ExeFileShortcut("卸载Pkn_HostSystem", "[SystemFolder]msiexec.exe", "/x [ProductCode]")
+                    {
+                        IconFile = iconFile2
+                    }
+
                     // , new File($@"..\Pkn_HostSystem\runtime\windowsdesktop-runtime-8.0.11-win-x64.exe") //将环境也一起打包进去
                     // {
                     //     TargetFileName = "dotnet-runtime-installer.exe", //重命名
@@ -87,7 +96,7 @@ namespace WixSharp
                         },
                     new ExeFileShortcut("卸载Pkn_HostSystem", "[SystemFolder]msiexec.exe", "/x [ProductCode]")
                     {
-                        IconFile = $@"{baseDir}\Pkn_HostSystem.exe" // 提取主程序内嵌图标
+                        IconFile = iconFile2
                     })
             );
 
