@@ -116,8 +116,7 @@ public class LoadMesService : ILoadMesService
         string request,
         CancellationTokenSource cts)
     {
-        //日志显示发送内容
-        Log.InfoToLogList($"[{TraceContext.Name}]--发送内容: \r\n {request}");
+      
 
 
         //创建连接
@@ -127,16 +126,111 @@ public class LoadMesService : ILoadMesService
         switch (item.Ajax)
         {
             case "POST":
+                //日志显示发送内容
+                Log.InfoToLogList($"[{TraceContext.Name}]--发送POST请求,内容: \r\n {request}");
+
                 requestBody = new RestRequest(item.Api, Method.Post);
+                //添加请求体
+                switch (item.RequestMethod)
+                {
+                    case "JSON":
+                        //会自动设置 Content-Type: application/json，并把内容当作 JSON 处理。
+                        requestBody.AddStringBody(request, DataFormat.Json);
+                        break;
+                    case "XML":
+                        //表示数据格式是 XML。
+                        requestBody.AddStringBody(request, DataFormat.Xml);
+                        break;
+                    case "TEXT":
+                        //一般用于你想自己完全控制请求内容或用于 GET 请求等不带 body 的请求。
+                        requestBody.AddStringBody(request, DataFormat.None);
+                        break;
+                    default:
+                        requestBody.AddStringBody(request, DataFormat.None);
+                        break;
+                }
                 break;
             case "GET":
-                requestBody = new RestRequest(item.Api, Method.Get);
+                //检查路径是否需要嵌入内容
+                //获得数据
+                var loadMesAddAndUpdateWindowModel = _self.SelectByName(item.Name);
+                if (loadMesAddAndUpdateWindowModel == null) return (false, null);
+                //获得当前行的条件  将   ObservableCollection<> 转成List
+                var conditionItems = Enumerable.ToList<LoadMesCondition>(loadMesAddAndUpdateWindowModel.Condition);
+                //获取请求体
+                var Api = item.Api;
+                //对请求体进行嵌入内容
+                //遍历当前条件,判断条件方式
+                foreach (var c in conditionItems)
+                {
+                    var itemKey = c.Key;
+                    var itemValue = c.Value;
+                    var itemMethodOtherValue = c.Method_OtherValue;
+
+                    //检查是否存在
+                    var i = Api.IndexOf($"[{itemKey}]");
+
+                    if (i == -1)
+                    {
+                        continue;
+                    }
+                    switch (c.Method)
+                    {
+                        case "动态获取":
+                            //获取动态的值
+                            Log.Info($"[{TraceContext.Name}]--正在动态嵌入内容");
+                            var (succeed, value) = await _self.DynMessage(Api, itemValue, cts);
+                            if (!succeed)
+                            {
+                                Log.Error($"[{TraceContext.Name}]--执行动态嵌入内容时发送错误:{value}");
+                                return (false, null);
+                            }
+
+                            Log.Info($"[{TraceContext.Name}]--嵌入内容: \r\n{value}");
+                            Api = _self.StaticMessage(Api, itemKey, value);
+                            break;
+                        case "常量":
+                            //直接嵌入常量
+                            Api = _self.StaticMessage(Api, itemKey, itemValue);
+                            break;
+                        case "方法集":
+                            var value2 = await _self.MethodMessage(Api, itemValue, itemMethodOtherValue);
+                            Api = _self.StaticMessage(Api, itemKey, value2);
+                            break;
+                    }
+                }
+
+                //日志显示发送内容
+                Log.InfoToLogList($"[{TraceContext.Name}]--发送GET请求,路径:{Api}");
+                requestBody = new RestRequest(Api, Method.Get);
                 break;
             case "DELETE":
                 requestBody = new RestRequest(item.Api, Method.Delete);
                 break;
             case "PUT":
+
+                //日志显示发送内容
+                Log.InfoToLogList($"[{TraceContext.Name}]--发送PUT请求,内容: \r\n {request}");
                 requestBody = new RestRequest(item.Api, Method.Put);
+                //添加请求体
+                switch (item.RequestMethod)
+                {
+                    case "JSON":
+                        //会自动设置 Content-Type: application/json，并把内容当作 JSON 处理。
+                        requestBody.AddStringBody(request, DataFormat.Json);
+                        break;
+                    case "XML":
+                        //表示数据格式是 XML。
+                        requestBody.AddStringBody(request, DataFormat.Xml);
+                        break;
+                    case "TEXT":
+                        //一般用于你想自己完全控制请求内容或用于 GET 请求等不带 body 的请求。
+                        requestBody.AddStringBody(request, DataFormat.None);
+                        break;
+                    default:
+                        requestBody.AddStringBody(request, DataFormat.None);
+                        break;
+                }
                 break;
             default:
                 requestBody = new RestRequest();
@@ -147,26 +241,6 @@ public class LoadMesService : ILoadMesService
         foreach (var header in item.HttpHeaders)
         {
             requestBody.AddHeader(header.Key, header.Value);
-        }
-
-        //添加请求体
-        switch (item.RequestMethod)
-        {
-            case "JSON":
-                //会自动设置 Content-Type: application/json，并把内容当作 JSON 处理。
-                requestBody.AddStringBody(request, DataFormat.Json);
-                break;
-            case "XML":
-                //表示数据格式是 XML。
-                requestBody.AddStringBody(request, DataFormat.Xml);
-                break;
-            case "TEXT":
-                //一般用于你想自己完全控制请求内容或用于 GET 请求等不带 body 的请求。
-                requestBody.AddStringBody(request, DataFormat.None);
-                break;
-            default:
-                requestBody.AddStringBody(request, DataFormat.None);
-                break;
         }
 
         //发送请求
@@ -191,8 +265,7 @@ public class LoadMesService : ILoadMesService
                 item.Response = response.Content;
             }
 
-            //判断是否是JSON格式,如果是转成输出
-            item.Response = JsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
+            //判断是否是JSON格式,如果是转成输出item.Response = JsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
 
             Log.ErrorToLogList($"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
 
@@ -366,7 +439,6 @@ public class LoadMesService : ILoadMesService
                 continue;
             }
 
-
             //2. 判断走什么形式的方法进行请求
             if (item.GetMessageType == "通讯")
             {
@@ -500,14 +572,22 @@ public class LoadMesService : ILoadMesService
 
                 if (loadMesAddAndUpdateWindowModel == null)
                 {
-                    return (false, $"[{TraceContext.Name}]--获取子程序的时候,程序为空!");
+                    return (false, $"[{TraceContext.Name}]--获取HTTP子程序的时候,程序为空!");
                 }
 
                 loadMesAddAndUpdateWindowModel.cts = cts;
                 loadMesAddAndUpdateWindowModel.LoadMesService = this;
+
+                //触发HTTP返回结果
                 (bool succeed, string? s) =
                     await loadMesPageViewModel.ExecutionCondition(loadMesAddAndUpdateWindowModel);
+                if (!succeed)
+                {
+                    return (false, null);
+                }
 
+
+                //是否定义返回结果
                 if (item.NeedInteriorTriggerUserSetReturn)
                 {
                     string InteriorMessage = item.InteriorTriggerReturnMessage.Value;
@@ -534,14 +614,20 @@ public class LoadMesService : ILoadMesService
                                     JObject jObject = JObject.Parse(s);
                                     if (httpObject.JsonParam != null)
                                     {
-                                        res = jObject[$"{httpObject.JsonParam}"].ToString();
+                                        res = jObject.SelectToken($"{httpObject.JsonParam}")?.ToString();
+
+                                        if (res ==null)
+                                        {
+                                            Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析到结果为NULL");
+                                            return (false, $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析到结果为NULL");
+                                        }
+
                                     }
                                     else
                                     {
                                         Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析路径参数为NULL");
                                         return (false, $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析路径参数为NULL");
                                     }
-
                                 }
                                 else
                                 {
@@ -554,6 +640,7 @@ public class LoadMesService : ILoadMesService
                                 res = String.Empty;
                                 break;
                         }
+
                         int length = httpObject.Name.Length;
                         var requestA = InteriorMessage.Substring(0, indexOf);
                         var requestB = InteriorMessage.Substring(indexOf + length + 2);
@@ -563,7 +650,20 @@ public class LoadMesService : ILoadMesService
                     s = InteriorMessage;
                 }
 
-                message = _self.StaticMessage(message, itemKey, item.InteriorTriggerReturn ? s : String.Empty);
+                //是否转发
+                (bool b1, string? responseLateProcess1) = await _self.LateProcess(item, s);
+                if (b1)
+                {
+                    message = _self.StaticMessage(message, itemKey, item.InteriorTriggerReturn ? responseLateProcess1 : String.Empty);
+                }
+                else
+                {
+                    Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess1}");
+                    return (false, null);
+                }
+
+
+      
 
                 //执行发送HTTP
                 // (bool succeed, string? response) = await _self.RunOne(item.HttpName, cts);
@@ -618,9 +718,24 @@ public class LoadMesService : ILoadMesService
             }
             else if (item.GetMessageType == "内部")
             {
+                //判断是集合还是队列
 
+                switch (item.MethodName)
+                {
+                    case "集合":
+                        message = _self.StaticMessage(message, itemKey, Volatile.Read(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex])?.ToString());
+                        break;
+                    case "队列":
+                        GlobalManager.QueueRegister[item.InteriorArrayIndex].TryPeek(out object a);
+
+                        if (a == null)
+                        {
+                            Log.Error($"[{TraceContext.Name}]--在取出队列中元素时为null");
+                        }
+                        message = _self.StaticMessage(message, itemKey, a?.ToString());
+                        break;
+                }
             }
-
         }
 
         return (true, message);
@@ -667,6 +782,13 @@ public class LoadMesService : ILoadMesService
                     Log.Info($"[{TraceContext.Name}]--转发失败");
                     return (false, null);
                 }
+
+                if (item.TranspondModbusDetailed.NoReturn)
+                {
+
+                    return (true, string.Empty);
+                }
+
             }
 
             return (true, response);
@@ -737,7 +859,13 @@ public class LoadMesService : ILoadMesService
                 }
 
                 break;
+            case "内部地址":
+                Volatile.Write(
+                    ref GlobalManager.ArrayRegister[int.Parse(model.TranspondModbusDetailed.InteriorAddress)],
+                    response);
+                break;
             case "队列":
+                GlobalManager.QueueRegister[int.Parse(model.TranspondModbusDetailed.InteriorAddress)].Enqueue(response);
                 break;
         }
 
@@ -1054,6 +1182,8 @@ public class LoadMesService : ILoadMesService
                 return dateTime.ToString("yyyy-MM-dd");
             case "当前时间(yyyy/MM/dd)":
                 return dateTime.ToString("yyyy/MM/dd");
+            case "当前时间(13位时间戳)":
+                return new DateTimeOffset(dateTime).ToUnixTimeMilliseconds().ToString();
             default:
                 return string.Empty;
         }
@@ -1227,12 +1357,44 @@ public class LoadMesService : ILoadMesService
 
         string response = string.Empty;
         TcpTool tcpTool = curNetWork.TcpTool;
+        //获取需要发送的内容
+        object sendMessage = null;
+        switch (item.SendMessageMethod)
+        {
+            case "常量":
+                sendMessage = item.SocketSendMessage;
+                break;
+            case "内部地址":
+                sendMessage = Volatile.Read(
+                    ref GlobalManager.ArrayRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
+                );
+
+                if (sendMessage == null)
+                {
+                    Log.Error($"[{TraceContext.Name}]--执行Socket时--读取内部地址为null");
+
+                    return (false, null);
+                }
+                break;
+            case "队列":
+
+                GlobalManager.QueueRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
+                    .TryDequeue(out sendMessage);
+                if (sendMessage == null)
+                {
+                    Log.Error($"[{TraceContext.Name}]--执行Socket时--读取队列地址为null");
+                    return (false, null);
+                }
+                break;
+        }
+
+
         //更具类型选择发送
         switch (netMethod)
         {
             case "Tcp客户端":
                 Log.Info($"[{TraceContext.Name}]--执行Tcp客户端消息发送,并等待消息返回");
-                (bool succeed, response) = await tcpTool.SendAndWaitClientAsync(item.SocketSendMessage, cts);
+                (bool succeed, response) = await tcpTool.SendAndWaitClientAsync(sendMessage.ToString(), cts);
                 if (!succeed)
                 {
                     Log.Error($"[{TraceContext.Name}]--执行Tcp客户端消息发送,等待消息返回时发生错误");
@@ -1242,7 +1404,7 @@ public class LoadMesService : ILoadMesService
                 break;
             case "Tcp服务器":
                 Log.Info($"[{TraceContext.Name}]--执行Tcp服务器消息发送,并等待消息返回");
-                (bool succeed2, response) = await tcpTool.ServerSendWaitResponseOneToOne(item.SocketSendMessage, cts);
+                (bool succeed2, response) = await tcpTool.ServerSendWaitResponseOneToOne(sendMessage.ToString(), cts);
 
                 if (!succeed2)
                 {
