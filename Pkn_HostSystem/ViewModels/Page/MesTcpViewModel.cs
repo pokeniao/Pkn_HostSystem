@@ -28,7 +28,9 @@ public partial class MesTcpViewModel : ObservableRecipient
 
     public List<string> GetMessageType { get; set; } = ["HTTP", "通讯","内部","自定义"];
 
-    public ObservableCollection<string> ForwardingMethod { get; set; } = ["通讯", "队列"];
+    public ObservableCollection<string> ForwardingMethod { get; set; } = ["通讯", "内部地址","队列"];
+
+    public List<string> SendMessageMethod { get; set; } = ["常量","内部地址","队列"];
 
     public List<string> InteriorMethod { get; set; } = ["常量", "结果Json解析","方法集"];
 

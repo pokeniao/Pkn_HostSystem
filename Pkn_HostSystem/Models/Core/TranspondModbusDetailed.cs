@@ -7,5 +7,9 @@
         public string StartAddress { get; set; } = "0";
         public string Length { get; set; } = "1";
 
+        public string InteriorAddress { get; set; } = "0";
+
+        public bool NoReturn { get; set; } = false;
+
     }
 }
