@@ -63,6 +63,29 @@ public class DynCondition : ObservableObject
 
     public bool OpenGetPropertyValue { get; set; }
 
+    
+    /// <summary>
+    /// 发送消息的模式
+    /// </summary>
+    private string sendMessageMethod = "常量";
+
+    public string SendMessageMethod
+    {
+        get => sendMessageMethod;
+        set
+        {
+            SetProperty(ref sendMessageMethod, value);
+            OnPropertyChanged(nameof(showStaticMessage));
+            OnPropertyChanged(nameof(showRegisterMessage));
+        }
+    }
+    public bool showStaticMessage => SendMessageMethod == "常量";
+    public bool showRegisterMessage => SendMessageMethod != "常量";
+
+    /// <summary>
+    /// 内部地址/队列 数组地址
+    /// </summary>
+    public string InteriorGetRegisterMessageIndex { get; set; } = "0";
 
 
     public Dictionary<string, string> MethodNameMemory = new Dictionary<string, string>();

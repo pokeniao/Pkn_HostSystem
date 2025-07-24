@@ -38,7 +38,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
     public ObservableCollection<string> TriggerType { get; set; } = ["循环触发", "通讯触发" , "内部触发"];
 
     public ObservableCollection<string> MethodCollection { get; set; } =
-        ["当前时间(yyyy-MM-dd HH:mm:ss)", "当前时间(yyyy/MM/dd HH:mm:ss)", "当前时间(yyyy-MM-dd)", "当前时间(yyyy/MM/dd)"];
+        ["当前时间(yyyy-MM-dd HH:mm:ss)", "当前时间(yyyy/MM/dd HH:mm:ss)", "当前时间(yyyy-MM-dd)", "当前时间(yyyy/MM/dd)","当前时间(13位时间戳)"];
 
     public ObservableCollection<string> RequestMethods { get; set; } = ["JSON", "XML", "TEXT"];
 

@@ -361,9 +361,16 @@
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
-
                                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,5">
+                                                <TextBlock Text="发送内容方式" Margin="5" />
+                                                <ComboBox
+                                                    ItemsSource="{Binding viewModel.SendMessageMethod ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                    SelectedValue="{Binding SendMessageMethod ,UpdateSourceTrigger=PropertyChanged}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,5"
+                                                        Visibility="{Binding showStaticMessage ,Converter={StaticResource BooleanVisibilityConverter}}">
                                                 <TextBlock Text="发送内容" VerticalAlignment="Center" />
                                                 <TextBox
                                                     Text="{Binding SocketSendMessage,UpdateSourceTrigger=PropertyChanged}"
@@ -371,7 +378,17 @@
                                                     Margin="5" />
                                             </StackPanel>
 
-                                            <UniformGrid Grid.Row="1"
+                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,5"
+                                                        Visibility="{Binding showRegisterMessage , Converter= { StaticResource BooleanVisibilityConverter}}">
+                                                <TextBlock Text="内部地址/队列" VerticalAlignment="Center" />
+                                                <ui:NumberBox
+                                                    Value="{Binding InteriorGetRegisterMessageIndex ,UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="150"
+                                                    Margin="5"
+                                                    Minimum="0"
+                                                    Maximum="99" />
+                                            </StackPanel>
+                                            <UniformGrid Grid.Row="2"
                                                          Rows="3"
                                                          Columns="2">
                                                 <ui:ToggleSwitch
@@ -466,21 +483,41 @@
                                                         </Button.Content>
                                                     </Button>
                                                 </WrapPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch OffContent="关闭校验" OnContent="启动校验" Margin="5"
+                                                                     IsChecked="{Binding OpenVerify}" />
+                                                    <Button Content="校验" Click="SetVerify" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
+                                                                     IsChecked="{Binding OpenSwitch}" />
+                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                                    <ui:ToggleSwitch
+                                                        OnContent="打开结果转发" OffContent="关闭结果转发"
+                                                        IsChecked="{Binding ResultTranspond}" />
+                                                    <Button
+                                                        Margin="5,5,0,0"
+                                                        Content="编辑转发"
+                                                        Width="100"
+                                                        Click="ResultTranspond_OnClick" />
+                                                </StackPanel>
                                             </StackPanel>
                                         </Grid>
                                         <!-- 内部请求参数 集合 -->
                                         <Grid
                                             HorizontalAlignment="Center"
                                             Visibility="{Binding showInteriorArrarySet ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                           <StackPanel>
-                                               <WrapPanel>
-                                                    <TextBlock Text="地址索引" VerticalAlignment="Center" Margin="5 0"/>
-                                                   <ui:NumberBox
-                                                       Minimum="0"
-                                                       ClearButtonEnabled="False"
-                                                       Width="110"
-                                                       Maximum="99"
-                                                       Value="{Binding InteriorArrayIndex ,UpdateSourceTrigger=PropertyChanged}" />
+                                            <StackPanel>
+                                                <WrapPanel>
+                                                    <TextBlock Text="地址索引" VerticalAlignment="Center" Margin="5 0" />
+                                                    <ui:NumberBox
+                                                        Minimum="0"
+                                                        ClearButtonEnabled="False"
+                                                        Width="110"
+                                                        Maximum="99"
+                                                        Value="{Binding InteriorArrayIndex ,UpdateSourceTrigger=PropertyChanged}" />
                                                 </WrapPanel>
                                             </StackPanel>
                                         </Grid>
@@ -490,8 +527,8 @@
                                             Visibility="{Binding showInteriorQueueSet ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <StackPanel>
                                                 <WrapPanel>
-                                                    <TextBlock Text="地址索引" VerticalAlignment="Center" Margin="5 0"/>
-                                                    <ui:NumberBox 
+                                                    <TextBlock Text="地址索引" VerticalAlignment="Center" Margin="5 0" />
+                                                    <ui:NumberBox
                                                         Minimum="0"
                                                         Maximum="99"
                                                         Width="110"
@@ -756,6 +793,10 @@
                                                         Minimum="1"
                                                         Value="{Binding MesTcpModel.TranspondModbusDetailed.Length,UpdateSourceTrigger=PropertyChanged}" />
                                                 </WrapPanel>
+                                                <WrapPanel Margin="0,10,0,0">
+                                                    <TextBlock Text="转发后不再嵌入" Margin="5" VerticalAlignment="Center" />
+                                                    <ui:ToggleSwitch OffContent="关闭" OnContent="开启" IsChecked="{Binding MesTcpModel.TranspondModbusDetailed.NoReturn}"/>
+                                                </WrapPanel>
 
                                                 <WrapPanel HorizontalAlignment="Right">
                                                     <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick5" />
@@ -765,10 +806,29 @@
                                     </TabItem>
                                     <TabItem>
                                         <TabItem.Header>
-                                            <TextBlock Text="队列" />
+                                            <TextBlock Text="内部地址/队列" />
                                         </TabItem.Header>
+                                        <Grid>
+                                            <StackPanel>
+                                                <WrapPanel Margin="0,10,0,0">
+                                                    <TextBlock Text="地址" Margin="5" VerticalAlignment="Center" />
+                                                    <ui:NumberBox
+                                                        Width="100"
+                                                        ClearButtonEnabled="False"
+                                                        Minimum="0"
+                                                        MaxWidth="99"
+                                                        Value="{Binding MesTcpModel.TranspondModbusDetailed.InteriorAddress,UpdateSourceTrigger=PropertyChanged}" />
+                                                </WrapPanel>
+                                                <WrapPanel Margin="0,10,0,0">
+                                                    <TextBlock Text="转发后不再嵌入" Margin="5" VerticalAlignment="Center" />
+                                                    <ui:ToggleSwitch OffContent="关闭" OnContent="开启" IsChecked="{Binding MesTcpModel.TranspondModbusDetailed.NoReturn}"/>
+                                                </WrapPanel>
+                                                <WrapPanel HorizontalAlignment="Right">
+                                                    <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick5" />
+                                                </WrapPanel>
+                                            </StackPanel>
+                                        </Grid>
                                     </TabItem>
-
                                 </TabControl>
                             </StackPanel>
                         </GroupBox>
