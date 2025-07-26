@@ -116,9 +116,6 @@ public class LoadMesService : ILoadMesService
         string request,
         CancellationTokenSource cts)
     {
-      
-
-
         //创建连接
         var client = new RestClient(item.HttpPath);
         RestRequest requestBody;
@@ -661,36 +658,6 @@ public class LoadMesService : ILoadMesService
                     Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess1}");
                     return (false, null);
                 }
-
-
-      
-
-                //执行发送HTTP
-                // (bool succeed, string? response) = await _self.RunOne(item.HttpName, cts);
-                //需要判断返回结果一下是否是Json格式
-                // JsonTool<Object>.TryFormatJson(response, out bool isJson);
-                // JObject jObject;
-                // if (!isJson)
-                // {
-                //     Log.Error($"[{TraceContext.Name}]--返回的response 不是JSON格式");
-                //     //如果不是JSON对象直接退出
-                //     return (false, null);
-                // }
-                //
-                // //将Json转成对象
-                // jObject = JObject.Parse(response);
-                // //获取内容
-                // foreach (var httpObject in item.HttpObjects)
-                // {
-                //     string JsonKey = httpObject.JsonKey;
-                //     //判断是否是自定义的JsonKey
-                //
-                //     //常规执行
-                //     string jToken = jObject.SelectToken(JsonKey).ToString();
-                //
-                //     Log.Info($"[{TraceContext.Name}]--解析 {httpObject.JsonKey}:\r\n {jToken}");
-                //     message = _self.StaticMessageSon(message, itemKey, httpObject.Name, jToken);
-                // }
             }
             else if (item.GetMessageType == "自定义")
             {
