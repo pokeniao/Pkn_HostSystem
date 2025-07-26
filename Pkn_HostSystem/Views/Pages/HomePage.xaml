@@ -1305,6 +1305,7 @@
                     </WrapPanel>
                 </Grid>
             </Grid>
+
             <ui:SnackbarPresenter Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Name="SnackbarPresenter" />
         </Grid>
     </Grid>
