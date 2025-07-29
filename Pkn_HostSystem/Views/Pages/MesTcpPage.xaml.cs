@@ -4,6 +4,7 @@ using Pkn_HostSystem.Models.Windows;
 using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
+using Button = System.Windows.Controls.Button;
 using Image = System.Windows.Controls.Image;
 using MesTcpViewModel = Pkn_HostSystem.ViewModels.Page.MesTcpViewModel;
 
@@ -57,6 +58,7 @@ namespace Pkn_HostSystem.Views.Pages
         }
 
         #region 请求类型
+
         /// <summary>
         /// 当 请求类型进行选择时
         /// </summary>
@@ -86,11 +88,12 @@ namespace Pkn_HostSystem.Views.Pages
                 case "内部":
                     selectedItem.MethodName = selectedItem.InteriorName;
                     break;
-               default:
+                default:
                     selectedItem.MethodName = "";
                     break;
             }
         }
+
         #endregion
 
         #region 通讯名
@@ -128,9 +131,11 @@ namespace Pkn_HostSystem.Views.Pages
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
             item.MethodName = item.InteriorName;
         }
+
         #endregion
 
         #region 请求方式
+
         /// <summary>
         /// 请求方式下拉修改
         /// </summary>
@@ -162,7 +167,8 @@ namespace Pkn_HostSystem.Views.Pages
                         "单寄存器(无符号)", "单寄存器(有符号)",
                         "双寄存器;无符号;BigEndian", "双寄存器;无符号;LittleEndian", "双寄存器;无符号;WordSwap", "双寄存器;无符号;ByteSwap",
                         "双寄存器;有符号;BigEndian", "双寄存器;有符号;LittleEndian", "双寄存器;有符号;WordSwap", "双寄存器;有符号;ByteSwap",
-                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;WordSwap", "32位浮点数;ByteSwap", "ASCII字符串(高低位)","ASCII字符串(低高位)"
+                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;WordSwap", "32位浮点数;ByteSwap",
+                        "ASCII字符串(高低位)", "ASCII字符串(低高位)"
                     ];
                     break;
                 case "ModbusRtu":
@@ -172,7 +178,8 @@ namespace Pkn_HostSystem.Views.Pages
                         "单寄存器(无符号)", "单寄存器(有符号)",
                         "双寄存器;无符号;BigEndian", "双寄存器;无符号;LittleEndian", "双寄存器;无符号;WordSwap", "双寄存器;无符号;ByteSwap",
                         "双寄存器;有符号;BigEndian", "双寄存器;有符号;LittleEndian", "双寄存器;有符号;WordSwap", "双寄存器;有符号;ByteSwap",
-                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;WordSwap", "32位浮点数;ByteSwap", "ASCII字符串(高低位)","ASCII字符串(低高位)"
+                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;WordSwap", "32位浮点数;ByteSwap",
+                        "ASCII字符串(高低位)", "ASCII字符串(低高位)"
                     ];
                     break;
                 case "Tcp客户端":
@@ -218,6 +225,7 @@ namespace Pkn_HostSystem.Views.Pages
                     break;
             }
         }
+
         /// <summary>
         /// 点击编辑Switch按钮
         /// </summary>
@@ -225,15 +233,15 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            viewModel.MesTcpModel.ShowSwitchSet = true;
-            showSetPage();
-
-       
-
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
+            if (item.OpenSwitch)
+            {
+                viewModel.MesTcpModel.ShowSwitchSet = true;
+                showSetPage();
+                viewModel.MesTcpModel.SwitchList = item.SwitchList;
+                viewModel.MesTcpModel.SetSwitchSetName = $"Switch :{item.Name}";
+            }
 
-            viewModel.MesTcpModel.SwitchList = item.SwitchList;
-            viewModel.MesTcpModel.SetSwitchSetName = $"Switch :{item.Name}";
         }
 
         /// <summary>
@@ -254,14 +262,16 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void SetVerify(object sender, RoutedEventArgs e)
         {
-            viewModel.MesTcpModel.VeritySet = true;
-            showSetPage();
-
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
+            if (item.OpenVerify)
+            {
+                viewModel.MesTcpModel.VeritySet = true;
+                showSetPage();
 
-            viewModel.MesTcpModel.VerifyList = item.VerifyList;
+                viewModel.MesTcpModel.VerifyList = item.VerifyList;
 
-            viewModel.MesTcpModel.SetVeritySetName = $"校验 :{item.Name}";
+                viewModel.MesTcpModel.SetVeritySetName = $"校验 :{item.Name}";
+            }
         }
 
         /// <summary>
@@ -282,12 +292,17 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void SetHttpGetObject(object sender, RoutedEventArgs e)
         {
-            viewModel.MesTcpModel.HttpSet = true;
-            showSetPage();
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
-            viewModel.MesTcpModel.HttpObjects = item.HttpObjects;
-            viewModel.MesTcpModel.InteriorReturnMessage = item.InteriorTriggerReturnMessage;
-            viewModel.MesTcpModel.SetHttpObjectName = $"设置定义的返回内容 :{item.Name}";
+            if (item.NeedInteriorTriggerUserSetReturn)
+            {
+                viewModel.MesTcpModel.HttpSet = true;
+                showSetPage();
+
+                viewModel.MesTcpModel.HttpObjects = item.HttpObjects;
+                viewModel.MesTcpModel.InteriorReturnMessage = item.InteriorTriggerReturnMessage;
+                viewModel.MesTcpModel.SetHttpObjectName = $"设置定义的返回内容 :{item.Name}";
+            }
+
         }
 
         /// <summary>
@@ -338,14 +353,15 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void ResultTranspond_OnClick(object sender, RoutedEventArgs e)
         {
-            
-            viewModel.MesTcpModel.TranspondSet = true;
-            showSetPage();
- 
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
-
-            viewModel.MesTcpModel.TranspondModbusDetailed = item.TranspondModbusDetailed;
-            viewModel.MesTcpModel.TranspondSetName = $"转发设置 :{item.Name}";
+            if (item.ResultTranspond)
+            {
+                viewModel.MesTcpModel.TranspondSet = true;
+                showSetPage();
+                viewModel.MesTcpModel.TranspondModbusDetailed = item.TranspondModbusDetailed;
+                viewModel.MesTcpModel.TranspondSetName = $"转发设置 :{item.Name}";
+            }
+         
         }
 
         /// <summary>
@@ -369,6 +385,7 @@ namespace Pkn_HostSystem.Views.Pages
         {
             DynGrid.MaxHeight = e.NewSize.Height;
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -381,7 +398,5 @@ namespace Pkn_HostSystem.Views.Pages
 
             viewModel.MesTcpModel.SwitchList?.Remove(value);
         }
-
-    
     }
 }

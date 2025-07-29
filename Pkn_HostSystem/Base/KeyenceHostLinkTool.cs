@@ -14,12 +14,12 @@ namespace Pkn_HostSystem.Base
 
         #region 连接与断开
 
-        public bool Connect(string ip, int port = 8501)
+        public async Task<bool> Connect(string ip, int port = 8501)
         {
             try
             {
                 client = new TcpClient();
-                client.Connect(ip, port);
+                await client.ConnectAsync(ip, port);
                 stream = client.GetStream();
                 return true;
             }
@@ -41,17 +41,20 @@ namespace Pkn_HostSystem.Base
 
         #region 读取R线圈和写R线圈
 
-        public string ReadR(string address)
+        public async Task<(bool succeed, string? response)> ReadR(string address, CancellationTokenSource cts)
         {
-            Log.Info($"ReadR执行,address:{address}");
-            return SendCommand($"RD R{address}");
+            Log.Info($"[{TraceContext.Name}]--读取R线圈,地址:{address}");
+            return await SendCommand($"RD R{address}", cts);
         }
 
-        public bool WriteR(string address, bool value)
+        public async Task<bool> WriteR(string address, bool value, CancellationTokenSource cts)
         {
-            Log.Info($"WriteR执行,address:{address},value:{value}");
+            Log.Info($"[{TraceContext.Name}]--写R线圈,地址:{address},写入内容:{value}");
             string cmd = value ? $"ST R{address}" : $"RS R{address}";
-            return SendCommand(cmd).Equals("OK", StringComparison.OrdinalIgnoreCase);
+
+            (bool succeed, string? response) = await SendCommand(cmd, cts);
+
+            return response.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase);
         }
 
         #endregion
@@ -59,37 +62,56 @@ namespace Pkn_HostSystem.Base
 
         #region 读ZF写ZF
 
-        public string ReadZF(string address)
+        public async Task<(bool succeed, string? response)>  ReadZF(string address,CancellationTokenSource cts)
         {
-            Log.Info($"ReadZF执行,address:{address}");
-            return SendCommand($"RD ZF{address}");
+            Log.Info($"[{TraceContext.Name}]--读ZF,地址:{address}");
+            return await SendCommand($"RD ZF{address}",cts);
         }
 
-        public bool WriteZF(string address, bool value)
+        public async Task<bool> WriteZF(string address, bool value , CancellationTokenSource cts)
         {
-            Log.Info($"WriteZF执行,address:{address},value{value}");
+            Log.Info($"[{TraceContext.Name}]--写ZF,地址:{address},值{value}");
             string cmd = value ? $"ST ZF{address}" : $"RS ZF{address}";
-            return SendCommand(cmd).Equals("OK", StringComparison.OrdinalIgnoreCase);
+
+            (bool succeed, string? response) = await SendCommand(cmd, cts);
+            return response.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase);
         }
 
         #endregion
 
         #region 读取写入DM
 
-        public T ReadDM<T>(int address) where T : struct
+        public async Task<(bool, T)> ReadDM<T>(int address, CancellationTokenSource cts) where T : struct
         {
-            Log.Info($"ReadDM执行,address:{address}");
+            Log.Info($"[{TraceContext.Name}]--读DM执行,地址:{address}");
             //判断是否是32位,来决定是否+L
             bool is32Bit = Is32BitType<T>();
             string suffix = is32Bit ? ".L" : "";
             //拼接报文
             string command = $"RD DM{address}{suffix}";
             //发送报文
-            string response = SendCommand(command);
-            return KeyenceMcDataConverter.ConvertFromResponse<T>(response);
+            (bool succeed, string response) = await SendCommand(command, cts);
+
+            try
+            {
+                if (succeed)
+                {
+                    T convertFromResponse = KeyenceMcDataConverter.ConvertFromResponse<T>(response);
+                    return (true, convertFromResponse);
+                }
+                else
+                {
+                    return (false, (T)(object)response);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[{TraceContext.Name}]--执行基恩士类型转换时候发送异常:{e}");
+                return (false, (T)(object)response);
+            }
         }
 
-        public bool WriteDM<T>(int address, T value) where T : struct
+        public async Task<bool> WriteDM<T>(int address, T value , CancellationTokenSource cts) where T : struct
         {
             Log.Info($"WriteDM执行,address:{address} ,value: {value}");
             string String = KeyenceMcDataConverter.ConvertToWriteData(value);
@@ -98,9 +120,10 @@ namespace Pkn_HostSystem.Base
             string suffix = is32Bit ? ".L" : "";
             string command = $"WR DM{address}{suffix} {String}";
             //发送数据
-            string response = SendCommand(command);
+             (bool succeed, string? response) = await SendCommand(command,cts);
+
             //判断是否接受成功
-            return IsSuccessResponse(response);
+            return response.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -109,9 +132,15 @@ namespace Pkn_HostSystem.Base
         /// <param name="startAddress"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public ushort[] ReadDMWords(int startAddress, int count)
+        public async Task<(bool succeed,  ushort[] response)> ReadDMWords(int startAddress, int count, CancellationTokenSource cts)
         {
-            string response = SendCommand($"RD DM{startAddress} {count}");
+            (bool succeed, string response) = await SendCommand($"RD DM{startAddress} {count}", cts);
+
+            if (!succeed)
+            {
+                return (false, null);
+            }
+
 
             if (response.StartsWith("+"))
                 response = response.Substring(1);
@@ -121,15 +150,16 @@ namespace Pkn_HostSystem.Base
 
             ushort[] values = new ushort[count];
 
-            ///转成16进制存储
+            //转成16进制存储
             for (int i = 0; i < count; i++)
             {
                 string hex = response.Substring(i * 4, 4);
                 values[i] = Convert.ToUInt16(hex, 16);
             }
 
-            return values;
+            return (true ,values);
         }
+
         #endregion
 
         #region 内部方法
@@ -145,25 +175,6 @@ namespace Pkn_HostSystem.Base
             return type == typeof(int) || type == typeof(uint) || type == typeof(float);
         }
 
-        /// <summary>
-        /// 判断是否接受成功
-        /// </summary>
-        /// <param name="response"></param>
-        /// <returns></returns>
-        private bool IsSuccessResponse(string response)
-        {
-            bool b = response?.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase) == true;
-            if (b)
-            {
-                Log.Info("发送成功,返回消息提示成功");
-            }
-            else
-            {
-                Log.Info("发送失败,返回消息提示失败");
-            }
-            return b;
-        }
-
         #endregion
 
 
@@ -172,25 +183,57 @@ namespace Pkn_HostSystem.Base
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        private string SendCommand(string command)
+        private async Task<(bool succeed, string response)> SendCommand(string command, CancellationTokenSource cts)
         {
-            if (!IsConnected) return "未连接";
+            if (!IsConnected) return (false, "未连接");
 
             try
             {
                 byte[] sendData = Encoding.ASCII.GetBytes(command + "\r");
-                stream.Write(sendData, 0, sendData.Length);
-
-                byte[] buffer = new byte[256];
-                int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                Log.Info("SendCommand:基恩士上位链路协议发送");
-                return Encoding.ASCII.GetString(buffer, 0, bytesRead).Trim('\0', '\r', '\n');
+                await stream.WriteAsync(sendData, 0, sendData.Length);
+                Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送");
             }
             catch (Exception ex)
             {
-                Log.Error($"错误: {ex.Message}");
-                return $"错误: {ex.Message}";
+                Log.Error($"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行发送消息时,出现异常{ex.Message}");
+                return (false, $"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行发送消息时,出现异常{ex.Message}");
             }
+
+
+            Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送后,等待消息返回");
+            byte[] buffer = new byte[256];
+            try
+            {
+                var startTime = Environment.TickCount; // 获取当前时间戳
+                while (!cts.Token.IsCancellationRequested)
+                {
+                    //检查超时
+                    int elapsed = Environment.TickCount - startTime;
+                    if (elapsed > 3000) // 超时3秒
+                    {
+                        Log.Error($"[{TraceContext.Name}]--基恩士上位链路协议发送后,等待消息返回超时");
+                        return (false, "基恩士超时");
+                    }
+
+                    //检查是否有数据可读
+                    if (stream.DataAvailable)
+                    {
+                        int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+
+                        return (true, Encoding.ASCII.GetString(buffer, 0, bytesRead).Trim('\0', '\r', '\n'));
+                    }
+
+                    // 没数据，休息一下再看
+                    await Task.Delay(100);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行读取消息时,出现异常{e.Message}");
+                return (false, $"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行读取消息时,出现异常{e.Message}");
+            }
+
+            return (false, "未收到数据");
         }
     }
 
