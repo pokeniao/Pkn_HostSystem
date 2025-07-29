@@ -146,8 +146,13 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        Task<string> KeyenceReadDM(DynCondition item);
-
+        Task<(bool succeed, string response)> KeyenceReadDM(DynCondition item , CancellationTokenSource cts);
+        /// <summary>
+        /// 动态获取基恩士上链路内容
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        Task<(bool succeed, string? result)> KeyenceReadCoid(DynCondition item,CancellationTokenSource cts);
         /// <summary>
         /// 执行可选后期处理
         /// </summary>
@@ -155,5 +160,13 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <param name="response"></param>
         /// <returns></returns>
         Task<(bool succeed, string message)> LateProcess(DynCondition item, string response);
+        /// <summary>
+        /// 串口通讯
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="cts"></param>
+        /// <returns></returns>
+        Task<(bool succeed, string response)> ScpiSerialAsync(DynCondition item,
+            CancellationTokenSource cts);
     }
 }

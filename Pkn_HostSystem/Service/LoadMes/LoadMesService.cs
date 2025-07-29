@@ -14,10 +14,12 @@ using RestSharp;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Reactive.Joins;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Pkn_HostSystem.Service.LoadMes;
 
@@ -146,6 +148,7 @@ public class LoadMesService : ILoadMesService
                         requestBody.AddStringBody(request, DataFormat.None);
                         break;
                 }
+
                 break;
             case "GET":
                 //检查路径是否需要嵌入内容
@@ -171,6 +174,7 @@ public class LoadMesService : ILoadMesService
                     {
                         continue;
                     }
+
                     switch (c.Method)
                     {
                         case "动态获取":
@@ -228,6 +232,7 @@ public class LoadMesService : ILoadMesService
                         requestBody.AddStringBody(request, DataFormat.None);
                         break;
                 }
+
                 break;
             default:
                 requestBody = new RestRequest();
@@ -418,292 +423,321 @@ public class LoadMesService : ILoadMesService
             return (false, null);
         }
 
-        var result = "";
-        // 1. 循环获取动态条件
-        foreach (var item in mesTcpPojo.DynCondition)
+        //通过正则表达式匹配对应数量的[]格式的字符
+        MatchCollection matches = Regex.Matches(message, @"\[.{1,}\]");
+        foreach (Match match in matches)
         {
-            var itemKey = item.Name;
-            var methodName = item.MethodName;
-            bool isSwitch = item.OpenSwitch;
-            bool isVerify = item.OpenVerify;
-            bool ResultTranspond = item.ResultTranspond;
-
-            //检查是否存在
-            var i = message.IndexOf($"[{itemKey}]");
-
-            if (i == -1)
+            foreach (var item in mesTcpPojo.DynCondition)
             {
-                continue;
-            }
+                var itemKey = item.Name;
+                var methodName = item.MethodName;
+                //检查是否存在
+                // var i = message.IndexOf();
 
-            //2. 判断走什么形式的方法进行请求
-            if (item.GetMessageType == "通讯")
-            {
-                //3. 判断需要通过什么获取动态内容
-                switch (methodName)
+                if (!match.Value.Equals($"[{itemKey}]"))
                 {
-                    case "读寄存器":
-                        Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读寄存器中");
-                        (bool succeed1, string readReg) = await _self.ReadReg(item);
-                        if (!succeed1)
-                        {
-                            Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--读寄存器地址{item.StartAddress}失败");
-                            return (false, null);
-                        }
-
-                        (bool b1, string? responseLateProcess1) = await _self.LateProcess(item, readReg);
-                        if (b1)
-                        {
-                            message = _self.StaticMessage(message, itemKey, responseLateProcess1);
-                        }
-                        else
-                        {
-                            Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess1}");
-                            return (false, null);
-                        }
-
-                        break;
-                    case "读线圈":
-                        Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读线圈中");
-                        (bool succeed2, string readCoid) = await _self.ReadCoid(item);
-                        if (!succeed2)
-                        {
-                            Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--读线圈地址{item.StartAddress}失败");
-                            return (false, null);
-                        }
-
-                        (bool b2, string? responseLateProcess2) = await _self.LateProcess(item, readCoid);
-
-                        if (b2)
-                        {
-                            message = _self.StaticMessage(message, itemKey, responseLateProcess2);
-                        }
-                        else
-                        {
-                            Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess2}");
-                            return (false, null);
-                        }
-
-                        break;
-                    case "Socket返回":
-                        Log.Info($"[{TraceContext.Name}]--动态嵌入内容:执行Socket消息发送");
-                        (bool succeed, string tcp) = await _self.ReadTcpMessageAsync(item, cts);
-                        //判断
-                        if (!succeed)
-                        {
-                            Log.Error($"[{TraceContext.Name}]--Socket返回发送错误");
-                            return (false, null);
-                        }
-
-                        (bool b3, string? responseLateProcess3) = await _self.LateProcess(item, tcp);
-                        if (b3)
-                        {
-                            message = _self.StaticMessage(message, itemKey, responseLateProcess3);
-                        }
-                        else
-                        {
-                            Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess3}");
-                            return (false, null);
-                        }
-
-                        break;
-                    case "读DM寄存器":
-                        Log.Info($"[{TraceContext.Name}]--执行读DM寄存器");
-                        string readDm = await _self.KeyenceReadDM(item);
-
-                        (bool b4, string? responseLateProcess4) = await _self.LateProcess(item, readDm);
-                        if (b4)
-                        {
-                            message = _self.StaticMessage(message, itemKey, responseLateProcess4);
-                        }
-                        else
-                        {
-                            Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess4}");
-                            return (false, null);
-                        }
-
-                        break;
-                    case "读R线圈状态":
-                        Log.Info($"[{TraceContext.Name}]--执行读R线圈状态");
-                        break;
-                    case "串口通讯":
-                        Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行串口发送中");
-                        (bool b, string? response) = await ScpiSerialAsync(item, cts);
-                        if (!b)
-                        {
-                            Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--串口发送返回失败");
-                            return (false, null);
-                        }
-
-                        (bool b5, string? responseLateProcess5) = await _self.LateProcess(item, response);
-
-                        if (b5)
-                        {
-                            message = _self.StaticMessage(message, itemKey, responseLateProcess5);
-                        }
-                        else
-                        {
-                            Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess5}");
-                            return (false, null);
-                        }
-
-                        break;
+                    continue;
                 }
-            }
-            else if (item.GetMessageType == "HTTP")
-            {
-                //检查是否循环嵌套
 
-                //获取到当前的HTTP
-
-                LoadMesPageViewModel loadMesPageViewModel = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
-                var loadMesAddAndUpdateWindowModels = loadMesPageViewModel.LoadMesPageModel.MesPojoList;
-                LoadMesAddAndUpdateWindowModel loadMesAddAndUpdateWindowModel = null;
-                foreach (var model in loadMesAddAndUpdateWindowModels)
+                //2. 判断走什么形式的方法进行请求
+                if (item.GetMessageType == "通讯")
                 {
-                    if (model.Name == item.HttpName)
+                    //3. 判断需要通过什么获取动态内容
+                    switch (methodName)
                     {
-                        loadMesAddAndUpdateWindowModel = model;
+                        case "读寄存器":
+                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读寄存器中");
+                            (bool succeed1, string readReg) = await _self.ReadReg(item);
+                            if (!succeed1)
+                            {
+                                Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--读寄存器地址{item.StartAddress}失败");
+                                return (false, null);
+                            }
+
+                            (bool b1, string? responseLateProcess1) = await _self.LateProcess(item, readReg);
+                            if (b1)
+                            {
+                                message = _self.StaticMessage(message, itemKey, responseLateProcess1);
+                            }
+                            else
+                            {
+                                Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess1}");
+                                return (false, null);
+                            }
+
+                            break;
+                        case "读线圈":
+                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读线圈中");
+                            (bool succeed2, string readCoid) = await _self.ReadCoid(item);
+                            if (!succeed2)
+                            {
+                                Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--读线圈地址{item.StartAddress}失败");
+                                return (false, null);
+                            }
+
+                            (bool b2, string? responseLateProcess2) = await _self.LateProcess(item, readCoid);
+
+                            if (b2)
+                            {
+                                message = _self.StaticMessage(message, itemKey, responseLateProcess2);
+                            }
+                            else
+                            {
+                                Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess2}");
+                                return (false, null);
+                            }
+
+                            break;
+                        case "Socket返回":
+                            Log.Info($"[{TraceContext.Name}]--动态嵌入内容:执行Socket消息发送");
+                            (bool succeed, string tcp) = await _self.ReadTcpMessageAsync(item, cts);
+                            //判断
+                            if (!succeed)
+                            {
+                                Log.Error($"[{TraceContext.Name}]--Socket返回发送错误");
+                                return (false, null);
+                            }
+
+                            (bool b3, string? responseLateProcess3) = await _self.LateProcess(item, tcp);
+                            if (b3)
+                            {
+                                message = _self.StaticMessage(message, itemKey, responseLateProcess3);
+                            }
+                            else
+                            {
+                                Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess3}");
+                                return (false, null);
+                            }
+
+                            break;
+                        case "读DM寄存器":
+                            Log.Info($"[{TraceContext.Name}]--执行读DM寄存器");
+                            (bool succeed4, string? s) = await _self.KeyenceReadDM(item, cts);
+
+                            if (!succeed4)
+                            {
+                                return (false, null);
+                            }
+
+                            (bool b4, string? responseLateProcess4) = await _self.LateProcess(item, s);
+                            if (b4)
+                            {
+                                message = _self.StaticMessage(message, itemKey, responseLateProcess4);
+                            }
+                            else
+                            {
+                                Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess4}");
+                                return (false, null);
+                            }
+
+                            break;
+                        case "读R线圈状态":
+                            Log.Info($"[{TraceContext.Name}]--执行读R线圈状态");
+
+                            (bool succeed3, string? result) = await _self.KeyenceReadCoid(item, cts);
+                            if (!succeed3)
+                            {
+                                return (false, null);
+                            }
+
+                            (bool b6, string? responseLateProcess6) = await _self.LateProcess(item, result);
+                            if (b6)
+                            {
+                                message = _self.StaticMessage(message, itemKey, responseLateProcess6);
+                            }
+                            else
+                            {
+                                Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess6}");
+                                return (false, null);
+                            }
+
+
+                            break;
+                        case "串口通讯":
+                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行串口发送中");
+                            (bool b, string? response) = await _self.ScpiSerialAsync(item, cts);
+                            if (!b)
+                            {
+                                Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--串口发送返回失败");
+                                return (false, null);
+                            }
+
+                            (bool b5, string? responseLateProcess5) = await _self.LateProcess(item, response);
+
+                            if (b5)
+                            {
+                                message = _self.StaticMessage(message, itemKey, responseLateProcess5);
+                            }
+                            else
+                            {
+                                Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess5}");
+                                return (false, null);
+                            }
+
+                            break;
                     }
                 }
-
-                if (loadMesAddAndUpdateWindowModel == null)
+                else if (item.GetMessageType == "HTTP")
                 {
-                    return (false, $"[{TraceContext.Name}]--获取HTTP子程序的时候,程序为空!");
-                }
+                    //检查是否循环嵌套
 
-                loadMesAddAndUpdateWindowModel.cts = cts;
-                loadMesAddAndUpdateWindowModel.LoadMesService = this;
+                    //获取到当前的HTTP
 
-                //触发HTTP返回结果
-                (bool succeed, string? s) =
-                    await loadMesPageViewModel.ExecutionCondition(loadMesAddAndUpdateWindowModel);
-                if (!succeed)
-                {
-                    return (false, null);
-                }
-
-
-                //是否定义返回结果
-                if (item.NeedInteriorTriggerUserSetReturn)
-                {
-                    string InteriorMessage = item.InteriorTriggerReturnMessage.Value;
-
-                    foreach (var httpObject in item.HttpObjects)
+                    LoadMesPageViewModel loadMesPageViewModel = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
+                    var loadMesAddAndUpdateWindowModels = loadMesPageViewModel.LoadMesPageModel.MesPojoList;
+                    LoadMesAddAndUpdateWindowModel loadMesAddAndUpdateWindowModel = null;
+                    foreach (var model in loadMesAddAndUpdateWindowModels)
                     {
-                        int indexOf = InteriorMessage.IndexOf($"[{httpObject.Name}]");
-                        if (indexOf == -1)
+                        if (model.Name == item.HttpName)
                         {
-                            continue;
+                            loadMesAddAndUpdateWindowModel = model;
                         }
+                    }
 
-                        string res = null;
-                        switch (httpObject.Method)
+                    if (loadMesAddAndUpdateWindowModel == null)
+                    {
+                        return (false, $"[{TraceContext.Name}]--获取HTTP子程序的时候,程序为空!");
+                    }
+
+                    loadMesAddAndUpdateWindowModel.cts = cts;
+                    loadMesAddAndUpdateWindowModel.LoadMesService = this;
+
+                    //触发HTTP返回结果
+                    (bool succeed, string? s) =
+                        await loadMesPageViewModel.ExecutionCondition(loadMesAddAndUpdateWindowModel);
+                    if (!succeed)
+                    {
+                        return (false, null);
+                    }
+
+
+                    //是否定义返回结果
+                    if (item.NeedInteriorTriggerUserSetReturn)
+                    {
+                        string InteriorMessage = item.InteriorTriggerReturnMessage.Value;
+
+                        foreach (var httpObject in item.HttpObjects)
                         {
-                            case "常量":
-                                res = httpObject.staticParam;
-                                break;
-                            case "结果Json解析":
-                                //判断是否为字符串格式
-                                JsonTool<object>.TryFormatJson(s, out bool isJson);
-                                if (isJson)
-                                {
-                                    JObject jObject = JObject.Parse(s);
-                                    if (httpObject.JsonParam != null)
+                            int indexOf = InteriorMessage.IndexOf($"[{httpObject.Name}]");
+                            if (indexOf == -1)
+                            {
+                                continue;
+                            }
+
+                            string res = null;
+                            switch (httpObject.Method)
+                            {
+                                case "常量":
+                                    res = httpObject.staticParam;
+                                    break;
+                                case "结果Json解析":
+                                    //判断是否为字符串格式
+                                    JsonTool<object>.TryFormatJson(s, out bool isJson);
+                                    if (isJson)
                                     {
-                                        res = jObject.SelectToken($"{httpObject.JsonParam}")?.ToString();
-
-                                        if (res ==null)
+                                        JObject jObject = JObject.Parse(s);
+                                        if (httpObject.JsonParam != null)
                                         {
-                                            Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析到结果为NULL");
-                                            return (false, $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析到结果为NULL");
-                                        }
+                                            res = jObject.SelectToken($"{httpObject.JsonParam}")?.ToString();
 
+                                            if (res == null)
+                                            {
+                                                Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析到结果为NULL");
+                                                return (false,
+                                                    $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析到结果为NULL");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析路径参数为NULL");
+                                            return (false,
+                                                $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析路径参数为NULL");
+                                        }
                                     }
                                     else
                                     {
-                                        Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析路径参数为NULL");
-                                        return (false, $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,解析路径参数为NULL");
+                                        Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,返回的不是Json字符串");
+                                        return (false, $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,返回的不是Json字符串");
                                     }
-                                }
-                                else
-                                {
-                                    Log.Error($"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,返回的不是Json字符串");
-                                    return (false, $"[{TraceContext.Name}]--解析内部调用Http程序,中的JSON字符串时,返回的不是Json字符串");
-                                }
 
-                                break;
-                            case "方法集":
-                                res = String.Empty;
-                                break;
+                                    break;
+                                case "方法集":
+                                    res = String.Empty;
+                                    break;
+                            }
+
+                            int length = httpObject.Name.Length;
+                            var requestA = InteriorMessage.Substring(0, indexOf);
+                            var requestB = InteriorMessage.Substring(indexOf + length + 2);
+                            InteriorMessage = requestA + res + requestB;
                         }
 
-                        int length = httpObject.Name.Length;
-                        var requestA = InteriorMessage.Substring(0, indexOf);
-                        var requestB = InteriorMessage.Substring(indexOf + length + 2);
-                        InteriorMessage = requestA + res + requestB;
+                        s = InteriorMessage;
                     }
 
-                    s = InteriorMessage;
+                    //是否转发
+                    (bool b1, string? responseLateProcess1) = await _self.LateProcess(item, s);
+                    if (b1)
+                    {
+                        message = _self.StaticMessage(message, itemKey,
+                            item.InteriorTriggerReturn ? responseLateProcess1 : String.Empty);
+                    }
+                    else
+                    {
+                        Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess1}");
+                        return (false, null);
+                    }
                 }
-
-                //是否转发
-                (bool b1, string? responseLateProcess1) = await _self.LateProcess(item, s);
-                if (b1)
+                else if (item.GetMessageType == "自定义")
                 {
-                    message = _self.StaticMessage(message, itemKey, item.InteriorTriggerReturn ? responseLateProcess1 : String.Empty);
+                    Type userDefined = item.UserDefined;
+                    //实例化
+                    var objInstance = Activator.CreateInstance(userDefined);
+                    //获取方法
+                    var method = userDefined.GetMethod("Main");
+
+                    //执行方法
+                    var invoke = method.Invoke(objInstance, [cts]);
+
+                    // 转换为具体元组类型
+                    var (succeed, returnValue) = await (Task<(bool Succeed, object Return)>)invoke;
+
+                    if (succeed)
+                    {
+                        //静态嵌入
+                        message = _self.StaticMessage(message, itemKey, returnValue.ToString());
+                    }
+                    else
+                    {
+                        return (false, returnValue?.ToString());
+                    }
                 }
-                else
+                else if (item.GetMessageType == "内部")
                 {
-                    Log.Error($"[{TraceContext.Name}]--后期处理方法发送错误{responseLateProcess1}");
-                    return (false, null);
-                }
-            }
-            else if (item.GetMessageType == "自定义")
-            {
-                Type userDefined = item.UserDefined;
-                //实例化
-                var objInstance = Activator.CreateInstance(userDefined);
-                //获取方法
-                var method = userDefined.GetMethod("Main");
+                    //判断是集合还是队列
 
-                //执行方法
-                var invoke = method.Invoke(objInstance, [cts]);
+                    switch (item.MethodName)
+                    {
+                        case "集合":
+                            message = _self.StaticMessage(message, itemKey,
+                                Volatile.Read(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex])?.ToString());
+                            break;
+                        case "队列":
+                            GlobalManager.QueueRegister[item.InteriorArrayIndex].TryPeek(out object a);
 
-                // 转换为具体元组类型
-                var (succeed, returnValue) = await (Task<(bool Succeed, object Return)>)invoke;
+                            if (a == null)
+                            {
+                                Log.Error($"[{TraceContext.Name}]--在取出队列中元素时为null");
+                            }
 
-                if (succeed)
-                {
-                    //静态嵌入
-                    message = _self.StaticMessage(message, itemKey, returnValue.ToString());
-                }
-                else
-                {
-                    return (false, returnValue?.ToString());
-                }
-            }
-            else if (item.GetMessageType == "内部")
-            {
-                //判断是集合还是队列
-
-                switch (item.MethodName)
-                {
-                    case "集合":
-                        message = _self.StaticMessage(message, itemKey, Volatile.Read(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex])?.ToString());
-                        break;
-                    case "队列":
-                        GlobalManager.QueueRegister[item.InteriorArrayIndex].TryPeek(out object a);
-
-                        if (a == null)
-                        {
-                            Log.Error($"[{TraceContext.Name}]--在取出队列中元素时为null");
-                        }
-                        message = _self.StaticMessage(message, itemKey, a?.ToString());
-                        break;
+                            message = _self.StaticMessage(message, itemKey, a?.ToString());
+                            break;
+                    }
                 }
             }
         }
+        // 1. 循环获取动态条件
+
 
         return (true, message);
     }
@@ -752,10 +786,8 @@ public class LoadMesService : ILoadMesService
 
                 if (item.TranspondModbusDetailed.NoReturn)
                 {
-
                     return (true, string.Empty);
                 }
-
             }
 
             return (true, response);
@@ -1342,6 +1374,7 @@ public class LoadMesService : ILoadMesService
 
                     return (false, null);
                 }
+
                 break;
             case "队列":
 
@@ -1352,6 +1385,7 @@ public class LoadMesService : ILoadMesService
                     Log.Error($"[{TraceContext.Name}]--执行Socket时--读取队列地址为null");
                     return (false, null);
                 }
+
                 break;
         }
 
@@ -1403,8 +1437,42 @@ public class LoadMesService : ILoadMesService
 
             ScpiSerialTool scpiSerialTool = netWork.ScpiSerialTool;
 
+
+            //获取需要发送的内容
+            object sendMessage = null;
+            switch (item.SendMessageMethod)
+            {
+                case "常量":
+                    sendMessage = item.SerialSendMessage;
+                    break;
+                case "内部地址":
+                    sendMessage = Volatile.Read(
+                        ref GlobalManager.ArrayRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
+                    );
+
+                    if (sendMessage == null)
+                    {
+                        Log.Error($"[{TraceContext.Name}]--执行Socket时--读取内部地址为null");
+
+                        return (false, null);
+                    }
+
+                    break;
+                case "队列":
+
+                    GlobalManager.QueueRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
+                        .TryDequeue(out sendMessage);
+                    if (sendMessage == null)
+                    {
+                        Log.Error($"[{TraceContext.Name}]--执行Socket时--读取队列地址为null");
+                        return (false, null);
+                    }
+
+                    break;
+            }
+
             (bool b, string? response) =
-                await scpiSerialTool.WriteLineAndWaitResponse(item.SerialSendMessage,
+                await scpiSerialTool.WriteLineAndWaitResponse(sendMessage.ToString(),
                     item.SendTimeOut);
 
             if (b)
@@ -1594,18 +1662,19 @@ public class LoadMesService : ILoadMesService
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public virtual async Task<string> KeyenceReadDM(DynCondition item)
+    public virtual async Task<(bool succeed, string response)> KeyenceReadDM(DynCondition item,
+        CancellationTokenSource cts)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;
         var methodName = item.MethodName;
         //获得网络,遍历获取对应的网络
         var netWork = GlobalManager.GetNetWork(itemConnectName);
-        if (netWork == null) return null;
+        if (netWork == null) return (false, null);
 
         //获得keyenceHostLinkTool
         KeyenceHostLinkTool keyenceHostLinkTool = netWork.KeyenceHostLinkTool;
-        var result = "";
+
         int startAddress = item.StartAddress;
         int num = item.EndAddress;
         try
@@ -1613,24 +1682,34 @@ public class LoadMesService : ILoadMesService
             switch (item.BitNet)
             {
                 case "单寄存器(无符号)":
-                    ushort readDm1 = keyenceHostLinkTool.ReadDM<ushort>(startAddress);
-                    return readDm1.ToString();
-                case "单寄存器(有符号)":
-                    short readDm2 = keyenceHostLinkTool.ReadDM<short>(startAddress);
-                    return readDm2.ToString();
-                case "双寄存器(无符号)":
-                    uint readDm3 = keyenceHostLinkTool.ReadDM<uint>(startAddress);
-                    return readDm3.ToString();
-                case "双寄存器(有符号)":
-                    int readDm4 = keyenceHostLinkTool.ReadDM<int>(startAddress);
-                    return readDm4.ToString();
-                case "32位浮点数":
-                    float readDm5 = keyenceHostLinkTool.ReadDM<float>(startAddress);
-                    return readDm5.ToString();
-                case "ASCII字符串":
-                    ushort[] readDmWords = keyenceHostLinkTool.ReadDMWords(startAddress, num);
+                    (bool b, ushort item3) = await keyenceHostLinkTool.ReadDM<ushort>(startAddress, cts);
 
-                    var result_4 = new List<byte>();
+                    return (b, item3.ToString());
+                case "单寄存器(有符号)":
+                    (bool b1, short s) = await keyenceHostLinkTool.ReadDM<short>(startAddress, cts);
+                    return (b1, s.ToString());
+                case "双寄存器(无符号)":
+                    (bool b2, uint u) = await keyenceHostLinkTool.ReadDM<uint>(startAddress, cts);
+                    return (b2, u.ToString());
+                case "双寄存器(有符号)":
+                    (bool b3, int i) = await keyenceHostLinkTool.ReadDM<int>(startAddress, cts);
+                    return (b3, i.ToString());
+                case "32位浮点数":
+                    (bool b4, float q) = await keyenceHostLinkTool.ReadDM<float>(startAddress, cts);
+                    return (b4, q.ToString());
+                case "ASCII字符串":
+
+                    (bool succeed, ushort[]? response) = await keyenceHostLinkTool.ReadDMWords(startAddress, num, cts);
+
+                    if (!succeed || response == null)
+                    {
+                        Log.Error($"[{TraceContext.Name}]--基恩士上链路读取DM失败");
+                        return (false, null);
+                    }
+
+                    ushort[] readDmWords = response;
+
+                    var bytes = new List<byte>();
                     foreach (var itemUshort in readDmWords)
                     {
                         //转成16进制
@@ -1642,20 +1721,40 @@ public class LoadMesService : ILoadMesService
                         var ByteHigh = byte.Parse(high, NumberStyles.HexNumber);
 
                         //低位在前
-                        result_4.Add(ByteLow);
-                        result_4.Add(ByteHigh);
+                        bytes.Add(ByteLow);
+                        bytes.Add(ByteHigh);
                     }
 
                     //输出ASCII码转换后的结果
-                    return Encoding.ASCII.GetString(result_4.ToArray());
+                    return (true, Encoding.ASCII.GetString(bytes.ToArray()));
             }
         }
         catch (Exception e)
         {
             Log.Error($"[{TraceContext.Name}]--基恩士上链路读取DM失败 :{e}");
+            return (false, null);
         }
 
-        return result;
+        return (false, "没有进入对应类型的解析Switch");
+    }
+
+    public virtual async Task<(bool succeed, string? result)> KeyenceReadCoid(DynCondition item,
+        CancellationTokenSource cts)
+    {
+        var itemKey = item.Name;
+        var itemConnectName = item.ConnectName;
+        var methodName = item.MethodName;
+        //获得网络,遍历获取对应的网络
+        var netWork = GlobalManager.GetNetWork(itemConnectName);
+        if (netWork == null) return (false, null);
+
+        //获得keyenceHostLinkTool
+        KeyenceHostLinkTool keyenceHostLinkTool = netWork.KeyenceHostLinkTool;
+        var result = "";
+        int startAddress = item.StartAddress;
+        int num = item.EndAddress;
+
+        return await keyenceHostLinkTool.ReadR(startAddress.ToString(), cts);
     }
 
     #endregion

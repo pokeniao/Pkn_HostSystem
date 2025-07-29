@@ -2,6 +2,6 @@
 {
     public class TranspondDetailed
     {
-        public string TranspondMethod { get; set; }
+        public string TranspondMethod { get; set; } = "通讯";
     }
 }

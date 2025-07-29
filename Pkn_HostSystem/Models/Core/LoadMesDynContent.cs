@@ -125,7 +125,7 @@ public class DynCondition : ObservableObject
     /// <summary>
     /// 串口发送超时
     /// </summary>
-    private int sendTimeOut;
+    private int sendTimeOut =1000;
 
     public int SendTimeOut
     {
