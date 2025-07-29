@@ -222,138 +222,322 @@
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
-                                            <StackPanel Grid.Row="0">
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <TextBlock Text="发送内容" VerticalAlignment="Center" />
-                                                    <TextBox
-                                                        Text="{Binding SerialSendMessage,UpdateSourceTrigger=PropertyChanged}"
-                                                        Width="150"
-                                                        Margin="5" />
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
 
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <TextBlock Text="等待接收超时(ms)" VerticalAlignment="Center" />
-                                                    <ui:NumberBox Width="130"
-                                                                  Value="{Binding SendTimeOut,UpdateSourceTrigger=PropertyChanged}" />
-                                                </StackPanel>
-                                            </StackPanel>
-                                            <UniformGrid Grid.Row="1"
-                                                         Rows="3"
-                                                         Columns="2">
-                                                <ui:ToggleSwitch
-                                                    OffContent="关闭校验" OnContent="启动校验"
-                                                    IsChecked="{Binding OpenVerify}" />
-                                                <Button
-                                                    Margin="5,5,0,0"
-                                                    Content="校验"
-                                                    Click="SetVerify"
-                                                    Width="100" />
-                                                <ui:ToggleSwitch
-                                                    OnContent="启用switch" OffContent="关闭switch"
-                                                    IsChecked="{Binding OpenSwitch}" />
-                                                <Button
-                                                    Margin="5,5,0,0"
-                                                    Content="编辑switch"
-                                                    Click="ButtonBase_OnClick"
-                                                    Width="100" />
 
-                                                <ui:ToggleSwitch
-                                                    OnContent="打开结果转发" OffContent="关闭结果转发"
-                                                    IsChecked="{Binding ResultTranspond}" />
-                                                <Button
-                                                    Margin="5,5,0,0"
-                                                    Content="编辑转发"
-                                                    Width="100"
-                                                    Click="ResultTranspond_OnClick" />
-                                            </UniformGrid>
+                                            <TextBlock
+                                                Grid.Row="0" Grid.Column="0"
+                                                Text="发送方式"
+                                                Margin="5"
+                                                TextAlignment="Right" />
+                                            <ComboBox
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                ItemsSource="{Binding viewModel.SendMessageMethod ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                SelectedValue="{Binding SendMessageMethod ,UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock
+                                                Grid.Row="1" Grid.Column="0"
+                                                Text="发送内容"
+                                                TextAlignment="Right"
+                                                Margin="5"
+                                                Visibility="{Binding showStaticMessage ,Converter={StaticResource BooleanVisibilityConverter}}" />
+                                            <ui:TextBox
+                                                Grid.Row="1" Grid.Column="1"
+                                                Margin="0 0 0 5"
+                                                Visibility="{Binding showStaticMessage ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                                Text="{Binding SerialSendMessage,UpdateSourceTrigger=PropertyChanged}"
+                                                Width="150" />
 
+                                            <TextBlock
+                                                Grid.Row="2" Grid.Column="0"
+                                                Text="内部地址"
+                                                Margin="5"
+                                                TextAlignment="Right"
+                                                Visibility="{Binding showRegisterMessage , Converter= { StaticResource BooleanVisibilityConverter}}" />
+                                            <ui:NumberBox
+                                                Grid.Row="2" Grid.Column="1"
+                                                Value="{Binding InteriorGetRegisterMessageIndex ,UpdateSourceTrigger=PropertyChanged}"
+                                                Visibility="{Binding showRegisterMessage , Converter= { StaticResource BooleanVisibilityConverter}}"
+                                                HorizontalAlignment="Left"
+                                                Width="150"
+                                                Margin="0 0 0 5"
+                                                Minimum="0"
+                                                Maximum="99" />
+
+
+                                            <TextBlock
+                                                Grid.Row="3" Grid.Column="0"
+                                                Text="接收超时ms"
+                                                Margin="5"
+                                                TextAlignment="Right" />
+                                            <ui:NumberBox
+                                                Grid.Row="3" Grid.Column="1"
+                                                Width="150"
+                                                ClearButtonEnabled="False"
+                                                Minimum="0"
+                                                Margin="0 0 0 5"
+                                                Value="{Binding SendTimeOut,UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0" Text="校验 " Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="4" Grid.Column="1"
+                                                Click="SetVerify"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启格式校验" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="5" Grid.Column="1"
+                                                Click="ButtonBase_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转换映射" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="6" Grid.Column="1"
+                                                Click="ResultTranspond_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转发" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
                                         </Grid>
                                         <!-- 读Modbus线圈 -->
                                         <Grid
                                             Visibility="{Binding showReadCoil ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <WrapPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                                    <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
-                                                    <ui:NumberBox
-                                                        Minimum="1"
-                                                        Text="{Binding StationAddress ,UpdateSourceTrigger=PropertyChanged}"
-                                                        Width="150" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
-                                                    <ui:NumberBox
-                                                        Minimum="0"
-                                                        Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
-                                                        Width="150" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <TextBlock Text="读取数量" Margin="5" TextAlignment="Center" />
-                                                    <ui:NumberBox
-                                                        Minimum="1"
-                                                        Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
-                                                        Width="150" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
-                                                                     IsChecked="{Binding OpenSwitch}" />
-                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
-                                                </StackPanel>
-                                            </WrapPanel>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="站地址" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ui:NumberBox Grid.Row="0"
+                                                              Grid.Column="1"
+                                                              Margin="0 0 0 5"
+                                                              ClearButtonEnabled="False"
+                                                              HorizontalAlignment="Left"
+                                                              Text="{Binding StationAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                              Minimum="1"
+                                                              Width="150" />
+                                                <TextBlock Grid.Row="1" Grid.Column="0" Text="起始地址" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ui:NumberBox Grid.Row="1" Grid.Column="1"
+                                                              Margin="0 0 0 5"
+                                                              ClearButtonEnabled="False"
+                                                              HorizontalAlignment="Left"
+                                                              Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                              Minimum="0"
+                                                              Width="150" />
+                                                <TextBlock Grid.Row="2" Grid.Column="0" Text="读取数量" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ui:NumberBox Grid.Row="2" Grid.Column="1"
+                                                              Margin="0 0 0 5"
+                                                              ClearButtonEnabled="False"
+                                                              HorizontalAlignment="Left"
+                                                              Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                              Minimum="1"
+                                                              Width="150" />
+                                                <TextBlock Grid.Row="4" Grid.Column="0" Text="校验 " Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ToggleButton
+                                                    Grid.Row="4" Grid.Column="1"
+                                                    Click="SetVerify"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="0 0 0 5"
+                                                    Width="150"
+                                                    IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                    <ToggleButton.Content>
+                                                        <WrapPanel>
+                                                            <TextBlock Text="开启格式校验" />
+                                                            <ui:SymbolIcon Symbol="Settings24" />
+                                                        </WrapPanel>
+                                                    </ToggleButton.Content>
+                                                </ToggleButton>
+                                                <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ToggleButton
+                                                    Grid.Row="5" Grid.Column="1"
+                                                    Click="ButtonBase_OnClick"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="0 0 0 5"
+                                                    Width="150"
+                                                    IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                    <ToggleButton.Content>
+                                                        <WrapPanel>
+                                                            <TextBlock Text="开启转换映射" />
+                                                            <ui:SymbolIcon Symbol="Settings24" />
+                                                        </WrapPanel>
+                                                    </ToggleButton.Content>
+                                                </ToggleButton>
+                                                <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ToggleButton
+                                                    Grid.Row="6" Grid.Column="1"
+                                                    Click="ResultTranspond_OnClick"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="0 0 0 5"
+                                                    Width="150"
+                                                    IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                    <ToggleButton.Content>
+                                                        <WrapPanel>
+                                                            <TextBlock Text="开启转发" />
+                                                            <ui:SymbolIcon Symbol="Settings24" />
+                                                        </WrapPanel>
+                                                    </ToggleButton.Content>
+                                                </ToggleButton>
+                                            </Grid>
                                         </Grid>
                                         <!-- 读Modbus寄存器 -->
                                         <Grid
                                             Visibility="{Binding showReadReg ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <WrapPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                                    <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
-                                                    <ui:NumberBox
-                                                        Text="{Binding StationAddress ,UpdateSourceTrigger=PropertyChanged}"
-                                                        Minimum="1"
-                                                        Width="150" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
-                                                    <ui:NumberBox
-                                                        Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
-                                                        Minimum="0"
-                                                        Width="150" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <TextBlock Text="读取数量" Margin="5" TextAlignment="Center" />
-                                                    <ui:NumberBox
-                                                        Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
-                                                        Minimum="1"
-                                                        Width="150" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <TextBlock Text="模式" Margin="5" TextAlignment="Center" />
-                                                    <ComboBox
-                                                        SelectedValue="{Binding BitNet ,UpdateSourceTrigger=PropertyChanged}"
-                                                        ItemsSource="{Binding DataContext.MesTcpModel.BitNet, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                        Width="200" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch OffContent="关闭校验" OnContent="启动校验" Margin="5"
-                                                                     IsChecked="{Binding OpenVerify}" />
-                                                    <Button Content="校验" Click="SetVerify" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
-                                                                     IsChecked="{Binding OpenSwitch}" />
-                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch
-                                                        OnContent="打开结果转发" OffContent="关闭结果转发"
-                                                        IsChecked="{Binding ResultTranspond}" />
-                                                    <Button
-                                                        Margin="5,5,0,0"
-                                                        Content="编辑转发"
-                                                        Width="100"
-                                                        Click="ResultTranspond_OnClick" />
-                                                </StackPanel>
-                                            </WrapPanel>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="站地址" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ui:NumberBox Grid.Row="0"
+                                                              Grid.Column="1"
+                                                              Margin="0 0 0 5"
+                                                              ClearButtonEnabled="False"
+                                                              HorizontalAlignment="Left"
+                                                              Text="{Binding StationAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                              Minimum="1"
+                                                              Width="150" />
+                                                <TextBlock Grid.Row="1" Grid.Column="0" Text="起始地址" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ui:NumberBox Grid.Row="1" Grid.Column="1"
+                                                              Margin="0 0 0 5"
+                                                              ClearButtonEnabled="False"
+                                                              HorizontalAlignment="Left"
+                                                              Text="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                              Minimum="0"
+                                                              Width="150" />
+                                                <TextBlock Grid.Row="2" Grid.Column="0" Text="读取数量" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ui:NumberBox Grid.Row="2" Grid.Column="1"
+                                                              Margin="0 0 0 5"
+                                                              ClearButtonEnabled="False"
+                                                              HorizontalAlignment="Left"
+                                                              Text="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                              Minimum="1"
+                                                              Width="150" />
+                                                <TextBlock Grid.Row="3" Grid.Column="0" Text="模式" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ComboBox Grid.Row="3"
+                                                          Grid.Column="1"
+                                                          HorizontalAlignment="Left"
+                                                          Margin="0 0 0 5"
+                                                          SelectedValue="{Binding BitNet ,UpdateSourceTrigger=PropertyChanged}"
+                                                          ItemsSource="{Binding DataContext.MesTcpModel.BitNet, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                          Width="150" />
+                                                <TextBlock Grid.Row="4" Grid.Column="0" Text="校验 " Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ToggleButton
+                                                    Grid.Row="4" Grid.Column="1"
+                                                    Click="SetVerify"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="0 0 0 5"
+                                                    Width="150"
+                                                    IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                    <ToggleButton.Content>
+                                                        <WrapPanel>
+                                                            <TextBlock Text="开启格式校验" />
+                                                            <ui:SymbolIcon Symbol="Settings24" />
+                                                        </WrapPanel>
+                                                    </ToggleButton.Content>
+                                                </ToggleButton>
+                                                <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ToggleButton
+                                                    Grid.Row="5" Grid.Column="1"
+                                                    Click="ButtonBase_OnClick"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="0 0 0 5"
+                                                    Width="150"
+                                                    IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                    <ToggleButton.Content>
+                                                        <WrapPanel>
+                                                            <TextBlock Text="开启转换映射" />
+                                                            <ui:SymbolIcon Symbol="Settings24" />
+                                                        </WrapPanel>
+                                                    </ToggleButton.Content>
+                                                </ToggleButton>
+                                                <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                           TextAlignment="Right" />
+                                                <ToggleButton
+                                                    Grid.Row="6" Grid.Column="1"
+                                                    Click="ResultTranspond_OnClick"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="0 0 0 5"
+                                                    Width="150"
+                                                    IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                    <ToggleButton.Content>
+                                                        <WrapPanel>
+                                                            <TextBlock Text="开启转发" />
+                                                            <ui:SymbolIcon Symbol="Settings24" />
+                                                        </WrapPanel>
+                                                    </ToggleButton.Content>
+                                                </ToggleButton>
+                                            </Grid>
                                         </Grid>
                                         <!-- TCP套接字通讯参数 -->
                                         <Grid
@@ -362,194 +546,542 @@
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
-                                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,5">
-                                                <TextBlock Text="发送内容方式" Margin="5" />
-                                                <ComboBox
-                                                    ItemsSource="{Binding viewModel.SendMessageMethod ,RelativeSource={RelativeSource AncestorType=Page}}"
-                                                    SelectedValue="{Binding SendMessageMethod ,UpdateSourceTrigger=PropertyChanged}" />
-                                            </StackPanel>
-                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,5"
-                                                        Visibility="{Binding showStaticMessage ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                                <TextBlock Text="发送内容" VerticalAlignment="Center" />
-                                                <TextBox
-                                                    Text="{Binding SocketSendMessage,UpdateSourceTrigger=PropertyChanged}"
-                                                    Width="150"
-                                                    Margin="5" />
-                                            </StackPanel>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
 
-                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,5"
-                                                        Visibility="{Binding showRegisterMessage , Converter= { StaticResource BooleanVisibilityConverter}}">
-                                                <TextBlock Text="内部地址/队列" VerticalAlignment="Center" />
-                                                <ui:NumberBox
-                                                    Value="{Binding InteriorGetRegisterMessageIndex ,UpdateSourceTrigger=PropertyChanged}"
-                                                    Width="150"
-                                                    Margin="5"
-                                                    Minimum="0"
-                                                    Maximum="99" />
-                                            </StackPanel>
-                                            <UniformGrid Grid.Row="2"
-                                                         Rows="3"
-                                                         Columns="2">
-                                                <ui:ToggleSwitch
-                                                    OffContent="关闭校验" OnContent="启动校验"
-                                                    IsChecked="{Binding OpenVerify}" />
-                                                <Button
-                                                    Margin="5,5,0,0"
-                                                    Content="校验"
-                                                    Click="SetVerify"
-                                                    Width="100" />
-                                                <ui:ToggleSwitch
-                                                    OnContent="启用switch" OffContent="关闭switch"
-                                                    IsChecked="{Binding OpenSwitch}" />
-                                                <Button
-                                                    Margin="5,5,0,0"
-                                                    Content="编辑switch"
-                                                    Click="ButtonBase_OnClick"
-                                                    Width="100" />
+                                            <TextBlock
+                                                Grid.Row="0" Grid.Column="0"
+                                                Text="发送方式"
+                                                Margin="5"
+                                                TextAlignment="Right" />
+                                            <ComboBox
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                ItemsSource="{Binding viewModel.SendMessageMethod ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                SelectedValue="{Binding SendMessageMethod ,UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock
+                                                Grid.Row="1" Grid.Column="0"
+                                                Text="发送内容"
+                                                TextAlignment="Right"
+                                                Margin="5"
+                                                Visibility="{Binding showStaticMessage ,Converter={StaticResource BooleanVisibilityConverter}}" />
+                                            <ui:TextBox
+                                                Grid.Row="1" Grid.Column="1"
+                                                Margin="0 0 0 5"
+                                                Visibility="{Binding showStaticMessage ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                                Text="{Binding SocketSendMessage,UpdateSourceTrigger=PropertyChanged}"
+                                                Width="150" />
 
-                                                <ui:ToggleSwitch
-                                                    OnContent="打开结果转发" OffContent="关闭结果转发"
-                                                    IsChecked="{Binding ResultTranspond}" />
-                                                <Button
-                                                    Margin="5,5,0,0"
-                                                    Content="编辑转发"
-                                                    Width="100"
-                                                    Click="ResultTranspond_OnClick" />
-                                            </UniformGrid>
+                                            <TextBlock
+                                                Grid.Row="2" Grid.Column="0"
+                                                Text="内部地址"
+                                                Margin="5"
+                                                TextAlignment="Right"
+                                                Visibility="{Binding showRegisterMessage , Converter= { StaticResource BooleanVisibilityConverter}}" />
+                                            <ui:NumberBox
+                                                Grid.Row="2" Grid.Column="1"
+                                                Value="{Binding InteriorGetRegisterMessageIndex ,UpdateSourceTrigger=PropertyChanged}"
+                                                Visibility="{Binding showRegisterMessage , Converter= { StaticResource BooleanVisibilityConverter}}"
+                                                HorizontalAlignment="Left"
+                                                Width="150"
+                                                Margin="0 0 0 5"
+                                                Minimum="0"
+                                                Maximum="99" />
 
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0" Text="校验 " Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="4" Grid.Column="1"
+                                                Click="SetVerify"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启格式校验" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="5" Grid.Column="1"
+                                                Click="ButtonBase_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转换映射" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="6" Grid.Column="1"
+                                                Click="ResultTranspond_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转发" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
                                         </Grid>
                                         <!-- 上链路协议读寄存器参数 -->
                                         <Grid
                                             Visibility="{Binding showHostLinkReadReg ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
-                                                    <ui:NumberBox
-                                                        Value="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
-                                                        Minimum="0"
-                                                        Width="150" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                                    <TextBlock Text="模式" Margin="5" TextAlignment="Center" />
-                                                    <ComboBox
-                                                        SelectedValue="{Binding BitNet ,UpdateSourceTrigger=PropertyChanged}"
-                                                        ItemsSource="{Binding DataContext.MesTcpModel.BitNet, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                        Width="150" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
-                                                                     IsChecked="{Binding OpenSwitch}" />
-                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
-                                                </StackPanel>
-                                            </StackPanel>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                       Text="起始地址"
+                                                       Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ui:NumberBox Grid.Row="0" Grid.Column="1"
+                                                          Value="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                          Minimum="0"
+                                                          Margin="0 0 0 5"
+                                                          Width="150" />
+
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="模式" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ComboBox Grid.Row="1" Grid.Column="1"
+                                                      Margin="0 0 0 5"
+                                                      SelectedValue="{Binding BitNet ,UpdateSourceTrigger=PropertyChanged}"
+                                                      ItemsSource="{Binding DataContext.MesTcpModel.BitNet, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                      Width="150" />
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0" Text="校验 " Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="4" Grid.Column="1"
+                                                Click="SetVerify"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启格式校验" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="5" Grid.Column="1"
+                                                Click="ButtonBase_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转换映射" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="6" Grid.Column="1"
+                                                Click="ResultTranspond_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转发" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
                                         </Grid>
                                         <!-- 上链路协议读线圈参数 -->
                                         <Grid
                                             Visibility="{Binding showHostLinkReadCoid ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
-                                                    <ui:NumberBox
-                                                        Value="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
-                                                        Minimum="0"
-                                                        Width="150" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
-                                                                     IsChecked="{Binding OpenSwitch}" />
-                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
-                                                </StackPanel>
-                                            </StackPanel>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                       Text="起始地址"
+                                                       Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ui:NumberBox Grid.Row="0" Grid.Column="1"
+                                                          Value="{Binding StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                          Minimum="0"
+                                                          Margin="0 0 0 5"
+                                                          Width="150" />
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0" Text="校验 " Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="4" Grid.Column="1"
+                                                Click="SetVerify"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启格式校验" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="5" Grid.Column="1"
+                                                Click="ButtonBase_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转换映射" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="6" Grid.Column="1"
+                                                Click="ResultTranspond_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转发" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
                                         </Grid>
                                         <!-- HTTP请求参数 -->
                                         <Grid
                                             HorizontalAlignment="Center"
                                             Visibility="{Binding showHttpName ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <StackPanel>
-                                                <WrapPanel>
-                                                    <TextBlock Text="返回内容" VerticalAlignment="Center" />
-                                                    <ui:ToggleSwitch IsChecked="{Binding InteriorTriggerReturn }"
-                                                                     OffContent="不返回" OnContent="返回" Margin="5" />
-                                                </WrapPanel>
-                                                <WrapPanel>
-                                                    <TextBlock Text="定义返回值" VerticalAlignment="Center" />
-                                                    <ui:ToggleSwitch
-                                                        IsChecked="{Binding NeedInteriorTriggerUserSetReturn }"
-                                                        OffContent="关闭" OnContent="启用" Margin="5" />
-                                                    <Button Click="SetHttpGetObject">
-                                                        <Button.Content>
-                                                            <ui:SymbolIcon Symbol="Settings24" />
-                                                        </Button.Content>
-                                                    </Button>
-                                                </WrapPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch OffContent="关闭校验" OnContent="启动校验" Margin="5"
-                                                                     IsChecked="{Binding OpenVerify}" />
-                                                    <Button Content="校验" Click="SetVerify" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch OnContent="启用switch" OffContent="关闭switch"
-                                                                     IsChecked="{Binding OpenSwitch}" />
-                                                    <Button Content="编辑switch" Margin="10,0" Click="ButtonBase_OnClick" />
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                                    <ui:ToggleSwitch
-                                                        OnContent="打开结果转发" OffContent="关闭结果转发"
-                                                        IsChecked="{Binding ResultTranspond}" />
-                                                    <Button
-                                                        Margin="5,5,0,0"
-                                                        Content="编辑转发"
-                                                        Width="100"
-                                                        Click="ResultTranspond_OnClick" />
-                                                </StackPanel>
-                                            </StackPanel>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="返回内容" TextAlignment="Right"
+                                                       Margin="5" />
+
+                                            <ToggleButton
+                                                Content="设置不返回"
+                                                Grid.Row="0" Grid.Column="1"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding InteriorTriggerReturn }" />
+                                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                                       Text="定义返回值" TextAlignment="Right" Margin="5"/>
+
+                                            <ToggleButton
+                                                Grid.Row="1" Grid.Column="1" Click="SetHttpGetObject"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding NeedInteriorTriggerUserSetReturn }">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="启用定义返回" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0" Text="校验 " Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="4" Grid.Column="1"
+                                                Click="SetVerify"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启格式校验" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="5" Grid.Column="1"
+                                                Click="ButtonBase_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转换映射" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="6" Grid.Column="1"
+                                                Click="ResultTranspond_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转发" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+
                                         </Grid>
                                         <!-- 内部请求参数 集合 -->
                                         <Grid
                                             HorizontalAlignment="Center"
                                             Visibility="{Binding showInteriorArrarySet ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <StackPanel>
-                                                <WrapPanel>
-                                                    <TextBlock Text="地址索引" VerticalAlignment="Center" Margin="5 0" />
-                                                    <ui:NumberBox
-                                                        Minimum="0"
-                                                        ClearButtonEnabled="False"
-                                                        Width="110"
-                                                        Maximum="99"
-                                                        Value="{Binding InteriorArrayIndex ,UpdateSourceTrigger=PropertyChanged}" />
-                                                </WrapPanel>
-                                            </StackPanel>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                       Text="地址索引"
+                                                       TextAlignment="Right" 
+                                                       Margin="5" />
+                                            <ui:NumberBox
+                                                Grid.Row="0" Grid.Column="1"
+                                                Minimum="0"
+                                                ClearButtonEnabled="False"
+                                                Width="150"
+                                                Maximum="99"
+                                                Margin="0 0 0 5"
+                                                Value="{Binding InteriorArrayIndex ,UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0" Text="校验 " Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="4" Grid.Column="1"
+                                                Click="SetVerify"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启格式校验" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="5" Grid.Column="1"
+                                                Click="ButtonBase_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转换映射" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="6" Grid.Column="1"
+                                                Click="ResultTranspond_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转发" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+
                                         </Grid>
                                         <!-- 内部请求参数 队列 -->
                                         <Grid
                                             HorizontalAlignment="Center"
                                             Visibility="{Binding showInteriorQueueSet ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <StackPanel>
-                                                <WrapPanel>
-                                                    <TextBlock Text="地址索引" VerticalAlignment="Center" Margin="5 0" />
-                                                    <ui:NumberBox
-                                                        Minimum="0"
-                                                        Maximum="99"
-                                                        Width="110"
-                                                        ClearButtonEnabled="False"
-                                                        Value="{Binding InteriorQueueIndex , UpdateSourceTrigger= PropertyChanged}" />
-                                                </WrapPanel>
-                                            </StackPanel>
+
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                       Text="地址索引"
+                                                       TextAlignment="Right" 
+                                                       Margin="5" />
+                                            <ui:NumberBox
+                                                Grid.Row="0" Grid.Column="1"
+                                                Minimum="0"
+                                                ClearButtonEnabled="False"
+                                                Width="150"
+                                                Maximum="99"
+                                                Margin="0 0 0 5"
+                                                Value="{Binding InteriorQueueIndex ,UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0" Text="校验 " Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="4" Grid.Column="1"
+                                                Click="SetVerify"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启格式校验" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="5" Grid.Column="1"
+                                                Click="ButtonBase_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转换映射" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="6" Grid.Column="1"
+                                                Click="ResultTranspond_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转发" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
                                         </Grid>
                                         <!-- 自定义参数 -->
                                         <Grid
                                             HorizontalAlignment="Center"
                                             Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}">
-                                            <StackPanel>
-                                                <ComboBox
-                                                    ItemsSource="{Binding DataContext.UserDefinedList ,RelativeSource={RelativeSource AncestorType=Page}}"
-                                                    DisplayMemberPath="Name"
-                                                    Width="200"
-                                                    SelectedValue="{Binding UserDefined}" />
-                                                <StackPanel Orientation="Horizontal">
-                                                </StackPanel>
-                                            </StackPanel>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Text=" " TextAlignment="Center" FontSize="20" />
+                                            <ComboBox Grid.Row="1"
+                                                      ItemsSource="{Binding DataContext.UserDefinedList ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                      DisplayMemberPath="Name"
+                                                      Width="200"
+                                                      SelectedValue="{Binding UserDefined}" />
 
                                         </Grid>
                                     </Grid>
@@ -795,7 +1327,8 @@
                                                 </WrapPanel>
                                                 <WrapPanel Margin="0,10,0,0">
                                                     <TextBlock Text="转发后不再嵌入" Margin="5" VerticalAlignment="Center" />
-                                                    <ui:ToggleSwitch OffContent="关闭" OnContent="开启" IsChecked="{Binding MesTcpModel.TranspondModbusDetailed.NoReturn}"/>
+                                                    <ui:ToggleSwitch OffContent="关闭" OnContent="开启"
+                                                                     IsChecked="{Binding MesTcpModel.TranspondModbusDetailed.NoReturn}" />
                                                 </WrapPanel>
 
                                                 <WrapPanel HorizontalAlignment="Right">
@@ -821,7 +1354,8 @@
                                                 </WrapPanel>
                                                 <WrapPanel Margin="0,10,0,0">
                                                     <TextBlock Text="转发后不再嵌入" Margin="5" VerticalAlignment="Center" />
-                                                    <ui:ToggleSwitch OffContent="关闭" OnContent="开启" IsChecked="{Binding MesTcpModel.TranspondModbusDetailed.NoReturn}"/>
+                                                    <ui:ToggleSwitch OffContent="关闭" OnContent="开启"
+                                                                     IsChecked="{Binding MesTcpModel.TranspondModbusDetailed.NoReturn}" />
                                                 </WrapPanel>
                                                 <WrapPanel HorizontalAlignment="Right">
                                                     <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick5" />

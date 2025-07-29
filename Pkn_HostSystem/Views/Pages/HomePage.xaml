@@ -651,6 +651,7 @@
                                     <TextBlock Grid.Row="0" Text="连接目标" Margin="0,15" />
                                     <DataGrid
                                         Grid.Row="1"
+                                        MinWidth="100"
                                         Name="setConnectDg"
                                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
@@ -1297,7 +1298,7 @@
                                  ItemsSource="{Binding HomePageModel.LogListBox, UpdateSourceTrigger=PropertyChanged}" />
                     </Border>
 
-                    <WrapPanel HorizontalAlignment="Right" Grid.Row="2" Margin="30 0">
+                    <WrapPanel HorizontalAlignment="Right" Grid.Row="2" Margin="30 10">
                         <Button Content="清空日志" Click="ClearLog" />
                         <Button Content="滚动到底部" Command="{Binding ScrollToBottomCommand}"
                                 CommandParameter="{Binding ElementName=LogListBox}"

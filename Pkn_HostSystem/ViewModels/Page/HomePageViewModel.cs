@@ -293,7 +293,7 @@ public partial class HomePageViewModel : ObservableRecipient
         if (!netWork.KeyenceHostLinkTool.IsConnected)
         {
             bool connect =
-                netWork.KeyenceHostLinkTool.Connect(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port);
+               await netWork.KeyenceHostLinkTool.Connect(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port);
             if (connect)
             {
                 if (netWork.KeyenceHostLinkTool.IsConnected)

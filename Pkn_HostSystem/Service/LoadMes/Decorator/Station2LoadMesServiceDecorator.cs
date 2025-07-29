@@ -99,14 +99,25 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return await _loadMesService.ReadReg(item);
         }
 
-        public async Task<string> KeyenceReadDM(DynCondition item)
+        public async Task<(bool succeed, string response)> KeyenceReadDM(DynCondition item, CancellationTokenSource cts)
         {
-            return await _loadMesService.KeyenceReadDM(item);
+            return await _loadMesService.KeyenceReadDM(item, cts);
         }
+
+        public async Task<(bool succeed, string? result)> KeyenceReadCoid(DynCondition item, CancellationTokenSource cts)
+        {
+            return await _loadMesService.KeyenceReadCoid(item, cts);
+        }
+
 
         public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response)
         {
             return await _loadMesService.LateProcess(item, response);
+        }
+
+        public async Task<(bool succeed, string response)> ScpiSerialAsync(DynCondition item, CancellationTokenSource cts)
+        {
+            return await _loadMesService.ScpiSerialAsync(item, cts);
         }
     }
 }
