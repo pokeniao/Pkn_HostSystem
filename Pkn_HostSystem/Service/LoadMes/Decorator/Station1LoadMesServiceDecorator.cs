@@ -257,10 +257,11 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return await _loadMesService.Transpond(model, response);
         }
 
-        public bool VerityMessage(string message, DynVerify verify)
+        public async Task<bool> VerityMessage(string message, DynVerify verify, CancellationTokenSource cts)
         {
-            return _loadMesService.VerityMessage(message, verify);
+            return await _loadMesService.VerityMessage(message, verify, cts);
         }
+
 
         public async Task<string> MethodMessage(string request, string itemValue, string itemMethodOtherValue)
         {
@@ -303,11 +304,11 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return await _loadMesService.KeyenceReadCoid(item, cts);
         }
 
-
-        public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response)
+        public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response, CancellationTokenSource cts)
         {
-            return await _loadMesService.LateProcess(item, response);
+            return await _loadMesService.LateProcess(item, response, cts);
         }
+
 
         public async Task<(bool succeed, string response)> ScpiSerialAsync(DynCondition item, CancellationTokenSource cts)
         {

@@ -16,6 +16,7 @@ using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Reactive.Subjects;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
@@ -127,6 +128,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     #endregion
 
     #region 手动触发发送 与 开启Http
+
     [RelayCommand]
     public async Task JogHttpButton(LoadMesPage page)
     {
@@ -440,6 +442,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                     }
                 }
 
+                //判断是什么通讯
                 if (netWork != null)
                 {
                     switch (netWork.NetworkDetailed.NetMethod)
@@ -459,8 +462,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                     if (model.NeedInteriorTrigger)
                                     {
                                         //进行寄存器触发
-                                        Volatile.Write(ref GlobalManager.Register[model.NeedInteriorTriggerIndex] ,1);
-                                        
+                                        Volatile.Write(ref GlobalManager.Register[model.NeedInteriorTriggerIndex], 1);
+
                                         //等待寄存器响应
                                         succeed = await Task.Run(async () =>
                                         {
@@ -471,16 +474,21 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
                                                 if (endTime > model.NeedInteriorTriggerTimeOut * 1000)
                                                 {
-                                                    Log.Error($"[{TraceContext.Name}]--等待内部触发返回超时,请检查内部触发对象是否运行,或是否响应时间超出设置时间");
+                                                    Log.Error(
+                                                        $"[{TraceContext.Name}]--等待内部触发返回超时,请检查内部触发对象是否运行,或是否响应时间超出设置时间");
                                                     break;
                                                 }
-                                              
-                                                if (Volatile.Read(ref GlobalManager.Register[model.NeedInteriorTriggerIndex]) == 2)
+
+                                                if (Volatile.Read(
+                                                        ref GlobalManager.Register[model.NeedInteriorTriggerIndex]) ==
+                                                    2)
                                                 {
                                                     return true;
                                                 }
 
-                                                if (Volatile.Read(ref GlobalManager.Register[model.NeedInteriorTriggerIndex]) == 3)
+                                                if (Volatile.Read(
+                                                        ref GlobalManager.Register[model.NeedInteriorTriggerIndex]) ==
+                                                    3)
                                                 {
                                                     return false;
                                                 }
@@ -532,6 +540,77 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                 else
                                 {
                                     await ModbusTriggerWrite(model, false);
+                                }
+                            }
+
+                            break;
+                        case "基恩士上位链路通讯":
+                            //获取触发位
+                            //判断是否触发
+                            if (IsTrigger(model.TriggerMessage, await KeyenceHostLinkTrigger(model)))
+                            {
+                                Log.Info($"[{TraceContext.Name}]--基恩士上位链路通讯已被触发");
+                                (bool succeed, string? message) = await ExecutionCondition(model);
+                                //完成后给触发位停止
+                                if (succeed)
+                                {
+                                    //需要进行内部触发
+                                    if (model.NeedInteriorTrigger)
+                                    {
+                                        //进行寄存器触发
+                                        Volatile.Write(ref GlobalManager.Register[model.NeedInteriorTriggerIndex], 1);
+
+                                        //等待寄存器响应
+                                        succeed = await Task.Run(async () =>
+                                        {
+                                            var startTime = Environment.TickCount; // 记录开始时间
+                                            while (!model.cts.Token.IsCancellationRequested)
+                                            {
+                                                var endTime = Environment.TickCount - startTime;
+
+                                                if (endTime > model.NeedInteriorTriggerTimeOut * 1000)
+                                                {
+                                                    Log.Error(
+                                                        $"[{TraceContext.Name}]--等待内部触发返回超时,请检查内部触发对象是否运行,或是否响应时间超出设置时间");
+                                                    break;
+                                                }
+
+                                                if (Volatile.Read(
+                                                        ref GlobalManager.Register[model.NeedInteriorTriggerIndex]) ==
+                                                    2)
+                                                {
+                                                    return true;
+                                                }
+
+                                                if (Volatile.Read(
+                                                        ref GlobalManager.Register[model.NeedInteriorTriggerIndex]) ==
+                                                    3)
+                                                {
+                                                    return false;
+                                                }
+
+                                                await Task.Delay(100);
+                                            }
+
+                                            return false;
+                                        });
+                                        if (succeed)
+                                        {
+                                            await ModbusTriggerWrite(model, true);
+                                        }
+                                        else
+                                        {
+                                            await ModbusTriggerWrite(model, false);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        await KeyenceHostLinkTriggerWrite(model, true);
+                                    }
+                                }
+                                else
+                                {
+                                    await KeyenceHostLinkTriggerWrite(model, false);
                                 }
                             }
 
@@ -594,6 +673,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         return readHoldingRegisters03[0].ToString();
     }
 
+
     private async Task<bool> ModbusTriggerWrite(LoadMesAddAndUpdateWindowModel model, bool succeed)
     {
         try
@@ -633,6 +713,71 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         return true;
     }
 
+
+    private async Task<string> KeyenceHostLinkTrigger(LoadMesAddAndUpdateWindowModel model)
+    {
+        //获取当前通讯对象
+        LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
+        var netWork = GlobalManager.GetNetWork(item.TriggerConnectName);
+        if (netWork == null)
+        {
+            Log.Error($"[{TraceContext.Name}]--循环读取ModbusTcp触发,GetNetWork未找到连接");
+            return string.Empty;
+        }
+
+        //获取基恩士对象
+        KeyenceHostLinkTool netWorkKeyenceHostLinkTool = netWork.KeyenceHostLinkTool;
+
+        (bool item1, ushort item2) =
+            await netWorkKeyenceHostLinkTool.ReadDM<ushort>(int.Parse(model.StartAddress), model.cts,true);
+
+        if (!item1)
+        {
+            Log.Error($"[{TraceContext.Name}]--循环读取:触发寄存器DM:{model.StartAddress} 失败");
+            return string.Empty;
+        }
+
+        return item2.ToString();
+    }
+
+
+    private async Task<bool> KeyenceHostLinkTriggerWrite(LoadMesAddAndUpdateWindowModel model, bool succeed)
+    {
+        try
+        {
+            //获取当前通讯对象
+            LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
+            var netWork = GlobalManager.GetNetWork(item.TriggerConnectName);
+            if (netWork == null)
+            {
+                Log.Error($"[{TraceContext.Name}]--触发型Modbus写回时,GetNetWork获取不到网络");
+                return false;
+            }
+
+            //获取基恩士对象
+            KeyenceHostLinkTool keyenceHostLinkTool = netWork.KeyenceHostLinkTool;
+            if (succeed)
+            {
+                Log.Info($"[{TraceContext.Name}]--KeyenceHostLink触发 返回成功触发消息:{model.SuccessResponseMessage}");
+                return await keyenceHostLinkTool.WriteDM<ushort>(int.Parse(model.StationAddress),
+                    ushort.Parse(model.SuccessResponseMessage), model.cts);
+            }
+            else
+            {
+                Log.Error($"[{TraceContext.Name}]--KeyenceHostLink触发 返回失败触发消息:{model.FailResponseMessage}");
+                return await keyenceHostLinkTool.WriteDM<ushort>(int.Parse(model.StationAddress),
+                    ushort.Parse(model.FailResponseMessage), model.cts);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Error($"[{TraceContext.Name}]--KeyenceHostLink触发写回失败 ,{e}");
+            return false;
+        }
+
+        return true;
+    }
+
     public bool IsTrigger(string triggerMessage, string currentMessage)
     {
         if (triggerMessage == currentMessage)
@@ -654,7 +799,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             {
                 //获取触发位
 
-                
+
                 int i = Volatile.Read(ref GlobalManager.Register[model.InteriorArrayIndex]);
 
                 //判断是否触发
@@ -665,8 +810,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                     //完成后给触发位停止
                     if (succeed)
                     {
-                        Volatile.Write(ref GlobalManager.Register[model.InteriorArrayIndex] ,2);
-
+                        Volatile.Write(ref GlobalManager.Register[model.InteriorArrayIndex], 2);
                     }
                     else
                     {
@@ -766,6 +910,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
 
     #region private方法
+
     /// <summary>
     /// 主要初始化 令牌 和 LoadMesService
     /// </summary>

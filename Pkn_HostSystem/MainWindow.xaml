@@ -93,7 +93,7 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                    Content="上传mes"
+                    Content="流程"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:LoadMesPage}">
                     <ui:NavigationViewItem.Icon>
@@ -101,7 +101,7 @@
                     </ui:NavigationViewItem.Icon>
                     <ui:NavigationViewItem.MenuItems>
                         <ui:NavigationViewItem
-                            Content="动态通讯内容"
+                            Content="动态获取"
                             NavigationCacheMode="Enabled"
                             TargetPageType="{x:Type pages:MesTcpPage}">
                             <ui:NavigationViewItem.Icon>

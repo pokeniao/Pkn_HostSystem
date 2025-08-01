@@ -114,8 +114,13 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showUserDefined));
             OnPropertyChanged(nameof(showSerial));
             OnPropertyChanged(nameof(showInterior));
+            OnPropertyChanged(nameof(showInteriorArraryWriteSet));
+            OnPropertyChanged(nameof(showInteriorQueueWriteSet));
         }
     }
+
+
+    public string InteriorWriteMessage { get; set; }
 
 
     /// <summary>
@@ -236,11 +241,17 @@ public class DynCondition : ObservableObject
                 case "串口通讯":
                     value = $"发送内容: {SerialSendMessage}";
                     break;
-                case "集合":
+                case "读取(集合)":
                     value = $"读取地址:{InteriorArrayIndex}";
                     break;
-                case "队列":
-                    value = $"读取地址:{InteriorQueueIndex}";
+                case "写入(集合)":
+                    value = $"写入地址:{InteriorQueueIndex},内容:{InteriorWriteMessage}";
+                    break;
+                case "读取(队列)":
+                    value = $"读取地址:{InteriorArrayIndex}";
+                    break;
+                case "写入(队列)":
+                    value = $"写入地址:{InteriorQueueIndex},内容:{InteriorWriteMessage}";
                     break;
             }
             return value;
@@ -277,6 +288,8 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showUserDefined));
             OnPropertyChanged(nameof(showSerial));
             OnPropertyChanged(nameof(showInterior));
+            OnPropertyChanged(nameof(showInteriorArraryWriteSet));
+            OnPropertyChanged(nameof(showInteriorQueueWriteSet));
         }
     }
 
@@ -341,11 +354,12 @@ public class DynCondition : ObservableObject
 
     public bool showSerial => MethodName == "串口通讯";
 
-    public bool showInteriorArrarySet => MethodName == "集合";
+    public bool showInteriorArrarySet => MethodName == "读取(集合)";
 
-    public bool showInteriorQueueSet => MethodName == "队列";
+    public bool showInteriorArraryWriteSet => MethodName == "写入(集合)";
+    public bool showInteriorQueueSet => MethodName == "读取(队列)";
 
-
+    public bool showInteriorQueueWriteSet => MethodName  == "写入(队列)";
     /// <summary>
     /// 通讯名: 用于控制连接名显示
     /// </summary>

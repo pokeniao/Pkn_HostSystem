@@ -81,16 +81,19 @@ namespace Pkn_HostSystem.Base
 
         #region 读取写入DM
 
-        public async Task<(bool, T)> ReadDM<T>(int address, CancellationTokenSource cts) where T : struct
+        public async Task<(bool, T)> ReadDM<T>(int address, CancellationTokenSource cts ,bool noLog = false) where T : struct
         {
-            Log.Info($"[{TraceContext.Name}]--读DM执行,地址:{address}");
+            if (!noLog)
+            {
+                Log.Info($"[{TraceContext.Name}]--读DM执行,地址:{address}");
+            }
             //判断是否是32位,来决定是否+L
             bool is32Bit = Is32BitType<T>();
             string suffix = is32Bit ? ".L" : "";
             //拼接报文
             string command = $"RD DM{address}{suffix}";
             //发送报文
-            (bool succeed, string response) = await SendCommand(command, cts);
+            (bool succeed, string response) = await SendCommand(command, cts , noLog);
 
             try
             {
@@ -183,7 +186,7 @@ namespace Pkn_HostSystem.Base
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        private async Task<(bool succeed, string response)> SendCommand(string command, CancellationTokenSource cts)
+        private async Task<(bool succeed, string response)> SendCommand(string command, CancellationTokenSource cts ,bool noLog=false)
         {
             if (!IsConnected) return (false, "未连接");
 
@@ -191,7 +194,11 @@ namespace Pkn_HostSystem.Base
             {
                 byte[] sendData = Encoding.ASCII.GetBytes(command + "\r");
                 await stream.WriteAsync(sendData, 0, sendData.Length);
-                Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送");
+                if (!noLog)
+                {
+                    Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送");
+                }
+              
             }
             catch (Exception ex)
             {
@@ -199,8 +206,8 @@ namespace Pkn_HostSystem.Base
                 return (false, $"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行发送消息时,出现异常{ex.Message}");
             }
 
-
-            Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送后,等待消息返回");
+            if (!noLog)
+                Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送后,等待消息返回");
             byte[] buffer = new byte[256];
             try
             {

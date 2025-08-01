@@ -24,7 +24,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 {
     public partial class LiveChartsTestViewModel : ObservableRecipient
     {
-        public LiveChartsTestModel LiveChartsTestModel { get; set; } = JsonTool<LiveChartsTestModel>.Load();
+        public LiveChartsModel LiveChartsModel { get; set; } = JsonTool<LiveChartsModel>.Load();
         public LogBase<LiveChartsTestViewModel> Log;
         public SnackbarService SnackbarService = new SnackbarService();
 
@@ -189,31 +189,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         #region 柱状图
 
-        public ISeries[] DayTimeYieldSeries { get; set; } =
-        [
-            new ColumnSeries<int>
-            {
-                Values = [6, 3, 5, 7, 3, 4, 6, 3, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                Fill = green,
-                Stroke = null,
-                MaxBarWidth = double.MaxValue,
-                IgnoresBarPosition = true
-            },
-            new ColumnSeries<int>
-            {
-                Values = [2, 4, 8, 9, 5, 2, 4, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                Fill = red,
-                Stroke = null,
-                MaxBarWidth = 30,
-                IgnoresBarPosition = true
-            },
-            new LineSeries<double>
-            {
-                Values = [6, 3, 5, 7, 3, 4, 6, 3, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                Fill = null,
-                GeometrySize = 0
-            }
-        ];
+        public ISeries[] DayTimeYieldSeries { get; set; }
 
         public Axis[] XAxesDayTimeYield { get; set; }
             = new Axis[]
@@ -223,9 +199,9 @@ namespace Pkn_HostSystem.ViewModels.Page
                     Name = "时间",
                     Labels =
                     [
-                        "0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00",
-                        "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00",
-                        "21:00", "22:00", "23:00"
+                        "0:00-1:00", "1:00-2:00", "2:00-3:00", "3:00-4:00", "4:00-5:00", "5:00-6:00", "6:00-7:00", "7:00-8:00", "8:00-9:00", "9:00-10:00", "10:00-11:00",
+                        "11:00-12:00", "12:00-13:00", "13:00-14:00", "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00", "18:00-19:00", "19:00-20:00", "20:00-21:00",
+                        "21:00-22:00", "22:00-23:00", "23:00-0:00"
                     ],
                     NamePaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
                     {
@@ -288,9 +264,9 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         public LiveChartsTestViewModel()
         {
-            if (LiveChartsTestModel == null)
+            if (LiveChartsModel == null)
             {
-                LiveChartsTestModel = new LiveChartsTestModel();
+                LiveChartsModel = new LiveChartsModel();
             }
             else
             {
@@ -298,21 +274,46 @@ namespace Pkn_HostSystem.ViewModels.Page
 
             Log = new LogBase<LiveChartsTestViewModel>(SnackbarService);
 
+
+            DayTimeYieldSeries =
+            [
+                new ColumnSeries<ObservableValue>
+                {
+                    Values = LiveChartsModel.Oks,
+                    Fill = green,
+                    Stroke = null,
+                    MaxBarWidth = double.MaxValue,
+                    IgnoresBarPosition = true
+                },
+                new ColumnSeries<ObservableValue>
+                {
+                    Values = LiveChartsModel.Ngs,
+                    Fill = red,
+                    Stroke = null,
+                    MaxBarWidth = 30,
+                    IgnoresBarPosition = true
+                },
+                new LineSeries<ObservableValue>
+                {
+                    Values = LiveChartsModel.All,
+                    Fill = null,
+                    GeometrySize = 0
+                }
+            ];
             OkTotalPieSeries =
             [
                 new PieSeries<ObservableValue>
                 {
                     Name = "OK",
-                    Values = [LiveChartsTestModel.Ok],
+                    Values = [LiveChartsModel.Ok],
                     Stroke = null,
-                    Fill = green
-                    ,
+                    Fill = green,
                     DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor), //页面上显示数据
                 },
                 new PieSeries<ObservableValue>
                 {
                     Name = "NG",
-                    Values = [LiveChartsTestModel.Ng],
+                    Values = [LiveChartsModel.Ng],
                     Stroke = null,
                     Fill = red,
                     DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor), //页面上显示数据
@@ -325,7 +326,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             [
                 new PieSeries<ObservableValue>
                 {
-                    Values = [LiveChartsTestModel.RunTime],
+                    Values = [LiveChartsModel.RunTime],
                     Fill = green,
                     DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
                     {
@@ -351,7 +352,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 },
                 new PieSeries<ObservableValue>
                 {
-                    Values = [LiveChartsTestModel.StopTime],
+                    Values = [LiveChartsModel.StopTime],
                     Fill = blue,
                     DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
                     {
@@ -377,7 +378,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 },
                 new PieSeries<ObservableValue>
                 {
-                    Values = [LiveChartsTestModel.ErrorTime],
+                    Values = [LiveChartsModel.ErrorTime],
                     Fill = red,
                     DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
                     {
@@ -478,7 +479,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public void Save()
         {
-            JsonTool<LiveChartsTestModel>.Save(LiveChartsTestModel);
+            JsonTool<LiveChartsModel>.Save(LiveChartsModel);
         }
 
         #endregion

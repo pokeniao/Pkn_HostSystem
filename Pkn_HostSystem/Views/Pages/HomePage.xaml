@@ -968,7 +968,7 @@
                                     Width="40"
                                     Margin="0"
                                     Source="../../Assets/工单.png" />
-                                <ui:TextBlock Grid.Column="1" Text="工单选择" VerticalAlignment="Center" />
+                                <ui:TextBlock Grid.Column="1" Text="电测参数修改" VerticalAlignment="Center" />
                             </Grid>
                         </ui:CardAction>
                         <Border

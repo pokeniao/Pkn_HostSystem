@@ -18,7 +18,7 @@ namespace Pkn_HostSystem.Service.UserDefined
             PppOrderList = homePageViewModel.HomePageModel.CurrentSelectPppOrder;
         }
 
-        public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts)
+        public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts, params object[] args)
         {
             string message = $"\"materialCode\":\"{PppOrderList.materialCode}\",\r\n\"materialName\":\"{PppOrderList.materialName}\",";
 

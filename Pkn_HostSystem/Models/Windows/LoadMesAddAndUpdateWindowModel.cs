@@ -205,6 +205,7 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// 显示Modbus触发页面
     /// </summary>
     [ObservableProperty] private bool showModbusTriggerParam;
+
     /// <summary>
     /// 显示Tcp触发页面参数
     /// </summary>

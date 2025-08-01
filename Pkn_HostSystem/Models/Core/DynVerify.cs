@@ -1,13 +1,33 @@
-﻿namespace Pkn_HostSystem.Models.Core
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace Pkn_HostSystem.Models.Core
 {
-    public class DynVerify
+    public partial class DynVerify:ObservableObject
     {
         //校验名
         public string Name { get; set; }
 
-        public string Type { get; set; }
+        private string type;
+
+        public string Type
+        {
+            get => type;
+            set
+            {
+                SetProperty(ref type, value);
+                OnPropertyChanged(nameof(showValueTextBox));
+                OnPropertyChanged(nameof(showValueCombox));
+            }
+
+        }
+
+        public bool showValueTextBox => Type != "自定义复杂逻辑校验";
+
+        public bool showValueCombox => Type == "自定义复杂逻辑校验";
 
         public string Value { get; set; }
+
+        public Type ComplexValue { get; set; }
 
     }
 }

@@ -198,8 +198,10 @@
                                                    Visibility="{Binding showHttpName ,Converter={StaticResource BooleanVisibilityConverter}}" />
                                         <TextBlock Text="{Binding MethodName}"
                                                    Visibility="{Binding showUserDefined ,Converter={StaticResource BooleanVisibilityConverter}}" />
-                                        <TextBlock Text="{Binding MethodName}"
-                                                   Visibility="{Binding showInterior ,Converter={StaticResource BooleanVisibilityConverter}}" />
+                                        <ComboBox
+                                            Visibility="{Binding showInterior ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                            ItemsSource="{Binding DataContext.MesTcpModel.MethodName,  RelativeSource={RelativeSource AncestorType=Page}}"
+                                            SelectedValue="{Binding MethodName ,UpdateSourceTrigger=PropertyChanged}" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
@@ -840,7 +842,7 @@
                                                 Width="150"
                                                 IsChecked="{Binding InteriorTriggerReturn }" />
                                             <TextBlock Grid.Row="1" Grid.Column="0"
-                                                       Text="定义返回值" TextAlignment="Right" Margin="5"/>
+                                                       Text="定义返回值" TextAlignment="Right" Margin="5" />
 
                                             <ToggleButton
                                                 Grid.Row="1" Grid.Column="1" Click="SetHttpGetObject"
@@ -905,27 +907,27 @@
                                             </ToggleButton>
 
                                         </Grid>
-                                        <!-- 内部请求参数 集合 -->
+                                        <!-- 内部请求参数 集合(读取) -->
                                         <Grid
                                             HorizontalAlignment="Center"
                                             Visibility="{Binding showInteriorArrarySet ,Converter={StaticResource BooleanVisibilityConverter}}">
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Grid.Row="0" Grid.Column="0"
                                                        Text="地址索引"
-                                                       TextAlignment="Right" 
+                                                       TextAlignment="Right"
                                                        Margin="5" />
                                             <ui:NumberBox
                                                 Grid.Row="0" Grid.Column="1"
@@ -986,28 +988,28 @@
                                             </ToggleButton>
 
                                         </Grid>
-                                        <!-- 内部请求参数 队列 -->
+                                        <!-- 内部请求参数 队列(读取) -->
                                         <Grid
                                             HorizontalAlignment="Center"
                                             Visibility="{Binding showInteriorQueueSet ,Converter={StaticResource BooleanVisibilityConverter}}">
 
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Grid.Row="0" Grid.Column="0"
                                                        Text="地址索引"
-                                                       TextAlignment="Right" 
+                                                       TextAlignment="Right"
                                                        Margin="5" />
                                             <ui:NumberBox
                                                 Grid.Row="0" Grid.Column="1"
@@ -1067,6 +1069,189 @@
                                                 </ToggleButton.Content>
                                             </ToggleButton>
                                         </Grid>
+
+                                        <!-- 内部请求参数 集合(写入) -->
+                                        <Grid
+                                            HorizontalAlignment="Center"
+                                            Visibility="{Binding showInteriorArraryWriteSet ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                       Text="写入内容"
+                                                       TextAlignment="Right"
+                                                       Margin="5" />
+                                            <TextBox Grid.Row="0" Grid.Column="1"
+                                                     Width="150"
+                                                     Margin="0 0 0 5"
+                                                     Text="{Binding InteriorWriteMessage , UpdateSourceTrigger=PropertyChanged}" />
+
+                                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                                       Text="地址索引"
+                                                       TextAlignment="Right"
+                                                       Margin="5" />
+                                            <ui:NumberBox
+                                                Grid.Row="1" Grid.Column="1"
+                                                Minimum="0"
+                                                ClearButtonEnabled="False"
+                                                Width="150"
+                                                Maximum="99"
+                                                Margin="0 0 0 5"
+                                                Value="{Binding InteriorArrayIndex ,UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0" Text="校验 " Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="4" Grid.Column="1"
+                                                Click="SetVerify"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启格式校验" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="5" Grid.Column="1"
+                                                Click="ButtonBase_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转换映射" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="6" Grid.Column="1"
+                                                Click="ResultTranspond_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转发" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+
+                                        </Grid>
+                                        <!-- 内部请求参数 队列(写入) -->
+                                        <Grid
+                                            HorizontalAlignment="Center"
+                                            Visibility="{Binding showInteriorQueueWriteSet ,Converter={StaticResource BooleanVisibilityConverter}}">
+
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                       Text="写入内容"
+                                                       TextAlignment="Right"
+                                                       Margin="5" />
+                                            <TextBox Grid.Row="0" Grid.Column="1"
+                                                     Width="150"
+                                                     Margin="0 0 0 5"
+                                                     Text="{Binding InteriorWriteMessage , UpdateSourceTrigger=PropertyChanged}" />
+
+                                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                                       Text="地址索引"
+                                                       TextAlignment="Right"
+                                                       Margin="5" />
+                                            <ui:NumberBox
+                                                Grid.Row="1" Grid.Column="1"
+                                                Minimum="0"
+                                                ClearButtonEnabled="False"
+                                                Width="150"
+                                                Maximum="99"
+                                                Margin="0 0 0 5"
+                                                Value="{Binding InteriorQueueIndex ,UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock Grid.Row="4"
+                                                       Grid.Column="0" Text="校验 " Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="4" Grid.Column="1"
+                                                Click="SetVerify"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenVerify,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启格式校验" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="5" Grid.Column="0" Text="转换映射" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="5" Grid.Column="1"
+                                                Click="ButtonBase_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding OpenSwitch,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转换映射" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                            <TextBlock Grid.Row="6" Grid.Column="0" Text="结果转发" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ToggleButton
+                                                Grid.Row="6" Grid.Column="1"
+                                                Click="ResultTranspond_OnClick"
+                                                HorizontalAlignment="Left"
+                                                Margin="0 0 0 5"
+                                                Width="150"
+                                                IsChecked="{Binding ResultTranspond,UpdateSourceTrigger=PropertyChanged}">
+                                                <ToggleButton.Content>
+                                                    <WrapPanel>
+                                                        <TextBlock Text="开启转发" />
+                                                        <ui:SymbolIcon Symbol="Settings24" />
+                                                    </WrapPanel>
+                                                </ToggleButton.Content>
+                                            </ToggleButton>
+                                        </Grid>
+
                                         <!-- 自定义参数 -->
                                         <Grid
                                             HorizontalAlignment="Center"
@@ -1149,8 +1334,8 @@
                                 ItemsSource="{Binding MesTcpModel.VerifyList}"
                                 AutoGenerateColumns="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Name}" />
-                                    <DataGridTemplateColumn Header="Type" Width="*">
+                                    <DataGridTextColumn Header="备注" Width="*" Binding="{Binding Name}" />
+                                    <DataGridTemplateColumn Header="类型" Width="*">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Grid>
@@ -1168,7 +1353,34 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellEditingTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}" />
+
+                                    <DataGridTemplateColumn Header="值" Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <TextBlock Text="{Binding Value}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid
+                                                        Visibility="{Binding showValueTextBox , Converter={StaticResource BooleanVisibilityConverter}}">
+                                                        <TextBox Text="{Binding Value}" />
+                                                    </Grid>
+
+                                                    <Grid
+                                                        Visibility="{Binding showValueCombox , Converter={StaticResource BooleanVisibilityConverter}}">
+                                                        <ComboBox
+                                                            ItemsSource="{Binding }"
+                                                            SelectedValue="{Binding ComplexValue}"
+                                                            DisplayMemberPath="Name" />
+                                                    </Grid>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </GroupBox>

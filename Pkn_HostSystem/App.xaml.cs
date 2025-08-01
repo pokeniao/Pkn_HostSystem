@@ -151,6 +151,7 @@ namespace Pkn_HostSystem
                     .AddSingleton<LiveChartsTestViewModel>()
                     .AddSingleton<LoginViewModel>()
                     .AddSingleton<SerialToolViewModel>()
+                    .AddSingleton<SetLiveChartsParamViewModel>()
 
                     //页面单例 ,预加载
                     // .AddSingleton<LoginWindowPage1>()
