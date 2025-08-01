@@ -245,6 +245,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         JsonTool<ProductiveModel>.Reset();
         JsonTool<SettingsPageModel>.Reset();
         JsonTool<VisionPageModel>.Reset();
+
     }
 
     #region 保存程序
@@ -253,7 +254,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
     public void Save()
     {
         JsonTool<SettingsPageModel>.Save(SettingsPageModel);
-      
+
     }
     #endregion
 
@@ -278,6 +279,8 @@ public partial class SettingsPageViewModel : ObservableRecipient
 
         VisionPageViewModel visionPageViewModel = Ioc.Default.GetRequiredService<VisionPageViewModel>();
         visionPageViewModel.SaveCommand.Execute(null);
+
+        GlobalManager.SaveRegister();
 
         return true;
     }

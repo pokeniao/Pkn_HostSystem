@@ -14,8 +14,6 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <returns></returns>
         LoadMesAddAndUpdateWindowModel SelectByName(string Name);
 
-
-
         /// <summary>
         ///  触发单个请求
         /// </summary>
@@ -23,7 +21,6 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <param name="cts"></param>
         /// <returns></returns>
         Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts);
-
 
         /// <summary>
         /// 触发单个请求
@@ -93,7 +90,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <param name="message"></param>
         /// <param name="verify"></param>
         /// <returns></returns>
-        bool VerityMessage(string message, DynVerify verify);
+        Task<bool> VerityMessage(string message, DynVerify verify, CancellationTokenSource cts);
 
         /// <summary>
         /// 方法集内容嵌入
@@ -159,7 +156,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <param name="item"></param>
         /// <param name="response"></param>
         /// <returns></returns>
-        Task<(bool succeed, string message)> LateProcess(DynCondition item, string response);
+        Task<(bool succeed, string message)> LateProcess(DynCondition item, string response, CancellationTokenSource cts);
         /// <summary>
         /// 串口通讯
         /// </summary>
