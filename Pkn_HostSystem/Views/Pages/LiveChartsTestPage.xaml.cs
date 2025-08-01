@@ -39,12 +39,12 @@ namespace Pkn_HostSystem.Views.Pages
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            ViewModel.LiveChartsTestModel.Ok.Value++;
+            ViewModel.LiveChartsModel.Ok.Value++;
         }
 
         private void ButtonBase_OnClick2(object sender, RoutedEventArgs e)
         {
-            ViewModel.LiveChartsTestModel.Ng.Value++;
+            ViewModel.LiveChartsModel.Ng.Value++;
         }
     }
 }

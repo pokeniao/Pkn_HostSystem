@@ -69,16 +69,16 @@ public static class GlobalManager
     /// </summary>
     public static string jdbcPath;
     /// <summary>
-    /// 内部触发寄存器
+    /// 内部触发寄存器,不断电保存
     /// </summary>
     public static int[] Register = new int[100];
 
     /// <summary>
-    /// 内部寄存器
+    /// 内部寄存器,断电保存
     /// </summary>
     public static object[] ArrayRegister = new object[100];
     /// <summary>
-    /// 内部队列 ,队列初始化器
+    /// 内部队列 ,队列初始化器,断电保存
     /// </summary>
     public static List<ConcurrentQueue<object>> QueueRegister = Enumerable
         .Range(0, 100)
@@ -143,4 +143,9 @@ public static class GlobalManager
     }
 
 
+    public static void SaveRegister()
+    {
+        JsonTool<object[]>.Save(ArrayRegister);
+        JsonTool<List<ConcurrentQueue<object>>>.Save(QueueRegister);
+    }
 }

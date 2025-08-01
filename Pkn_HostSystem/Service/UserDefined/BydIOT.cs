@@ -12,7 +12,7 @@ namespace Pkn_HostSystem.Service.UserDefined
 
         public LogBase<PppIOT> Log = new();
 
-        public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts)
+        public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts, params object[] args)
         {
             var netWorkPoJoes = GlobalManager.NetWorkDictionary.Items.ToList();
             NetWork netWork = null;

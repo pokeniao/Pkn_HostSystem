@@ -1,4 +1,5 @@
-﻿using Azure.Identity;
+﻿using Azure;
+using Azure.Identity;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -14,6 +15,7 @@ using RestSharp;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Net;
 using System.Reactive.Joins;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -356,6 +358,8 @@ public class LoadMesService : ILoadMesService
     public virtual string StaticMessage(string request, string itemKey, string itemValue)
     {
         var i = request.IndexOf($"[{itemKey}]");
+
+        string messageBefore = request;
         if (i != -1)
         {
             var keyLen = itemKey.Length;
@@ -363,6 +367,13 @@ public class LoadMesService : ILoadMesService
             var requestB = request.Substring(i + keyLen + 2);
             request = requestA + itemValue + requestB;
         }
+        //防止堆栈溢出,重复嵌套调用
+        if (request == messageBefore)
+        {
+            Log.Error($"[{TraceContext.Name}]--进行嵌入后,前后一样,避免循环嵌套堆栈溢出,退出嵌套");
+            return request;
+        }
+
 
         return request.IndexOf($"[{itemKey}]") != -1 ? StaticMessage(request, itemKey, itemValue) : request;
     }
@@ -454,7 +465,7 @@ public class LoadMesService : ILoadMesService
                                 return (false, null);
                             }
 
-                            (bool b1, string? responseLateProcess1) = await _self.LateProcess(item, readReg);
+                            (bool b1, string? responseLateProcess1) = await _self.LateProcess(item, readReg, cts);
                             if (b1)
                             {
                                 message = _self.StaticMessage(message, itemKey, responseLateProcess1);
@@ -475,7 +486,7 @@ public class LoadMesService : ILoadMesService
                                 return (false, null);
                             }
 
-                            (bool b2, string? responseLateProcess2) = await _self.LateProcess(item, readCoid);
+                            (bool b2, string? responseLateProcess2) = await _self.LateProcess(item, readCoid, cts);
 
                             if (b2)
                             {
@@ -498,7 +509,7 @@ public class LoadMesService : ILoadMesService
                                 return (false, null);
                             }
 
-                            (bool b3, string? responseLateProcess3) = await _self.LateProcess(item, tcp);
+                            (bool b3, string? responseLateProcess3) = await _self.LateProcess(item, tcp, cts);
                             if (b3)
                             {
                                 message = _self.StaticMessage(message, itemKey, responseLateProcess3);
@@ -519,7 +530,7 @@ public class LoadMesService : ILoadMesService
                                 return (false, null);
                             }
 
-                            (bool b4, string? responseLateProcess4) = await _self.LateProcess(item, s);
+                            (bool b4, string? responseLateProcess4) = await _self.LateProcess(item, s, cts);
                             if (b4)
                             {
                                 message = _self.StaticMessage(message, itemKey, responseLateProcess4);
@@ -540,7 +551,7 @@ public class LoadMesService : ILoadMesService
                                 return (false, null);
                             }
 
-                            (bool b6, string? responseLateProcess6) = await _self.LateProcess(item, result);
+                            (bool b6, string? responseLateProcess6) = await _self.LateProcess(item, result, cts);
                             if (b6)
                             {
                                 message = _self.StaticMessage(message, itemKey, responseLateProcess6);
@@ -562,7 +573,7 @@ public class LoadMesService : ILoadMesService
                                 return (false, null);
                             }
 
-                            (bool b5, string? responseLateProcess5) = await _self.LateProcess(item, response);
+                            (bool b5, string? responseLateProcess5) = await _self.LateProcess(item, response, cts);
 
                             if (b5)
                             {
@@ -676,7 +687,7 @@ public class LoadMesService : ILoadMesService
                     }
 
                     //是否转发
-                    (bool b1, string? responseLateProcess1) = await _self.LateProcess(item, s);
+                    (bool b1, string? responseLateProcess1) = await _self.LateProcess(item, s, cts);
                     if (b1)
                     {
                         message = _self.StaticMessage(message, itemKey,
@@ -718,19 +729,34 @@ public class LoadMesService : ILoadMesService
 
                     switch (item.MethodName)
                     {
-                        case "集合":
+                        case "读取(集合)":
                             message = _self.StaticMessage(message, itemKey,
                                 Volatile.Read(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex])?.ToString());
                             break;
-                        case "队列":
-                            GlobalManager.QueueRegister[item.InteriorArrayIndex].TryPeek(out object a);
+                        case "读取(队列)":
+                            bool tryPeek = GlobalManager.QueueRegister[item.InteriorQueueIndex].TryDequeue(out object a);
+
+                            if (!tryPeek)
+                            {
+                                Log.Error($"[{TraceContext.Name}]--在取出队列中元素时失败");
+                                return (false, null);
+                            }
 
                             if (a == null)
                             {
                                 Log.Error($"[{TraceContext.Name}]--在取出队列中元素时为null");
+                                return (false, null);
                             }
 
                             message = _self.StaticMessage(message, itemKey, a?.ToString());
+                            break;
+                        case "写入(集合)":
+                            message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
+                           Volatile.Write(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex] , item.InteriorWriteMessage);
+                            break;
+                        case "写入(队列)":
+                            message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
+                            GlobalManager.QueueRegister[item.InteriorQueueIndex].Enqueue(item.InteriorWriteMessage);
                             break;
                     }
                 }
@@ -744,7 +770,7 @@ public class LoadMesService : ILoadMesService
 
     #region 执行可选后期处理
 
-    public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response)
+    public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response ,CancellationTokenSource cts)
     {
         var itemKey = item.Name;
         var methodName = item.MethodName;
@@ -766,7 +792,7 @@ public class LoadMesService : ILoadMesService
                 Log.Info($"[{TraceContext.Name}]---Socket需要进行消息校验");
                 foreach (var dynVerify in item.VerifyList)
                 {
-                    if (!_self.VerityMessage(response, dynVerify))
+                    if (!await _self.VerityMessage(response, dynVerify,cts))
                     {
                         Log.Error($"[{TraceContext.Name}]--校验到不匹配,撤回发送");
                         return (false, null);
@@ -883,12 +909,15 @@ public class LoadMesService : ILoadMesService
     /// <param name="message"></param>
     /// <param name="verify"></param>
     /// <returns></returns>
-    public virtual bool VerityMessage(string message, DynVerify verify)
+    public async Task<bool>  VerityMessage(string message, DynVerify verify , CancellationTokenSource cts)
     {
         bool tryParse = false;
         bool tryParse2 = false;
         int len = 0;
         int len2 = 0;
+        //预处理一下message
+        message = message.Replace(" ","").Trim();
+
         switch (verify.Type)
         {
             case "字符长度检测=":
@@ -1146,6 +1175,23 @@ public class LoadMesService : ILoadMesService
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
                     return false;
                 }
+            case "自定义复杂逻辑校验":
+                Type ComplexValue = verify.ComplexValue;
+                //实例化
+                var objInstance = Activator.CreateInstance(ComplexValue);
+                //获取方法
+                var method = ComplexValue.GetMethod("Main");
+
+                //执行方法
+                var invoke = method.Invoke(objInstance, [cts]);
+
+                // 转换为具体元组类型
+                var (succeed, returnValue) = await(Task<(bool Succeed, object Return)>)invoke;
+
+
+
+                return (bool)returnValue;
+                break;
         }
 
         return false;
@@ -1682,16 +1728,20 @@ public class LoadMesService : ILoadMesService
             switch (item.BitNet)
             {
                 case "单寄存器(无符号)":
+                  
                     (bool b, ushort item3) = await keyenceHostLinkTool.ReadDM<ushort>(startAddress, cts);
 
                     return (b, item3.ToString());
                 case "单寄存器(有符号)":
+                
                     (bool b1, short s) = await keyenceHostLinkTool.ReadDM<short>(startAddress, cts);
                     return (b1, s.ToString());
                 case "双寄存器(无符号)":
+                
                     (bool b2, uint u) = await keyenceHostLinkTool.ReadDM<uint>(startAddress, cts);
                     return (b2, u.ToString());
                 case "双寄存器(有符号)":
+                 
                     (bool b3, int i) = await keyenceHostLinkTool.ReadDM<int>(startAddress, cts);
                     return (b3, i.ToString());
                 case "32位浮点数":

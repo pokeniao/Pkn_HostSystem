@@ -86,7 +86,7 @@ namespace Pkn_HostSystem.Views.Pages
                     SetDefault(selectedItem);
                     break;
                 case "内部":
-                    selectedItem.MethodName = selectedItem.InteriorName;
+                    selectedItem.MethodName = "";
                     break;
                 default:
                     selectedItem.MethodName = "";
@@ -129,7 +129,18 @@ namespace Pkn_HostSystem.Views.Pages
         private void InteriorSelectChange(object sender, SelectionChangedEventArgs e)
         {
             DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
-            item.MethodName = item.InteriorName;
+
+            switch (item.InteriorName)
+            {
+                case "集合":
+                    viewModel.MesTcpModel.MethodName = ["读取(集合)", "写入(集合)"];
+                    item.MethodName = "读取(集合)";
+                    break;
+                case "队列":
+                    viewModel.MesTcpModel.MethodName = ["读取(队列)", "写入(队列)"];
+                    item.MethodName = "读取(队列)";
+                    break;
+            }
         }
 
         #endregion

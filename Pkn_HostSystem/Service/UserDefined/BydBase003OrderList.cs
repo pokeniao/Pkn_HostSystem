@@ -33,7 +33,7 @@ namespace Pkn_HostSystem.Service.UserDefined
         /// 主入口
         /// </summary>
         /// <returns></returns>
-        public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts)
+        public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts, params object[] args)
         {
             string message = $"\"materialCode\":\"{PppOrderList.materialCode}\",\r\n\"workOrderNumber\":\"{PppOrderList.orderCode}\",\r\n\"scheduleNumber\":\"{PppOrderList.scheduleCode}\",";
 

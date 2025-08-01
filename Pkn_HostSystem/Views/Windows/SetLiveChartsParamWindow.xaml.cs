@@ -1,4 +1,5 @@
-﻿using Pkn_HostSystem.ViewModels.Windows;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.ViewModels.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace Pkn_HostSystem.Views.Windows
         public SetLiveChartsParamWindow()
         {
             InitializeComponent();
-            ViewModel = new SetLiveChartsParamViewModel();
+            ViewModel = Ioc.Default.GetRequiredService<SetLiveChartsParamViewModel>();
             DataContext = ViewModel;
 
             ViewModel.setSnackbarService(SnackbarPresenter);
