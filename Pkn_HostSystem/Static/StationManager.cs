@@ -13,8 +13,7 @@ namespace Pkn_HostSystem.Static
 
         public static void InitStation()
         {
-            GlobalManager.StationDictionary.AddOrUpdate(new EachStation<Station1>() { Header = "扫码过站",CreateDecoratorFunc = (loadMesService) => new Station1LoadMesServiceDecorator(loadMesService ) });
-            GlobalManager.StationDictionary.AddOrUpdate(new EachStation<Station2>() { Header = "生产信息上传", CreateDecoratorFunc = (loadMesService) => new Station2LoadMesServiceDecorator(loadMesService ) });
+            GlobalManager.StationDictionary.AddOrUpdate(new EachStation<Station1>() { Header = "电测",CreateDecoratorFunc = (loadMesService) => new Station1LoadMesServiceDecorator(loadMesService ) });
         }
         /// <summary>
         /// 记录工位日志
@@ -23,7 +22,7 @@ namespace Pkn_HostSystem.Static
         /// <param name="station"></param>
         /// <param name="message"></param>
         public static void StationLog(StationLogEnum logMethod, InfoAndErrorEnum logInfoAndErrorEnum, string station,
-            string message)
+            string message , bool baseNeed = true)
         {
             if (station == null)
             {
@@ -45,37 +44,38 @@ namespace Pkn_HostSystem.Static
                     if (logInfoAndErrorEnum == InfoAndErrorEnum.Info)
                     {
                         value.UserLog.InfoToRichTextBox(message,false);
-                        value.DevLog.InfoToRichTextBox(message);
+
+                        value.DevLog.InfoToRichTextBox(message, baseNeed);
                     }
                     else
                     {
                         value.UserLog.ErrorToRichTextBox(message,false);
                         value.ErrorLog.ErrorToRichTextBox(message,false);
-                        value.DevLog.ErrorToRichTextBox(message);
+                        value.DevLog.ErrorToRichTextBox(message, baseNeed);
                     }
 
                     break;
                 case StationLogEnum.DevLog:
                     if (logInfoAndErrorEnum == InfoAndErrorEnum.Info)
                     {
-                        value.DevLog.InfoToRichTextBox(message);
+                        value.DevLog.InfoToRichTextBox(message, baseNeed);
                     }
                     else
                     {
                         value.ErrorLog.ErrorToRichTextBox(message, false);
-                        value.DevLog.ErrorToRichTextBox(message);
+                        value.DevLog.ErrorToRichTextBox(message, baseNeed);
                     }
 
                     break;
                 case StationLogEnum.ErrorLog:
                     if (logInfoAndErrorEnum == InfoAndErrorEnum.Info)
                     {
-                        value.ErrorLog.InfoToRichTextBox(message);
+                        value.ErrorLog.InfoToRichTextBox(message, baseNeed);
                     }
                     else
                     {
                         value.ErrorLog.ErrorToRichTextBox(message, false);
-                        value.DevLog.ErrorToRichTextBox(message);
+                        value.DevLog.ErrorToRichTextBox(message, baseNeed);
                     }
                     break;
             }

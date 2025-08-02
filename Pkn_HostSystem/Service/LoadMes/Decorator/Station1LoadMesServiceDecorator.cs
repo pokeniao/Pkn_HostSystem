@@ -3,8 +3,10 @@ using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Core.Interface;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Service.LoadMes.Interface;
+using Pkn_HostSystem.Service.Stations;
 using Pkn_HostSystem.Static;
 using RestSharp;
 
@@ -32,8 +34,6 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return _loadMesService.SelectByName(Name);
         }
 
-
-
         public async Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts)
         {
             return await _loadMesService.RunOne(Name, cts);
@@ -45,195 +45,35 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return await _loadMesService.RunOne(Name, request, cts);
         }
 
+        //
         public async Task<(bool succeed, string? response)> SendHttp(LoadMesAddAndUpdateWindowModel item,
             string request, CancellationTokenSource cts)
         {
-            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
-                $"[{TraceContext.Name}]--发送内容: \r\n {request}");
+            var eachStation = TraceContext.GetParam("EachStation");
+            EachStation<Station1>? station1 = eachStation as EachStation<Station1>;
 
-            StationManager.TraceContextStart(item.Station);
-            dynamic eachStation = TraceContext.Param["EachStation"];
-
-            //调用工位逻辑
-            TraceContext.UpdateParam("step", 1);
-            TraceContext.UpdateParam("response", request);
-            var result = await eachStation?.Station.Main(cts);
-
-            if (!result.Item1)
+            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station, request , false);
+            (bool succeed, string? response) = await _loadMesService.SendHttp(item, request, cts);
+            if (succeed)
             {
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
-                    $"[{TraceContext.Name}]-- 调用Main失败,当前step应该为1, 错误原因:{result.Item2}");
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station, response , false);
+            }
+            else
+            {
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station, response, false);
             }
 
-
-            //日志显示发送内容
-
-
-            try
-            {
-
-                //创建连接
-                var client = new RestClient(item.HttpPath);
-                RestRequest requestBody;
-                //创建请求
-                switch (item.Ajax)
-                {
-                    case "POST":
-                        requestBody = new RestRequest(item.Api, Method.Post);
-                        break;
-                    case "GET":
-                        requestBody = new RestRequest(item.Api, Method.Get);
-                        break;
-                    case "DELETE":
-                        requestBody = new RestRequest(item.Api, Method.Delete);
-                        break;
-                    case "PUT":
-                        requestBody = new RestRequest(item.Api, Method.Put);
-                        break;
-                    default:
-                        requestBody = new RestRequest();
-                        break;
-                }
-
-                //添加请求头
-                foreach (var header in item.HttpHeaders)
-                {
-                    requestBody.AddHeader(header.Key, header.Value);
-                }
-
-                //添加请求体
-                switch (item.RequestMethod)
-                {
-                    case "JSON":
-                        //会自动设置 Content-Type: application/json，并把内容当作 JSON 处理。
-                        requestBody.AddStringBody(request, DataFormat.Json);
-                        break;
-                    case "XML":
-                        //表示数据格式是 XML。
-                        requestBody.AddStringBody(request, DataFormat.Xml);
-                        break;
-                    case "TEXT":
-                        //一般用于你想自己完全控制请求内容或用于 GET 请求等不带 body 的请求。
-                        requestBody.AddStringBody(request, DataFormat.None);
-                        break;
-                    default:
-                        requestBody.AddStringBody(request, DataFormat.None);
-                        break;
-                }
-
-                //发送请求
-                RestResponse response = await client.ExecuteAsync(requestBody, cts.Token);
-                //判断
-                if (response.IsSuccessStatusCode)
-                {
-                    item.Response = response.Content;
-                    //判断是否是JSON格式,如果是转成输出
-                    item.Response = JsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
-
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
-                        $"[{TraceContext.Name}]--返回消息--成功--消息体:\r\n{item.Response}");
-
-                    TraceContext.UpdateParam("response", item.Response);
-                    var result2 = await eachStation?.Station.Main(cts);
-
-                    if (!result2.Item1)
-                    {
-                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
-                            $"[{TraceContext.Name}]-- 调用Main失败,当前step应该为2, 错误原因:{result2.Item2}");
-                    }
-
-                    return (true, item.Response);
-                }
-                else
-                {
-                    //尝试从错误消息中获取,获取不到就从消息内容中获取
-                    item.Response = response.ErrorMessage;
-                    if (item.Response == null)
-                    {
-                        item.Response = response.Content;
-                    }
-
-                    //判断是否是JSON格式,如果是转成输出
-                    item.Response = JsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
-
-
-                    //拦截工位错误
-
-                    if (isJson)
-                    {
-                        JObject jObject = JObject.Parse(item.Response);
-                        string? s = jObject["data"]?.ToString();
-                        if (s ==
-                            "Post接口请求接口http://hf-mes-fdkj2.ppp.com/api/mes-opm/snChangeFromMesOpenPlatform/snStageChange发生错误:I/O error on POST request for \"http://hf-mes-fdkj2.ppp.com/api/mes-opm/snChangeFromMesOpenPlatform/snStageChange\": Connection reset; nested exception is java.net.SocketException: Connection reset")
-                        {
-                            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
-                                $"[{TraceContext.Name}]--返回消息--成功(拦截)--消息体:\r\n{item.Response}");
-
-                            TraceContext.UpdateParam("response", item.Response);
-                            var result3 = await eachStation.Station.Main(cts);
-
-                            if (!result3.Item1)
-                            {
-                                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
-                                    $"[{TraceContext.Name}]-- 调用Main失败,当前step应该为2, 错误原因:{result3.Item2}");
-                            }
-
-                            return (true, item.Response);
-                        }
-
-                        if (s ==
-                            "Post接口请求接口http://hf-mes-fdkj2.ppp.com/api/mes-jj/pro/ProPackagePo/addData发生错误:I/O error on POST request for \"http://hf-mes-fdkj2.ppp.com/api/mes-jj/pro/ProPackagePo/addData\": Connection reset; nested exception is java.net.SocketException: Connection reset")
-                        {
-                            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station,
-                                $"[{TraceContext.Name}]--返回消息--成功(拦截)--消息体:\r\n{item.Response}");
-
-                            TraceContext.UpdateParam("response", item.Response);
-                            var result4 = await eachStation.Station.Main(cts);
-
-                            if (!result4.Item1)
-                            {
-                                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
-                                    $"[{TraceContext.Name}]-- 调用Main失败,当前step应该为2, 错误原因:{result4.Item2}");
-                            }
-
-                            return (true, item.Response);
-                        }
-                    }
-
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
-                        $"[{TraceContext.Name}]--返回消息--失败--消息体:\r\n{item.Response}");
-                    TraceContext.UpdateParam("response", item.Response);
-                    var result5 = await eachStation.Station.Main(cts);
-
-                    if (!result5.Item1)
-                    {
-                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
-                            $"[{TraceContext.Name}]-- 调用Main失败,当前step应该为2, 错误原因:{result5.Item2}");
-                    }
-
-                    return (false, item.Response);
-                }
-            }
-            catch (Exception e)
-            {
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
-                    $"[{TraceContext.Name}]--SendHttp发生不可预期错误: {e}");
-
-
-                TraceContext.UpdateParam("step", 3);
-                var result6 = await eachStation.Station.Main(cts);
-                if (!result6.Item1)
-                {
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station,
-                        $"[{TraceContext.Name}]-- 调用Main失败,当前step应该为2, 错误原因:{result6.Item2}");
-                }
-                return (false, item.Response);
-            }
+            return (succeed, response);
         }
 
         public async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
         {
-            return await _loadMesService.PackRequest(httpName, cts);
+            var eachStation = TraceContext.GetParam("EachStation");
+            EachStation<Station1>? station1 = eachStation as EachStation<Station1>;
+            station1.Station.Main(cts);
+            (bool succeed, string? value) = await _loadMesService.PackRequest(httpName, cts);
+            station1.Station.Main(cts);
+            return (succeed, value);
         }
 
         public string StaticMessage(string request, string itemKey, string itemValue)
@@ -257,7 +97,8 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return await _loadMesService.Transpond(model, response);
         }
 
-        public async Task<bool> VerityMessage(string message, DynVerify verify, CancellationTokenSource cts)
+        public async Task<(bool succeed, string response)> VerityMessage(string message, DynVerify verify,
+            CancellationTokenSource cts)
         {
             return await _loadMesService.VerityMessage(message, verify, cts);
         }
@@ -299,18 +140,21 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return await _loadMesService.KeyenceReadDM(item, cts);
         }
 
-        public async Task<(bool succeed, string? result)> KeyenceReadCoid(DynCondition item, CancellationTokenSource cts)
+        public async Task<(bool succeed, string? result)> KeyenceReadCoid(DynCondition item,
+            CancellationTokenSource cts)
         {
             return await _loadMesService.KeyenceReadCoid(item, cts);
         }
 
-        public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response, CancellationTokenSource cts)
+        public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response,
+            CancellationTokenSource cts)
         {
             return await _loadMesService.LateProcess(item, response, cts);
         }
 
 
-        public async Task<(bool succeed, string response)> ScpiSerialAsync(DynCondition item, CancellationTokenSource cts)
+        public async Task<(bool succeed, string response)> ScpiSerialAsync(DynCondition item,
+            CancellationTokenSource cts)
         {
             return await _loadMesService.ScpiSerialAsync(item, cts);
         }

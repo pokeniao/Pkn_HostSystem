@@ -76,18 +76,17 @@ public static class GlobalManager
     /// <summary>
     /// 内部寄存器,断电保存
     /// </summary>
-    public static object[] ArrayRegister = new object[100];
+    public static object[] ArrayRegister;
+
     /// <summary>
     /// 内部队列 ,队列初始化器,断电保存
     /// </summary>
-    public static List<ConcurrentQueue<object>> QueueRegister = Enumerable
-        .Range(0, 100)
-        .Select(_ => new ConcurrentQueue<object>())
-        .ToList();
+    public static List<ConcurrentQueue<object>> QueueRegister;
 
 
     static GlobalManager()
     {
+
         //登入状态
         CurLoginState = UserLoginEnum.NoLogged;
         //向静态字典添加东西

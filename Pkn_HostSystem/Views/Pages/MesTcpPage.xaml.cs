@@ -409,5 +409,12 @@ namespace Pkn_HostSystem.Views.Pages
 
             viewModel.MesTcpModel.SwitchList?.Remove(value);
         }
+
+        private void DeleteClick2(object sender, RoutedEventArgs e)
+        {
+            DynVerify? value = DynVerifyDataGrid.SelectedValue as DynVerify;
+
+            viewModel.MesTcpModel.VerifyList?.Remove(value);
+        }
     }
 }

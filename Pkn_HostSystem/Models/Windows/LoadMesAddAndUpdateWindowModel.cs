@@ -79,6 +79,26 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// </summary>
     [ObservableProperty] private string triggerMessage = "1";
 
+
+    /// <summary>
+    /// 触发返回的方式
+    /// </summary>
+
+    private string triggerReturnMethod = "常量返回";
+
+    public string TriggerReturnMethod
+    {
+        get => triggerReturnMethod;
+        set
+        {
+            SetProperty(ref triggerReturnMethod, value);
+            OnPropertyChanged(nameof(showTriggerReturnStatic));
+            OnPropertyChanged(nameof(showTriggerReturnInterior));
+        }
+    }
+
+
+
     /// <summary>
     /// 触发后:成功返回消息
     /// </summary>
@@ -89,10 +109,14 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// </summary>
     [ObservableProperty] private string failResponseMessage = "3";
 
+
+    [ObservableProperty] private string interiorResponseIndex = "0";
+
     /// <summary>
     /// 是否需要本地保存
     /// </summary>
     [ObservableProperty] private bool localSave;
+
 
     /// <summary>
     /// 是否需要发送HTTP请求
@@ -218,6 +242,15 @@ public partial class LoadMesAddAndUpdateWindowModel : ObservableObject
     /// 显示串口通讯参数
     /// </summary>
     [ObservableProperty] private bool showSerialParam;
+    /// <summary>
+    /// 触发返回静态
+    /// </summary>
+     public bool showTriggerReturnStatic => triggerReturnMethod =="常量返回";
+    /// <summary>
+    /// 触发返回内部寄存器
+    /// </summary>
+    public bool showTriggerReturnInterior => triggerReturnMethod == "内部寄存器";
+
 
     public override string ToString()
     {

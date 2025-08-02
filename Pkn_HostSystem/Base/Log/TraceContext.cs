@@ -29,6 +29,11 @@
             set => _name.Value = value;
         }
 
+        /// <summary>
+        /// 获取对应key的参数值,没有返回null
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static dynamic GetParam(string key)
         {
             bool tryGetValue = TraceContext.Param.TryGetValue(key, out dynamic value);
@@ -42,7 +47,11 @@
                 return null;
             }
         }
-
+        /// <summary>
+        /// 更新对应key的参数值,没有则添加其中
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public static void UpdateParam(string key , object value)
         {
             bool tryGetValue = TraceContext.Param.TryGetValue(key, out _);

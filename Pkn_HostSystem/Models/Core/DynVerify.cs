@@ -27,7 +27,17 @@ namespace Pkn_HostSystem.Models.Core
 
         public string Value { get; set; }
 
-        public Type ComplexValue { get; set; }
+        private Type complexValue;
+
+        public Type ComplexValue
+        {
+            get => complexValue;
+            set
+            {
+                SetProperty(ref complexValue, value);
+                Value = value.Name;
+            }
+        }
 
     }
 }

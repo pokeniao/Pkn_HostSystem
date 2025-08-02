@@ -367,6 +367,7 @@ public class LoadMesService : ILoadMesService
             var requestB = request.Substring(i + keyLen + 2);
             request = requestA + itemValue + requestB;
         }
+
         //防止堆栈溢出,重复嵌套调用
         if (request == messageBefore)
         {
@@ -734,7 +735,8 @@ public class LoadMesService : ILoadMesService
                                 Volatile.Read(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex])?.ToString());
                             break;
                         case "读取(队列)":
-                            bool tryPeek = GlobalManager.QueueRegister[item.InteriorQueueIndex].TryDequeue(out object a);
+                            bool tryPeek = GlobalManager.QueueRegister[item.InteriorQueueIndex]
+                                .TryDequeue(out object a);
 
                             if (!tryPeek)
                             {
@@ -752,7 +754,8 @@ public class LoadMesService : ILoadMesService
                             break;
                         case "写入(集合)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
-                           Volatile.Write(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex] , item.InteriorWriteMessage);
+                            Volatile.Write(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex],
+                                item.InteriorWriteMessage);
                             break;
                         case "写入(队列)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
@@ -770,7 +773,8 @@ public class LoadMesService : ILoadMesService
 
     #region 执行可选后期处理
 
-    public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response ,CancellationTokenSource cts)
+    public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response,
+        CancellationTokenSource cts)
     {
         var itemKey = item.Name;
         var methodName = item.MethodName;
@@ -779,20 +783,15 @@ public class LoadMesService : ILoadMesService
         bool ResultTranspond = item.ResultTranspond;
         try
         {
-            //进行switch替换
-            if (isSwitch)
-            {
-                Log.Info($"[{TraceContext.Name}]--Socket需要进行消息转换Switch映射");
-                response = _self.SwitchGetMessage(response, item);
-            }
-
             //进行校验
             if (isVerify)
             {
                 Log.Info($"[{TraceContext.Name}]---Socket需要进行消息校验");
                 foreach (var dynVerify in item.VerifyList)
                 {
-                    if (!await _self.VerityMessage(response, dynVerify,cts))
+                    (bool succeed, response) = await _self.VerityMessage(response, dynVerify, cts);
+
+                    if (!succeed)
                     {
                         Log.Error($"[{TraceContext.Name}]--校验到不匹配,撤回发送");
                         return (false, null);
@@ -800,6 +799,12 @@ public class LoadMesService : ILoadMesService
                 }
             }
 
+            //进行switch替换
+            if (isSwitch)
+            {
+                Log.Info($"[{TraceContext.Name}]--Socket需要进行消息转换Switch映射");
+                response = _self.SwitchGetMessage(response, item);
+            }
             if (ResultTranspond)
             {
                 Log.Info($"[{TraceContext.Name}]--需要对当前结果进行转发");
@@ -909,14 +914,14 @@ public class LoadMesService : ILoadMesService
     /// <param name="message"></param>
     /// <param name="verify"></param>
     /// <returns></returns>
-    public async Task<bool>  VerityMessage(string message, DynVerify verify , CancellationTokenSource cts)
+    public async Task<(bool succeed, string response)> VerityMessage(string message, DynVerify verify, CancellationTokenSource cts)
     {
         bool tryParse = false;
         bool tryParse2 = false;
         int len = 0;
         int len2 = 0;
         //预处理一下message
-        message = message.Replace(" ","").Trim();
+        message = message.Replace(" ", "").Trim();
 
         switch (verify.Type)
         {
@@ -925,135 +930,135 @@ public class LoadMesService : ILoadMesService
                 if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
-                    return false;
+                    return (false, message);
                 }
 
                 if (message.Length == len)
                 {
-                    return true;
+                    return (true,message);
                 }
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,长度不等于{len}");
-                    return false;
+                    return (false, message);
                 }
             case "字符长度检测!=":
                 tryParse = int.TryParse(verify.Value, out len);
                 if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
-                    return false;
+                    return (false, message);
                 }
 
                 if (message.Length != len)
                 {
-                    return true;
+                    return (true, message);
                 }
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,长度={len}");
-                    return false;
-                }
+                    return (false, message);
+                }   
 
             case "字符长度检测>":
                 tryParse = int.TryParse(verify.Value, out len);
                 if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
-                    return false;
+                    return (false, message);
                 }
 
                 if (message.Length > len)
                 {
-                    return true;
+                    return (true, message);
                 }
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,长度<={len}");
-                    return false;
+                    return (false, message);
                 }
             case "字符长度检测<":
                 tryParse = int.TryParse(verify.Value, out len);
                 if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
-                    return false;
+                    return (false, message);
                 }
 
                 if (message.Length < len)
                 {
-                    return true;
+                    return (true, message);
                 }
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,长度>={len}");
-                    return false;
-                }
+                    return (false, message);
+                } 
             case "字符长度检测>=":
                 tryParse = int.TryParse(verify.Value, out len);
                 if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
-                    return false;
+                    return (false, message);
                 }
 
                 if (message.Length >= len)
                 {
-                    return true;
+                    return (true, message);
                 }
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,长度<{len}");
-                    return false;
+                    return (false, message);
                 }
             case "字符长度检测=<":
                 tryParse = int.TryParse(verify.Value, out len);
                 if (!tryParse)
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败,检测填入的内容");
-                    return false;
+                    return (false, message);
                 }
 
                 if (message.Length <= len)
                 {
-                    return true;
+                    return (true, message);
                 }
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,长度>{len}");
-                    return false;
+                    return (false, message);
                 }
 
             case "字符=":
                 if (message == verify.Value)
                 {
-                    return true;
+                    return (true, message);
                 }
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,字符不等于 {verify.Value}");
-                    return false;
+                    return (false, message);
                 }
             case "字符!=":
                 if (message != verify.Value)
                 {
-                    return true;
+                    return (true, message);
                 }
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,字符等于 {verify.Value}");
-                    return false;
+                    return (false, message);
                 }
             case "正则表达式检测":
 
                 if (Regex.IsMatch(message, verify.Type))
                 {
-                    return true;
+                    return (true, message);
                 }
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,不符合正则表达式");
-                    return false;
+                    return (false, message);
                 }
             case "数据>":
                 tryParse = int.TryParse(message, out len);
@@ -1062,18 +1067,18 @@ public class LoadMesService : ILoadMesService
                 {
                     if (len > len2)
                     {
-                        return true;
+                        return (true, message);
                     }
                     else
                     {
                         Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据>{verify.Value}");
-                        return false;
+                        return (false, message);
                     }
                 }
                 else
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
-                    return false;
+                    return (false, message);
                 }
             case "数据>=":
                 tryParse = int.TryParse(message, out len);
@@ -1082,18 +1087,18 @@ public class LoadMesService : ILoadMesService
                 {
                     if (len >= len2)
                     {
-                        return true;
+                        return (true, message);
                     }
                     else
                     {
                         Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据>={verify.Value}");
-                        return false;
+                        return (false, message);
                     }
                 }
                 else
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
-                    return false;
+                    return (false, message);
                 }
             case "数据<":
                 tryParse = int.TryParse(message, out len);
@@ -1102,18 +1107,18 @@ public class LoadMesService : ILoadMesService
                 {
                     if (len < len2)
                     {
-                        return true;
+                        return (true, message);
                     }
                     else
                     {
                         Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据<{verify.Value}");
-                        return false;
+                        return (false, message);
                     }
                 }
                 else
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
-                    return false;
+                    return (false, message);
                 }
             case "数据<=":
                 tryParse = int.TryParse(message, out len);
@@ -1122,18 +1127,18 @@ public class LoadMesService : ILoadMesService
                 {
                     if (len <= len2)
                     {
-                        return true;
+                        return (true,message);
                     }
                     else
                     {
                         Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据<={verify.Value}");
-                        return false;
+                        return (false,message);
                     }
                 }
                 else
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
-                    return false;
+                    return (false, message);
                 }
             case "数据=":
                 tryParse = int.TryParse(message, out len);
@@ -1142,18 +1147,18 @@ public class LoadMesService : ILoadMesService
                 {
                     if (len == len2)
                     {
-                        return true;
+                        return (true, message);
                     }
                     else
                     {
                         Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据=={verify.Value}");
-                        return false;
+                        return (false, message);
                     }
                 }
                 else
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
-                    return false;
+                    return (false, message);
                 }
             case "数据!=":
                 tryParse = int.TryParse(message, out len);
@@ -1162,18 +1167,18 @@ public class LoadMesService : ILoadMesService
                 {
                     if (len != len2)
                     {
-                        return true;
+                        return (true, message);
                     }
                     else
                     {
                         Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据!={verify.Value}");
-                        return false;
+                        return (false, message);
                     }
                 }
                 else
                 {
                     Log.Info($"[{TraceContext.Name}]--在检测字符串的时候转换Int失败");
-                    return false;
+                    return (false, message);
                 }
             case "自定义复杂逻辑校验":
                 Type ComplexValue = verify.ComplexValue;
@@ -1182,19 +1187,41 @@ public class LoadMesService : ILoadMesService
                 //获取方法
                 var method = ComplexValue.GetMethod("Main");
 
+                var ErrorReturn = ComplexValue.GetMethod("ErrorMessage");
+
                 //执行方法
-                var invoke = method.Invoke(objInstance, [cts]);
+                var invoke = method.Invoke(objInstance, [cts, (object[])[message]]);
 
                 // 转换为具体元组类型
-                var (succeed, returnValue) = await(Task<(bool Succeed, object Return)>)invoke;
+                var (succeed, returnValue) = await (Task<(bool Succeed, object Return)>)invoke;
 
 
+                object[] returnValues =  returnValue as object[];
+                if (succeed)
+                {
+                    if (!(bool)returnValues[0])
+                    {
+                        var Error =
+                            await (Task<string>)ErrorReturn.Invoke(objInstance, [cts, (object[])[message]]);
 
-                return (bool)returnValue;
+                        Log.Error($"[{TraceContext.Name}]--校验失败:{Error}");
+
+                    }
+
+
+                    return ((bool)returnValues[0], returnValues[1].ToString());
+                }
+                else
+                {
+                    Log.Error($"[{TraceContext.Name}]--在校验是否满足条件时,发生故障");
+                    return (false,message);
+                }
+
+
                 break;
         }
 
-        return false;
+        return (false,message);
     }
 
     #endregion
@@ -1728,20 +1755,20 @@ public class LoadMesService : ILoadMesService
             switch (item.BitNet)
             {
                 case "单寄存器(无符号)":
-                  
+
                     (bool b, ushort item3) = await keyenceHostLinkTool.ReadDM<ushort>(startAddress, cts);
 
                     return (b, item3.ToString());
                 case "单寄存器(有符号)":
-                
+
                     (bool b1, short s) = await keyenceHostLinkTool.ReadDM<short>(startAddress, cts);
                     return (b1, s.ToString());
                 case "双寄存器(无符号)":
-                
+
                     (bool b2, uint u) = await keyenceHostLinkTool.ReadDM<uint>(startAddress, cts);
                     return (b2, u.ToString());
                 case "双寄存器(有符号)":
-                 
+
                     (bool b3, int i) = await keyenceHostLinkTool.ReadDM<int>(startAddress, cts);
                     return (b3, i.ToString());
                 case "32位浮点数":

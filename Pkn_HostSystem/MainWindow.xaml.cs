@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using log4net.Config;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
@@ -63,6 +65,20 @@ namespace Pkn_HostSystem
 
         private async Task Starting()
         {
+
+            GlobalManager.ArrayRegister = JsonTool<object[]>.Load();
+            if (GlobalManager.ArrayRegister == null)
+            {
+                GlobalManager. ArrayRegister = new object[100];
+            }
+            GlobalManager.QueueRegister = JsonTool<List<ConcurrentQueue<object>>>.Load();
+            if (GlobalManager.QueueRegister == null)
+            {
+                GlobalManager.QueueRegister = Enumerable
+                    .Range(0, 100)
+                    .Select(_ => new ConcurrentQueue<object>())
+                    .ToList();
+            }
             //判断软件开启,启动的连接,自动进行连接
             HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
             ObservableCollection<NetworkDetailed> ConnectPojos = homePageViewModel.HomePageModel.SetConnectDg;
