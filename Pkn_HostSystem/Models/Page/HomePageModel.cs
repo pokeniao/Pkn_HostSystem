@@ -24,22 +24,50 @@ public partial class HomePageModel : ObservableObject
         }
 
     }
+
+    #region 通讯设置页
+
+    
+
+
     /// <summary>
     /// 网络连接对象列表
     /// </summary>
     [ObservableProperty] private ObservableCollection<NetworkDetailed> setConnectDg;
     /// <summary>
-    /// 工单集合
-    /// </summary>
-    [ObservableProperty] private ObservableCollection<PppOrderList> pppOrderLists;
-    /// <summary>
     /// 变量,当前选择的名字
     /// </summary>
     [ObservableProperty] private string currentSetName;
-    /// <summary>
-    /// 当前选中的工单
-    /// </summary>
-    [ObservableProperty] private PppOrderList currentSelectPppOrder;
+    #endregion
+
+    #region 自定义页
+
+    
+
+
+    // /// <summary>
+    // /// 工单集合
+    // /// </summary>
+    // [ObservableProperty] private ObservableCollection<PppOrderList> pppOrderLists;
+    // /// <summary>
+    // /// 当前选中的工单
+    // /// </summary>
+    // [ObservableProperty] private PppOrderList currentSelectPppOrder;
+
+    //低电阻
+    [ObservableProperty] private string rLow;
+    //高电阻
+    [ObservableProperty] private string rHight;
+
+    //低电压
+    [ObservableProperty] private string vLow;
+    //高电压
+    [ObservableProperty] private string vHight;
+
+
+    #endregion
+
+
 
     /// <summary>
     /// Http请求的列表

@@ -90,7 +90,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <param name="message"></param>
         /// <param name="verify"></param>
         /// <returns></returns>
-        Task<bool> VerityMessage(string message, DynVerify verify, CancellationTokenSource cts);
+        Task<(bool succeed, string response)> VerityMessage(string message, DynVerify verify, CancellationTokenSource cts);
 
         /// <summary>
         /// 方法集内容嵌入

@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-      xmlns:viewModels="clr-namespace:Pkn_HostSystem.ViewModels"
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
       mc:Ignorable="d"
@@ -65,7 +64,6 @@
                             Margin="5,0" />
                 </WrapPanel>
             </Grid>
-
         </Grid>
 
         <Grid Grid.Row="0" Grid.Column="1" Name="DynGrid">
@@ -82,7 +80,6 @@
                     Margin="26,10"
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-
                     BorderThickness="1"
                     CornerRadius="10">
                     <TextBox
@@ -678,7 +675,6 @@
                                                           Minimum="0"
                                                           Margin="0 0 0 5"
                                                           Width="150" />
-
                                             <TextBlock Grid.Row="1" Grid.Column="0" Text="模式" Margin="5"
                                                        TextAlignment="Right" />
                                             <ComboBox Grid.Row="1" Grid.Column="1"
@@ -848,7 +844,7 @@
                                                 Grid.Row="1" Grid.Column="1" Click="SetHttpGetObject"
                                                 Margin="0 0 0 5"
                                                 Width="150"
-                                                IsChecked="{Binding NeedInteriorTriggerUserSetReturn }">
+                                                IsChecked="{Binding NeedInteriorTriggerUserSetReturn,UpdateSourceTrigger=PropertyChanged }">
                                                 <ToggleButton.Content>
                                                     <WrapPanel>
                                                         <TextBlock Text="启用定义返回" />
@@ -1069,7 +1065,6 @@
                                                 </ToggleButton.Content>
                                             </ToggleButton>
                                         </Grid>
-
                                         <!-- 内部请求参数 集合(写入) -->
                                         <Grid
                                             HorizontalAlignment="Center"
@@ -1251,7 +1246,6 @@
                                                 </ToggleButton.Content>
                                             </ToggleButton>
                                         </Grid>
-
                                         <!-- 自定义参数 -->
                                         <Grid
                                             HorizontalAlignment="Center"
@@ -1348,7 +1342,7 @@
                                                 <Grid>
                                                     <ComboBox
                                                         ItemsSource="{Binding viewModel.VerifyType,RelativeSource={RelativeSource AncestorType=Page}}"
-                                                        SelectedValue="{Binding Type}" />
+                                                        SelectedValue="{Binding Type , UpdateSourceTrigger=PropertyChanged}" />
                                                 </Grid>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellEditingTemplate>
@@ -1373,7 +1367,7 @@
                                                     <Grid
                                                         Visibility="{Binding showValueCombox , Converter={StaticResource BooleanVisibilityConverter}}">
                                                         <ComboBox
-                                                            ItemsSource="{Binding }"
+                                                            ItemsSource="{Binding DataContext.UserDefinedList ,RelativeSource={RelativeSource AncestorType=Page}}"
                                                             SelectedValue="{Binding ComplexValue}"
                                                             DisplayMemberPath="Name" />
                                                     </Grid>
@@ -1385,7 +1379,7 @@
                             </DataGrid>
                         </GroupBox>
                         <WrapPanel HorizontalAlignment="Right">
-                            <Button Content="删除" />
+                            <Button Content="删除" Click="DeleteClick2" />
                             <Button Content="关闭" Margin="20,0,5,0" Click="ButtonBase_OnClick3" />
                         </WrapPanel>
                     </StackPanel>

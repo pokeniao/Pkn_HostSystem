@@ -23,38 +23,73 @@ namespace Pkn_HostSystem.Service.Stations
         }
 
 
-        private string _条码;
+        private string _电阻上限;
 
-        public string 条码
+        public string 电阻上限
         {
-            get => _条码;
+            get => _电阻上限;
             set
             {
-                SetProperty(ref _条码, value);
+                SetProperty(ref _电阻上限, value);
             }
         }
 
-        private string _工单编码;
+        private string _电阻值;
 
-        public string 工单编码
+        public string 电阻值
         {
-            get => _工单编码;
+            get => _电阻值;
             set
             {
-                SetProperty(ref _工单编码, value);
+                SetProperty(ref _电阻值, value);
             }
         }
 
-        private string _排程编码;
+        private string _电阻下限;
 
-        public string 排程编码
+        public string 电阻下限
         {
-            get => _排程编码;
+            get => _电阻下限;
             set
             {
-                SetProperty(ref _排程编码, value);
+                SetProperty(ref _电阻下限, value);
             }
         }
+
+
+        private string _电压上限;
+
+        public string 电压上限
+        {
+            get => _电压上限;
+            set
+            {
+                SetProperty(ref _电压上限, value);
+            }
+        }
+
+        private string _电压值;
+
+        public string 电压值
+        {
+            get => _电压值;
+            set
+            {
+                SetProperty(ref _电压值, value);
+            }
+        }
+
+        private string _电压下限;
+
+        public string 电压下限
+        {
+            get => _电压下限;
+            set
+            {
+                SetProperty(ref _电压下限, value);
+            }
+        }
+
 
         [ObservableProperty] private string cT;
 
@@ -78,66 +113,46 @@ namespace Pkn_HostSystem.Service.Stations
         {
             try
             {
+                //从TraceContext中获取参数
                 var eachStation = TraceContext.GetParam("EachStation");
-                int step = TraceContext.GetParam("step");
 
-                if (step == null)
+                if ( TraceContext.GetParam("step") == null || TraceContext.GetParam("step") ==0)
                 {
                     TraceContext.UpdateParam("step", 1);
                 }
+                int step = TraceContext.GetParam("step");
 
                 switch (step)
                 {
+                    //第一步
                     case 1:
+
                         TraceContext.UpdateParam("start", DateTime.Now);
-                        //解析JSON
-                        JObject jObject = JObject.Parse(TraceContext.GetParam("response"));
                         Station1 station1 = new Station1();
-                        station1.时间 = DateTime.Now.ToString("yyyy-MM-mm:ss");
-                        station1.工单编码 = jObject["workOrderNumber"]?.ToString();
-                        station1.排程编码 = jObject["scheduleNumber"]?.ToString();
-                        station1.条码 = jObject["snNumber"]?.ToString();
+                        station1.时间 = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                        station1.电阻上限 = Volatile.Read(ref GlobalManager.ArrayRegister[50]).ToString();
+                        station1.电阻下限 = Volatile.Read(ref GlobalManager.ArrayRegister[51]).ToString();
+                        station1.电压上限 = Volatile.Read(ref GlobalManager.ArrayRegister[52]).ToString();
+                        station1.电压下限 = Volatile.Read(ref GlobalManager.ArrayRegister[53]).ToString();
+                        //添加一行数据到显示
                         eachStation.AddItem(station1);
+                        //当前添加的是第几行
                         TraceContext.UpdateParam("curIndex", eachStation.Items.Count);
+                        //流程跳转
                         TraceContext.UpdateParam("step", 2);
                         return (true, null);
-
+                    //第二步
                     case 2:
+                        //获取到当前的一行数据
                         Station1 eachStationItem = eachStation.Items[TraceContext.GetParam("curIndex") - 1];
+                        //计算CT
                         TimeSpan t = DateTime.Now - TraceContext.GetParam("start");
+                        //填入参数
                         eachStationItem.CT = t.Seconds.ToString();
-                        //解析JSON
-                       string json =JsonTool<object>.TryFormatJson(TraceContext.GetParam("response"), out bool isJson);
-
-                        JObject jObject2 = null;
-                        string? success =null;
-                        string? fail =null;
-                        string? code = null;
-                        if (isJson)
-                        {
-                            jObject2 = JObject.Parse(json);
-                            success = jObject2["success"]?.ToString();
-                            fail = jObject2["fail"]?.ToString();
-                            code = jObject2["code"]?.ToString();
-                        }
-                        
-                        if (isJson && success == "True" && fail == "False" && code == "000000")
-                        {
-                            eachStationItem.合格 = "True";
-                        }
-                        else
-                        {
-                            eachStationItem.合格 = "False";
-                        }
-
+                        eachStationItem.电阻值 = Volatile.Read(ref GlobalManager.ArrayRegister[54]).ToString();
+                        eachStationItem.电压值 = Volatile.Read(ref GlobalManager.ArrayRegister[55]).ToString();
+                        eachStationItem.合格 = Volatile.Read(ref GlobalManager.ArrayRegister[56]).ToString();
                         TraceContext.UpdateParam("step", 0);
-                        return (true, null);
-
-                    case 3:
-                        Station1 eachStationItem2 = eachStation.Items[TraceContext.GetParam("curIndex") - 1];
-                        TimeSpan t2 = DateTime.Now - TraceContext.GetParam("start");
-                        eachStationItem2.CT = t2.Seconds.ToString();
-                        eachStationItem2.合格 = "False";
                         return (true, null);
                     default:
                         TraceContext.UpdateParam("step", 0);

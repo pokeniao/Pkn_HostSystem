@@ -14,6 +14,6 @@
         /// 返回错误的信息
         /// </summary>
         /// <returns></returns>
-        string ErrorMessage();
+        Task<string> ErrorMessage(CancellationTokenSource cts, params object[] args);
     }
 }
