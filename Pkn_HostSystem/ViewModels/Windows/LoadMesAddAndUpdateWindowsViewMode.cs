@@ -44,6 +44,9 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public ObservableCollection<string> ForwardingMethod { get; set; } = ["ModbusTcp", "队列"];
 
+
+    public List<string> TriggerReturnMethodList { get; set; } = ["常量返回", "内部寄存器"];
+
     public ObservableCollectionExtended<LoadMesDynContent> Para_dyn { get; set; } = new();
 
     /// <summary>

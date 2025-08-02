@@ -271,35 +271,39 @@ namespace Pkn_HostSystem.Views.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void SelectPppOrderDown(object? sender, EventArgs e)
-        {
-            //进行一次查询
-            string httpName = HomePageViewModel.HomePageModel.HttpName;
-
-            var pppBase003OrderList = new PppBase003OrderList();
-            var (succeed, pppOrderLists) =
-                await pppBase003OrderList.GetPppOrderLists(httpName, new CancellationTokenSource());
-
-            if (succeed)
-            {
-                //返回结果,显示到页面Combobox提供选择
-                HomePageViewModel.HomePageModel.PppOrderLists = pppOrderLists;
-
-                Log.Info("获取工单成功");
-            }
-            else
-            {
-                Log.Info("获取工单失败--pppBase003OrderList.GetPppOrderLists返回false");
-            }
-        }
+        // private async void SelectPppOrderDown(object? sender, EventArgs e)
+        // {
+        //     //进行一次查询
+        //     string httpName = HomePageViewModel.HomePageModel.HttpName;
+        //
+        //     var pppBase003OrderList = new PppBase003OrderList();
+        //     var (succeed, pppOrderLists) =
+        //         await pppBase003OrderList.GetPppOrderLists(httpName, new CancellationTokenSource());
+        //
+        //     if (succeed)
+        //     {
+        //         //返回结果,显示到页面Combobox提供选择
+        //         HomePageViewModel.HomePageModel.PppOrderLists = pppOrderLists;
+        //
+        //         Log.Info("获取工单成功");
+        //     }
+        //     else
+        //     {
+        //         Log.Info("获取工单失败--pppBase003OrderList.GetPppOrderLists返回false");
+        //     }
+        // }
         /// <summary>
-        /// 选择123工单
+        /// 设置参数
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void SelectPppOrderButton(object sender, RoutedEventArgs e)
         {
-            HomePageViewModel.HomePageModel.CurrentSelectPppOrder = PppOrderListComboBox.SelectedValue as PppOrderList;
+            HomePageModel homePageModel = HomePageViewModel.HomePageModel;
+            Volatile.Write(ref GlobalManager.ArrayRegister[50], homePageModel.RHight);
+            Volatile.Write(ref GlobalManager.ArrayRegister[51], homePageModel.RLow);
+            Volatile.Write(ref GlobalManager.ArrayRegister[52], homePageModel.VHight);
+            Volatile.Write(ref GlobalManager.ArrayRegister[53], homePageModel.VLow);
         }
 
         #endregion

@@ -35,7 +35,7 @@ public class JsonTool<T> where T : class
     /// </summary>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static bool Save(T config)
+    public static bool Save(T config )
     {
         try
         {

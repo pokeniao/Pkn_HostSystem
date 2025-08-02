@@ -63,9 +63,10 @@ namespace Pkn_HostSystem.Service.UserDefined
   
         }
 
-        public string ErrorMessage()
+        public async Task<string> ErrorMessage(CancellationTokenSource cts, params object[] args)
         {
             return "";
         }
+
     }
 }
