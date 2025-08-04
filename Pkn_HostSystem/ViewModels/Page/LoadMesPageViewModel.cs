@@ -32,8 +32,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
     public LogBase<LoadMesPageViewModel> Log;
 
-    //手动发送Http请求
-    // public ILoadMesService LoadMesService { get; set; }
 
     public LoadMesPageViewModel()
     {
@@ -53,8 +51,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         SnackbarService = new SnackbarService();
         Log = new LogBase<LoadMesPageViewModel>(SnackbarService);
-        //创建LoadMesService服务
-        // LoadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
+
         // 启用监听
         IsActive = true;
     }
