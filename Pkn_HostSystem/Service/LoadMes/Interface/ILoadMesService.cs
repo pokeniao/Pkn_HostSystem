@@ -75,6 +75,14 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <returns></returns>
         Task<(bool sueeced, string? result)> DynMessage(string request, string DynName,
             CancellationTokenSource cts);
+        /// <summary>
+        /// 动态嵌入
+        /// </summary>
+        /// <param name="DynName"></param>
+        /// <param name="cts"></param>
+        /// <returns></returns>
+        Task<(bool sueeced, string? result)> DynMessage(string DynName,
+            CancellationTokenSource cts);
 
         /// <summary>
         /// 转发

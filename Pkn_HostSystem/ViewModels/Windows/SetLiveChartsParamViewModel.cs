@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
 using log4net;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
@@ -37,9 +38,9 @@ namespace Pkn_HostSystem.ViewModels.Windows
         /// </summary>
         /// <param name="window"></param>
         [RelayCommand]
-        public void AckButton(SetLiveChartsParamWindow window)
+        public void DayTotalImportButton(SetLiveChartsParamWindow window)
         {
-            ObservableCollection<DynCondition> observableCollection = new ObservableCollection<DynCondition>();
+            ObservableCollection<DynCondition> observableCollection = new();
             observableCollection.Add(new DynCondition(){Name = "okh0-1" });
             observableCollection.Add(new DynCondition(){Name = "okh1-2" });
             observableCollection.Add(new DynCondition(){Name = "okh2-3" });
@@ -64,8 +65,6 @@ namespace Pkn_HostSystem.ViewModels.Windows
             observableCollection.Add(new DynCondition(){Name = "okh21-22" });
             observableCollection.Add(new DynCondition(){Name = "okh22-23" });
             observableCollection.Add(new DynCondition(){Name = "okh23-0" });
-
-
             observableCollection.Add(new DynCondition() { Name = "ngh0-1" });
             observableCollection.Add(new DynCondition() { Name = "ngh1-2" });
             observableCollection.Add(new DynCondition() { Name = "ngh2-3" });
@@ -93,7 +92,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
 
 
 
-            LoadMesDynContent loadMesDynContent = new LoadMesDynContent()
+            LoadMesDynContent loadMesDynContent = new()
             {
                 Name="产量统计",
                 DynCondition = observableCollection,
@@ -110,6 +109,54 @@ namespace Pkn_HostSystem.ViewModels.Windows
 
             GlobalManager.DynDictionary.AddOrUpdate(loadMesDynContent);
         }
+
+        /// <summary>
+        /// 选中配置
+        /// </summary>
+        [RelayCommand]
+        public void SelectDayTotalParamButton()
+        {
+            // string selectName = SetLiveChartsParamModel.DayProductionDynName;
+
+        }
+
+        /// <summary>
+        /// 运行按钮
+        /// </summary>
+        public void RunButton(SetLiveChartsParamWindow window)
+        {
+            if (window.RunButton.Content == "启用")
+            {
+              
+
+
+
+                window.RunButton.Content = "停用";
+            }
+            else
+            {
+                window.RunButton.Content = "启用";
+            }
+
+        }
+
+
+        public void RunLiveCharts(CancellationTokenSource cts)
+        {
+            while (!cts.Token.IsCancellationRequested)
+            {
+                //产量统计
+                var dayProductionDynName = SetLiveChartsParamModel.DayProductionDynName;
+                //执行当前动态嵌入内容
+
+
+
+                //解析JSON
+                // JsonTool<object>.TryFormatJson()
+            }
+        }
+
+
         public void setSnackbarService(SnackbarPresenter snackbarPresenter)
         {
             SnackbarService.SetSnackbarPresenter(snackbarPresenter);
