@@ -28,6 +28,9 @@ public static class GlobalManager
 
     public static string? AssemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
 
+    /// <summary>
+    /// 登入状态
+    /// </summary>
     public static UserLoginEnum CurLoginState { get; set; } 
 
     /// <summary>
@@ -96,7 +99,7 @@ public static class GlobalManager
         //初始化网路连接字典
         NetWorkDictionary =
             new SourceCache<NetWork, string>(n => n.NetWorkId);
-        //初始化话动态字典
+        //初始化动态字典
         DynDictionary = new SourceCache<LoadMesDynContent, string>(n => n.Name);
         //初始化工位字典
         StationDictionary = new SourceCache<IEachStation, string>(n => n.Header);

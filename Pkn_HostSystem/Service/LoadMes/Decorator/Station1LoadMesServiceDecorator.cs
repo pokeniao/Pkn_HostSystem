@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Azure.Core;
+using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
@@ -90,6 +91,11 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             CancellationTokenSource cts)
         {
             return await _loadMesService.DynMessage(request, DynName, cts);
+        }
+
+        public async Task<(bool sueeced, string? result)> DynMessage(string DynName, CancellationTokenSource cts)
+        {
+            return await _loadMesService.DynMessage(DynName, cts);
         }
 
         public async Task<(bool succeed, string message)> Transpond(DynCondition model, string response)

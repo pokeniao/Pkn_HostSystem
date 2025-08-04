@@ -13,7 +13,7 @@ namespace Pkn_HostSystem.Static
 
         public static void InitStation()
         {
-            GlobalManager.StationDictionary.AddOrUpdate(new EachStation<Station1>() { Header = "电测",CreateDecoratorFunc = (loadMesService) => new Station1LoadMesServiceDecorator(loadMesService ) });
+            GlobalManager.StationDictionary.AddOrUpdate(new EachStation<Station1>() { Header = "电测",CreateDecoratorFunc = (loadMesService) => new Station1LoadMesServiceDecorator(loadMesService)});
         }
         /// <summary>
         /// 记录工位日志
