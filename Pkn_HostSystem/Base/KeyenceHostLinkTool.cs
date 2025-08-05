@@ -96,7 +96,6 @@ namespace Pkn_HostSystem.Base
             string command = $"RD DM{address}{suffix}";
             //发送报文
             (bool succeed, string response) = await SendCommand(command, cts, noLog);
-
             try
             {
                 if (succeed)
@@ -127,8 +126,12 @@ namespace Pkn_HostSystem.Base
             //发送数据
             (bool succeed, string? response) = await SendCommand(command, cts);
 
+            Log.Info($"[{TraceContext.Name}]--基恩士写入后收到返回内容:{response}");
+
+            bool equals = response.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase);
+
             //判断是否接受成功
-            return response.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase);
+            return equals;
         }
 
         /// <summary>
@@ -202,7 +205,12 @@ namespace Pkn_HostSystem.Base
                 try
                 {
                     byte[] sendData = Encoding.ASCII.GetBytes(command + "\r");
+                    if (stream == null)
+                    {
+                        return (false, null);
+                    }
                     await stream.WriteAsync(sendData, 0, sendData.Length);
+
                     if (!noLog)
                     {
                         Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送");
