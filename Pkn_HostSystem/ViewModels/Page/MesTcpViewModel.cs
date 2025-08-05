@@ -63,7 +63,7 @@ public partial class MesTcpViewModel : ObservableRecipient
         {
             GlobalManager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe(); //绑定
             GlobalManager.DynDictionary.AddOrUpdate(MesTcpModel.DynNetList); //存入到缓存,后面在绑定
-            GlobalManager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
+            GlobalManager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();//绑定
             MesTcpModel.HttpList = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
         }
         log = new LogBase<MesTcpViewModel>(SnackbarService);

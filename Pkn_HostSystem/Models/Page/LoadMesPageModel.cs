@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DynamicData.Binding;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Models.Windows;
 using System.Collections.ObjectModel;
@@ -11,7 +12,7 @@ public partial class LoadMesPageModel : ObservableObject
     /// HTTP发送的列表
     /// </summary>
     [ObservableProperty]
-    private ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
+    private ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel> mesPojoList;
     /// <summary>
     /// 返回消息数据,显示列表
     /// </summary>

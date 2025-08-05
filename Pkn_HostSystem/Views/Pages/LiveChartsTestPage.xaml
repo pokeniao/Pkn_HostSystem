@@ -27,50 +27,9 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1.5*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" BorderThickness="1"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        CornerRadius="5"
-                        Margin="10,10,10,50">
-                    <Grid Grid.Column="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="0.2*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Margin="10" Text="心跳检测" />
-                        <wpf:CartesianChart Grid.Row="1"
-                                            SyncContext="{Binding Sync}"
-                                            Series="{Binding Series}"
-                                            XAxes="{Binding XAxes}">
-                        </wpf:CartesianChart>
-                    </Grid>
-                </Border>
 
-                <Border Grid.Column="1" BorderThickness="1"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        CornerRadius="5"
-                        Margin="10,10,10,50">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="0.2*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="CT" Margin="10"/>
-                        <wpf:PieChart Grid.Row="1"
-                            Series="{Binding CTSeries}"
-                            InitialRotation="-90"
-                            MaxAngle="350"
-                            MinValue="0"
-                            MaxValue="100">
-                        </wpf:PieChart>
-                    </Grid>
-                </Border>
+
             </Grid>
 
             <Border Grid.Row="1" BorderThickness="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
@@ -113,10 +72,11 @@
                               Title="{Binding TotalTitlePie2}" />
             </Border>
 
-            <Button Grid.RowSpan="2" HorizontalAlignment="Right" Command="{Binding SetParamButtonCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
+            <Button Grid.RowSpan="2" HorizontalAlignment="Right" Command="{Binding SetParamButtonCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
                 <ui:SymbolIcon Symbol="ChevronUp24" />
                 <Button.LayoutTransform>
-                    <RotateTransform Angle="-90"/>
+                    <RotateTransform Angle="-90" />
                 </Button.LayoutTransform>
             </Button>
         </Grid>

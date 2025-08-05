@@ -57,12 +57,6 @@ namespace Pkn_HostSystem.Models.Page
             set
             {
                 SetProperty(ref oks, value);
-
-                for (int i = 0; i < 24; i++)
-                {
-                    All[i].Value = Oks[i].Value + Ngs[i].Value;
-                }
-            
                 
             }
         }
@@ -102,10 +96,6 @@ namespace Pkn_HostSystem.Models.Page
             set
             {
                 SetProperty(ref ngs, value);
-                for (int i = 0; i < 24; i++)
-                {
-                    All[i].Value = Oks[i].Value + Ngs[i].Value;
-                }
             }
 
         }

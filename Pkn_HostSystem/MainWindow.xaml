@@ -93,7 +93,7 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                    Content="流程"
+                    Content="任务"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:LoadMesPage}">
                     <ui:NavigationViewItem.Icon>
