@@ -329,13 +329,10 @@ public class DynCondition : ObservableObject
 
     public ObservableCollection<DynSwitch> SwitchList { get; set; } = new ObservableCollection<DynSwitch>();
 
-
     /// <summary>
     /// 用于显示连接
     /// </summary>
     public ObservableCollection<DynVerify> VerifyList { get; set; } = new ObservableCollection<DynVerify>();
-
-
     public ObservableCollection<GetHttpObject> HttpObjects { get; set; } = new ObservableCollection<GetHttpObject>();
 
     /// <summary>

@@ -76,7 +76,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         public LabelVisual TotalTitlePie { get; set; } =
             new()
             {
-                Text = "良率产量统计",
+                Text = "24小时良率产量统计",
                 TextSize = 15,
                 Padding = new LiveChartsCore.Drawing.Padding(15),
                 Paint = new SolidColorPaint
@@ -89,7 +89,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         public LabelVisual TotalTitlePie2 { get; set; } =
             new()
             {
-                Text = "耗时统计",
+                Text = "24小时耗时统计",
                 TextSize = 15,
                 Padding = new LiveChartsCore.Drawing.Padding(15),
                 Paint = new SolidColorPaint

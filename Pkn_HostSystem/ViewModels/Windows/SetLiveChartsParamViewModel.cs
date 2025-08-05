@@ -3,11 +3,14 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
+using LiveChartsCore.Defaults;
 using log4net;
+using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
+using Pkn_HostSystem.Service.LoadMes;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Windows;
@@ -25,6 +28,8 @@ namespace Pkn_HostSystem.ViewModels.Windows
 
         public ObservableCollectionExtended<LoadMesDynContent> DynNetList { get; set; }
 
+
+        public CancellationTokenSource cts { get; set; }
         public SetLiveChartsParamViewModel()
         {
             SetLiveChartsParamModel = new SetLiveChartsParamModel();
@@ -96,7 +101,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
             {
                 Name="产量统计",
                 DynCondition = observableCollection,
-                Message = "{\r\n\"OKS\":[\"[okh0-1]\",\"[okh1-2]\",\"[okh2-3]\",\"[okh3-4]\",\"[okh4-5]\",\"[okh5-6]\",\"[okh6-7]\",\"[okh7-8]\",\"[okh8-9]\",\"[okh9-10]\",\"[okh10-11]\",\"[okh11-12]\",\"[okh12-13]\",\"[okh13-14]\",\"[okh14-15]\",\"[okh15-16]\",\"[okh16-17]\",\"[okh17-18]\",\"[okh18-19]\",\"[okh19-20]\",\"[okh20-21]\",\"[okh21-22]\",\"[okh22-23]\",\"[okh23-0]\"]\r\n\"NGS\":[\"[ngh0-1]\",\"[ngh1-2]\",\"[ngh2-3]\",\"[ngh3-4]\",\"[ngh4-5]\",\"[ngh5-6]\",\"[ngh6-7]\",\"[ngh7-8]\",\"[ngh8-9]\",\"[ngh9-10]\",\"[ngh10-11]\",\"[ngh11-12]\",\"[ngh12-13]\",\"[ngh13-14]\",\"[ngh14-15]\",\"[ngh15-16]\",\"[ngh16-17]\",\"[ngh17-18]\",\"[ngh18-19]\",\"[ngh19-20]\",\"[ngh20-21]\",\"[ngh21-22]\",\"[ngh22-23]\",\"[ngh23-0]\"]\r\n\r\n\r\n}\r\n\r\n"
+                Message = "{\r\n\"OKS\":[\"[okh0-1]\",\"[okh1-2]\",\"[okh2-3]\",\"[okh3-4]\",\"[okh4-5]\",\"[okh5-6]\",\"[okh6-7]\",\"[okh7-8]\",\"[okh8-9]\",\"[okh9-10]\",\"[okh10-11]\",\"[okh11-12]\",\"[okh12-13]\",\"[okh13-14]\",\"[okh14-15]\",\"[okh15-16]\",\"[okh16-17]\",\"[okh17-18]\",\"[okh18-19]\",\"[okh19-20]\",\"[okh20-21]\",\"[okh21-22]\",\"[okh22-23]\",\"[okh23-0]\"],\r\n\"NGS\":[\"[ngh0-1]\",\"[ngh1-2]\",\"[ngh2-3]\",\"[ngh3-4]\",\"[ngh4-5]\",\"[ngh5-6]\",\"[ngh6-7]\",\"[ngh7-8]\",\"[ngh8-9]\",\"[ngh9-10]\",\"[ngh10-11]\",\"[ngh11-12]\",\"[ngh12-13]\",\"[ngh13-14]\",\"[ngh14-15]\",\"[ngh15-16]\",\"[ngh16-17]\",\"[ngh17-18]\",\"[ngh18-19]\",\"[ngh19-20]\",\"[ngh20-21]\",\"[ngh21-22]\",\"[ngh22-23]\",\"[ngh23-0]\"]\r\n\r\n\r\n}\r\n\r\n"
             };
 
 
@@ -107,52 +112,114 @@ namespace Pkn_HostSystem.ViewModels.Windows
                 return;
             }
 
+
+
+            SetLiveChartsParamModel.DayProductionDynName = "产量统计";
             GlobalManager.DynDictionary.AddOrUpdate(loadMesDynContent);
-        }
-
-        /// <summary>
-        /// 选中配置
-        /// </summary>
-        [RelayCommand]
-        public void SelectDayTotalParamButton()
-        {
-            // string selectName = SetLiveChartsParamModel.DayProductionDynName;
-
         }
 
         /// <summary>
         /// 运行按钮
         /// </summary>
-        public void RunButton(SetLiveChartsParamWindow window)
+        [RelayCommand]
+        public async Task RunButton(SetLiveChartsParamWindow window)
         {
-            if (window.RunButton.Content == "启用")
+            if (SetLiveChartsParamModel .RunLiveChartsButton== "启用")
             {
-              
-
-
-
-                window.RunButton.Content = "停用";
+                cts = new CancellationTokenSource();
+                Task.Run(() => RunLiveCharts(cts));
+                SetLiveChartsParamModel.RunLiveChartsButton = "停用";
             }
             else
             {
-                window.RunButton.Content = "启用";
+                cts.Cancel();
+                SetLiveChartsParamModel.RunLiveChartsButton = "启用";
             }
 
         }
 
 
-        public void RunLiveCharts(CancellationTokenSource cts)
+        public async Task RunLiveCharts(CancellationTokenSource cts)
         {
+            LoadMesService loadMesService = new LoadMesService();
             while (!cts.Token.IsCancellationRequested)
             {
-                //产量统计
-                var dayProductionDynName = SetLiveChartsParamModel.DayProductionDynName;
-                //执行当前动态嵌入内容
+                try
+                {
+                    //产量统计
+                    var dayProductionDynName = SetLiveChartsParamModel.DayProductionDynName;
+                    //执行当前动态嵌入内容
+                    (bool sueeced, string? result) = await loadMesService.DynMessage(dayProductionDynName, cts,true);
+                    if (!sueeced)
+                    {
+                        return;
+                    }
 
+                    //解析JSON
+                    string tryFormatJson = JsonTool<object>.TryFormatJson(result, out bool isJson);
 
+                    JObject jObject = JObject.Parse(result);
 
-                //解析JSON
-                // JsonTool<object>.TryFormatJson()
+                    JArray? OksJArray = jObject.SelectToken("OKS") as JArray;
+
+                    var liveChartsTestViewModel = Ioc.Default.GetRequiredService<LiveChartsTestViewModel>();
+
+                    double OksTotal= 0;
+                    //OKS修改参数
+                    if (OksJArray != null)
+                    {
+                        for (int i = 0;
+                             i < Math.Min(OksJArray.Count, liveChartsTestViewModel.LiveChartsModel.Oks.Count);
+                             i++)
+                        {
+                            if (double.TryParse(OksJArray[i]?.ToString(), out double value))
+                            {
+                                liveChartsTestViewModel.LiveChartsModel.Oks[i].Value = value;
+                                OksTotal = OksTotal + value;
+                            }
+                        }
+                    }
+
+                    JArray? NgsJArray = jObject.SelectToken("NGS") as JArray;
+
+                    double NgsTotal = 0;
+                    //NGS修改参数
+                    if (NgsJArray != null)
+                    {
+                        for (int i = 0;
+                             i < Math.Min(NgsJArray.Count, liveChartsTestViewModel.LiveChartsModel.Ngs.Count);
+                             i++)
+                        {
+                            if (double.TryParse(NgsJArray[i]?.ToString(), out double value))
+                            {
+                                liveChartsTestViewModel.LiveChartsModel.Ngs[i].Value = value;
+                                NgsTotal = NgsTotal + value;
+                            }
+                        }
+                    }
+                    //统计
+                    for (int i = 0;
+                         i < Math.Min(OksJArray.Count, NgsJArray.Count);
+                         i++)
+                    {
+                        if (double.TryParse(NgsJArray[i]?.ToString(), out double value))
+                        {
+                            if (double.TryParse(OksJArray[i]?.ToString(), out double value2))
+                            {
+                                liveChartsTestViewModel.LiveChartsModel.All[i].Value = value + value2;
+                            }
+                        }
+                    }
+                    //良率饼图统计
+                    liveChartsTestViewModel.LiveChartsModel.Ok.Value = OksTotal;
+                    liveChartsTestViewModel.LiveChartsModel.Ng.Value = NgsTotal;
+                    await Task.Delay(100);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
             }
         }
 

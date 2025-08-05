@@ -17,6 +17,11 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         private LogBase<TcpToolViewModel> Log;
 
+        public Dictionary<string, string> NewLines { get; set; } =
+            new Dictionary<string, string>() { ["\\n"] = "\n", ["\\r"] = "\r", ["\\r\\n"] = "\r\n", ["空"] = "" };
+
+        public string NewLine { get; set; }
+
         public SnackbarService SnackbarService { get; set; } = new();
 
         public TcpToolViewModel()
@@ -123,7 +128,8 @@ namespace Pkn_HostSystem.ViewModels.Page
 
             TcpNet tcpNet = new TcpNet();
             tcpNet.TcpTool = tcpTool;
-            tcpNet.IpAndPost = (tcpTool._client?.Client.LocalEndPoint).ToString(); ;
+            tcpNet.IpAndPost = (tcpTool._client?.Client.LocalEndPoint).ToString();
+            ;
             TcpToolModel.SelectClient.Add(tcpNet);
 
             tcpNet.OnMessageReceived = (ip, message) =>
@@ -166,7 +172,8 @@ namespace Pkn_HostSystem.ViewModels.Page
 
             if (TcpToolModel.SelectServerTcpNet != null)
             {
-                TcpToolModel.SelectServerTcpNet.TcpTool.ServerSendAsync(item,TcpToolModel.SelectServerTcpNet.SendMessage);
+                TcpToolModel.SelectServerTcpNet.TcpTool.ServerSendAsync(item,
+                    TcpToolModel.SelectServerTcpNet.SendMessage);
             }
             else
             {
@@ -196,17 +203,18 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public async void SendClientButton()
         {
-
             if (TcpToolModel.SelectClientTcpNet != null)
             {
-                TcpToolModel.SelectClientTcpNet.TcpTool.ClientSendAsync(TcpToolModel.SelectClientTcpNet.SendMessage);
+                string sendMessage = TcpToolModel.SelectClientTcpNet.SendMessage + NewLine;
+
+                TcpToolModel.SelectClientTcpNet.TcpTool.ClientSendAsync(sendMessage);
             }
             else
             {
                 Log.ErrorAndShow("没有选中发送的客户端");
             }
-      
         }
+
         /// <summary>
         /// 清除服务器按钮
         /// </summary>
@@ -222,7 +230,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 Log.ErrorAndShow("没有选中发送的服务器");
             }
         }
-        
+
         /// <summary>
         /// 清除客户端按钮
         /// </summary>
@@ -238,8 +246,6 @@ namespace Pkn_HostSystem.ViewModels.Page
                 Log.ErrorAndShow("没有选中发送的客户端");
             }
         }
-
-
 
 
         #region 弹窗SnackbarService

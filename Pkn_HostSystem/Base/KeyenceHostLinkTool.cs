@@ -62,13 +62,13 @@ namespace Pkn_HostSystem.Base
 
         #region 读ZF写ZF
 
-        public async Task<(bool succeed, string? response)>  ReadZF(string address,CancellationTokenSource cts)
+        public async Task<(bool succeed, string? response)> ReadZF(string address, CancellationTokenSource cts)
         {
             Log.Info($"[{TraceContext.Name}]--读ZF,地址:{address}");
-            return await SendCommand($"RD ZF{address}",cts);
+            return await SendCommand($"RD ZF{address}", cts);
         }
 
-        public async Task<bool> WriteZF(string address, bool value , CancellationTokenSource cts)
+        public async Task<bool> WriteZF(string address, bool value, CancellationTokenSource cts)
         {
             Log.Info($"[{TraceContext.Name}]--写ZF,地址:{address},值{value}");
             string cmd = value ? $"ST ZF{address}" : $"RS ZF{address}";
@@ -81,19 +81,21 @@ namespace Pkn_HostSystem.Base
 
         #region 读取写入DM
 
-        public async Task<(bool, T)> ReadDM<T>(int address, CancellationTokenSource cts ,bool noLog = false) where T : struct
+        public async Task<(bool, T)> ReadDM<T>(int address, CancellationTokenSource cts, bool noLog = false)
+            where T : struct
         {
             if (!noLog)
             {
                 Log.Info($"[{TraceContext.Name}]--读DM执行,地址:{address}");
             }
+
             //判断是否是32位,来决定是否+L
             bool is32Bit = Is32BitType<T>();
             string suffix = is32Bit ? ".L" : "";
             //拼接报文
             string command = $"RD DM{address}{suffix}";
             //发送报文
-            (bool succeed, string response) = await SendCommand(command, cts , noLog);
+            (bool succeed, string response) = await SendCommand(command, cts, noLog);
 
             try
             {
@@ -104,17 +106,17 @@ namespace Pkn_HostSystem.Base
                 }
                 else
                 {
-                    return (false, (T)(object)response);
+                    return (false, default);
                 }
             }
             catch (Exception e)
             {
                 Log.Error($"[{TraceContext.Name}]--执行基恩士类型转换时候发送异常:{e}");
-                return (false, (T)(object)response);
+                return (false, default);
             }
         }
 
-        public async Task<bool> WriteDM<T>(int address, T value , CancellationTokenSource cts) where T : struct
+        public async Task<bool> WriteDM<T>(int address, T value, CancellationTokenSource cts) where T : struct
         {
             Log.Info($"WriteDM执行,address:{address} ,value: {value}");
             string String = KeyenceMcDataConverter.ConvertToWriteData(value);
@@ -123,7 +125,7 @@ namespace Pkn_HostSystem.Base
             string suffix = is32Bit ? ".L" : "";
             string command = $"WR DM{address}{suffix} {String}";
             //发送数据
-             (bool succeed, string? response) = await SendCommand(command,cts);
+            (bool succeed, string? response) = await SendCommand(command, cts);
 
             //判断是否接受成功
             return response.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase);
@@ -135,7 +137,8 @@ namespace Pkn_HostSystem.Base
         /// <param name="startAddress"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public async Task<(bool succeed,  ushort[] response)> ReadDMWords(int startAddress, int count, CancellationTokenSource cts)
+        public async Task<(bool succeed, ushort[] response)> ReadDMWords(int startAddress, int count,
+            CancellationTokenSource cts)
         {
             (bool succeed, string response) = await SendCommand($"RD DM{startAddress} {count}", cts);
 
@@ -160,7 +163,7 @@ namespace Pkn_HostSystem.Base
                 values[i] = Convert.ToUInt16(hex, 16);
             }
 
-            return (true ,values);
+            return (true, values);
         }
 
         #endregion
@@ -180,66 +183,89 @@ namespace Pkn_HostSystem.Base
 
         #endregion
 
-
+        private static readonly SemaphoreSlim _commLock = new(1, 1);
         /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        private async Task<(bool succeed, string response)> SendCommand(string command, CancellationTokenSource cts ,bool noLog=false)
+        private async Task<(bool succeed, string response)> SendCommand(string command, CancellationTokenSource cts,
+            bool noLog = false)
         {
             if (!IsConnected) return (false, "未连接");
 
-            try
-            {
-                byte[] sendData = Encoding.ASCII.GetBytes(command + "\r");
-                await stream.WriteAsync(sendData, 0, sendData.Length);
-                if (!noLog)
-                {
-                    Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送");
-                }
-              
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行发送消息时,出现异常{ex.Message}");
-                return (false, $"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行发送消息时,出现异常{ex.Message}");
-            }
+            await _commLock.WaitAsync(cts.Token); // 添加通信串行化
 
-            if (!noLog)
-                Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送后,等待消息返回");
-            byte[] buffer = new byte[256];
+
             try
             {
+                try
+                {
+                    byte[] sendData = Encoding.ASCII.GetBytes(command + "\r");
+                    await stream.WriteAsync(sendData, 0, sendData.Length);
+                    if (!noLog)
+                    {
+                        Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行发送消息时,出现异常{ex.Message}");
+                    return (false, $"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行发送消息时,出现异常{ex.Message}");
+                }
+
+                if (!noLog)
+                    Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送后,等待消息返回");
+                byte[] buffer = new byte[256];
+
                 var startTime = Environment.TickCount; // 获取当前时间戳
                 while (!cts.Token.IsCancellationRequested)
                 {
-                    //检查超时
-                    int elapsed = Environment.TickCount - startTime;
-                    if (elapsed > 3000) // 超时3秒
+                    try
                     {
-                        Log.Error($"[{TraceContext.Name}]--基恩士上位链路协议发送后,等待消息返回超时");
-                        return (false, "基恩士超时");
-                    }
+                        //检查超时
+                        int elapsed = Environment.TickCount - startTime;
+                        if (elapsed > 3000) // 超时3秒
+                        {
+                            Log.Error($"[{TraceContext.Name}]--基恩士上位链路协议发送后,等待消息返回超时");
+                            return (false, "基恩士超时");
+                        }
 
-                    //检查是否有数据可读
-                    if (stream.DataAvailable)
+                        //检查是否有数据可读
+
+                        // 累积数据直到检测到 "\r\n"
+                        var sb = new StringBuilder();
+                        if (stream.DataAvailable)
+                        {
+                            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length,cts.Token);
+
+                            sb.Append(Encoding.ASCII.GetString(buffer, 0, bytesRead));
+
+                            //  一次读完一帧，并自动丢弃多余粘包内容。
+                            if (sb.ToString().Contains("\r\n"))
+                            {
+                                var raw = sb.ToString();
+                                var cleanLines = raw.Split(["\r\n"], StringSplitOptions.RemoveEmptyEntries);
+                                string response = cleanLines.FirstOrDefault() ?? "";
+                                return (true, response);
+                            }
+                        }
+                        // 没数据，休息一下再看
+                        await Task.Delay(100, cts.Token);
+                    }
+                    catch (Exception e)
                     {
-                        int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
-
-                        return (true, Encoding.ASCII.GetString(buffer, 0, bytesRead).Trim('\0', '\r', '\n'));
+                        Log.Error($"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行读取消息时,出现异常{e.Message}");
+                        return (false, $"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行读取消息时,出现异常{e.Message}");
                     }
-
-                    // 没数据，休息一下再看
-                    await Task.Delay(100);
+       
                 }
             }
-            catch (Exception e)
+            finally
             {
-                Log.Error($"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行读取消息时,出现异常{e.Message}");
-                return (false, $"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行读取消息时,出现异常{e.Message}");
+                _commLock.Release();
             }
-
+         
             return (false, "未收到数据");
         }
     }

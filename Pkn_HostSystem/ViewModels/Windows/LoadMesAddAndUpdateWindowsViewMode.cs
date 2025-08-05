@@ -30,7 +30,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
     public bool add;
 
     //当前已存在集合
-    public ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
+    public ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel> mesPojoList;
 
 
     public ObservableCollection<string> ReqMethodList { get; set; } = ["动态获取", "常量", "方法集"];

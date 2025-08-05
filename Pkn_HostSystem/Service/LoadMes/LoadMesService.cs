@@ -1,10 +1,6 @@
-﻿using Azure;
-using Azure.Identity;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using Newtonsoft.Json;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
-using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
@@ -13,55 +9,28 @@ using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using RestSharp;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Globalization;
-using System.Net;
-using System.Reactive.Joins;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Pkn_HostSystem.Service.LoadMes;
 
 public class LoadMesService : ILoadMesService
 {
-    private ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList;
+
 
     public LogControl<LoadMesService> Log { get; set; }
 
 
     public ILoadMesService _self { get; set; }
 
-    public LoadMesService(ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList)
+    public LoadMesService()
     {
-        this.mesPojoList = mesPojoList;
         _self = this;
         GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
         Log = new LogControl<LoadMesService>((ObservableCollection<string>)value);
     }
 
-
-    #region 获取当前行
-
-    /// <summary>
-    /// 循环查找当前行是否存在
-    /// </summary>
-    /// <param name="Name"></param>
-    /// <returns></returns>
-    public LoadMesAddAndUpdateWindowModel SelectByName(string Name)
-    {
-        // Log.Info($"SelectByName执行,Name:{Name}");
-        //判断是否有当前key 
-        foreach (var item in mesPojoList)
-            if (Name == item.Name)
-                //返回当前行的数据
-                return item;
-        return null;
-    }
-
-    #endregion
 
     #region 触发Http请求
 
@@ -71,11 +40,11 @@ public class LoadMesService : ILoadMesService
     /// <param name="Name">HTTP请求名称</param>
     /// <param name="cts"></param>
     /// <returns></returns>
-    public virtual async Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts)
+    public  async Task<(bool succeed, string? response)> RunOne(string Name, CancellationTokenSource cts)
     {
         Log.Info($"[{TraceContext.Name}]--执行发送一次Http请求");
         //获取当前Name的行数据
-        LoadMesAddAndUpdateWindowModel item = _self.SelectByName(Name);
+        LoadMesAddAndUpdateWindowModel item = GlobalManager.ProcessTask.Lookup(Name).Value;
         //得到消息体
         var (succeed, request) = await _self.PackRequest(item?.Name, cts);
         if (!succeed)
@@ -95,12 +64,12 @@ public class LoadMesService : ILoadMesService
     /// <param name="request">请求体</param>
     /// <param name="cts"></param>
     /// <returns></returns>
-    public virtual async Task<(bool succeed, string? response)> RunOne(string Name, string request,
+    public  async Task<(bool succeed, string? response)> RunOne(string Name, string request,
         CancellationTokenSource cts)
     {
         Log.Info($"[{TraceContext.Name}]--执行发送一次Http请求");
         //获取当前Name的行数据
-        LoadMesAddAndUpdateWindowModel item = _self.SelectByName(Name);
+        LoadMesAddAndUpdateWindowModel item = GlobalManager.ProcessTask.Lookup(Name).Value;
         //得到消息体
         return await _self.SendHttp(item, request, cts);
     }
@@ -116,7 +85,7 @@ public class LoadMesService : ILoadMesService
     /// <param name="request"></param>
     /// <param name="cts"></param>
     /// <returns></returns>
-    public virtual async Task<(bool succeed, string? response)> SendHttp(LoadMesAddAndUpdateWindowModel item,
+    public  async Task<(bool succeed, string? response)> SendHttp(LoadMesAddAndUpdateWindowModel item,
         string request,
         CancellationTokenSource cts)
     {
@@ -155,7 +124,7 @@ public class LoadMesService : ILoadMesService
             case "GET":
                 //检查路径是否需要嵌入内容
                 //获得数据
-                var loadMesAddAndUpdateWindowModel = _self.SelectByName(item.Name);
+                var loadMesAddAndUpdateWindowModel = GlobalManager.ProcessTask.Lookup(item.Name).Value;
                 if (loadMesAddAndUpdateWindowModel == null) return (false, null);
                 //获得当前行的条件  将   ObservableCollection<> 转成List
                 var conditionItems = Enumerable.ToList<LoadMesCondition>(loadMesAddAndUpdateWindowModel.Condition);
@@ -286,10 +255,10 @@ public class LoadMesService : ILoadMesService
     /// 包装Request请求
     /// </summary>
     /// <param httpName="httpName"></param>
-    public virtual async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
+    public  async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
     {
         //获得当前行的数据
-        var loadMesAddAndUpdateWindowModel = _self.SelectByName(httpName);
+        var loadMesAddAndUpdateWindowModel = GlobalManager.ProcessTask.Lookup(httpName).Value;
         if (loadMesAddAndUpdateWindowModel == null) return (false, null);
 
         //获得当前行的条件  将   ObservableCollection<> 转成List
@@ -355,7 +324,7 @@ public class LoadMesService : ILoadMesService
     /// <param name="itemKey">填充键</param>
     /// <param name="itemValue">填充值</param>
     /// <returns></returns>
-    public virtual string StaticMessage(string request, string itemKey, string itemValue)
+    public  string StaticMessage(string request, string itemKey, string itemValue)
     {
         var i = request.IndexOf($"[{itemKey}]");
 
@@ -387,7 +356,7 @@ public class LoadMesService : ILoadMesService
     /// <param name="itemKeySon"></param>
     /// <param name="itemValue"></param>
     /// <returns></returns>
-    public virtual string StaticMessageSon(string request, string itemKey, string itemKeySon, string itemValue)
+    public  string StaticMessageSon(string request, string itemKey, string itemKeySon, string itemValue)
     {
         var i = request.IndexOf($"[{itemKey}.{itemKeySon}]");
         if (i != -1)
@@ -411,8 +380,8 @@ public class LoadMesService : ILoadMesService
     /// <param name="DynName">动态嵌入的名称</param>
     /// <param name="cts"></param>
     /// <returns></returns>
-    public  async Task<(bool sueeced, string? result)> DynMessage(string request, string DynName,
-        CancellationTokenSource cts)
+    public async Task<(bool sueeced, string? result)> DynMessage(string request, string DynName,
+        CancellationTokenSource cts,bool noLog = false)
     {
         if (DynName == null)
         {
@@ -436,7 +405,7 @@ public class LoadMesService : ILoadMesService
         }
 
         //通过正则表达式匹配对应数量的[]格式的字符
-        MatchCollection matches = Regex.Matches(message, @"\[.{1,}\]");
+        MatchCollection matches = Regex.Matches(message, @"\[.*?\]");
         foreach (Match match in matches)
         {
             foreach (var item in mesTcpPojo.DynCondition)
@@ -444,9 +413,9 @@ public class LoadMesService : ILoadMesService
                 var itemKey = item.Name;
                 var methodName = item.MethodName;
                 //检查是否存在
-                // var i = message.IndexOf();
+                var i = match.Value.IndexOf($"[{itemKey}]");
 
-                if (!match.Value.Equals($"[{itemKey}]"))
+                if (i == -1)
                 {
                     continue;
                 }
@@ -458,10 +427,14 @@ public class LoadMesService : ILoadMesService
                     switch (methodName)
                     {
                         case "读寄存器":
-                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读寄存器中");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读寄存器中");
+                            }
                             (bool succeed1, string readReg) = await _self.ReadReg(item);
                             if (!succeed1)
                             {
+
                                 Log.Error($"[{TraceContext.Name}]--嵌入值:{item.Name}--读寄存器地址{item.StartAddress}失败");
                                 return (false, null);
                             }
@@ -479,7 +452,11 @@ public class LoadMesService : ILoadMesService
 
                             break;
                         case "读线圈":
-                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读线圈中");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读线圈中");
+                            }
+                   
                             (bool succeed2, string readCoid) = await _self.ReadCoid(item);
                             if (!succeed2)
                             {
@@ -501,7 +478,10 @@ public class LoadMesService : ILoadMesService
 
                             break;
                         case "Socket返回":
-                            Log.Info($"[{TraceContext.Name}]--动态嵌入内容:执行Socket消息发送");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--动态嵌入内容:执行Socket消息发送");
+                            }
                             (bool succeed, string tcp) = await _self.ReadTcpMessageAsync(item, cts);
                             //判断
                             if (!succeed)
@@ -523,7 +503,11 @@ public class LoadMesService : ILoadMesService
 
                             break;
                         case "读DM寄存器":
-                            Log.Info($"[{TraceContext.Name}]--执行读DM寄存器");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--执行读DM寄存器");
+                            }
+                    
                             (bool succeed4, string? s) = await _self.KeyenceReadDM(item, cts);
 
                             if (!succeed4)
@@ -544,14 +528,15 @@ public class LoadMesService : ILoadMesService
 
                             break;
                         case "读R线圈状态":
-                            Log.Info($"[{TraceContext.Name}]--执行读R线圈状态");
-
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--执行读R线圈状态");
+                            }
                             (bool succeed3, string? result) = await _self.KeyenceReadCoid(item, cts);
                             if (!succeed3)
                             {
                                 return (false, null);
                             }
-
                             (bool b6, string? responseLateProcess6) = await _self.LateProcess(item, result, cts);
                             if (b6)
                             {
@@ -566,7 +551,11 @@ public class LoadMesService : ILoadMesService
 
                             break;
                         case "串口通讯":
-                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行串口发送中");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行串口发送中");
+                            }
+                        
                             (bool b, string? response) = await _self.ScpiSerialAsync(item, cts);
                             if (!b)
                             {
@@ -772,7 +761,7 @@ public class LoadMesService : ILoadMesService
     }
 
     public async Task<(bool sueeced, string? result)> DynMessage(string DynName,
-    CancellationTokenSource cts)
+    CancellationTokenSource cts, bool noLog = false)
     {
         if (DynName == null)
         {
@@ -796,17 +785,18 @@ public class LoadMesService : ILoadMesService
         }
 
         //通过正则表达式匹配对应数量的[]格式的字符
-        MatchCollection matches = Regex.Matches(message, @"\[.{1,}\]");
+        MatchCollection matches = Regex.Matches(message, @"\[.*?\]");
         foreach (Match match in matches)
         {
             foreach (var item in mesTcpPojo.DynCondition)
             {
                 var itemKey = item.Name;
                 var methodName = item.MethodName;
-                //检查是否存在
-                // var i = message.IndexOf();
 
-                if (!match.Value.Equals($"[{itemKey}]"))
+                //检查是否存在
+                var i = match.Value.IndexOf($"[{itemKey}]");
+
+                if (i == -1)
                 {
                     continue;
                 }
@@ -818,7 +808,11 @@ public class LoadMesService : ILoadMesService
                     switch (methodName)
                     {
                         case "读寄存器":
-                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读寄存器中");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读寄存器中");
+                            }
+                           
                             (bool succeed1, string readReg) = await _self.ReadReg(item);
                             if (!succeed1)
                             {
@@ -839,7 +833,10 @@ public class LoadMesService : ILoadMesService
 
                             break;
                         case "读线圈":
-                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读线圈中");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行读线圈中");
+                            }
                             (bool succeed2, string readCoid) = await _self.ReadCoid(item);
                             if (!succeed2)
                             {
@@ -861,7 +858,11 @@ public class LoadMesService : ILoadMesService
 
                             break;
                         case "Socket返回":
-                            Log.Info($"[{TraceContext.Name}]--动态嵌入内容:执行Socket消息发送");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--动态嵌入内容:执行Socket消息发送");
+                            }
+                        
                             (bool succeed, string tcp) = await _self.ReadTcpMessageAsync(item, cts);
                             //判断
                             if (!succeed)
@@ -883,7 +884,11 @@ public class LoadMesService : ILoadMesService
 
                             break;
                         case "读DM寄存器":
-                            Log.Info($"[{TraceContext.Name}]--执行读DM寄存器");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--执行读DM寄存器");
+                            }
+                            
                             (bool succeed4, string? s) = await _self.KeyenceReadDM(item, cts);
 
                             if (!succeed4)
@@ -904,7 +909,11 @@ public class LoadMesService : ILoadMesService
 
                             break;
                         case "读R线圈状态":
-                            Log.Info($"[{TraceContext.Name}]--执行读R线圈状态");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--执行读R线圈状态");
+                            }
+                       
 
                             (bool succeed3, string? result) = await _self.KeyenceReadCoid(item, cts);
                             if (!succeed3)
@@ -926,7 +935,11 @@ public class LoadMesService : ILoadMesService
 
                             break;
                         case "串口通讯":
-                            Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行串口发送中");
+                            if (!noLog)
+                            {
+                                Log.Info($"[{TraceContext.Name}]--嵌入值:{item.Name}:执行串口发送中");
+                            }
+                       
                             (bool b, string? response) = await _self.ScpiSerialAsync(item, cts);
                             if (!b)
                             {
@@ -1244,7 +1257,20 @@ public class LoadMesService : ILoadMesService
                             Log.Error($"[{TraceContext.Name}]--进行通讯转发时发送错误,:{e}");
                             return (false, null);
                         }
-
+                        break;
+                    case "基恩士上位链路通讯":
+                        KeyenceHostLinkTool netWorkKeyenceHostLinkTool = netWork.KeyenceHostLinkTool;
+                        try
+                        {
+                            //将字符串转换为字节数组
+                            
+                            // await netWorkKeyenceHostLinkTool.WriteDM(model.TranspondModbusDetailed.StartAddress,string ,cts );
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error($"[{TraceContext.Name}]--进行基恩士上位链路通讯转发时发送错误,:{e}");
+                            return (false, null);
+                        }
                         break;
                 }
 
@@ -1295,7 +1321,7 @@ public class LoadMesService : ILoadMesService
 
                 if (message.Length == len)
                 {
-                    return (true,message);
+                    return (true, message);
                 }
                 else
                 {
@@ -1318,7 +1344,7 @@ public class LoadMesService : ILoadMesService
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,长度={len}");
                     return (false, message);
-                }   
+                }
 
             case "字符长度检测>":
                 tryParse = int.TryParse(verify.Value, out len);
@@ -1353,7 +1379,7 @@ public class LoadMesService : ILoadMesService
                 {
                     Log.Error($"[{TraceContext.Name}]--校验失败,长度>={len}");
                     return (false, message);
-                } 
+                }
             case "字符长度检测>=":
                 tryParse = int.TryParse(verify.Value, out len);
                 if (!tryParse)
@@ -1487,12 +1513,12 @@ public class LoadMesService : ILoadMesService
                 {
                     if (len <= len2)
                     {
-                        return (true,message);
+                        return (true, message);
                     }
                     else
                     {
                         Log.Error($"[{TraceContext.Name}]--校验失败,不符合数据<={verify.Value}");
-                        return (false,message);
+                        return (false, message);
                     }
                 }
                 else
@@ -1556,7 +1582,7 @@ public class LoadMesService : ILoadMesService
                 var (succeed, returnValue) = await (Task<(bool Succeed, object Return)>)invoke;
 
 
-                object[] returnValues =  returnValue as object[];
+                object[] returnValues = returnValue as object[];
                 if (succeed)
                 {
                     if (!(bool)returnValues[0])
@@ -1574,14 +1600,14 @@ public class LoadMesService : ILoadMesService
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--在校验是否满足条件时,发生故障");
-                    return (false,message);
+                    return (false, message);
                 }
 
 
                 break;
         }
 
-        return (false,message);
+        return (false, message);
     }
 
     #endregion
@@ -1595,7 +1621,7 @@ public class LoadMesService : ILoadMesService
     /// <param name="itemValue"></param>
     /// <param name="itemMethodOtherValue"></param>
     /// <returns></returns>
-    public virtual async Task<string> MethodMessage(string request, string itemValue, string itemMethodOtherValue)
+    public async Task<string> MethodMessage(string request, string itemValue, string itemMethodOtherValue)
     {
         if (itemValue == null)
         {
@@ -1626,7 +1652,7 @@ public class LoadMesService : ILoadMesService
     /// </summary>
     /// <param name="itemMethodOtherValue"></param>
     /// <returns></returns>
-    public virtual DateTime DateTimeDispose(string itemMethodOtherValue)
+    public DateTime DateTimeDispose(string itemMethodOtherValue)
     {
         if (itemMethodOtherValue == null)
         {
@@ -1735,7 +1761,7 @@ public class LoadMesService : ILoadMesService
     /// <param name="message"></param>
     /// <param name="item"></param>
     /// <returns></returns>
-    public virtual string SwitchGetMessage(string message, DynCondition item)
+    public string SwitchGetMessage(string message, DynCondition item)
     {
         var dynSwitches = item.SwitchList;
 
@@ -1764,7 +1790,7 @@ public class LoadMesService : ILoadMesService
     /// <param name="item">动态</param>
     /// <param name="parentName">调用的父类名称,用于日志显示</param>
     /// <returns></returns>
-    public virtual async Task<(bool succeed, string response)> ReadTcpMessageAsync(DynCondition item,
+    public  async Task<(bool succeed, string response)> ReadTcpMessageAsync(DynCondition item,
         CancellationTokenSource cts)
     {
         //判断是走客户端发送,还是走服务器发送
@@ -1856,7 +1882,7 @@ public class LoadMesService : ILoadMesService
 
     #region 串口获取内容
 
-    public virtual async Task<(bool succeed, string response)> ScpiSerialAsync(DynCondition item,
+    public async Task<(bool succeed, string response)> ScpiSerialAsync(DynCondition item,
         CancellationTokenSource cts)
     {
         try
@@ -1933,7 +1959,7 @@ public class LoadMesService : ILoadMesService
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public virtual async Task<(bool succeed, string? result)> ReadCoid(DynCondition item)
+    public async Task<(bool succeed, string? result)> ReadCoid(DynCondition item)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;
@@ -1962,7 +1988,7 @@ public class LoadMesService : ILoadMesService
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public virtual async Task<(bool succeed, string? result)> ReadReg(DynCondition item)
+    public async Task<(bool succeed, string? result)> ReadReg(DynCondition item)
     {
         var itemKey = item.Name;
         var itemConnectName = item.ConnectName;
@@ -2095,7 +2121,7 @@ public class LoadMesService : ILoadMesService
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>
-    public virtual async Task<(bool succeed, string response)> KeyenceReadDM(DynCondition item,
+    public async Task<(bool succeed, string response)> KeyenceReadDM(DynCondition item,
         CancellationTokenSource cts)
     {
         var itemKey = item.Name;
@@ -2175,7 +2201,7 @@ public class LoadMesService : ILoadMesService
         return (false, "没有进入对应类型的解析Switch");
     }
 
-    public virtual async Task<(bool succeed, string? result)> KeyenceReadCoid(DynCondition item,
+    public  async Task<(bool succeed, string? result)> KeyenceReadCoid(DynCondition item,
         CancellationTokenSource cts)
     {
         var itemKey = item.Name;
