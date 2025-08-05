@@ -2,18 +2,15 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
-using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
 using Microsoft.Win32;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
-using Pkn_HostSystem.Service.UserDefined;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using SkiaSharp;
 using System.Diagnostics;
-using System.Reflection;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -24,7 +21,7 @@ namespace Pkn_HostSystem.ViewModels.Page;
 public partial class SettingsPageViewModel : ObservableRecipient
 {
     public SnackbarService SnackbarService { get; set; }
-    public LogBase<SettingsPageViewModel> Log;
+    public LogControl<SettingsPageViewModel> Log;
     public SettingsPageModel SettingsPageModel { get; set; }
 
     public SettingsPageViewModel()
@@ -37,9 +34,9 @@ public partial class SettingsPageViewModel : ObservableRecipient
             SettingsPageModel = new SettingsPageModel();
         }
 
-      
+
         SnackbarService = new SnackbarService();
-        Log = new LogBase<SettingsPageViewModel>(SnackbarService);
+        Log = new LogControl<SettingsPageViewModel>(SnackbarService);
         Init();
 
     }
@@ -77,9 +74,9 @@ public partial class SettingsPageViewModel : ObservableRecipient
             GlobalManager.ThemeSkColor = new SKColor(0, 0, 0);
             Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().RefreshCommand.Execute(null);
         });
-        if (TraceContext.Name!= "系统初始化")
+        if (TraceContext.Name != "系统初始化")
         {
-            Log.SuccessAndShow("切换主题成功,LiveCharts渲染需要重启后生效");
+            Log.SuccessAndShowTask("切换主题成功,LiveCharts渲染需要重启后生效");
         }
     }
 
@@ -99,7 +96,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         });
         if (TraceContext.Name != "系统初始化")
         {
-            Log.SuccessAndShow("切换主题成功,LiveCharts渲染需要重启后生效");
+            Log.SuccessAndShowTask("切换主题成功,LiveCharts渲染需要重启后生效");
         }
     }
 
@@ -122,7 +119,8 @@ public partial class SettingsPageViewModel : ObservableRecipient
                 GlobalManager.ThemeSkColor = new SKColor(0, 0, 0);
                 Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().RefreshCommand.Execute(null);
             });
-        } else if (systemTheme is SystemTheme.Dark)
+        }
+        else if (systemTheme is SystemTheme.Dark)
         {
             //设置LiveCharts报表图片主题
             LiveCharts.Configure(config =>
@@ -134,7 +132,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         }
         if (TraceContext.Name != "系统初始化")
         {
-            Log.SuccessAndShow("切换主题成功,LiveCharts渲染需要重启后生效");
+            Log.SuccessAndShowTask("切换主题成功,LiveCharts渲染需要重启后生效");
         }
     }
 
@@ -164,11 +162,11 @@ public partial class SettingsPageViewModel : ObservableRecipient
 
             if (IsAutoStartEnabled())
             {
-                Log.SuccessAndShow("开机自启动设置完毕");
+                Log.SuccessAndShowTask("开机自启动设置完毕");
             }
             else
             {
-                Log.WarningAndShow("开机自启动设置未成功,注册表写入失败");
+                Log.WarningAndShowTask("开机自启动设置未成功,注册表写入失败");
             }
         }
         else
@@ -182,12 +180,12 @@ public partial class SettingsPageViewModel : ObservableRecipient
 
             if (!IsAutoStartEnabled())
             {
-         
-                Log.SuccessAndShow("开机自启动关闭");
+
+                Log.SuccessAndShowTask("开机自启动关闭");
             }
             else
             {
-                Log.WarningAndShow("开机自启动关闭设置未成功,注册表删除失败");
+                Log.WarningAndShowTask("开机自启动关闭设置未成功,注册表删除失败");
             }
         }
     }
@@ -214,11 +212,11 @@ public partial class SettingsPageViewModel : ObservableRecipient
     {
         if (SaveAll())
         {
-            Log.SuccessAndShow("存档成功");
+            Log.SuccessAndShowTask("存档成功");
         }
         else
         {
-            Log.ErrorAndShow("存档失败");
+            Log.ErrorAndShowTask("存档失败");
         }
     }
 
@@ -233,7 +231,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         if (messageBoxResult == MessageBoxResult.Primary)
         {
             Reset();
-            Log.SuccessAndShow("重置成功");
+            Log.SuccessAndShowTask("重置成功");
         }
     }
 

@@ -19,7 +19,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         public SnackbarService SnackbarService { get; set; } = new();
 
-        public LogBase<StationViewModel> Log { get; set; }
+        public LogControl<StationViewModel> Log { get; set; }
 
         public StationViewModel()
         {
@@ -36,7 +36,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             {
 
             }
-            Log = new LogBase<StationViewModel>(SnackbarService);
+            Log = new LogControl<StationViewModel>(SnackbarService);
         }
         #region 弹窗SnackbarService
         public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)

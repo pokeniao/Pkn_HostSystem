@@ -12,12 +12,12 @@ namespace Pkn_HostSystem.Models.Page
     {
 
         //良率Ok饼图
-       [ObservableProperty] private ObservableValue ok = new ObservableValue(6);
-       [ObservableProperty] private ObservableValue ng = new ObservableValue(2);
-       [ObservableProperty] private ObservableValue runTime = new ObservableValue(12960);
-       [ObservableProperty] private ObservableValue stopTime = new ObservableValue(64800); //一天一共86400秒
-       [ObservableProperty] private ObservableValue errorTime = new ObservableValue(8640);
-
+       [ObservableProperty] private ObservableValue ok = new ObservableValue(1);
+       [ObservableProperty] private ObservableValue ng = new ObservableValue(1);
+       [ObservableProperty] private ObservableValue runTime = new ObservableValue(1);
+       [ObservableProperty] private ObservableValue stopTime = new ObservableValue(1); //一天一共86400秒
+       [ObservableProperty] private ObservableValue errorTime = new ObservableValue(1);
+        
         #region 七日产量
 
         //OK数量

@@ -35,8 +35,8 @@ namespace Pkn_HostSystem.Views.Pages
             if (selectedItem == null)
             {return; }
 
-            selectedItem.UserLog.richTextBox = rtb;
-            rtb.Document = selectedItem.UserLog.flowDocument;
+            selectedItem.UserLog.RichTextBox = rtb;
+            rtb.Document = selectedItem.UserLog.FlowDocument;
         }
         private void DevRichTextBox_OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -46,8 +46,8 @@ namespace Pkn_HostSystem.Views.Pages
             IEachStation selectedItem = LogTabControl.SelectedItem as IEachStation;
             if (selectedItem == null)
             { return; }
-            selectedItem.DevLog.richTextBox = rtb;
-            rtb.Document = selectedItem.DevLog.flowDocument;
+            selectedItem.DevLog.RichTextBox = rtb;
+            rtb.Document = selectedItem.DevLog.FlowDocument;
         }
 
         private void ErrorRichTextBox_OnLoaded(object sender, RoutedEventArgs e)
@@ -58,8 +58,8 @@ namespace Pkn_HostSystem.Views.Pages
             IEachStation? selectedItem = LogTabControl.SelectedItem as IEachStation;
             if (selectedItem == null)
             { return; }
-            selectedItem.ErrorLog.richTextBox = rtb;
-            rtb.Document = selectedItem.ErrorLog.flowDocument;
+            selectedItem.ErrorLog.RichTextBox = rtb;
+            rtb.Document = selectedItem.ErrorLog.FlowDocument;
         }
         private void LogTabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -82,13 +82,13 @@ namespace Pkn_HostSystem.Views.Pages
             switch (selectedIndex)
             {
                 case 0:
-                    selectedItem.UserLog.flowDocument.Blocks.Clear();
+                    selectedItem.UserLog.FlowDocument.Blocks.Clear();
                     break;
                 case 1:
-                    selectedItem.ErrorLog.flowDocument.Blocks.Clear();
+                    selectedItem.ErrorLog.FlowDocument.Blocks.Clear();
                     break;
                 case 2:
-                    selectedItem.DevLog.flowDocument.Blocks.Clear();
+                    selectedItem.DevLog.FlowDocument.Blocks.Clear();
                     break;
             }
         }
@@ -106,13 +106,13 @@ namespace Pkn_HostSystem.Views.Pages
             switch (selectedIndex)
             {
                 case 0:
-                    selectedItem.UserLog.richTextBox.ScrollToEnd();
+                    selectedItem.UserLog.RichTextBox.ScrollToEnd();
                     break;
                 case 1:
-                    selectedItem.ErrorLog.richTextBox.ScrollToEnd();
+                    selectedItem.ErrorLog.RichTextBox.ScrollToEnd();
                     break;
                 case 2:
-                    selectedItem.DevLog.richTextBox.ScrollToEnd();
+                    selectedItem.DevLog.RichTextBox.ScrollToEnd();
                     break;
             }
         }

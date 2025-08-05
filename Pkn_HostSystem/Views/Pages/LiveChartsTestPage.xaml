@@ -11,9 +11,9 @@
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-
       d:DataContext="{d:DesignInstance page:LiveChartsTestViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
+      SizeChanged="LiveChartsTestPage_OnSizeChanged"
       Title="LiveChartsTestPage">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -23,16 +23,12 @@
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.8*" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="0.9*" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
 
 
-
-            </Grid>
-
-            <Border Grid.Row="1" BorderThickness="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+            <Border Grid.Row="0" BorderThickness="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     CornerRadius="5"
                     Margin="10,0,10,10">
@@ -41,13 +37,24 @@
                         <RowDefinition Height="0.2*" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="产量统计" FontSize="20" Margin="20,5" />
+                    <TextBlock Text="产量统计" FontSize="15" Margin="20,5" />
                     <wpf:CartesianChart Grid.Row="1" Series="{Binding DayTimeYieldSeries}"
                                         XAxes="{Binding XAxesDayTimeYield}"
                                         YAxes="{Binding YAxesDayTimeYield}"
                                         ZoomMode="X" />
                 </Grid>
             </Border>
+
+
+            <RichTextBox
+                Grid.Row="1" BorderThickness="1"
+                Name="LogRichTextBox"
+                Margin="10,0,10,10"
+                IsReadOnly="True"
+                VerticalScrollBarVisibility="Auto"
+                FontSize="12">
+            </RichTextBox>
+
         </Grid>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
