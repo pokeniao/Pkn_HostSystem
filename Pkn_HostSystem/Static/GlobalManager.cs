@@ -4,6 +4,7 @@ using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Core.Interface;
 using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.Models.Windows;
 using SkiaSharp;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -31,7 +32,7 @@ public static class GlobalManager
     /// <summary>
     /// 登入状态
     /// </summary>
-    public static UserLoginEnum CurLoginState { get; set; } 
+    public static UserLoginEnum CurLoginState { get; set; }
 
     /// <summary>
     /// 获得当前项目集
@@ -53,6 +54,11 @@ public static class GlobalManager
     public static SourceCache<NetWork, string> NetWorkDictionary;
 
     /// <summary>
+    /// 流程任务
+    /// </summary>
+    public static SourceCache<LoadMesAddAndUpdateWindowModel, string> ProcessTask;
+
+    /// <summary>
     /// 动态连接的字典
     /// </summary>
     public static SourceCache<LoadMesDynContent, string> DynDictionary;
@@ -71,6 +77,7 @@ public static class GlobalManager
     /// 数据库
     /// </summary>
     public static string jdbcPath;
+
     /// <summary>
     /// 内部触发寄存器,不断电保存
     /// </summary>
@@ -89,7 +96,6 @@ public static class GlobalManager
 
     static GlobalManager()
     {
-
         //登入状态
         CurLoginState = UserLoginEnum.NoLogged;
         //向静态字典添加东西
@@ -99,6 +105,8 @@ public static class GlobalManager
         //初始化网路连接字典
         NetWorkDictionary =
             new SourceCache<NetWork, string>(n => n.NetWorkId);
+        //初始化流程任务字典
+        ProcessTask = new SourceCache<LoadMesAddAndUpdateWindowModel, string>(n => n.Name);
         //初始化动态字典
         DynDictionary = new SourceCache<LoadMesDynContent, string>(n => n.Name);
         //初始化工位字典
@@ -121,7 +129,6 @@ public static class GlobalManager
         }
 
         return null;
-
     }
 
 

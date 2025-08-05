@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using DynamicData.Binding;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using Pkn_HostSystem.ViewModels.Windows;
@@ -24,7 +25,7 @@ namespace Pkn_HostSystem.Views.Windows
         }
 
         //添加
-        public LoadMesAddWindow(string title, ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList) : this()
+        public LoadMesAddWindow(string title, ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel> mesPojoList) : this()
         {
             DataContext = new LoadMesAddAndUpdateWindowsViewModel();
             Title.Text = title;
@@ -35,7 +36,7 @@ namespace Pkn_HostSystem.Views.Windows
 
         //修改
         public LoadMesAddWindow(string title, LoadMesAddAndUpdateWindowModel item,
-            ObservableCollection<LoadMesAddAndUpdateWindowModel> mesPojoList) : this()
+            ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel> mesPojoList) : this()
         {
             DataContext = new LoadMesAddAndUpdateWindowsViewModel(item);
             Title.Text = title;

@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using DynamicData;
+using DynamicData.Binding;
 using NModbus.Logging;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
@@ -41,14 +43,16 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
             LoadMesPageModel = new LoadMesPageModel()
             {
-                MesPojoList = [], ReturnMessageList = (ObservableCollection<string>)value
+                MesPojoList = new ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel>(), 
+                ReturnMessageList = (ObservableCollection<string>)value
             };
         }
         else
         {
             GlobalManager.GlobalDictionary["MesLogListBox"] = LoadMesPageModel.ReturnMessageList;
+            GlobalManager.ProcessTask.AddOrUpdate(LoadMesPageModel.MesPojoList);
         }
-
+        GlobalManager.ProcessTask.Connect().Bind(LoadMesPageModel.MesPojoList).Subscribe(); //绑定
         SnackbarService = new SnackbarService();
         Log = new LogBase<LoadMesPageViewModel>(SnackbarService);
 
@@ -68,6 +72,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             Log.SuccessAndShow("添加MES成功");
         }
+
     }
 
     [RelayCommand]
@@ -266,11 +271,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     public async Task<(bool succeed, string? message)> ExecutionCondition(LoadMesAddAndUpdateWindowModel model)
     {
         Log.Info($"[{TraceContext.Name}]--开始执行触发和循环共同的代码");
-        //从MesServer中取出绑定好的item
-        // LoadMesAddAndUpdateWindowModel item = LoadMesService.SelectByName(model.Name);
-        //维护一个集合,用于判断动态嵌入HTTP请求不会循环嵌套;
-        // model.UseHttpList = new List<string>();
-        // model.UseHttpList.Add(model.Name);
+ 
 
         Log.Info($"[{TraceContext.Name}]--消息体准备组装");
         //消息体打包
@@ -753,7 +754,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     private async Task<string> ModbusTrigger(LoadMesAddAndUpdateWindowModel model)
     {
         //获取当前通讯对象
-        LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
+        LoadMesAddAndUpdateWindowModel item = GlobalManager.ProcessTask.Lookup(model.Name).Value;
         var netWork = GlobalManager.GetNetWork(item.TriggerConnectName);
         if (netWork == null)
         {
@@ -786,7 +787,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         try
         {
             //获取当前通讯对象
-            LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
+            LoadMesAddAndUpdateWindowModel item = GlobalManager.ProcessTask.Lookup(model.Name).Value;
             var netWork = GlobalManager.GetNetWork(item.TriggerConnectName);
             if (netWork == null)
             {
@@ -824,7 +825,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     private async Task<string> KeyenceHostLinkTrigger(LoadMesAddAndUpdateWindowModel model)
     {
         //获取当前通讯对象
-        LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
+        LoadMesAddAndUpdateWindowModel item = GlobalManager.ProcessTask.Lookup(model.Name).Value;
         var netWork = GlobalManager.GetNetWork(item.TriggerConnectName);
         if (netWork == null)
         {
@@ -853,7 +854,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         try
         {
             //获取当前通讯对象
-            LoadMesAddAndUpdateWindowModel item = model.LoadMesService.SelectByName(model.Name);
+            LoadMesAddAndUpdateWindowModel item = GlobalManager.ProcessTask.Lookup(model.Name).Value;
             var netWork = GlobalManager.GetNetWork(item.TriggerConnectName);
             if (netWork == null)
             {
@@ -997,7 +998,10 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     public void Receive(AddOneMesMessage message)
     {
         LoadMesAddAndUpdateWindowModel loadMesAddAndUpdateWindowModel = message.Value;
-        LoadMesPageModel.MesPojoList.Add(loadMesAddAndUpdateWindowModel);
+
+
+        GlobalManager.ProcessTask.AddOrUpdate(loadMesAddAndUpdateWindowModel);
+        // LoadMesPageModel.MesPojoList.Add(loadMesAddAndUpdateWindowModel);
         Log.Info(
             $"添加一行HTTP请求: Name:{loadMesAddAndUpdateWindowModel.Name} 请求方式:{loadMesAddAndUpdateWindowModel.Ajax} 请求路径:{loadMesAddAndUpdateWindowModel.HttpPath}" +
             $"请求消息体:{loadMesAddAndUpdateWindowModel.Request} 请求条件{loadMesAddAndUpdateWindowModel.ToString()}");
@@ -1031,7 +1035,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             if (item.Station == null)
             {
-                item.LoadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
+                item.LoadMesService = new LoadMesService();
                 return;
             }
 
@@ -1041,20 +1045,20 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 var eachStation = GlobalManager.StationDictionary.Lookup(item.Station).Value;
                 //通过委托创建出特别的 LoadMesService
                 //每个站点的LoadMesService都不一样,所以需要通过委托来创建
-                item.LoadMesService = eachStation.CreateDecoratorFunc(new LoadMesService(LoadMesPageModel.MesPojoList));
+                item.LoadMesService = eachStation.CreateDecoratorFunc(new LoadMesService());
 
 
                 StationManager.TraceContextStart(item.Station);
             }
             else
             {
-                item.LoadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
+                item.LoadMesService = new LoadMesService();
                 return;
             }
         }
         else
         {
-            item.LoadMesService = new LoadMesService(LoadMesPageModel.MesPojoList);
+            item.LoadMesService = new LoadMesService();
         }
     }
 

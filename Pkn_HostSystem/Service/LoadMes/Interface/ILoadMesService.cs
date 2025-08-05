@@ -7,12 +7,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
 
     public interface ILoadMesService
     {
-        /// <summary>
-        /// 循环查找当前行是否存在
-        /// </summary>
-        /// <param name="Name"></param>
-        /// <returns></returns>
-        LoadMesAddAndUpdateWindowModel SelectByName(string Name);
+
 
         /// <summary>
         ///  触发单个请求
@@ -74,7 +69,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <param name="cts"></param>
         /// <returns></returns>
         Task<(bool sueeced, string? result)> DynMessage(string request, string DynName,
-            CancellationTokenSource cts);
+            CancellationTokenSource cts, bool noLog = false);
         /// <summary>
         /// 动态嵌入
         /// </summary>
@@ -82,7 +77,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <param name="cts"></param>
         /// <returns></returns>
         Task<(bool sueeced, string? result)> DynMessage(string DynName,
-            CancellationTokenSource cts);
+            CancellationTokenSource cts, bool noLog = false);
 
         /// <summary>
         /// 转发

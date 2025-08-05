@@ -54,7 +54,6 @@
                           SelectedValuePath="Name"
                           SelectedValue="{Binding SetLiveChartsParamModel.DayProductionDynName ,UpdateSourceTrigger=PropertyChanged}"
                           Width="150" />
-                <Button Content="选中配置" Grid.Row="0" Grid.Column="2" Margin="10,0" Command="{Binding }" />
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="配置导入"
                            Margin="5"
                            TextAlignment="Right" />
@@ -80,8 +79,8 @@
 
             <Button
                 Name="RunButton"
-                Content="启用" Width="70"
-                Command="{Binding AckButtonCommand}"
+                Content="{Binding SetLiveChartsParamModel.RunLiveChartsButton}" Width="70"
+                Command="{Binding RunButtonCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                 HorizontalAlignment="Left" />
             <Button Content="关闭页面" Margin="30,0" Width="110" Click="ButtonBase_OnClick" HorizontalAlignment="Right" />

@@ -206,7 +206,15 @@
                     </Grid>
                     <Grid Grid.Row="2" HorizontalAlignment="Right" Margin="20,0">
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="发送" Width="70" Command="{Binding SendClientButtonCommand}" />
+                            <TextBlock Text="发送结束符" TextAlignment="Center" Margin="5"/>
+                            <ComboBox ItemsSource="{Binding NewLines}" 
+                                      Width="100"
+                                      SelectedValue="{Binding NewLine , UpdateSourceTrigger=PropertyChanged}"
+                                      DisplayMemberPath="Key"
+                                      SelectedValuePath="Value"/>
+                            <Button Content="发送" Width="70" 
+                                    Margin="10,0,0,0"
+                                    Command="{Binding SendClientButtonCommand}" />
                             <Button Content="清空" Width="70" Margin="10,0,0,0"
                                     Command="{Binding ClearClientButtonCommand}"/>
                         </StackPanel>
