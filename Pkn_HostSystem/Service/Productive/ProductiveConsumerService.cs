@@ -39,7 +39,7 @@ namespace Pkn_HostSystem.Service.Productive
         /// </summary>
         public string ConsumeName { get; set; }
 
-        public LogBase<ProductiveConsumerService> Log = new LogBase<ProductiveConsumerService>();
+        public LogControl<ProductiveConsumerService> Log = new LogControl<ProductiveConsumerService>();
 
 
         public ProductiveConsumerService(BlockingCollection<List<ushort>> _Queue,

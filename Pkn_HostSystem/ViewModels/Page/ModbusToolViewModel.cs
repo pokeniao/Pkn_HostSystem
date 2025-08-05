@@ -14,7 +14,7 @@ namespace Pkn_HostSystem.ViewModels.Page;
 
 public partial class ModbusToolViewModel : ObservableRecipient
 {
-    public LogBase<ModbusToolViewModel> Log { get; set; }
+    public LogControl<ModbusToolViewModel> Log { get; set; }
     public ModbusToolModel ModbusToolModel { get; set; } = new();
 
     public ModbusBase ModbusBase { get; set; }
@@ -25,7 +25,7 @@ public partial class ModbusToolViewModel : ObservableRecipient
     {
         ModbusBase = new ModbusBase();
         SnackbarService = new SnackbarService();
-        Log = new LogBase<ModbusToolViewModel>(SnackbarService);
+        Log = new LogControl<ModbusToolViewModel>(SnackbarService);
     }
 
     public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
@@ -43,7 +43,7 @@ public partial class ModbusToolViewModel : ObservableRecipient
     {
         if (ModbusBase.IsTCPConnect() || ModbusBase.IsRTUConnect())
         {
-            Log.WarningAndShow("已连接,请勿重复连接");
+            Log.WarningAndShowTask("已连接,请勿重复连接");
             return;
         }
         else
@@ -53,13 +53,13 @@ public partial class ModbusToolViewModel : ObservableRecipient
 
         if (ModbusBase.IsTCPConnect())
         {
-            Log.SuccessAndShow("连接成功");
+            Log.SuccessAndShowTask("连接成功");
             page.Border_Connect.Visibility = Visibility.Visible;
             page.Border_Close.Visibility = Visibility.Collapsed;
         }
         else
         {
-            Log.WarningAndShow("连接失败,请检查IP端口号");
+            Log.WarningAndShowTask("连接失败,请检查IP端口号");
             page.Border_Close.Visibility = Visibility.Visible;
             page.Border_Connect.Visibility = Visibility.Collapsed;
         }
@@ -70,7 +70,7 @@ public partial class ModbusToolViewModel : ObservableRecipient
     {
         if (ModbusBase.IsTCPConnect() || ModbusBase.IsRTUConnect())
         {
-            Log.WarningAndShow("已连接,请勿重复连接");
+            Log.WarningAndShowTask("已连接,请勿重复连接");
             return;
         }
         else
@@ -83,13 +83,13 @@ public partial class ModbusToolViewModel : ObservableRecipient
 
         if (ModbusBase.IsRTUConnect())
         {
-            Log.SuccessAndShow("连接成功");
+            Log.SuccessAndShowTask("连接成功");
             page.Border_Connect.Visibility = Visibility.Visible;
             page.Border_Close.Visibility = Visibility.Collapsed;
         }
         else
         {
-            Log.WarningAndShow("连接失败,请检查设置");
+            Log.WarningAndShowTask("连接失败,请检查设置");
             page.Border_Close.Visibility = Visibility.Visible;
             page.Border_Connect.Visibility = Visibility.Collapsed;
         }
@@ -103,7 +103,7 @@ public partial class ModbusToolViewModel : ObservableRecipient
     {
         ModbusBase.CloseTCP();
         ModbusBase.CloseRTU();
-        Log.SuccessAndShow("连接断开");
+        Log.SuccessAndShowTask("连接断开");
         page.Border_Close.Visibility = Visibility.Visible;
         page.Border_Connect.Visibility = Visibility.Collapsed;
     }
@@ -127,12 +127,12 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 }
                 catch (Exception exception)
                 {
-                    Log.ErrorAndShow($"读取发生错误:{exception.Message}");
+                    Log.ErrorAndShowTask($"读取发生错误:{exception.Message}");
                     break;
                 }
 
                 if (coils01 != null) readDGV(coils01);
-                Log.SuccessAndShow("01读线圈读取成功");
+                Log.SuccessAndShowTask("01读线圈读取成功");
                 break;
             case "02读输入状态":
                 bool[] inputs02 = null;
@@ -143,12 +143,12 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 }
                 catch (Exception exception)
                 {
-                    Log.ErrorAndShow($"读取发生错误:{exception.Message}");
+                    Log.ErrorAndShowTask($"读取发生错误:{exception.Message}");
                     break;
                 }
 
                 if (inputs02 != null) readDGV(inputs02);
-                Log.SuccessAndShow("02读输入状态读取成功");
+                Log.SuccessAndShowTask("02读输入状态读取成功");
                 break;
             case "03读保持寄存器":
                 ushort[] holdingRegisters03 = null;
@@ -159,12 +159,12 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 }
                 catch (Exception exception)
                 {
-                    Log.ErrorAndShow($"读取发生错误:{exception.Message}");
+                    Log.ErrorAndShowTask($"读取发生错误:{exception.Message}");
                     break;
                 }
 
                 if (holdingRegisters03 != null) readDGV(holdingRegisters03);
-                Log.SuccessAndShow("03读保持寄存器读取成功");
+                Log.SuccessAndShowTask("03读保持寄存器读取成功");
                 break;
             case "04读输入寄存器":
                 ushort[] readInputRegisters04 = null;
@@ -175,12 +175,12 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 }
                 catch (Exception exception)
                 {
-                    Log.ErrorAndShow($"读取发生错误:{exception.Message}");
+                    Log.ErrorAndShowTask($"读取发生错误:{exception.Message}");
                     break;
                 }
 
                 if (readInputRegisters04 != null) readDGV(readInputRegisters04);
-                Log.SuccessAndShow("04读输入寄存器读取成功");
+                Log.SuccessAndShowTask("04读输入寄存器读取成功");
                 break;
             case "05写单线圈":
                 try
@@ -191,11 +191,11 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 }
                 catch (Exception exception)
                 {
-                    Log.ErrorAndShow($"读取发生错误:{exception.Message}");
+                    Log.ErrorAndShowTask($"读取发生错误:{exception.Message}");
                 }
 
 
-                Log.SuccessAndShow("05写单线圈成功");
+                Log.SuccessAndShowTask("05写单线圈成功");
                 break;
             case "06写单寄存器":
                 try
@@ -206,11 +206,11 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 }
                 catch (Exception exception)
                 {
-                    Log.ErrorAndShow($"读取发生错误:{exception.Message}");
+                    Log.ErrorAndShowTask($"读取发生错误:{exception.Message}");
                 }
 
 
-                Log.SuccessAndShow("06写单寄存器成功");
+                Log.SuccessAndShowTask("06写单寄存器成功");
                 break;
             case "0F写多线圈":
                 try
@@ -226,10 +226,10 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 }
                 catch (Exception exception)
                 {
-                    Log.ErrorAndShow($"读取发生错误:{exception.Message}");
+                    Log.ErrorAndShowTask($"读取发生错误:{exception.Message}");
                 }
 
-                Log.SuccessAndShow("0F写多线圈成功");
+                Log.SuccessAndShowTask("0F写多线圈成功");
                 break;
             case "10写多寄存器":
                 var registers = new List<ushort>();
@@ -244,10 +244,10 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 }
                 catch (Exception exception)
                 {
-                    Log.ErrorAndShow($"读取发生错误:{exception.Message}");
+                    Log.ErrorAndShowTask($"读取发生错误:{exception.Message}");
                 }
 
-                Log.SuccessAndShow("10写多寄存器成功");
+                Log.SuccessAndShowTask("10写多寄存器成功");
                 break;
         }
     }

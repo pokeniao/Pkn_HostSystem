@@ -76,7 +76,7 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                    Content="产量一览"
+                    Content="产量日志"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:LiveChartsTestPage}">
                     <ui:NavigationViewItem.Icon>

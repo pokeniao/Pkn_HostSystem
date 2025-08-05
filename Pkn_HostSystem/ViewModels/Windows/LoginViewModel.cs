@@ -9,13 +9,13 @@ namespace Pkn_HostSystem.ViewModels.Windows
     public partial class LoginViewModel:ObservableRecipient
     {
         public SnackbarService SnackbarService { get; set; }
-        public LogBase<LoginViewModel> log;
+        public LogControl<LoginViewModel> log;
         public LoginModel LoginModel { get; set; }
 
         public LoginViewModel()
         {
             SnackbarService = new SnackbarService();
-            log = new LogBase<LoginViewModel>(SnackbarService);
+            log = new LogControl<LoginViewModel>(SnackbarService);
             //Model初始化
             LoginModel = new LoginModel();
         }

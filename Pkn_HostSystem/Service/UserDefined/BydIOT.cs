@@ -10,7 +10,7 @@ namespace Pkn_HostSystem.Service.UserDefined
     public class PppIOT :IUserDefined
     {
 
-        public LogBase<PppIOT> Log = new();
+        public LogControl<PppIOT> Log = new();
 
         public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts, params object[] args)
         {

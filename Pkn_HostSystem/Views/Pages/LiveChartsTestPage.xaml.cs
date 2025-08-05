@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Base.Log;
+using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using System;
 using System.Collections.Generic;
@@ -28,10 +29,13 @@ namespace Pkn_HostSystem.Views.Pages
         public LiveChartsTestViewModel ViewModel { get; set; }
 
 
-        public LogBase<LiveChartsTestPage> Log = new LogBase<LiveChartsTestPage>();
+        public LogControl<LiveChartsTestPage> Log = new LogControl<LiveChartsTestPage>();
         public LiveChartsTestPage()
         {
             InitializeComponent();
+
+            GlobalManager.LogRichTextBox = LogRichTextBox;
+            GlobalManager.LogRichTextBoxDocument = LogRichTextBox.Document;
             ViewModel = Ioc.Default.GetRequiredService<LiveChartsTestViewModel>();
             DataContext = ViewModel;
             ViewModel.setSnackbarService(SnackbarPresenter);
@@ -45,6 +49,11 @@ namespace Pkn_HostSystem.Views.Pages
         private void ButtonBase_OnClick2(object sender, RoutedEventArgs e)
         {
             ViewModel.LiveChartsModel.Ng.Value++;
+        }
+
+        private void LiveChartsTestPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            LogRichTextBox.Height = Math.Max(50, e.NewSize.Height - e.NewSize.Height*55/100); // 50为最小高度
         }
     }
 }

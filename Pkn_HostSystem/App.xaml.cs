@@ -168,7 +168,7 @@ namespace Pkn_HostSystem
                     .AddSingleton<SettingsPage>()
                     .AddSingleton<ModbusToolPage>()
                     .AddSingleton<TcpToolPage>()
-                    .AddTransient<LiveChartsTestPage>() //AddTransient每次导航会new 一个新对象
+                    .AddSingleton<LiveChartsTestPage>() //AddTransient每次导航会new 一个新对象
                     // .BuildServiceProvider()  Microsoft.Extensions.DependencyInjection原生
                     .BuildDynamicProxyProvider() //AspectCore中的Ioc,支持Aop
             );

@@ -65,7 +65,7 @@ namespace Pkn_HostSystem.Views.Windows
             {
                 //从集合中移除
                 items?.Remove(item);
-                viewModel?.Log.SuccessAndShow("删除一个条件", $"Mes请求{HTTP_Name.Text} ,{item.Key}条件被删掉");
+                viewModel?.Log.SuccessAndShowTask("删除一个条件", $"Mes请求{HTTP_Name.Text} ,{item.Key}条件被删掉");
             }
         }
 
@@ -106,11 +106,11 @@ namespace Pkn_HostSystem.Views.Windows
                 bool b = viewModel.LoadMesAddAndUpdateWindowModel.HttpHeaders.Remove(item);
                 if (b)
                 {
-                    viewModel?.Log.SuccessAndShow("删除成功");
+                    viewModel?.Log.SuccessAndShowTask("删除成功");
                 }
                 else
                 {
-                    viewModel?.Log.WarningAndShow("删除失败");
+                    viewModel?.Log.WarningAndShowTask("删除失败");
                 }
             }
         }

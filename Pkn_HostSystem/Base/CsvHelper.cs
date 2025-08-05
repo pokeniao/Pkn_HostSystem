@@ -11,7 +11,7 @@ public class CsvHelper
     private readonly List<List<string>> _rows = new();
     private readonly string _filePath;
     private readonly Encoding _encoding;
-    private LogBase<CsvHelper> Log =new LogBase<CsvHelper>();
+    private LogControl<CsvHelper> Log =new LogControl<CsvHelper>();
     public CsvHelper(string filePath, Encoding encoding = null)
     {
         _filePath = filePath;

@@ -25,7 +25,7 @@ namespace Pkn_HostSystem.ViewModels.Page
     public partial class LiveChartsTestViewModel : ObservableRecipient
     {
         public LiveChartsModel LiveChartsModel { get; set; } = JsonTool<LiveChartsModel>.Load();
-        public LogBase<LiveChartsTestViewModel> Log;
+        public LogControl<LiveChartsTestViewModel> Log;
         public SnackbarService SnackbarService = new SnackbarService();
 
         private static readonly RadialGradientPaint green = new RadialGradientPaint(
@@ -98,93 +98,6 @@ namespace Pkn_HostSystem.ViewModels.Page
                     SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                 }
             };
-
-        #endregion
-
-        #region 实时线图
-
-        private readonly Random _random = new();
-        private readonly List<DateTimePoint> _values = [];
-        private DateTimeAxis _customAxis;
-
-        public ObservableCollection<ISeries> Series { get; set; }
-
-        public Axis[] XAxes { get; set; }
-
-        public object Sync { get; } = new object();
-
-        public bool IsReading { get; set; } = true;
-
-
-        public void HeartBeat()
-        {
-            Series =
-            [
-                new LineSeries<DateTimePoint>
-                {
-                    Values = _values, Fill = null, GeometryFill = null, GeometryStroke = null
-                }
-            ];
-
-            _customAxis = new DateTimeAxis(TimeSpan.FromSeconds(1), Formatter)
-            {
-                CustomSeparators = GetSeparators(),
-                AnimationsSpeed = TimeSpan.FromMilliseconds(0),
-                SeparatorsPaint = new SolidColorPaint(SKColors.Black.WithAlpha(100))
-            };
-
-            XAxes = [_customAxis];
-
-            _ = ReadData();
-        }
-
-        private async Task ReadData()
-        {
-            // to keep this sample simple, we run the next infinite loop 
-            // in a real application you should stop the loop/task when the view is disposed 
-
-            while (IsReading)
-            {
-                await Task.Delay(100);
-
-                // Because we are updating the chart from a different thread 
-                // we need to use a lock to access the chart data. 
-                // this is not necessary if your changes are made on the UI thread. 
-                lock (Sync)
-                {
-                    _values.Add(new DateTimePoint(DateTime.Now, _random.Next(0, 10)));
-                    if (_values.Count > 250) _values.RemoveAt(0);
-
-                    // we need to update the separators every time we add a new point 
-                    _customAxis.CustomSeparators = GetSeparators();
-                }
-            }
-        }
-
-        private static double[] GetSeparators()
-        {
-            var now = DateTime.Now;
-
-            return
-            [
-                now.AddSeconds(-25).Ticks,
-                now.AddSeconds(-20).Ticks,
-                now.AddSeconds(-15).Ticks,
-                now.AddSeconds(-10).Ticks,
-                now.AddSeconds(-5).Ticks,
-                now.Ticks
-            ];
-        }
-
-        private static string Formatter(DateTime date)
-        {
-            var secsAgo = (DateTime.Now - date).TotalSeconds;
-
-            return secsAgo < 1
-                ? "now"
-                : $"{secsAgo:N0}s ago";
-        }
-
         #endregion
 
         #region 柱状图
@@ -192,8 +105,8 @@ namespace Pkn_HostSystem.ViewModels.Page
         public ISeries[] DayTimeYieldSeries { get; set; }
 
         public Axis[] XAxesDayTimeYield { get; set; }
-            = new Axis[]
-            {
+            =
+            [
                 new Axis
                 {
                     Name = "时间",
@@ -208,15 +121,13 @@ namespace Pkn_HostSystem.ViewModels.Page
                         SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                     },
                     LabelsPaint = new SolidColorPaint(SKColors.Blue),
-                    TextSize = 15,
-
-                    // SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) { StrokeThickness = 2 }
+                    TextSize = 13,
                 }
-            };
+            ];
 
         public Axis[] YAxesDayTimeYield { get; set; }
-            = new Axis[]
-            {
+            =
+            [
                 new Axis
                 {
                     Name = "产量",
@@ -225,42 +136,13 @@ namespace Pkn_HostSystem.ViewModels.Page
                         SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                     },
                     LabelsPaint = new SolidColorPaint(SKColors.Green),
-                    TextSize = 15,
+                    TextSize = 13,
 
-                    // SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
-                    // {
-                    //     StrokeThickness = 2,
-                    //     PathEffect = new DashEffect(new float[] { 3, 3 })
-                    // }
                 }
-            };
+            ];
 
         #endregion
 
-        #region CT图
-
-        public IEnumerable<ISeries> CTSeries { get; set; } =
-            GaugeGenerator.BuildSolidGauge(
-                new GaugeItem(50, series => SetStyle("Station1", series)),
-                new GaugeItem(80, series => SetStyle("Station2", series)),
-                new GaugeItem(95, series => SetStyle("Station3", series)),
-                new GaugeItem(GaugeItem.Background, series =>
-                {
-                    series.Fill = null;
-                }));
-
-        public static void SetStyle(string name, PieSeries<ObservableValue> series)
-        {
-            series.Name = name;
-            series.DataLabelsSize = 20;
-            series.DataLabelsPosition = PolarLabelsPosition.End;
-            series.DataLabelsFormatter =
-                point => point.Coordinate.PrimaryValue.ToString();
-            series.InnerRadius = 20;
-            series.MaxRadialColumnWidth = 5;
-        }
-
-        #endregion
 
         public LiveChartsTestViewModel()
         {
@@ -272,7 +154,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             {
             }
 
-            Log = new LogBase<LiveChartsTestViewModel>(SnackbarService);
+            Log = new LogControl<LiveChartsTestViewModel>(SnackbarService);
 
 
             DayTimeYieldSeries =
@@ -300,6 +182,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                     GeometrySize = 0
                 }
             ];
+
             OkTotalPieSeries =
             [
                 new PieSeries<ObservableValue>
@@ -308,7 +191,6 @@ namespace Pkn_HostSystem.ViewModels.Page
                     Values = [LiveChartsModel.Ok],
                     Stroke = null,
                     Fill = green,
-                    DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor), //页面上显示数据
                 },
                 new PieSeries<ObservableValue>
                 {
@@ -316,7 +198,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                     Values = [LiveChartsModel.Ng],
                     Stroke = null,
                     Fill = red,
-                    DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor), //页面上显示数据
+                    // DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor), //页面上显示数据
                     Pushout = 10,
                     OuterRadiusOffset = 20
                 }
@@ -328,7 +210,8 @@ namespace Pkn_HostSystem.ViewModels.Page
                 {
                     Values = [LiveChartsModel.RunTime],
                     Fill = green,
-                    DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
+                    // GlobalManager.ThemeSkColor
+                    DataLabelsPaint = new SolidColorPaint(new SKColor(0,0,255))
                     {
                         SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
                     }, //页面上显示数据
@@ -346,7 +229,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                         {
                             var pv = point.Coordinate.PrimaryValue;
                             var sv = point.StackedValue!;
-                            var a = $"运行时间{Environment.NewLine}{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
+                            var a = $"Start {Environment.NewLine}{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
                             return a;
                         }
                 },
@@ -372,7 +255,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                         {
                             var pv = point.Coordinate.PrimaryValue;
                             var sv = point.StackedValue!;
-                            var a = $"待机时间{Environment.NewLine}{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
+                            var a = $"Wait {Environment.NewLine}{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
                             return a;
                         }
                 },
@@ -401,13 +284,11 @@ namespace Pkn_HostSystem.ViewModels.Page
                             var pv = point.Coordinate.PrimaryValue;
                             var sv = point.StackedValue!;
 
-                            var a = $"报警时间{Environment.NewLine}{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
+                            var a = $"Alarm {Environment.NewLine}{pv}/{sv.Total}{Environment.NewLine}{sv.Share:P2}";
                             return a;
                         }
                 }
             ];
-
-            HeartBeat();
         }
 
 
@@ -433,36 +314,15 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public void Refresh(LiveChartsTestPage page)
         {
-            TotalTitlePie = new()
+            foreach (var timePieSeries in TimePieSeries)
             {
-                Text = "良率产量统计",
-                TextSize = 15,
-                Padding = new LiveChartsCore.Drawing.Padding(15),
-                Paint = new SolidColorPaint
-                {
-                    Color = GlobalManager.ThemeSkColor,
-                    SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
-                }
-            };
-
-            TotalTitlePie2 =
-                new()
-                {
-                    Text = "耗时统计",
-                    TextSize = 15,
-                    Padding = new LiveChartsCore.Drawing.Padding(15),
-                    Paint = new SolidColorPaint
-                    {
-                        Color = GlobalManager.ThemeSkColor,
-                        SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
-                    }
-                };
+                timePieSeries.DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor);
+            }
             foreach (var series in OkTotalPieSeries)
             {
                 series.DataLabelsPaint = new SolidColorPaint(GlobalManager.ThemeSkColor);
             }
         }
-
         #endregion
 
         #region SnackBar弹窗

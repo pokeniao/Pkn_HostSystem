@@ -7,19 +7,25 @@ using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
 using SkiaSharp;
 using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
+
 using System.Runtime.CompilerServices;
+using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace Pkn_HostSystem.Static;
 
 public static class GlobalManager
 {
-    /// <summary>
-    /// 当前全局字典
-    /// </summary>
-    public static ConcurrentDictionary<string, object> GlobalDictionary;
+
+    ///
+    ///
+    /// 
+    public static RichTextBox LogRichTextBox;
+
+    public static FlowDocument LogRichTextBoxDocument;
+
 
     /// <summary>
     ///  当前软件版本
@@ -98,10 +104,7 @@ public static class GlobalManager
     {
         //登入状态
         CurLoginState = UserLoginEnum.NoLogged;
-        //向静态字典添加东西
-        GlobalDictionary = new ConcurrentDictionary<string, object>();
-        GlobalDictionary.TryAdd("LogListBox", new ObservableCollection<string>());
-        GlobalDictionary.TryAdd("MesLogListBox", new ObservableCollection<string>());
+
         //初始化网路连接字典
         NetWorkDictionary =
             new SourceCache<NetWork, string>(n => n.NetWorkId);

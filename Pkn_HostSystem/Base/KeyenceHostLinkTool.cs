@@ -8,7 +8,7 @@ namespace Pkn_HostSystem.Base
     {
         private TcpClient client;
         private NetworkStream stream;
-        private LogBase<KeyenceHostLinkTool> Log = new LogBase<KeyenceHostLinkTool>();
+        private LogControl<KeyenceHostLinkTool> Log = new LogControl<KeyenceHostLinkTool>();
 
         public bool IsConnected => client?.Connected ?? false;
 

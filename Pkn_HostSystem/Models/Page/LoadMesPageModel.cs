@@ -13,19 +13,5 @@ public partial class LoadMesPageModel : ObservableObject
     /// </summary>
     [ObservableProperty]
     private ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel> mesPojoList;
-    /// <summary>
-    /// 返回消息数据,显示列表
-    /// </summary>
-    private ObservableCollection<string> returnMessageList = new();
 
-    [JsonIgnore]
-    public ObservableCollection<string> ReturnMessageList
-    {
-        get => returnMessageList;
-        set
-        {
-            SetProperty(ref returnMessageList, value);
-        }
-        
-    } 
 }

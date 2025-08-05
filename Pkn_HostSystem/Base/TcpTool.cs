@@ -13,7 +13,7 @@ namespace Pkn_HostSystem.Base
         /// <summary>
         /// 日志
         /// </summary>
-        public LogBase<TcpTool> Log = new();
+        public LogControl<TcpTool> Log = new();
         /// <summary>
         /// CTS
         /// </summary>

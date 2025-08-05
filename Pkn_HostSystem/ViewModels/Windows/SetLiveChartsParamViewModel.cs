@@ -22,7 +22,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
 {
     public partial class SetLiveChartsParamViewModel :ObservableRecipient
     {
-        private LogBase<SetLiveChartsParamViewModel> Log ;
+        private LogControl<SetLiveChartsParamViewModel> Log ;
         public SnackbarService SnackbarService { get; set; } = new SnackbarService();
         public SetLiveChartsParamModel SetLiveChartsParamModel { get; set; }
 
@@ -33,7 +33,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
         public SetLiveChartsParamViewModel()
         {
             SetLiveChartsParamModel = new SetLiveChartsParamModel();
-            Log = new LogBase<SetLiveChartsParamViewModel>(SnackbarService);
+            Log = new LogControl<SetLiveChartsParamViewModel>(SnackbarService);
 
             DynNetList = Ioc.Default.GetRequiredService<MesTcpViewModel>().MesTcpModel.DynNetList;
         }
@@ -108,7 +108,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
           
             if (GlobalManager.DynDictionary.Lookup("产量统计").HasValue)
             {
-                Log.WarningAndShow("添加动态通讯名称已存在", $"添加动态通讯名称已存在: 产量统计");
+                Log.WarningAndShowTask("添加动态通讯名称已存在", $"添加动态通讯名称已存在: 产量统计");
                 return;
             }
 

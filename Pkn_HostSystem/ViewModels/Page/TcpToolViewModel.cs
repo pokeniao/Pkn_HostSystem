@@ -15,7 +15,7 @@ namespace Pkn_HostSystem.ViewModels.Page
     {
         public TcpToolModel TcpToolModel { get; set; } = JsonTool<TcpToolModel>.Load();
 
-        private LogBase<TcpToolViewModel> Log;
+        private LogControl<TcpToolViewModel> Log;
 
         public Dictionary<string, string> NewLines { get; set; } =
             new Dictionary<string, string>() { ["\\n"] = "\n", ["\\r"] = "\r", ["\\r\\n"] = "\r\n", ["空"] = "" };
@@ -31,7 +31,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 TcpToolModel = new TcpToolModel();
             }
 
-            Log = new LogBase<TcpToolViewModel>(SnackbarService);
+            Log = new LogControl<TcpToolViewModel>(SnackbarService);
         }
 
         /// <summary>
@@ -49,12 +49,12 @@ namespace Pkn_HostSystem.ViewModels.Page
 
             if (!startServerAsync)
             {
-                Log.ErrorAndShow("创建服务器失败, 请检查端口号");
+                Log.ErrorAndShowTask("创建服务器失败, 请检查端口号");
                 return;
             }
             else
             {
-                Log.SuccessAndShow("服务器创建成功");
+                Log.SuccessAndShowTask("服务器创建成功");
             }
 
             tcpNet.TcpTool = tcpTool;
@@ -93,7 +93,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             TcpNet? selectedItem = page.SelectServerComboBox.SelectedItem as TcpNet;
             if (selectedItem == null)
             {
-                Log.ErrorAndShow("断开服务器时,未选择任何服务器");
+                Log.ErrorAndShowTask("断开服务器时,未选择任何服务器");
                 return;
             }
 
@@ -151,7 +151,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 
             if (selectedItem == null)
             {
-                Log.ErrorAndShow("断开客户端时,未选择任何客户端");
+                Log.ErrorAndShowTask("断开客户端时,未选择任何客户端");
                 return;
             }
 
@@ -177,7 +177,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
             else
             {
-                Log.ErrorAndShow("没有选中发送的服务器");
+                Log.ErrorAndShowTask("没有选中发送的服务器");
             }
         }
 
@@ -193,7 +193,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
             else
             {
-                Log.ErrorAndShow("没有选中发送的服务器");
+                Log.ErrorAndShowTask("没有选中发送的服务器");
             }
         }
 
@@ -211,7 +211,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
             else
             {
-                Log.ErrorAndShow("没有选中发送的客户端");
+                Log.ErrorAndShowTask("没有选中发送的客户端");
             }
         }
 
@@ -227,7 +227,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
             else
             {
-                Log.ErrorAndShow("没有选中发送的服务器");
+                Log.ErrorAndShowTask("没有选中发送的服务器");
             }
         }
 
@@ -243,7 +243,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
             else
             {
-                Log.ErrorAndShow("没有选中发送的客户端");
+                Log.ErrorAndShowTask("没有选中发送的客户端");
             }
         }
 

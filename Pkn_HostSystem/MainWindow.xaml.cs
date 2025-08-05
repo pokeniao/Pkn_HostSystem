@@ -45,11 +45,11 @@ namespace Pkn_HostSystem
                 //路由到Ioc的实例化对象
                 var navigation = Ioc.Default.GetRequiredService<INavigationService>();
                 navigation.SetNavigationControl(RootNavigation);
-
+                PreLoad();
                 // 默认导航页面
                 navigation.Navigate(typeof(HomePage));
 
-                PreLoad();
+               
                 _ = Starting();
             };
        
@@ -57,6 +57,7 @@ namespace Pkn_HostSystem
 
         private void PreLoad()
         {
+            _ = Ioc.Default.GetRequiredService<LiveChartsTestPage>();
             _ = Ioc.Default.GetRequiredService<HomePage>();
             _ = Ioc.Default.GetRequiredService<LoadMesPage>();
             _ = Ioc.Default.GetRequiredService<MesTcpPage>();

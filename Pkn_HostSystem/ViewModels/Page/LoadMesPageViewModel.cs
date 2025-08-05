@@ -32,7 +32,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     public SnackbarService SnackbarService { get; set; }
 
 
-    public LogBase<LoadMesPageViewModel> Log;
+    public LogControl<LoadMesPageViewModel> Log;
 
 
     public LoadMesPageViewModel()
@@ -40,21 +40,19 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         LoadMesPageModel = JsonTool<LoadMesPageModel>.Load();
         if (LoadMesPageModel == null)
         {
-            GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
+         
             LoadMesPageModel = new LoadMesPageModel()
             {
                 MesPojoList = new ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel>(), 
-                ReturnMessageList = (ObservableCollection<string>)value
             };
         }
         else
         {
-            GlobalManager.GlobalDictionary["MesLogListBox"] = LoadMesPageModel.ReturnMessageList;
             GlobalManager.ProcessTask.AddOrUpdate(LoadMesPageModel.MesPojoList);
         }
         GlobalManager.ProcessTask.Connect().Bind(LoadMesPageModel.MesPojoList).Subscribe(); //绑定
         SnackbarService = new SnackbarService();
-        Log = new LogBase<LoadMesPageViewModel>(SnackbarService);
+        Log = new LogControl<LoadMesPageViewModel>(SnackbarService);
 
         // 启用监听
         IsActive = true;
@@ -70,7 +68,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         bool? b = addWindow.ShowDialog();
         if (b == true)
         {
-            Log.SuccessAndShow("添加MES成功");
+            Log.SuccessAndShowTask("添加MES成功");
         }
 
     }
@@ -82,7 +80,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
         if (item == null)
         {
-            Log.WarningAndShow("没有选中行", "当前HTTP列表没有数据,用户点击更新操作");
+            Log.WarningAndShowTask("没有选中行", "当前HTTP列表没有数据,用户点击更新操作");
             return;
         }
 
@@ -96,7 +94,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         bool? b = addWindow.ShowDialog();
         if (b == true)
         {
-            Log.SuccessAndShow($"更新MES成功 name:{item.Name}");
+            Log.SuccessAndShowTask($"更新MES成功 name:{item.Name}");
         }
     }
 
@@ -107,13 +105,13 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         LoadMesAddAndUpdateWindowModel? item = page.DataGrid.SelectedItem as LoadMesAddAndUpdateWindowModel;
         if (item == null)
         {
-            Log.WarningAndShow("没有数据不需要删除", "用户在操作删除,但HTTP数据已删除完");
+            Log.WarningAndShowTask("没有数据不需要删除", "用户在操作删除,但HTTP数据已删除完");
             return;
         }
 
         if (item.RunCyc)
         {
-            Log.WarningAndShow("删除前请停止运行", $"用户在操作删除,请先停止运行{item.Name}");
+            Log.WarningAndShowTask("删除前请停止运行", $"用户在操作删除,请先停止运行{item.Name}");
             return;
         }
 
@@ -123,7 +121,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             string name = item.Name;
             LoadMesPageModel.MesPojoList.Remove(item);
-            Log.SuccessAndShow($"删除HTTP成功 name:{name}");
+            Log.SuccessAndShowTask($"删除HTTP成功 name:{name}");
         }
     }
 
@@ -161,7 +159,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         (bool succeed, string? message) = await ExecutionCondition(item);
         if (succeed)
         {
-            Log.SuccessAndShow($"[{TraceContext.Name}]--手动执行成功 ,返回: {message}");
+            Log.SuccessAndShowTask($"[{TraceContext.Name}]--手动执行成功 ,返回: {message}");
         }
         else
         {
