@@ -10,26 +10,8 @@ namespace Pkn_HostSystem.Models.Page;
 
 public partial class HomePageModel : ObservableObject
 {
-    /// <summary>
-    /// Log日志列表,用于显示日志
-    /// </summary>
-    private ObservableCollection<string> logListBox =  new ();
-    [JsonIgnore]
-    public ObservableCollection<string> LogListBox
-    {
-        get => logListBox;
-        set
-        {
-            SetProperty(ref logListBox, value);
-        }
-
-    }
 
     #region 通讯设置页
-
-    
-
-
     /// <summary>
     /// 网络连接对象列表
     /// </summary>

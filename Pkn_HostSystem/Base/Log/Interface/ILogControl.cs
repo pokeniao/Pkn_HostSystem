@@ -1,16 +1,18 @@
-﻿using System.Collections.ObjectModel;
+﻿using log4net;
+using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using Wpf.Ui;
 
 
 namespace Pkn_HostSystem.Base.Log.Interface
 {
     public interface ILogControl
     {
-         ObservableCollection<string> list { get; set; }
+        ILog Log { get; set; }
+        ISnackbarService SnackbarService { get; set; }
+        FlowDocument FlowDocument { get; set; }
 
-         FlowDocument flowDocument { get; set; }
-
-         RichTextBox richTextBox { get; set; }
+        RichTextBox RichTextBox { get; set; }
     }
 }

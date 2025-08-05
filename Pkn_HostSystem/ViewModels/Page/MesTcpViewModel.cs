@@ -20,7 +20,7 @@ namespace Pkn_HostSystem.ViewModels.Page;
 public partial class MesTcpViewModel : ObservableRecipient
 {
     public SnackbarService SnackbarService { get; set; }
-    public LogBase<MesTcpViewModel> log;
+    public LogControl<MesTcpViewModel> log;
 
     public MesTcpModel MesTcpModel { get; set; }
 
@@ -66,7 +66,7 @@ public partial class MesTcpViewModel : ObservableRecipient
             GlobalManager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();//绑定
             MesTcpModel.HttpList = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
         }
-        log = new LogBase<MesTcpViewModel>(SnackbarService);
+        log = new LogControl<MesTcpViewModel>(SnackbarService);
     }
 
     #region dyn添加删除修改
@@ -88,7 +88,7 @@ public partial class MesTcpViewModel : ObservableRecipient
             };
             if (GlobalManager.DynDictionary.Lookup(addDynWindow.viewModel.Name).HasValue)
             {
-                log.WarningAndShow("添加动态通讯名称已存在", $"添加动态通讯名称已存在{addDynWindow.viewModel.Name}");
+                log.WarningAndShowTask("添加动态通讯名称已存在", $"添加动态通讯名称已存在{addDynWindow.viewModel.Name}");
                 return;
             }
 
@@ -111,7 +111,7 @@ public partial class MesTcpViewModel : ObservableRecipient
             }
             else
             {
-                log.WarningAndShow("删除已经不存在");
+                log.WarningAndShowTask("删除已经不存在");
                 return;
             }
         }
@@ -131,7 +131,7 @@ public partial class MesTcpViewModel : ObservableRecipient
             }
             else
             {
-                log.WarningAndShow("删除已经不存在");
+                log.WarningAndShowTask("删除已经不存在");
                 return;
             }
         }

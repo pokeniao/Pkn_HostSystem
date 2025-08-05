@@ -19,7 +19,7 @@ namespace Pkn_HostSystem.ViewModels.Page
     public partial class ProductiveViewModel : ObservableRecipient
     {
         public SnackbarService SnackbarService { get; set; }
-        public LogBase<ProductiveViewModel> Log;
+        public LogControl<ProductiveViewModel> Log;
         public ProductiveModel ProductiveModel { get; set; }
 
         public ProductiveViewModel()
@@ -41,7 +41,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
 
             SnackbarService = new SnackbarService();
-            Log = new LogBase<ProductiveViewModel>(SnackbarService);
+            Log = new LogControl<ProductiveViewModel>(SnackbarService);
             GlobalManager.NetWorkDictionary.Connect().Bind(ProductiveModel.ProducerList).Subscribe();
             GlobalManager.NetWorkDictionary.Connect().Bind(ProductiveModel.ConsumerList).Subscribe();
         }
@@ -72,7 +72,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 item.ReConnectionCts = new CancellationTokenSource();
                 item.TaskProductive = null;
                 item.TaskConsumer = null;
-                Log.SuccessAndShow("关闭成功", $"{nameof(ProductiveViewModel)}--{item.Name}--生产者消费者模式关闭成功");
+                Log.SuccessAndShowTask("关闭成功", $"{nameof(ProductiveViewModel)}--{item.Name}--生产者消费者模式关闭成功");
             }
         }
 
@@ -148,7 +148,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             Task task = item.TaskProductive.Value;
             Task task2 = item.TaskConsumer.Value;
             Task value = item.ReConnectionTask.Value;
-            Log.SuccessAndShow("启动成功", $"{nameof(ProductiveViewModel)}--{item.Name}--生产者消费者模式启动成功");
+            Log.SuccessAndShowTask("启动成功", $"{nameof(ProductiveViewModel)}--{item.Name}--生产者消费者模式启动成功");
         }
 
 

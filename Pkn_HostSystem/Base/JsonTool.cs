@@ -27,9 +27,14 @@ public class JsonTool<T> where T : class
     private static readonly string FilePath = Path.Combine(SaveFile, typeof(T).Name + ".json");
 
 
-    private static LogBase<JsonTool<T>> Log = new();
+
+    private static Lazy<LogControl<JsonTool<T>>> logLazy => new Lazy<LogControl<JsonTool<T>>>(()=>new LogControl<JsonTool<T>>());
+
 
     #region Json格式本地保存 , Json格式本地加载
+
+
+
     /// <summary>
     /// 用Json格式保存
     /// </summary>
@@ -37,6 +42,11 @@ public class JsonTool<T> where T : class
     /// <returns></returns>
     public static bool Save(T config )
     {
+        LogControl<JsonTool<T>> Log = logLazy.Value;
+
+
+
+        Log = new LogControl<JsonTool<T>>();
         try
         {
             //1.不存在文件夹,创建文件夹
@@ -63,6 +73,7 @@ public class JsonTool<T> where T : class
     /// <returns></returns>
     public static T Load()
     {
+        LogControl<JsonTool<T>> Log = logLazy.Value;
         try
         {
             //1. 判断文件路径是否存在

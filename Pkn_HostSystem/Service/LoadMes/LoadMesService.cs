@@ -27,8 +27,7 @@ public class LoadMesService : ILoadMesService
     public LoadMesService()
     {
         _self = this;
-        GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out object value);
-        Log = new LogControl<LoadMesService>((ObservableCollection<string>)value);
+        Log = new LogControl<LoadMesService>();
     }
 
 
@@ -97,7 +96,7 @@ public class LoadMesService : ILoadMesService
         {
             case "POST":
                 //日志显示发送内容
-                Log.InfoToLogList($"[{TraceContext.Name}]--发送POST请求,内容: \r\n {request}");
+                Log.Info($"[{TraceContext.Name}]--发送POST请求,内容: \r\n {request}");
 
                 requestBody = new RestRequest(item.Api, Method.Post);
                 //添加请求体
@@ -173,7 +172,7 @@ public class LoadMesService : ILoadMesService
                 }
 
                 //日志显示发送内容
-                Log.InfoToLogList($"[{TraceContext.Name}]--发送GET请求,路径:{Api}");
+                Log.Info($"[{TraceContext.Name}]--发送GET请求,路径:{Api}");
                 requestBody = new RestRequest(Api, Method.Get);
                 break;
             case "DELETE":
@@ -182,7 +181,7 @@ public class LoadMesService : ILoadMesService
             case "PUT":
 
                 //日志显示发送内容
-                Log.InfoToLogList($"[{TraceContext.Name}]--发送PUT请求,内容: \r\n {request}");
+                Log.Info($"[{TraceContext.Name}]--发送PUT请求,内容: \r\n {request}");
                 requestBody = new RestRequest(item.Api, Method.Put);
                 //添加请求体
                 switch (item.RequestMethod)
@@ -224,7 +223,7 @@ public class LoadMesService : ILoadMesService
             item.Response = response.Content;
             //判断是否是JSON格式,如果是转成输出
             item.Response = JsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
-            Log.InfoToLogList($"[{TraceContext.Name}]--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+            Log.Info($"[{TraceContext.Name}]--返回消息--成功--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
 
 
             return (true, item.Response);
@@ -240,7 +239,7 @@ public class LoadMesService : ILoadMesService
 
             //判断是否是JSON格式,如果是转成输出item.Response = JsonTool<Object>.TryFormatJson(item.Response, out bool isJson);
 
-            Log.ErrorToLogList($"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
+            Log.Error($"[{TraceContext.Name}]--返回消息--失败--状态码:{response.StatusCode}--消息体:\r\n{item.Response}");
 
 
             return (false, item.Response);

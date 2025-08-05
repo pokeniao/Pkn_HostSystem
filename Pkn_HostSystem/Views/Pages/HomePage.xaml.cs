@@ -13,6 +13,7 @@ using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Service.UserDefined;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
+using System.Windows.Documents;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
 using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
@@ -28,34 +29,19 @@ namespace Pkn_HostSystem.Views.Pages
     {
         public HomePageViewModel HomePageViewModel { get; set; }
 
-        public LogBase<HomePage> Log { get; set; } = new();
+        public LogControl<HomePage> Log { get; set; } = new();
 
         public HomePage()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetRequiredService<HomePageViewModel>();
 
+            DataContext = Ioc.Default.GetRequiredService<HomePageViewModel>();
             HomePageViewModel = (HomePageViewModel)DataContext;
             HomePageViewModel.setSnackbarPresenter(SnackbarPresenter);
 
-            //添加LogListBox监听
-            HomePageViewModel.HomePageModel.LogListBox.CollectionChanged += Item_CollectionChanged;
         }
 
-        private void Item_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            Dispatcher.InvokeAsync(() =>
-            {
-                //不在聚焦,自动下滑
-                if (!LogListBox.IsKeyboardFocusWithin)
-                {
-                    if (LogListBox != null && LogListBox.Items.Count > 0)
-                    {
-                        LogListBox.ScrollIntoView(LogListBox.Items[^1]);
-                    }
-                }
-            });
-        }
+
 
         #region 播放动画
 
@@ -257,9 +243,6 @@ namespace Pkn_HostSystem.Views.Pages
 
         private void ClearLog(object sender, RoutedEventArgs e)
         {
-            GlobalManager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
-            ObservableCollection<string> list = (ObservableCollection<string>)obj;
-            list.Clear();
         }
 
         #endregion
@@ -316,8 +299,7 @@ namespace Pkn_HostSystem.Views.Pages
         /// <exception cref="NotImplementedException"></exception>
         private void HomePage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            LogListBorder.MaxHeight = e.NewSize.Height - 150;
-            LogListBox.Height = e.NewSize.Height - 150;
         }
+
     }
 }

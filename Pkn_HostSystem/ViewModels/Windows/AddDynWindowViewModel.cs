@@ -9,14 +9,14 @@ namespace Pkn_HostSystem.ViewModels.Windows;
 public partial class AddDynWindowViewModel:ObservableRecipient
 {
     public SnackbarService SnackbarService { get; set; }
-    public LogBase<AddDynWindowViewModel> log;
+    public LogControl<AddDynWindowViewModel> log;
     public AddDynWindowModel AddDynWindowModel { get; set; }
     [ObservableProperty] private string name;
 
     public AddDynWindowViewModel()
     {
         SnackbarService = new SnackbarService();
-        log = new LogBase<AddDynWindowViewModel>(SnackbarService);
+        log = new LogControl<AddDynWindowViewModel>(SnackbarService);
         //Model初始化
         AddDynWindowModel = new AddDynWindowModel();
     }

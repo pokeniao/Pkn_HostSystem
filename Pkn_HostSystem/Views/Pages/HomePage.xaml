@@ -513,6 +513,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" ColumnSpan="2">
             <ui:CardControl Margin="5">
@@ -1263,34 +1264,11 @@
                         <RowDefinition Height="0.9*" />
                         <RowDefinition Height="0.1*" />
                     </Grid.RowDefinitions>
-                    <Border
-                        Grid.Row="0" x:Name="LogListBorder" Margin="30 0"
-                        BorderThickness="2"
-                        CornerRadius="10"
-                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}" RenderTransformOrigin="0.5,0.5">
-                        <Border.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform />
-                                <SkewTransform />
-                                <RotateTransform />
-                                <TranslateTransform />
-                            </TransformGroup>
-                        </Border.RenderTransform>
-                        <ListBox x:Name="LogListBox"
-                                 ItemsSource="{Binding HomePageModel.LogListBox, UpdateSourceTrigger=PropertyChanged}" />
-                    </Border>
-
-                    <WrapPanel HorizontalAlignment="Right" Grid.Row="2" Margin="30 10">
-                        <Button Content="清空日志" Click="ClearLog" />
-                        <Button Content="滚动到底部" Command="{Binding ScrollToBottomCommand}"
-                                CommandParameter="{Binding ElementName=LogListBox}"
-                                Margin="10,0,0,0" />
-                    </WrapPanel>
                 </Grid>
             </Grid>
 
-            <ui:SnackbarPresenter Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Name="SnackbarPresenter" />
+
         </Grid>
+        <ui:SnackbarPresenter  Grid.Row="2" Name="SnackbarPresenter" />
     </Grid>
 </Page>

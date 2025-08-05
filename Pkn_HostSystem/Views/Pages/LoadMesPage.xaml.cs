@@ -18,38 +18,16 @@ namespace Pkn_HostSystem.Views.Pages
         public LoadMesPageViewModel LoadMesPageViewModel { get; set; }
 
 
-        public LogBase<LoadMesPage> Log = new LogBase<LoadMesPage>();
+        public LogControl<LoadMesPage> Log = new LogControl<LoadMesPage>();
         public LoadMesPage()
         {
             InitializeComponent();
             DataContext = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
             LoadMesPageViewModel = (LoadMesPageViewModel)DataContext;
             LoadMesPageViewModel.setSnackbarService(SnackbarPresenter);
-            //添加为ReturnMessageList监听
-            LoadMesPageViewModel.LoadMesPageModel.ReturnMessageList.CollectionChanged += Item_CollectionChanged;
+
         }
 
-        private void Item_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                //不在聚焦,自动下滑
-                if (!HttpLogListBox.IsKeyboardFocusWithin)
-                {
-                    if (HttpLogListBox != null && HttpLogListBox.Items.Count > 0)
-                    {
-                        try
-                        {
-                            HttpLogListBox.ScrollIntoView(HttpLogListBox.Items[^1]);
-                        }
-                        catch (Exception exception)
-                        {
-                            Log.Error($"页面下滑刷新报错:--{exception}");
-                        }
-                    }
-                }
-            });
-        }
         /// <summary>
         /// 滑动到底部
         /// </summary>
@@ -57,18 +35,12 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            if (HttpLogListBox.Items.Count == 0)
-            {
-                return;
-            }
-            HttpLogListBox.ScrollIntoView(HttpLogListBox.Items[^1]);
+
         }
 
         private void ClearLog(object sender, RoutedEventArgs e)
         {
-            GlobalManager.GlobalDictionary.TryGetValue("MesLogListBox", out var obj);
-            ObservableCollection<string> list = (ObservableCollection<string>)obj;
-            list.Clear();
+
         }
         /// <summary>
         /// 页面大小发生改变
@@ -80,7 +52,6 @@ namespace Pkn_HostSystem.Views.Pages
         {
             double newHeight = Math.Max(50, e.NewSize.Height - 100); // 50为最小高度
             DataGrid.Height = newHeight;
-            HttpLogListBoxBorder.Height = newHeight;
         }
     }
 }

@@ -23,7 +23,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public LoadMesAddAndUpdateWindowModel LoadMesAddAndUpdateWindowModelBefore { get; set; }
 
-    public LogBase<LoadMesAddAndUpdateWindowsViewModel> Log;
+    public LogControl<LoadMesAddAndUpdateWindowsViewModel> Log;
 
     public SnackbarService SnackbarService { get; set; } = new();
 
@@ -64,7 +64,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
             Condition = new ObservableCollection<LoadMesCondition>() { },
             NetWorkList = new ObservableCollectionExtended<NetWork>()
         };
-        Log = new LogBase<LoadMesAddAndUpdateWindowsViewModel>(SnackbarService);
+        Log = new LogControl<LoadMesAddAndUpdateWindowsViewModel>(SnackbarService);
         add = true;
         GlobalManager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
         GlobalManager.StationDictionary.Connect().Bind(Stations).Subscribe();
@@ -79,7 +79,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
         //深拷贝一份进行修改
         LoadMesAddAndUpdateWindowModel = JsonTool<LoadMesAddAndUpdateWindowModel>.DeepClone(loadMesAddAndUpdateWindowModel);
 
-        Log = new LogBase<LoadMesAddAndUpdateWindowsViewModel>(SnackbarService);
+        Log = new LogControl<LoadMesAddAndUpdateWindowsViewModel>(SnackbarService);
         add = false;
         GlobalManager.DynDictionary.Connect().Bind(Para_dyn).Subscribe();
         GlobalManager.StationDictionary.Connect().Bind(Stations).Subscribe();
@@ -125,7 +125,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
         //先判断是否为空
         if (verifyObject.Name == null)
         {
-            Log.WarningAndShow("Name不能为空", "用户添加时,输入的Name参数不正确,Name不能为空");
+            Log.WarningAndShowTask("Name不能为空", "用户添加时,输入的Name参数不正确,Name不能为空");
             return false;
         }
 
@@ -135,7 +135,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
             {
                 if (item.Name == verifyObject.Name) 
                 {
-                    Log.WarningAndShow("名称已存在,请修改", "用户添加时,输入的Name参数已存在");
+                    Log.WarningAndShowTask("名称已存在,请修改", "用户添加时,输入的Name参数已存在");
                     return false;
                 }
             }
@@ -143,7 +143,7 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
             {
                 if (item.Name == verifyObject.Name && item.Name != LoadMesAddAndUpdateWindowModelBefore?.Name)
                 {
-                    Log.WarningAndShow("名称已存在,请修改", "用户添加时,输入的Name参数已存在");
+                    Log.WarningAndShowTask("名称已存在,请修改", "用户添加时,输入的Name参数已存在");
                     return false;
                 }
             }
@@ -154,25 +154,25 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
         {
             if (verifyObject.HttpPath == null)
             {
-                Log.WarningAndShow("请求路径不能为空", "用户添加时,输入的请求路径参数不正确,请求路径不能为空");
+                Log.WarningAndShowTask("请求路径不能为空", "用户添加时,输入的请求路径参数不正确,请求路径不能为空");
                 return false;
             }
 
             if (verifyObject.Api == null)
             {
-                Log.WarningAndShow("API不能为空", "用户添加时,输入的API参数不正确,API不能为空");
+                Log.WarningAndShowTask("API不能为空", "用户添加时,输入的API参数不正确,API不能为空");
                 return false;
             }
             if (verifyObject.Ajax == "POST" && verifyObject.Request == null)
             {
-                Log.WarningAndShow("POST请求,请求体不能为空", "用户添加时,输入的请求体参数不正确,POST请求,请求体不能为空");
+                Log.WarningAndShowTask("POST请求,请求体不能为空", "用户添加时,输入的请求体参数不正确,POST请求,请求体不能为空");
                 return false;
             }
             string pattern;
             pattern = @"[a-zA-z]+://[^\s]*";
             if (!Regex.IsMatch(LoadMesAddAndUpdateWindowModel.HttpPath, pattern))
             {
-                Log.WarningAndShow("请求路径格式错误", "用户添加时,输入的请求路径参数不正确");
+                Log.WarningAndShowTask("请求路径格式错误", "用户添加时,输入的请求路径参数不正确");
                 return false;
             }
         }
@@ -181,25 +181,25 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
         {
             if (verifyObject.TriggerConnectName == null)
             {
-                Log.WarningAndShow("通讯触发对象不能为空", "用户添加或修改时,通讯触发未选择");
+                Log.WarningAndShowTask("通讯触发对象不能为空", "用户添加或修改时,通讯触发未选择");
                 return false;
             }
 
             if (verifyObject.TriggerMessage == null)
             {
-                Log.WarningAndShow("触发消息不能未null", "用户添加或修改时,触发消息不能未null");
+                Log.WarningAndShowTask("触发消息不能未null", "用户添加或修改时,触发消息不能未null");
                 return false;
             }
 
             if (verifyObject.SuccessResponseMessage == null)
             {
-                Log.WarningAndShow("触发成功返回消息不能未null", "用户添加或修改时,触发成功返回消息不能未null");
+                Log.WarningAndShowTask("触发成功返回消息不能未null", "用户添加或修改时,触发成功返回消息不能未null");
                 return false;
             }
 
             if (verifyObject.FailResponseMessage ==null)
             {
-                Log.WarningAndShow("触发失败消息不能未null", "用户添加或修改时,触发失败返回消息不能未null");
+                Log.WarningAndShowTask("触发失败消息不能未null", "用户添加或修改时,触发失败返回消息不能未null");
                 return false;
             }
         }

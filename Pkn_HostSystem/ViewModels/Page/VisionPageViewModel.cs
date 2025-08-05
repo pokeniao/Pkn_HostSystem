@@ -16,7 +16,7 @@ namespace Pkn_HostSystem.ViewModels.Page
     public partial class VisionPageViewModel : ObservableRecipient
     {
         public SnackbarService SnackbarService { get; set; }
-        public LogBase<VisionPageViewModel> Log;
+        public LogControl<VisionPageViewModel> Log;
         public VisionPageModel VisionPageModel { get; set; }
 
 
@@ -44,7 +44,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
 
             SnackbarService = new SnackbarService();
-            Log = new LogBase<VisionPageViewModel>(SnackbarService);
+            Log = new LogControl<VisionPageViewModel>(SnackbarService);
         }
 
         /// <summary>

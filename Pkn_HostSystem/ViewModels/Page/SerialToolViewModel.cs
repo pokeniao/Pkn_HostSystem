@@ -16,7 +16,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 
 
         public SnackbarService SnackbarService { get; set; }
-        public LogBase<SerialToolViewModel> Log;
+        public LogControl<SerialToolViewModel> Log;
         public SerialToolModel SerialToolModel { get; set; }
 
 
@@ -28,7 +28,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         public SerialToolViewModel()
         {
             SnackbarService = new SnackbarService();
-            Log = new LogBase<SerialToolViewModel>(SnackbarService);
+            Log = new LogControl<SerialToolViewModel>(SnackbarService);
             //Model初始化
             SerialToolModel = new SerialToolModel();
 
@@ -47,7 +47,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 }
                 catch (Exception e)
                 {
-                    Log.ErrorAndShow($"连接发生错误:{e}");
+                    Log.ErrorAndShowTask($"连接发生错误:{e}");
                     return;
                 }
                 SerialToolModel.ConnectButton = "断开";
@@ -110,7 +110,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
             else
             {
-                Log.ErrorAndShow($"{response}");
+                Log.ErrorAndShowTask($"{response}");
             }
             
         }

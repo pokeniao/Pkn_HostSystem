@@ -23,11 +23,10 @@ public partial class HomePageViewModel : ObservableRecipient
 {
     [ObservableProperty] private UserLoginEnum curLoginState;
 
-    private LogBase<HomePageViewModel> Log;
+    private LogControl<HomePageViewModel> Log;
 
     public HomePageModel HomePageModel { get; set; } = JsonTool<HomePageModel>.Load();
 
-    // public ModbusToolModel ModbusToolModel { get; set; } = new();
 
     public HomeSetConnectModel HomeSetConnectModel { get; set; } = new();
     public SnackbarService SnackbarService { get; set; } = new();
@@ -40,18 +39,15 @@ public partial class HomePageViewModel : ObservableRecipient
     {
         if (HomePageModel == null)
         {
-            //全局字典中获取到记录日志的ListBox的绑定对象ObservableCollection
-            GlobalManager.GlobalDictionary.TryGetValue("LogListBox", out var obj);
+
             HomePageModel = new HomePageModel()
             {
-                LogListBox = (ObservableCollection<string>)obj, // 将其与HomePageModel中的ObservableCollection关联
                 SetConnectDg = new ObservableCollection<NetworkDetailed>() //创建 设置连接列表的DataGrid 绑定对象
             };
         }
         else
         {
-            //只用将LogListBox数据源将其与HomePageModel中的ObservableCollection关联
-            HomePageModel.LogListBox = (ObservableCollection<string>)GlobalManager.GlobalDictionary["LogListBox"];
+
         }
 
         //获取到 HTTP的集合 引用类型并且绑定到HomePageModel.HttpLists
@@ -60,7 +56,7 @@ public partial class HomePageViewModel : ObservableRecipient
 
         //获取到 连接相机的集合 引用类型并且绑定到HomePageModel.CameraList
         HomePageModel.CameraList = Ioc.Default.GetRequiredService<VisionPageViewModel>().VisionPageModel.CameraList;
-        Log = new LogBase<HomePageViewModel>(SnackbarService);
+        Log = new LogControl<HomePageViewModel>(SnackbarService);
     }
 
     #region 弹窗SnackbarService
@@ -75,11 +71,9 @@ public partial class HomePageViewModel : ObservableRecipient
     #region 滚动到底部
 
     [RelayCommand]
-    public void ScrollToBottom(ListBox LogListBox)
+    public void ScrollToBottom()
     {
-        if (LogListBox.Items.Count == 0) return;
 
-        LogListBox.ScrollIntoView(LogListBox.Items[^1]);
     }
 
     #endregion
@@ -106,7 +100,7 @@ public partial class HomePageViewModel : ObservableRecipient
         Log.Info($"[{TraceContext.Name}]--正在启动.");
         if (Name == null)
         {
-            Log.ErrorAndShow("请先填写好连接名,并且回车确认后启动");
+            Log.ErrorAndShowTask("请先填写好连接名,并且回车确认后启动");
             return;
         }
 
@@ -411,11 +405,11 @@ public partial class HomePageViewModel : ObservableRecipient
                 {
                     HomePageModel.SetConnectDg.Remove(item);
                     GlobalManager.NetWorkDictionary.Remove(item.Id);
-                    Log.SuccessAndShow("删除成功!", $"{item.Name}->连接被删除");
+                    Log.SuccessAndShowTask("删除成功!", $"{item.Name}->连接被删除");
                 }
                 else
                 {
-                    Log.WarningAndShow($"{item.Name}处于运行状态不能删除,请先停止");
+                    Log.WarningAndShowTask($"{item.Name}处于运行状态不能删除,请先停止");
                     return;
                 }
             }

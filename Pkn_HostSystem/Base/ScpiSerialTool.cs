@@ -22,7 +22,7 @@ namespace Pkn_HostSystem.Base
 
         private TaskCompletionSource<bool> _connectTcs = new TaskCompletionSource<bool>();
 
-        private LogBase<ScpiSerialTool> Log = new LogBase<ScpiSerialTool>();
+        private LogControl<ScpiSerialTool> Log = new LogControl<ScpiSerialTool>();
 
         /// <summary>
         /// 接收消息事件
