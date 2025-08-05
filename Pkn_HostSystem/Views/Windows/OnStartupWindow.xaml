@@ -30,7 +30,7 @@
                Stretch="None"/>
 
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Starting...." FontSize="16" Margin="10" Foreground="#FF2218DA" FontFamily="Forte"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Loading...." FontSize="16" Margin="10" Foreground="#FF2218DA" FontFamily="Forte"/>
 
         <!-- <ui:ProgressRing Grid.Row="1" Grid.ColumnSpan="2"  IsIndeterminate="True" /> -->
         <ProgressBar  Grid.Row="1" Grid.ColumnSpan="2"  IsIndeterminate="True"/>

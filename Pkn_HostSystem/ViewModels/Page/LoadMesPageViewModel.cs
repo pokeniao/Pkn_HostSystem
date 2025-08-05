@@ -708,7 +708,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                                         ref GlobalManager.ArrayRegister[
                                                             int.Parse(model.InteriorResponseIndex)]);
                                                 await netWork.KeyenceHostLinkTool.WriteDM(
-                                                    int.Parse(model.StationAddress),
+                                                    int.Parse(model.StartAddress),
                                                     ushort.Parse(objects.ToString()), model.cts);
                                                 break;
                                         }
@@ -865,13 +865,13 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             if (succeed)
             {
                 Log.Info($"[{TraceContext.Name}]--KeyenceHostLink触发 返回成功触发消息:{model.SuccessResponseMessage}");
-                return await keyenceHostLinkTool.WriteDM<ushort>(int.Parse(model.StationAddress),
+                return await keyenceHostLinkTool.WriteDM<ushort>(int.Parse(model.StartAddress),
                     ushort.Parse(model.SuccessResponseMessage), model.cts);
             }
             else
             {
                 Log.Error($"[{TraceContext.Name}]--KeyenceHostLink触发 返回失败触发消息:{model.FailResponseMessage}");
-                return await keyenceHostLinkTool.WriteDM<ushort>(int.Parse(model.StationAddress),
+                return await keyenceHostLinkTool.WriteDM<ushort>(int.Parse(model.StartAddress),
                     ushort.Parse(model.FailResponseMessage), model.cts);
             }
         }
