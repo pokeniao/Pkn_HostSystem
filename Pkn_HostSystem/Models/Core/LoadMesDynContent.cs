@@ -195,14 +195,14 @@ public class DynCondition : ObservableObject
     /// <summary>
     /// 模式选择
     /// </summary>
-    private string bitNet = "单寄存器(无符号)";
+    private string functionCode = "单寄存器(无符号)";
 
-    public string BitNet
+    public string FunctionCode
     {
-        get => bitNet;
+        get => functionCode;
         set
         {
-            SetProperty(ref bitNet, value);
+            SetProperty(ref functionCode, value);
             OnPropertyChanged(nameof(ShowValue));
         }
     }
@@ -218,7 +218,7 @@ public class DynCondition : ObservableObject
             switch (MethodName)
             {
                 case "读寄存器":
-                    value = $"站地址:{StationAddress} 起始地址:{StartAddress} 读取数量{EndAddress} {bitNet}";
+                    value = $"站地址:{StationAddress} 起始地址:{StartAddress} 读取数量{EndAddress} {functionCode}";
                     break;
                 case "读线圈":
                     value = $"站地址:{StationAddress} 起始地址:{StartAddress} 读取数量{EndAddress}";
@@ -227,7 +227,7 @@ public class DynCondition : ObservableObject
                     value = $"发送内容: {SocketSendMessage}";
                     break;
                 case "读DM寄存器":
-                    value = $"起始地址:{StartAddress} {bitNet}";
+                    value = $"起始地址:{StartAddress} {functionCode}";
                     break;
                 case "读R线圈状态":
                     value = $"起始地址:{StartAddress}";

@@ -104,9 +104,10 @@
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                     ItemsSource="{Binding MesTcpModel.DynConditionItemList}"
+                    PreparingCellForEdit="DynConditionDataGrid_OnPreparingCellForEdit"
                     AutoGenerateColumns="False"
                     Margin="30, 0">
-                    <DataGrid.Columns>
+                    <DataGrid.Columns >
                         <DataGridTextColumn Header="请求名" Width="*" Binding="{Binding Name}" />
                         <DataGridTemplateColumn Width="*" Header="请求类型">
                             <DataGridTemplateColumn.CellTemplate>
@@ -485,8 +486,8 @@
                                                           Grid.Column="1"
                                                           HorizontalAlignment="Left"
                                                           Margin="0 0 0 5"
-                                                          SelectedValue="{Binding BitNet ,UpdateSourceTrigger=PropertyChanged}"
-                                                          ItemsSource="{Binding DataContext.MesTcpModel.BitNet, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                          SelectedValue="{Binding FunctionCode ,UpdateSourceTrigger=PropertyChanged}"
+                                                          ItemsSource="{Binding DataContext.MesTcpModel.FunctionCodeList, RelativeSource={RelativeSource AncestorType=Page}}"
                                                           Width="150" />
                                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="校验 " Margin="5"
                                                            TextAlignment="Right" />
@@ -679,8 +680,8 @@
                                                        TextAlignment="Right" />
                                             <ComboBox Grid.Row="1" Grid.Column="1"
                                                       Margin="0 0 0 5"
-                                                      SelectedValue="{Binding BitNet ,UpdateSourceTrigger=PropertyChanged}"
-                                                      ItemsSource="{Binding DataContext.MesTcpModel.BitNet, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                      SelectedValue="{Binding FunctionCode ,UpdateSourceTrigger=PropertyChanged}"
+                                                      ItemsSource="{Binding DataContext.MesTcpModel.FunctionCodeList, RelativeSource={RelativeSource AncestorType=Page}}"
                                                       Width="150" />
                                             <TextBlock Grid.Row="4"
                                                        Grid.Column="0" Text="校验 " Margin="5"

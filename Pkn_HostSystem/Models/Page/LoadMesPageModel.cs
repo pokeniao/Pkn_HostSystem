@@ -8,10 +8,16 @@ namespace Pkn_HostSystem.Models.Page;
 
 public partial class LoadMesPageModel : ObservableObject
 {
+
+    #region 需要保存
+
     /// <summary>
     /// HTTP发送的列表
     /// </summary>
     [ObservableProperty]
     private ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel> mesPojoList;
+
+    #endregion
+
 
 }

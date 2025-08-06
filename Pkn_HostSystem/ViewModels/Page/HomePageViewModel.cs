@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
+using DynamicData.Binding;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
@@ -10,6 +11,7 @@ using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,14 +44,14 @@ public partial class HomePageViewModel : ObservableRecipient
 
             HomePageModel = new HomePageModel()
             {
-                SetConnectDg = new ObservableCollection<NetworkDetailed>() //创建 设置连接列表的DataGrid 绑定对象
+                SetConnectDg = new ObservableCollection<NetworkDetailed>(), //创建 设置连接列表的DataGrid 绑定对象
+                NetWorkList = new ObservableCollectionExtended<NetWork>()
             };
         }
-        else
-        {
-
-        }
-
+        //先添加 ,后绑定
+        GlobalManager.NetWorkDictionary.AddOrUpdate(HomePageModel.NetWorkList);
+        GlobalManager.NetWorkDictionary.Connect().Bind(HomePageModel.NetWorkList).Subscribe();
+        
         //获取到 HTTP的集合 引用类型并且绑定到HomePageModel.HttpLists
         var vm = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
         HomePageModel.HttpLists = vm.LoadMesPageModel.MesPojoList;

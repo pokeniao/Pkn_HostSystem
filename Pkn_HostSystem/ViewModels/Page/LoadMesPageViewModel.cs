@@ -46,10 +46,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 MesPojoList = new ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel>(), 
             };
         }
-        else
-        {
-            GlobalManager.ProcessTask.AddOrUpdate(LoadMesPageModel.MesPojoList);
-        }
+
+        //将本地 `流程` 读取,且添加到运行时管理
+        GlobalManager.ProcessTask.AddOrUpdate(LoadMesPageModel.MesPojoList);
         GlobalManager.ProcessTask.Connect().Bind(LoadMesPageModel.MesPojoList).Subscribe(); //绑定
         SnackbarService = new SnackbarService();
         Log = new LogControl<LoadMesPageViewModel>(SnackbarService);

@@ -7,6 +7,8 @@ namespace Pkn_HostSystem.Models.Page
 {
     public partial class LiveChartsModel : ObservableObject
     {
+
+        #region 不需要保存
         #region 良率饼图
 
         private ObservableValue ok = new ObservableValue(1);
@@ -190,6 +192,12 @@ namespace Pkn_HostSystem.Models.Page
         }
         #endregion
 
+
+        #endregion
+
+
+        #region 需要保存
+
         /// <summary>
         /// 产量统计,动态获取的名
         /// </summary>
@@ -201,6 +209,9 @@ namespace Pkn_HostSystem.Models.Page
         [ObservableProperty] private string runLiveChartsButton = "启用";
 
         [ObservableProperty] private int timeCyc = 100;
+
+        #endregion
+
 
     }
 }

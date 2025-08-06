@@ -51,21 +51,14 @@ public partial class MesTcpViewModel : ObservableRecipient
             //Model初始化
             MesTcpModel = new MesTcpModel()
             {
-                NetWorkList = new ObservableCollectionExtended<NetWork>(),
-                HttpList = new ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel>(),
                 DynNetList = new ObservableCollectionExtended<LoadMesDynContent>(),
             };
-            GlobalManager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe();
-            GlobalManager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();
-            MesTcpModel.HttpList = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
         }
-        else
-        {
-            GlobalManager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe(); //绑定
-            GlobalManager.DynDictionary.AddOrUpdate(MesTcpModel.DynNetList); //存入到缓存,后面在绑定
-            GlobalManager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();//绑定
-            MesTcpModel.HttpList = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
-        }
+       
+        GlobalManager.NetWorkDictionary.Connect().Bind(MesTcpModel.NetWorkList).Subscribe(); //绑定
+        GlobalManager.DynDictionary.AddOrUpdate(MesTcpModel.DynNetList); //存入到缓存,后面在绑定
+        GlobalManager.DynDictionary.Connect().Bind(MesTcpModel.DynNetList).Subscribe();//绑定
+        MesTcpModel.HttpList = Ioc.Default.GetRequiredService<LoadMesPageViewModel>().LoadMesPageModel.MesPojoList;
         log = new LogControl<MesTcpViewModel>(SnackbarService);
     }
 

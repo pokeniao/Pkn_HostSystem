@@ -30,7 +30,7 @@ namespace Pkn_HostSystem.Views.Pages
 
 
         /// <summary>
-        /// 选择方式修改
+        /// 动态嵌入对象被选中时触发
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -91,6 +91,28 @@ namespace Pkn_HostSystem.Views.Pages
                 default:
                     selectedItem.MethodName = "";
                     break;
+            }
+        }
+
+        #endregion
+
+        #region 嵌入内容被切换时候触发
+
+        private void DynConditionDataGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+           
+        }
+
+        private void DynConditionDataGrid_OnPreparingCellForEdit(object? sender,
+            DataGridPreparingCellForEditEventArgs e)
+        {
+
+            var col = e.Column;
+            if (col.Header.Equals("参数"))
+            {
+                //修改切换后,功能码下拉列表显示问题
+                DynCondition? item = DynConditionDataGrid.SelectedItem as DynCondition;
+                ChangeParam(item);
             }
         }
 
@@ -168,12 +190,12 @@ namespace Pkn_HostSystem.Views.Pages
         private void ChangeParam(DynCondition dynCondition)
         {
             //得到当前通讯方式
-            string netMethod = dynCondition.NetWork.NetworkDetailed.NetMethod;
+            string netMethod = dynCondition?.NetWork?.NetworkDetailed?.NetMethod;
             switch (netMethod)
             {
                 case "ModbusTcp":
                     viewModel.MesTcpModel.MethodName = ["读线圈", "读寄存器"];
-                    viewModel.MesTcpModel.BitNet =
+                    viewModel.MesTcpModel.FunctionCodeList =
                     [
                         "单寄存器(无符号)", "单寄存器(有符号)",
                         "双寄存器;无符号;BigEndian", "双寄存器;无符号;LittleEndian", "双寄存器;无符号;WordSwap", "双寄存器;无符号;ByteSwap",
@@ -184,7 +206,7 @@ namespace Pkn_HostSystem.Views.Pages
                     break;
                 case "ModbusRtu":
                     viewModel.MesTcpModel.MethodName = ["读线圈", "读寄存器"];
-                    viewModel.MesTcpModel.BitNet =
+                    viewModel.MesTcpModel.FunctionCodeList =
                     [
                         "单寄存器(无符号)", "单寄存器(有符号)",
                         "双寄存器;无符号;BigEndian", "双寄存器;无符号;LittleEndian", "双寄存器;无符号;WordSwap", "双寄存器;无符号;ByteSwap",
@@ -201,7 +223,7 @@ namespace Pkn_HostSystem.Views.Pages
                     break;
                 case "基恩士上位链路通讯":
                     viewModel.MesTcpModel.MethodName = ["读DM寄存器", "读R线圈状态"];
-                    viewModel.MesTcpModel.BitNet =
+                    viewModel.MesTcpModel.FunctionCodeList =
                         ["单寄存器(无符号)", "单寄存器(有符号)", "双寄存器(无符号)", "双寄存器(有符号)", "32位浮点数", "ASCII字符串"];
                     break;
                 case "串口232/485":
@@ -252,7 +274,6 @@ namespace Pkn_HostSystem.Views.Pages
                 viewModel.MesTcpModel.SwitchList = item.SwitchList;
                 viewModel.MesTcpModel.SetSwitchSetName = $"Switch :{item.Name}";
             }
-
         }
 
         /// <summary>
@@ -313,7 +334,6 @@ namespace Pkn_HostSystem.Views.Pages
                 viewModel.MesTcpModel.InteriorReturnMessage = item.InteriorTriggerReturnMessage;
                 viewModel.MesTcpModel.SetHttpObjectName = $"设置定义的返回内容 :{item.Name}";
             }
-
         }
 
         /// <summary>
@@ -372,7 +392,6 @@ namespace Pkn_HostSystem.Views.Pages
                 viewModel.MesTcpModel.TranspondModbusDetailed = item.TranspondModbusDetailed;
                 viewModel.MesTcpModel.TranspondSetName = $"转发设置 :{item.Name}";
             }
-         
         }
 
         /// <summary>
