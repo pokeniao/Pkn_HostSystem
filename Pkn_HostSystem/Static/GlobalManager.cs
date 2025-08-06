@@ -19,13 +19,15 @@ namespace Pkn_HostSystem.Static;
 public static class GlobalManager
 {
 
-    ///
-    ///
-    /// 
+
+    /// <summary>
+    /// 日志的富文本
+    /// </summary>
     public static RichTextBox LogRichTextBox;
 
     public static FlowDocument LogRichTextBoxDocument;
 
+    public static DateTimeOffset StartTime;
 
     /// <summary>
     ///  当前软件版本

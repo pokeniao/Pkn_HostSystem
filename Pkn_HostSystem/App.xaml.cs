@@ -30,29 +30,31 @@ namespace Pkn_HostSystem
         /// <param name="e"></param>
         protected override async void OnStartup(StartupEventArgs e)
         {
-          
-                AppRunOn();
-                OnStartupWindow onStartupWindow = new OnStartupWindow();
-                onStartupWindow.Show();
-              
+            //记录启动时间
+            GlobalManager.StartTime = DateTimeOffset.Now;
+            AppRunOn();
+            OnStartupWindow onStartupWindow = new OnStartupWindow();
+            onStartupWindow.Show();
 
-               await Task.Run(async () =>
-                {
-                    LogConfig();
-                    log4net.LogManager.GetLogger(typeof(App)).Info("Pkn_HostSystem程序启动");
-                    CreateIoc();
-                    LoadDll();
-                });
-                
-                // ✅ 创建主窗口，显示并设置为主窗口
-                var mainWindow = new MainWindow();
-                Application.Current.MainWindow = mainWindow;
-                mainWindow.Show();
-                base.OnStartup(e); // 只有当 App.Xaml 中设置了 StartupUri="MainWindow.xaml" 才需要
-                onStartupWindow.Close();
-              
+
+            await Task.Run(async () =>
+            {
+                LogConfig();
+                log4net.LogManager.GetLogger(typeof(App)).Info("Pkn_HostSystem程序启动");
+                CreateIoc();
+                LoadDll();
+            });
+
+            // ✅ 创建主窗口，显示并设置为主窗口
+            var mainWindow = new MainWindow();
+            Application.Current.MainWindow = mainWindow;
+            mainWindow.Show();
+            base.OnStartup(e); // 只有当 App.Xaml 中设置了 StartupUri="MainWindow.xaml" 才需要
+            onStartupWindow.Close();
+
+            Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().Log
+                .Info($"启动耗时{(DateTimeOffset.Now - GlobalManager.StartTime).TotalMilliseconds} ms");
         }
-
 
 
         #region 唯一运行程序
@@ -107,7 +109,7 @@ namespace Pkn_HostSystem
         /// <summary>
         /// 日志配置
         /// </summary>
-        private  void LogConfig()
+        private void LogConfig()
         {
             string path = Path.Combine(GlobalManager.AppFolder, "Logs");
             // 设置 log4net 全局变量
@@ -132,7 +134,7 @@ namespace Pkn_HostSystem
         /// <summary>
         /// IOC配置
         /// </summary>
-        private  void CreateIoc()
+        private void CreateIoc()
         {
             // IOC 容器
             Ioc.Default.ConfigureServices(
@@ -151,7 +153,6 @@ namespace Pkn_HostSystem
                     .AddSingleton<LiveChartsTestViewModel>()
                     .AddSingleton<LoginViewModel>()
                     .AddSingleton<SerialToolViewModel>()
-                    .AddSingleton<SetLiveChartsParamViewModel>()
 
                     //页面单例 ,预加载
                     // .AddSingleton<LoginWindowPage1>()
@@ -177,7 +178,7 @@ namespace Pkn_HostSystem
         /// <summary>
         /// 加载引用的DLL配置
         /// </summary>
-        private  void LoadDll()
+        private void LoadDll()
         {
             // AppDomain.CurrentDomain.BaseDirectory 获取当前程序（即 .exe 可执行文件）所在的根目录路径，结尾自带 \ 
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "lib");

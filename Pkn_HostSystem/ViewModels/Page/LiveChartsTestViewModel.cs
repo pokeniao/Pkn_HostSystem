@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Force.DeepCloner;
 using LiveChartsCore;
@@ -9,9 +10,11 @@ using LiveChartsCore.SkiaSharpView.Extensions;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using LiveChartsCore.SkiaSharpView.VisualElements;
+using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.Service.LoadMes;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
@@ -27,7 +30,9 @@ namespace Pkn_HostSystem.ViewModels.Page
         public LiveChartsModel LiveChartsModel { get; set; } = JsonTool<LiveChartsModel>.Load();
         public LogControl<LiveChartsTestViewModel> Log;
         public SnackbarService SnackbarService = new SnackbarService();
-
+        //循环读取数据的CTS
+        public CancellationTokenSource ctsCycRun { get; set; }
+        //绿色
         private static readonly RadialGradientPaint green = new RadialGradientPaint(
             [
                 new SKColor(130, 220, 100), // 中心亮绿
@@ -40,7 +45,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             [0f, 0.4f, 0.7f, 1f],
             tileMode: SKShaderTileMode.Clamp
         );
-
+        //红色
         private static readonly RadialGradientPaint red = new RadialGradientPaint(
             [
                 new SKColor(200, 50, 70), // 中心酒红
@@ -52,8 +57,7 @@ namespace Pkn_HostSystem.ViewModels.Page
             radius: 0,
             [0f, 0.3f, 0.6f, 1f],
             tileMode: SKShaderTileMode.Clamp);
-
-
+        //蓝色
         private readonly RadialGradientPaint blue = new RadialGradientPaint(
             [
                 new SKColor(40, 100, 220), // 深科技蓝
@@ -297,9 +301,117 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public void SetParamButton(LiveChartsTestPage page)
         {
-            var setLiveChartsParamWindow = new SetLiveChartsParamWindow();
+            var setLiveChartsParamWindow = new SetLiveChartsParamWindow(LiveChartsModel);
 
             var showDialog = setLiveChartsParamWindow.ShowDialog();
+        }
+
+        #endregion
+
+
+        #region 读取数据
+        /// <summary>
+        /// 运行
+        /// </summary>
+        [RelayCommand]
+        public async Task Run(SetLiveChartsParamWindow window)
+        {
+            if (LiveChartsModel.RunLiveChartsButton == "启用")
+            {
+                ctsCycRun = new CancellationTokenSource();
+                Task.Run(() => RunLiveCharts(ctsCycRun));
+                LiveChartsModel.RunLiveChartsButton = "停用";
+            }
+            else
+            {
+                ctsCycRun.Cancel();
+                LiveChartsModel.RunLiveChartsButton = "启用";
+            }
+
+        }
+
+        public async Task RunLiveCharts(CancellationTokenSource cts)
+        {
+            LoadMesService loadMesService = new LoadMesService();
+            while (!cts.Token.IsCancellationRequested)
+            {
+                try
+                {
+                    //产量统计
+                    var dayProductionDynName = LiveChartsModel.DayProductionDynName;
+                    //执行当前动态嵌入内容
+                    (bool sueeced, string? result) = await loadMesService.DynMessage(dayProductionDynName, cts, true);
+                    if (!sueeced)
+                    {
+                        return;
+                    }
+
+                    //解析JSON
+                    string tryFormatJson = JsonTool<object>.TryFormatJson(result, out bool isJson);
+
+                    JObject jObject = JObject.Parse(result);
+
+                    JArray? OksJArray = jObject.SelectToken("OKS") as JArray;
+
+                    var liveChartsTestViewModel = Ioc.Default.GetRequiredService<LiveChartsTestViewModel>();
+
+                    double OksTotal = 0;
+                    //OKS修改参数
+                    if (OksJArray != null)
+                    {
+                        for (int i = 0;
+                             i < Math.Min(OksJArray.Count, liveChartsTestViewModel.LiveChartsModel.Oks.Count);
+                             i++)
+                        {
+                            if (double.TryParse(OksJArray[i]?.ToString(), out double value))
+                            {
+                                liveChartsTestViewModel.LiveChartsModel.Oks[i].Value = value;
+                                OksTotal = OksTotal + value;
+                            }
+                        }
+                    }
+
+                    JArray? NgsJArray = jObject.SelectToken("NGS") as JArray;
+
+                    double NgsTotal = 0;
+                    //NGS修改参数
+                    if (NgsJArray != null)
+                    {
+                        for (int i = 0;
+                             i < Math.Min(NgsJArray.Count, liveChartsTestViewModel.LiveChartsModel.Ngs.Count);
+                             i++)
+                        {
+                            if (double.TryParse(NgsJArray[i]?.ToString(), out double value))
+                            {
+                                liveChartsTestViewModel.LiveChartsModel.Ngs[i].Value = value;
+                                NgsTotal = NgsTotal + value;
+                            }
+                        }
+                    }
+                    //统计
+                    for (int i = 0;
+                         i < Math.Min(OksJArray.Count, NgsJArray.Count);
+                         i++)
+                    {
+                        if (double.TryParse(NgsJArray[i]?.ToString(), out double value))
+                        {
+                            if (double.TryParse(OksJArray[i]?.ToString(), out double value2))
+                            {
+                                liveChartsTestViewModel.LiveChartsModel.All[i].Value = value + value2;
+                            }
+                        }
+                    }
+                    //良率饼图统计
+                    liveChartsTestViewModel.LiveChartsModel.Ok.Value = OksTotal;
+                    liveChartsTestViewModel.LiveChartsModel.Ng.Value = NgsTotal;
+                    await Task.Delay(LiveChartsModel.TimeCyc, cts.Token);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            }
         }
 
         #endregion
