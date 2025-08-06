@@ -20,6 +20,7 @@ using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
 using SkiaSharp;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -314,7 +315,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         /// 运行
         /// </summary>
         [RelayCommand]
-        public async Task Run(SetLiveChartsParamWindow window)
+        public async Task Run()
         {
             if (LiveChartsModel.RunLiveChartsButton == "启用")
             {
@@ -329,9 +330,23 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
         }
 
+        public async Task ReStart()
+        {
+            if (LiveChartsModel.RunLiveChartsButton == "停用")
+            {
+                ctsCycRun = new CancellationTokenSource();
+                Task.Run(() => RunLiveCharts(ctsCycRun));
+            }
+        }
+
         public async Task RunLiveCharts(CancellationTokenSource cts)
         {
+            TraceContext.Name = "产量统计循环";
             LoadMesService loadMesService = new LoadMesService();
+            bool isJson;
+            bool sueeced;
+            string? result;
+            string tryFormatJson;
             while (!cts.Token.IsCancellationRequested)
             {
                 try
@@ -339,14 +354,22 @@ namespace Pkn_HostSystem.ViewModels.Page
                     //产量统计
                     var dayProductionDynName = LiveChartsModel.DayProductionDynName;
                     //执行当前动态嵌入内容
-                    (bool sueeced, string? result) = await loadMesService.DynMessage(dayProductionDynName, cts, true);
+                    (sueeced, result) = await loadMesService.DynMessage(dayProductionDynName, cts, true);
                     if (!sueeced)
                     {
+                        Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败");
                         return;
                     }
 
                     //解析JSON
-                    string tryFormatJson = JsonTool<object>.TryFormatJson(result, out bool isJson);
+                     tryFormatJson = JsonTool<object>.TryFormatJson(result, out  isJson);
+
+                    if (!isJson)
+                    {
+                        Log.Error($"[{TraceContext.Name}]--产量统计解析JSON失败");
+                        return;
+                    }
+
 
                     JObject jObject = JObject.Parse(result);
 
@@ -403,6 +426,45 @@ namespace Pkn_HostSystem.ViewModels.Page
                     //良率饼图统计
                     liveChartsTestViewModel.LiveChartsModel.Ok.Value = OksTotal;
                     liveChartsTestViewModel.LiveChartsModel.Ng.Value = NgsTotal;
+
+                    //产量统计
+                    string runStopTimeDynName = LiveChartsModel.RunStopTimeDynName;
+
+                    //执行当前动态嵌入内容
+                    (sueeced, result) = await loadMesService.DynMessage(runStopTimeDynName, cts, true);
+
+                    if (!sueeced)
+                    {
+                        Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败");
+                        return;
+                    }
+                    //解析JSON
+                    tryFormatJson = JsonTool<object>.TryFormatJson(result, out isJson);
+
+                    if (!isJson)
+                    {
+                        Log.Error($"[{TraceContext.Name}]--停机运行时长统计解析JSON失败");
+                        return;
+                    }
+
+                    JObject jObject2 = JObject.Parse(result);
+
+                    if (double.TryParse(jObject2.SelectToken("运行总时长").ToString(), out double value3))
+                    {
+                        liveChartsTestViewModel.LiveChartsModel.RunTime.Value = value3;
+                    }
+                    if (double.TryParse(jObject2.SelectToken("报警总时长]").ToString(), out double value4))
+                    {
+                        liveChartsTestViewModel.LiveChartsModel.ErrorTime.Value = value4;
+                    }
+                    if (double.TryParse(jObject2.SelectToken("待机总时长").ToString(), out double value5))
+                    {
+                        liveChartsTestViewModel.LiveChartsModel.StopTime.Value = value5;
+                    }
+
+
+
+
                     await Task.Delay(LiveChartsModel.TimeCyc, cts.Token);
                 }
                 catch (Exception e)

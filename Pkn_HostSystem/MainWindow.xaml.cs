@@ -123,6 +123,10 @@ namespace Pkn_HostSystem
                     TraceContext.Name = null;
                 }
             }
+
+            //运行统计
+            LiveChartsTestViewModel liveChartsTestViewModel = Ioc.Default.GetRequiredService<LiveChartsTestViewModel>();
+            liveChartsTestViewModel.ReStart();
         }
 
         #region 自动伸缩的Navigation

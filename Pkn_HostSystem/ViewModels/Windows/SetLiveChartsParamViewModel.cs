@@ -44,7 +44,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
         /// </summary>
         /// <param name="window"></param>
         [RelayCommand]
-        public void DayTotalImportButton(SetLiveChartsParamWindow window)
+        public void DayTotalImportButton()
         {
             ObservableCollection<DynCondition> observableCollection = new();
             observableCollection.Add(new DynCondition(){Name = "okh0-1" });
@@ -100,7 +100,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
             {
                 Name="产量统计",
                 DynCondition = observableCollection,
-                Message = "{\r\n\"OKS\":[\"[okh0-1]\",\"[okh1-2]\",\"[okh2-3]\",\"[okh3-4]\",\"[okh4-5]\",\"[okh5-6]\",\"[okh6-7]\",\"[okh7-8]\",\"[okh8-9]\",\"[okh9-10]\",\"[okh10-11]\",\"[okh11-12]\",\"[okh12-13]\",\"[okh13-14]\",\"[okh14-15]\",\"[okh15-16]\",\"[okh16-17]\",\"[okh17-18]\",\"[okh18-19]\",\"[okh19-20]\",\"[okh20-21]\",\"[okh21-22]\",\"[okh22-23]\",\"[okh23-0]\"],\r\n\"NGS\":[\"[ngh0-1]\",\"[ngh1-2]\",\"[ngh2-3]\",\"[ngh3-4]\",\"[ngh4-5]\",\"[ngh5-6]\",\"[ngh6-7]\",\"[ngh7-8]\",\"[ngh8-9]\",\"[ngh9-10]\",\"[ngh10-11]\",\"[ngh11-12]\",\"[ngh12-13]\",\"[ngh13-14]\",\"[ngh14-15]\",\"[ngh15-16]\",\"[ngh16-17]\",\"[ngh17-18]\",\"[ngh18-19]\",\"[ngh19-20]\",\"[ngh20-21]\",\"[ngh21-22]\",\"[ngh22-23]\",\"[ngh23-0]\"]\r\n\r\n\r\n}\r\n\r\n"
+                Message = "{\r\n\"OKS\":[\"[okh0-1]\",\"[okh1-2]\",\"[okh2-3]\",\"[okh3-4]\",\"[okh4-5]\",\"[okh5-6]\",\"[okh6-7]\",\"[okh7-8]\",\"[okh8-9]\",\"[okh9-10]\",\"[okh10-11]\",\"[okh11-12]\",\"[okh12-13]\",\"[okh13-14]\",\"[okh14-15]\",\"[okh15-16]\",\"[okh16-17]\",\"[okh17-18]\",\"[okh18-19]\",\"[okh19-20]\",\"[okh20-21]\",\"[okh21-22]\",\"[okh22-23]\",\"[okh23-0]\"],\r\n\"NGS\":[\"[ngh0-1]\",\"[ngh1-2]\",\"[ngh2-3]\",\"[ngh3-4]\",\"[ngh4-5]\",\"[ngh5-6]\",\"[ngh6-7]\",\"[ngh7-8]\",\"[ngh8-9]\",\"[ngh9-10]\",\"[ngh10-11]\",\"[ngh11-12]\",\"[ngh12-13]\",\"[ngh13-14]\",\"[ngh14-15]\",\"[ngh15-16]\",\"[ngh16-17]\",\"[ngh17-18]\",\"[ngh18-19]\",\"[ngh19-20]\",\"[ngh20-21]\",\"[ngh21-22]\",\"[ngh22-23]\",\"[ngh23-0]\"]\r\n}\r\n"
             };
 
             if (GlobalManager.DynDictionary.Lookup("产量统计").HasValue)
@@ -113,6 +113,35 @@ namespace Pkn_HostSystem.ViewModels.Windows
             GlobalManager.DynDictionary.AddOrUpdate(loadMesDynContent);
         }
 
+
+        /// <summary>
+        /// 停机运行时长配置
+        /// </summary>
+        [RelayCommand]
+        public void RunTimeImportButton()
+        {
+            ObservableCollection<DynCondition> observableCollection = new();
+            observableCollection.Add(new DynCondition() { Name = "运行总时长" });
+            observableCollection.Add(new DynCondition() { Name = "报警总时长" });
+            observableCollection.Add(new DynCondition() { Name = "待机总时长" });
+
+
+            LoadMesDynContent loadMesDynContent = new()
+            {
+                Name = "停机运行时长",
+                DynCondition = observableCollection,
+                Message = "{\r\n\"运行总时长\":\"[运行总时长]\",\r\n\"报警总时长\":\"[报警总时长]\",\r\n\"待机总时长\":\"[待机总时长]\"\r\n}\r\n"
+            };
+
+            if (GlobalManager.DynDictionary.Lookup("停机运行时长").HasValue)
+            {
+                Log.WarningAndShowTask("添加动态通讯名称已存在", $"添加动态通讯名称已存在: 停机运行时长");
+                return;
+            }
+
+            LiveChartsModel.RunStopTimeDynName = "停机运行时长";
+            GlobalManager.DynDictionary.AddOrUpdate(loadMesDynContent);
+        }
         /// <summary>
         /// 运行按钮
         /// </summary>

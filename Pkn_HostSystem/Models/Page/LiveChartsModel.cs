@@ -203,6 +203,8 @@ namespace Pkn_HostSystem.Models.Page
         /// </summary>
         [ObservableProperty] private string dayProductionDynName;
 
+        [ObservableProperty] private string runStopTimeDynName;
+
         /// <summary>
         /// 运行LiveCharts进行数据展示按钮
         /// </summary>
