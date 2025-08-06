@@ -22,10 +22,12 @@ namespace Pkn_HostSystem.Views.Pages
             InitializeComponent();
             DataContext = viewModel;
             viewModel.setSnackbarPresenter(SnackbarPresenter);
-            if (viewModel.MesTcpModel.DynNetList.Count > 0)
-            {
-                DynNameListBox.SelectedValue = viewModel.MesTcpModel.DynNetList[0];
-            }
+
+            MessageTextBox.Visibility = Visibility.Collapsed;
+            // if (viewModel.MesTcpModel.DynNetList.Count > 0)
+            // {
+            //     DynNameListBox.SelectedValue = viewModel.MesTcpModel.DynNetList[0];
+            // }
         }
 
 
@@ -37,7 +39,7 @@ namespace Pkn_HostSystem.Views.Pages
         private void DynNameListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             LoadMesDynContent? mesTcpPojo = DynNameListBox.SelectedItem as LoadMesDynContent;
-
+            MessageTextBox.Visibility = Visibility.Visible;
             if (mesTcpPojo != null)
             {
                 //绑定选中行的数据到页面
@@ -414,7 +416,10 @@ namespace Pkn_HostSystem.Views.Pages
         private void MesTcpPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             DynGrid.Height = e.NewSize.Height;
+    
         }
+
+
 
         /// <summary>
         /// 

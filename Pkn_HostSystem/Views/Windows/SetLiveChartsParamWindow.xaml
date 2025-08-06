@@ -71,7 +71,7 @@
         <GroupBox
             Grid.Row="0"
             Grid.Column="1"
-            Header="停机时间">
+            Header="运行报警停机时长统计">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -90,7 +90,7 @@
                           ItemsSource="{Binding DynNetList }"
                           DisplayMemberPath="Name"
                           SelectedValuePath="Name"
-                          SelectedValue="{Binding LiveChartsModel.DayProductionDynName ,UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValue="{Binding LiveChartsModel.RunStopTimeDynName ,UpdateSourceTrigger=PropertyChanged}"
                           Width="150" />
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="配置导入"
                            Margin="5"
@@ -100,7 +100,7 @@
                         Width="150"
                         Margin="0 0 0 5"
                         Content="导入到配置"
-                        Command="{Binding DayTotalImportButtonCommand }" />
+                        Command="{Binding RunTimeImportButtonCommand }" />
             </Grid>
         </GroupBox>
 

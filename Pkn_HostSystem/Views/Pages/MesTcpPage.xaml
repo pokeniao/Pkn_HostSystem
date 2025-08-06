@@ -83,6 +83,7 @@
                     BorderThickness="1"
                     CornerRadius="10">
                     <TextBox
+                        Name="MessageTextBox"
                         Margin="5"
                         VerticalScrollBarVisibility="Auto"
                         HorizontalScrollBarVisibility="Auto"
