@@ -20,6 +20,7 @@ public partial class HomePageModel : ObservableObject
     /// 变量,当前选择的名字
     /// </summary>
     [ObservableProperty] private string currentSetName;
+
     #endregion
 
     #region 自定义页

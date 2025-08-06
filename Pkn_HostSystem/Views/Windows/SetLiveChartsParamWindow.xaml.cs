@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.ViewModels.Windows;
 using System;
 using System.Collections.Generic;
@@ -19,16 +20,15 @@ namespace Pkn_HostSystem.Views.Windows
     /// <summary>
     /// SetLiveChartsParamWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class SetLiveChartsParamWindow 
+    public partial class SetLiveChartsParamWindow
     {
+  
         public SetLiveChartsParamViewModel ViewModel { get; set; }
-
-        public SetLiveChartsParamWindow()
+        public SetLiveChartsParamWindow(LiveChartsModel LiveChartsModel)
         {
             InitializeComponent();
-            ViewModel = Ioc.Default.GetRequiredService<SetLiveChartsParamViewModel>();
+            ViewModel = new SetLiveChartsParamViewModel(LiveChartsModel);
             DataContext = ViewModel;
-
             ViewModel.setSnackbarService(SnackbarPresenter);
 
         }

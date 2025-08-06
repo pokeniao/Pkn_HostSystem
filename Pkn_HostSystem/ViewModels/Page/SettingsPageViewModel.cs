@@ -278,6 +278,10 @@ public partial class SettingsPageViewModel : ObservableRecipient
         VisionPageViewModel visionPageViewModel = Ioc.Default.GetRequiredService<VisionPageViewModel>();
         visionPageViewModel.SaveCommand.Execute(null);
 
+
+        LiveChartsTestViewModel liveChartsTestViewModel = Ioc.Default.GetRequiredService<LiveChartsTestViewModel>();
+        liveChartsTestViewModel.SaveCommand.Execute(null);
+
         GlobalManager.SaveRegister();
 
         return true;

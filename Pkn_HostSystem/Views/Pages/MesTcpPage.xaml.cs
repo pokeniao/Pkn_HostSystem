@@ -394,7 +394,7 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void MesTcpPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            DynGrid.MaxHeight = e.NewSize.Height;
+            DynGrid.Height = e.NewSize.Height;
         }
 
         /// <summary>

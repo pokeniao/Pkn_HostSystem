@@ -20,7 +20,7 @@
 
 	<ItemGroup>
 		<None Remove="Assets\github.png" />
-		<None Remove="Assets\LoadingGIF.gif" />
+		<None Remove="Assets\LoadingGIF2.gif" />
 		<None Remove="Assets\Pkn_Install128.ico" />
 		<None Remove="Assets\Pkn_Install128Delete.ico" />
 		<None Remove="Assets\plc2.ico" />
@@ -29,7 +29,7 @@
 
 	<ItemGroup>
 		<Resource Include="Assets\github.png" />
-		<Resource Include="Assets\LoadingGIF.gif" />
+		<Resource Include="Assets\LoadingGIF2.gif" />
 		<Resource Include="Assets\Pkn_Install128.ico" />
 		<Resource Include="Assets\Pkn_Install128Delete.ico" />
 		<Resource Include="Assets\pokeniao_logo_圆角_128.ico">

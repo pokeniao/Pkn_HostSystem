@@ -1,25 +1,80 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore.Defaults;
-using LiveChartsCore.SkiaSharpView.Painting;
-using LiveChartsCore.SkiaSharpView.VisualElements;
-using Pkn_HostSystem.Static;
-using SkiaSharp;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.Models.Page
 {
-    public partial class LiveChartsModel :ObservableObject
+    public partial class LiveChartsModel : ObservableObject
     {
+        #region 良率饼图
 
+        private ObservableValue ok = new ObservableValue(1);
+        [JsonIgnore]
+        public ObservableValue Ok
+        {
+            get => ok;
+            set
+            {
+                SetProperty(ref ok, value);
+            }
+
+        }
+
+
+        private ObservableValue ng = new ObservableValue(1);
+        [JsonIgnore]
+        public ObservableValue Ng
+        {
+            get => ng;
+            set
+            {
+                SetProperty(ref ng, value);
+            }
+        }
+        #endregion
         //良率Ok饼图
-       [ObservableProperty] private ObservableValue ok = new ObservableValue(1);
-       [ObservableProperty] private ObservableValue ng = new ObservableValue(1);
-       [ObservableProperty] private ObservableValue runTime = new ObservableValue(1);
-       [ObservableProperty] private ObservableValue stopTime = new ObservableValue(1); //一天一共86400秒
-       [ObservableProperty] private ObservableValue errorTime = new ObservableValue(1);
-        
-        #region 七日产量
 
+        #region 停机运行时间
+
+        private ObservableValue runTime = new ObservableValue(1);
+        [JsonIgnore]
+        public ObservableValue RunTime
+        {
+            get => runTime;
+            set
+            {
+                SetProperty(ref runTime, value);
+            }
+
+        }
+
+        private ObservableValue stopTime = new ObservableValue(1); //一天一共86400秒
+        [JsonIgnore]
+        public ObservableValue StopTime
+        {
+            get => stopTime;
+            set
+            {
+                SetProperty(ref stopTime, value);
+            }
+
+        }
+
+        private ObservableValue errorTime = new ObservableValue(1);
+        [JsonIgnore]
+        public ObservableValue ErrorTime
+        {
+            get => errorTime;
+            set
+            {
+                SetProperty(ref errorTime, value);
+            }
+
+        }
+        #endregion
+
+        #region 七日产量
         //OK数量
         private ObservableCollection<ObservableValue> oks = new ObservableCollection<ObservableValue>()
         {
@@ -48,20 +103,17 @@ namespace Pkn_HostSystem.Models.Page
             new ObservableValue(0),//23
             new ObservableValue(0),//24
         };
-
-
-
+        [JsonIgnore]
         public ObservableCollection<ObservableValue> Oks
         {
             get => oks;
             set
             {
                 SetProperty(ref oks, value);
-                
+
             }
         }
         //NG数量
-
         private ObservableCollection<ObservableValue> ngs = new ObservableCollection<ObservableValue>()
         {
             new ObservableValue(0),//1
@@ -89,7 +141,7 @@ namespace Pkn_HostSystem.Models.Page
             new ObservableValue(0),//23
             new ObservableValue(0),//24
         };
-
+        [JsonIgnore]
         public ObservableCollection<ObservableValue> Ngs
         {
             get => ngs;
@@ -127,7 +179,7 @@ namespace Pkn_HostSystem.Models.Page
             new ObservableValue(0),//23
             new ObservableValue(0),//24
         };
-
+        [JsonIgnore]
         public ObservableCollection<ObservableValue> All
         {
             get => all;
@@ -136,11 +188,19 @@ namespace Pkn_HostSystem.Models.Page
                 SetProperty(ref all, value);
             }
         }
-
-
         #endregion
 
+        /// <summary>
+        /// 产量统计,动态获取的名
+        /// </summary>
+        [ObservableProperty] private string dayProductionDynName;
 
+        /// <summary>
+        /// 运行LiveCharts进行数据展示按钮
+        /// </summary>
+        [ObservableProperty] private string runLiveChartsButton = "启用";
+
+        [ObservableProperty] private int timeCyc = 100;
 
     }
 }

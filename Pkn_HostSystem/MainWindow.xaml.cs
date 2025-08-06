@@ -23,7 +23,7 @@ namespace Pkn_HostSystem
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow 
+    public partial class MainWindow
     {
         //预加载
         public MainWindow()
@@ -48,11 +48,9 @@ namespace Pkn_HostSystem
                 PreLoad();
                 // 默认导航页面
                 navigation.Navigate(typeof(HomePage));
-
-               
                 _ = Starting();
             };
-       
+         
         }
 
         private void PreLoad()
