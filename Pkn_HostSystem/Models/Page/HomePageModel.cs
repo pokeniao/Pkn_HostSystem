@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DynamicData.Binding;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Models.Windows;
 using System.Collections.ObjectModel;
 
@@ -10,23 +10,35 @@ namespace Pkn_HostSystem.Models.Page;
 
 public partial class HomePageModel : ObservableObject
 {
-
-    #region 通讯设置页
+    #region 需要保存的
     /// <summary>
     /// 网络连接对象列表
     /// </summary>
     [ObservableProperty] private ObservableCollection<NetworkDetailed> setConnectDg;
     /// <summary>
-    /// 变量,当前选择的名字
+    /// 已连接的对象
     /// </summary>
-    [ObservableProperty] private string currentSetName;
+    [ObservableProperty] private ObservableCollectionExtended<NetWork> netWorkList;
 
-    #endregion
+
+
+    /// <summary>
+    /// 相机的连接集合
+    /// </summary>
+    [ObservableProperty] private ObservableCollection<CameraDetailed> cameraList;
+
+    /// <summary>
+    /// 连接数据库
+    /// </summary>
+    [ObservableProperty] private JdbcUrl jdbcUrl = new();
+
+    /// <summary>
+    /// 连接数据URL地址
+    /// </summary>
+    [ObservableProperty] private string realJdbcUrl = "Server=服务器名;DataBase=数据名;Uid=sa;Pwd=密码;TrustServerCertificate=True;";
+    [ObservableProperty] private string showJdbcUrl = "Server=服务器名;DataBase=数据名;Uid=sa;Pwd=密码;TrustServerCertificate=True;";
 
     #region 自定义页
-
-    
-
 
     // /// <summary>
     // /// 工单集合
@@ -48,34 +60,73 @@ public partial class HomePageModel : ObservableObject
     [ObservableProperty] private string vHight;
 
 
+
+
+
     #endregion
+
+
+    #endregion
+
+
+    #region 不需要保存的变量
+
+    /// <summary>
+    /// 网络连接对象列表,当前选择的名字
+    /// </summary>
+    private string currentSetName;
+
+    [JsonIgnore]
+    public string CurrentSetName
+    {
+        get => currentSetName;
+        set
+        {
+            SetProperty(ref currentSetName, value);
+        }
+
+    }
 
 
 
     /// <summary>
     /// Http请求的列表
     /// </summary>
-    [ObservableProperty] private ObservableCollection<LoadMesAddAndUpdateWindowModel> httpLists;
+    private ObservableCollection<LoadMesAddAndUpdateWindowModel> httpLists;
+    [JsonIgnore]
+    public ObservableCollection<LoadMesAddAndUpdateWindowModel> HttpLists
+    {
+        get => httpLists;
+        set
+        {
+            SetProperty(ref httpLists, value);
+        }
 
+    }
     /// <summary>
     /// 当前选中的Http名
     /// </summary>
-    [ObservableProperty] private string httpName;
+    private string httpName;
+    [JsonIgnore]
+    public string HttpName
+    {
+        get => httpName;
+        set
+        {
+            SetProperty(ref httpName, value);
+        }
 
-    /// <summary>
-    /// 相机的连接集合
-    /// </summary>
-    [ObservableProperty] private ObservableCollection<CameraDetailed> cameraList;
+    }
+    #endregion
 
-    /// <summary>
-    /// 连接数据库
-    /// </summary>
-    [ObservableProperty] private JdbcUrl jdbcUrl = new();
 
-    /// <summary>
-    /// 连接数据URL地址
-    /// </summary>
-    [ObservableProperty] private string realJdbcUrl = "Server=服务器名;DataBase=数据名;Uid=sa;Pwd=密码;TrustServerCertificate=True;";
-    [ObservableProperty] private string showJdbcUrl = "Server=服务器名;DataBase=数据名;Uid=sa;Pwd=密码;TrustServerCertificate=True;";
+
+
+
+
+
+
+
+
 
 }

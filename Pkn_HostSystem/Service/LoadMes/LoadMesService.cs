@@ -2004,7 +2004,7 @@ public class LoadMesService : ILoadMesService
             var holdingRegisters03 = await modbusBase.ReadHoldingRegisters_03((byte)item.StationAddress,
                 (ushort)item.StartAddress, (ushort)item.EndAddress);
 
-            switch (item.BitNet)
+            switch (item.FunctionCode)
             {
                 case "单寄存器(无符号)":
                     //用逗号分割
@@ -2137,7 +2137,7 @@ public class LoadMesService : ILoadMesService
         int num = item.EndAddress;
         try
         {
-            switch (item.BitNet)
+            switch (item.FunctionCode)
             {
                 case "单寄存器(无符号)":
 

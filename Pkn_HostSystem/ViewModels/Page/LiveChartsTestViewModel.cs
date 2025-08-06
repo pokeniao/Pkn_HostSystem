@@ -327,7 +327,6 @@ namespace Pkn_HostSystem.ViewModels.Page
                 ctsCycRun.Cancel();
                 LiveChartsModel.RunLiveChartsButton = "启用";
             }
-
         }
 
         public async Task RunLiveCharts(CancellationTokenSource cts)

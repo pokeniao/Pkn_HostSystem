@@ -90,7 +90,7 @@
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
                         CornerRadius="10">
-                        <ListBox Name="HttpLogListBox" ItemsSource="{Binding LoadMesPageModel.ReturnMessageList}" />
+                      
                     </Border>
                     <WrapPanel 
                         Grid.Row="2"
