@@ -65,6 +65,9 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
 
         public async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
         {
+            Volatile.Write(ref GlobalManager.ArrayRegister[54],0);
+            Volatile.Write(ref GlobalManager.ArrayRegister[55],0);
+            Volatile.Write(ref GlobalManager.ArrayRegister[56],0);
             var eachStation = TraceContext.GetParam("EachStation");
             EachStation<Station1>? station1 = eachStation as EachStation<Station1>;
             station1.Station.Main(cts);
