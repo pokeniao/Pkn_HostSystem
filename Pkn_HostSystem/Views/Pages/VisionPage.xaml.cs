@@ -28,8 +28,8 @@ namespace Pkn_HostSystem.Views.Pages
             InitializeComponent();
             ViewModel = Ioc.Default.GetRequiredService<VisionPageViewModel>();
             DataContext = ViewModel;
-            ViewModel.setSnackbarPresenter(SnackbarPresenter);
-            ViewModel.setHSmartWindowControl(HalconControl1);
+            // ViewModel.setSnackbarPresenter(SnackbarPresenter);
+            // ViewModel.setHSmartWindowControl(HalconControl1);
         }
     }
 }

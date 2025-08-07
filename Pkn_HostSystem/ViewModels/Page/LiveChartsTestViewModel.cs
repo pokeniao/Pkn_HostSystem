@@ -453,7 +453,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                     {
                         liveChartsTestViewModel.LiveChartsModel.RunTime.Value = value3;
                     }
-                    if (double.TryParse(jObject2.SelectToken("报警总时长]").ToString(), out double value4))
+                    if (double.TryParse(jObject2.SelectToken("报警总时长").ToString(), out double value4))
                     {
                         liveChartsTestViewModel.LiveChartsModel.ErrorTime.Value = value4;
                     }
@@ -461,16 +461,11 @@ namespace Pkn_HostSystem.ViewModels.Page
                     {
                         liveChartsTestViewModel.LiveChartsModel.StopTime.Value = value5;
                     }
-
-
-
-
                     await Task.Delay(LiveChartsModel.TimeCyc, cts.Token);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
-                    throw;
+                    Log.Error($"[{TraceContext.Name}]--发送错误:{e}");
                 }
             }
         }
