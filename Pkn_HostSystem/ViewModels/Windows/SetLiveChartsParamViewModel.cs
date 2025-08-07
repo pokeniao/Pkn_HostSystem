@@ -105,7 +105,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
 
             if (GlobalManager.DynDictionary.Lookup("产量统计").HasValue)
             {
-                Log.WarningAndShowTask("添加动态通讯名称已存在", $"添加动态通讯名称已存在: 产量统计");
+                Log.WarningAndShowTask($"添加动态通讯名称已存在: 产量统计");
                 return;
             }
 
@@ -135,12 +135,13 @@ namespace Pkn_HostSystem.ViewModels.Windows
 
             if (GlobalManager.DynDictionary.Lookup("停机运行时长").HasValue)
             {
-                Log.WarningAndShowTask("添加动态通讯名称已存在", $"添加动态通讯名称已存在: 停机运行时长");
+                Log.WarningAndShowTask( $"添加动态通讯名称已存在: 停机运行时长");
                 return;
             }
 
-            LiveChartsModel.RunStopTimeDynName = "停机运行时长";
+        
             GlobalManager.DynDictionary.AddOrUpdate(loadMesDynContent);
+            LiveChartsModel.RunStopTimeDynName = "停机运行时长";
         }
         /// <summary>
         /// 运行按钮
