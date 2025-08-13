@@ -32,6 +32,7 @@ namespace Pkn_HostSystem.Base.Halcon
             {
                 return (false, $"[{TraceContext.Name}]--等待获取锁超时");
             }
+
             try
             {
                 if (run)
@@ -39,7 +40,6 @@ namespace Pkn_HostSystem.Base.Halcon
                     try
                     {
                         HalconControl.hv_AcqHandle = new HTuple();
-                        HOperatorSet.GenEmptyObj(out HalconControl.hImage);
                         HalconControl.hv_AcqHandle.Dispose();
                         // 启动相机
                         switch (CameraInterfaceEnum)
@@ -77,7 +77,6 @@ namespace Pkn_HostSystem.Base.Halcon
                         HOperatorSet.GrabImageStart(HalconControl.hv_AcqHandle, -1);
                         // 实时采集线程
                         Task.Run(() => ContinuesGrab(cts));
-
                         return (true, "相机连接成功,开始实时采集");
                     }
                     catch (Exception e)
@@ -86,6 +85,7 @@ namespace Pkn_HostSystem.Base.Halcon
                         cts?.Cancel();
                         HOperatorSet.CloseFramegrabber(HalconControl.hv_AcqHandle);
                         HalconControl.hv_AcqHandle.Dispose();
+                        return (false, $"{e}");
                     }
                 }
                 else
@@ -97,26 +97,23 @@ namespace Pkn_HostSystem.Base.Halcon
                     return (true, "");
                 }
             }
-            catch (HOperatorException exception)
-            {
-                return (false, $"相机连接超时异常,请查看相机是否被占用{exception}");
-            }
-            catch (Exception e)
-            {
-                return (false, $"{e}");
-            }
             finally
             {
                 VisionSemaphoreSlim.Release(); // 释放信号量
             }
-
-            return (false, "未知错误,请查看日志");
         }
+        HObject hImage = new HObject();
 
         public async Task<(bool succeed, string message)> VisionTrigger(CameraInterfaceEnum CameraInterfaceEnum,
             string param)
         {
-            await VisionSemaphoreSlim.WaitAsync(1000); // 获取信号量
+            bool waitAsync = await VisionSemaphoreSlim.WaitAsync(1000);
+
+            if (!waitAsync)
+            {
+                return (false, $"[{TraceContext.Name}]--等待获取锁超时");
+            }
+
             try
             {
                 return await Task.Run(() =>
@@ -126,7 +123,8 @@ namespace Pkn_HostSystem.Base.Halcon
                         //将窗口赋值
                         HalconControl.hWindow = HalconControl.HSmartWindowControl.HalconWindow;
                         HalconControl.hv_AcqHandle = new HTuple();
-                        HOperatorSet.GenEmptyObj(out HalconControl.hImage);
+                     
+                        // HOperatorSet.GenEmptyObj(out HObject hImage);
                         HalconControl.hv_AcqHandle.Dispose();
                         // 启动相机,创建连接
                         //HalconControl.hv_AcqHandle连接句柄
@@ -163,13 +161,13 @@ namespace Pkn_HostSystem.Base.Halcon
                         }
 
                         HOperatorSet.GrabImageStart(HalconControl.hv_AcqHandle, -1);
-                        HalconControl.hImage.Dispose();
+
+                        HalconControl.RemoveImage(hImage);
                         //获取图片
-                        HOperatorSet.GrabImageAsync(out HalconControl.hImage,
+                        HOperatorSet.GrabImageAsync(out hImage,
                             HalconControl.hv_AcqHandle, -1);
-                        HalconControl.ChangeSizeManualResetEvent.Set();
+                        HalconControl.ShowImage(hImage);
                         HalconControl.OnChangeCameraShowMethod();
-                        HalconControl.hWindow.DispObj(HalconControl.hImage);
                         return (true, "相机拍照完成");
                     }
                     finally
@@ -179,10 +177,6 @@ namespace Pkn_HostSystem.Base.Halcon
                         HalconControl.hv_AcqHandle.Dispose();
                     }
                 });
-            }
-            catch (HOperatorException exception)
-            {
-                return (false, $"相机连接超时异常,请查看相机是否被占用{exception}");
             }
             catch (Exception e)
             {
@@ -203,13 +197,10 @@ namespace Pkn_HostSystem.Base.Halcon
             HalconControl.hWindow = HalconControl.HSmartWindowControl.HalconWindow;
             while (!cts.Token.IsCancellationRequested)
             {
-                HalconControl.ChangeSizeManualResetEvent.Reset();
-                // 先释放内存
-                HalconControl.hImage.Dispose();
-                HOperatorSet.GrabImageAsync(out HalconControl.hImage, HalconControl.hv_AcqHandle,
+                HalconControl.RemoveImage(hImage);
+                HOperatorSet.GrabImageAsync(out hImage, HalconControl.hv_AcqHandle,
                     -1);
-                HOperatorSet.DispObj(HalconControl.hImage, HalconControl.hWindow);
-                HalconControl.ChangeSizeManualResetEvent.Set();
+                HalconControl.ShowImage(hImage);
 
                 // // 在新的线程里用如下方式更新到界面
                 // _ = Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate()
