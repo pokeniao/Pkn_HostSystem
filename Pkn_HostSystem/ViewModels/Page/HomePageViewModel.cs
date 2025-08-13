@@ -607,6 +607,7 @@ public partial class HomePageViewModel : ObservableRecipient
             if (!succeed)
             {
                 Log.ErrorAndShowTask( message);
+                return;
             }
             // 切换到停止状态
             HomePageModel.RealTimeName = "停止";

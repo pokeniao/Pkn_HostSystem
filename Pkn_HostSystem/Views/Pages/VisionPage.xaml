@@ -6,7 +6,6 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:halcon="clr-namespace:HalconDotNet;assembly=halcondotnet"
-
       mc:Ignorable="d"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -14,14 +13,11 @@
       d:DataContext="{d:DesignInstance page:VisionPageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       Title="VisionPageViewModel">
-
     <Grid>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
@@ -34,7 +30,10 @@
             <WrapPanel Grid.Row="0">
                 <TextBlock Text="视觉显示" Margin="10,5"  TextAlignment="Center"/>
                 <ComboBox ItemsSource="{Binding CameraShowMethodList }" 
-                          SelectedValue="{Binding VisionPageModel.CameraShowMethod}"
+
+                          DisplayMemberPath="Display"
+                          SelectedValuePath="Value"
+                          SelectedValue="{Binding HalconControl.CameraShowSize}"
                           Width="120"/>
             </WrapPanel>
             <Border Grid.Row="1">
@@ -42,9 +41,7 @@
                     Margin="5"
                     Name="HalconControl" />
             </Border>
-
         </Grid>
-   
         <Button
             Grid.Row="2"
             Content="运行"  Command="{Binding RunTestCommand}"/>

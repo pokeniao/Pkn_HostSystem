@@ -6,6 +6,8 @@ using Pkn_HostSystem.Models.Page;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using HalconDotNet;
+using Pkn_HostSystem.Base.Enum;
+using Pkn_HostSystem.Base.Halcon;
 using Pkn_HostSystem.Models.Core;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -19,9 +21,16 @@ namespace Pkn_HostSystem.ViewModels.Page
         public SnackbarService SnackbarService { get; set; } = new SnackbarService();
         public LogControl<VisionPageViewModel> Log;
         public VisionPageModel VisionPageModel { get; set; }
-        public List<string> CameraShowMethodList { get; set; } = ["适应窗口模式", "100%", "50%", "25%"];
-        //页面显示Control
-        private HSmartWindowControlWPF HSmartWindowControl { get; set; }
+
+        public HalconControl HalconControl { get; set; } = new();
+
+
+        public List<ComBoxEnumItem<CameraShowSizeEnum>> CameraShowMethodList { get; set; } = Enum
+            .GetValues(typeof(CameraShowSizeEnum)).Cast<CameraShowSizeEnum>().Select(v =>
+                new ComBoxEnumItem<CameraShowSizeEnum>(
+                    )
+                    { Value = v, Display = v.GetDescription() }).ToList();
+
 
         private void OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -30,12 +39,16 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public async void RunTest()
         {
+            //滑
+            HalconControl.HSmartWindowControl.PreviewMouseWheel += OnPreviewMouseWheel;
 
-            HSmartWindowControl.PreviewMouseWheel += OnPreviewMouseWheel;
-            HWindow hWindow = HSmartWindowControl.HalconWindow;
-            HObject image;
-            HOperatorSet.ReadImage(out image, "printer_chip/printer_chip_01");
-            HOperatorSet.DispObj(image, hWindow);
+            HalconControl.hWindow = HalconControl.HSmartWindowControl.HalconWindow;
+            HWindow hWindow = HalconControl.hWindow;
+
+            HOperatorSet.ReadImage(out HObject hImage, "printer_chip/printer_chip_01");
+            HalconControl.ShowImage(hImage);
+            HalconControl.OnChangeCameraShowMethod();
+
             HOperatorSet.SetDraw(hWindow, "margin");
             HOperatorSet.SetLineWidth(hWindow, 1);
             HOperatorSet.SetColor(hWindow, "green");
@@ -54,9 +67,8 @@ namespace Pkn_HostSystem.ViewModels.Page
             HOperatorSet.GenRectangle1(out ho_ROI_0, row1, column1, row2, column2);
             HOperatorSet.SetDraw(hWindow,"fill");
             HOperatorSet.SetColor(hWindow, "blue");
-            HOperatorSet.DispObj(ho_ROI_0, hWindow);
-
-            HSmartWindowControl.PreviewMouseWheel -= OnPreviewMouseWheel;
+            HalconControl.ShowImage(ho_ROI_0);
+            HalconControl.HSmartWindowControl.PreviewMouseWheel -= OnPreviewMouseWheel;
         }
 
 
@@ -71,9 +83,9 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         #region 赋值
 
-        public void setHSmartWindowControl(HSmartWindowControlWPF HalconControl)
+        public void setHSmartWindowControl(HSmartWindowControlWPF _halconControl)
         {
-            HSmartWindowControl = HalconControl;
+            HalconControl.HSmartWindowControl = _halconControl;
         }
 
         #endregion
