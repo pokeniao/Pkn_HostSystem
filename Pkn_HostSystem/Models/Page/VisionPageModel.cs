@@ -6,15 +6,7 @@ namespace Pkn_HostSystem.Models.Page
 {
     public partial class VisionPageModel:ObservableObject
     {
+        [ObservableProperty] private string cameraShowMethod;
 
-        [ObservableProperty] private ObservableCollection<CameraDetailed> cameraList;
-
-        [ObservableProperty]
-        private string realTimeName = "实时";
-
-        [ObservableProperty] private string controlCameraGim1;
-        [ObservableProperty] private string controlCameraGim2;
-        [ObservableProperty] private string controlCameraGim3;
-        [ObservableProperty] private string controlCameraGim4;
     }
 }

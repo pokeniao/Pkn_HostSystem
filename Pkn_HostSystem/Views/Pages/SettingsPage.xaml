@@ -56,7 +56,7 @@
                     <WrapPanel>
                         <Button Content="保存" Margin="40,5,0,0" Command="{Binding SaveProgramCommand}"/>
                         <Button Content="重置" Margin="30,5,0,0" Command="{Binding ReSetProgramCommand}"/>
-                        <ToggleButton Content="关闭时保存" Margin="30,5,0,0" IsChecked="{Binding SettingsPageModel.OffSave}"/>
+                        <ToggleButton Content="弹窗关闭保存" Margin="30,5,0,0" IsChecked="{Binding SettingsPageModel.OffSave}"/>
                             <Button Content="打开目录" Margin="30,5,0,0" Click="ButtonBase_OnClick"/>
                     </WrapPanel>
                 </StackPanel>

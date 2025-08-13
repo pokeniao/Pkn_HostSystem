@@ -9,132 +9,57 @@ using HalconDotNet;
 using Pkn_HostSystem.Models.Core;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace Pkn_HostSystem.ViewModels.Page
 {
     public partial class VisionPageViewModel : ObservableRecipient
     {
-        public SnackbarService SnackbarService { get; set; }
+        public SnackbarService SnackbarService { get; set; } = new SnackbarService();
         public LogControl<VisionPageViewModel> Log;
         public VisionPageModel VisionPageModel { get; set; }
-
-
+        public List<string> CameraShowMethodList { get; set; } = ["适应窗口模式", "100%", "50%", "25%"];
+        //页面显示Control
         private HSmartWindowControlWPF HSmartWindowControl { get; set; }
-        private HTuple hv_AcqHandle = null;
-        private HObject ho_Image = null;
-        private HWindow ho_Window;
-        private Thread ho_thread;
- 
 
-        private bool IsFirstGrab { get; set; } = true;
-        public VisionPageViewModel()
+        private void OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            VisionPageModel = JsonTool<VisionPageModel>.Load();
-            if (VisionPageModel == null)
-            {
-                //Model初始化
-                VisionPageModel = new VisionPageModel()
-                {
-                    CameraList = new ObservableCollection<CameraDetailed>()
-                };
-            }
-            else
-            {
-            }
-
-            SnackbarService = new SnackbarService();
-            Log = new LogControl<VisionPageViewModel>(SnackbarService);
+            e.Handled = true;  // 禁用滚轮缩放
         }
-
-        /// <summary>
-        /// 触发画面
-        /// </summary>
         [RelayCommand]
-        public void VisionTrigger()
+        public async void RunTest()
         {
-            ho_Window = HSmartWindowControl.HalconWindow;
-            hv_AcqHandle = new HTuple();
-            HOperatorSet.GenEmptyObj(out ho_Image);
-            hv_AcqHandle.Dispose();
-          
-            // 启动相机
-            HOperatorSet.OpenFramegrabber("GenICamTL", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "", 0, -1, out hv_AcqHandle);
-            HOperatorSet.GrabImageStart(hv_AcqHandle, -1);
-            ho_Image.Dispose();
-            HOperatorSet.GrabImageAsync(out ho_Image, hv_AcqHandle, -1);
-            HOperatorSet.GetImageSize(ho_Image, out HTuple width, out HTuple height);
-            HOperatorSet.SetPart(ho_Window, 0, 0, height - 1, width - 1);
-            // Halcon 图像自适应显示
-            if (IsFirstGrab)
+
+            HSmartWindowControl.PreviewMouseWheel += OnPreviewMouseWheel;
+            HWindow hWindow = HSmartWindowControl.HalconWindow;
+            HObject image;
+            HOperatorSet.ReadImage(out image, "printer_chip/printer_chip_01");
+            HOperatorSet.DispObj(image, hWindow);
+            HOperatorSet.SetDraw(hWindow, "margin");
+            HOperatorSet.SetLineWidth(hWindow, 1);
+            HOperatorSet.SetColor(hWindow, "green");
+            HObject ho_ROI_0;
+
+            HTuple row1 = null, column1 = null, row2 = null, column2 = null;
+
+            // 开启异步模式
+            await Task.Run(async () =>
             {
-                IsFirstGrab = false;
-                HSmartWindowControl.SetFullImagePart();
-            }
-            ho_Window.DispObj(ho_Image);
-            // 关闭摄像头
-            HOperatorSet.CloseFramegrabber(hv_AcqHandle);
-            ho_Image.Dispose();
-            hv_AcqHandle.Dispose();
+
+            HOperatorSet.DrawRectangle1Mod(hWindow, 50, 50, 150, 150, out row1, out column1, out row2, out column2);
+            });
+            // HOperatorSet.DrawRectangle1(hWindow, out row1, out column1, out row2, out column2);
+
+            HOperatorSet.GenRectangle1(out ho_ROI_0, row1, column1, row2, column2);
+            HOperatorSet.SetDraw(hWindow,"fill");
+            HOperatorSet.SetColor(hWindow, "blue");
+            HOperatorSet.DispObj(ho_ROI_0, hWindow);
+
+            HSmartWindowControl.PreviewMouseWheel -= OnPreviewMouseWheel;
         }
-        CancellationTokenSource cts = null;
-        /// <summary>
-        /// 实时画面
-        /// </summary>
-        [RelayCommand]
-        public void VisionRealTime()
-        {
-            if (VisionPageModel.RealTimeName == "实时")
-            {
-                hv_AcqHandle = new HTuple();
-                HOperatorSet.GenEmptyObj(out ho_Image);
-                hv_AcqHandle.Dispose();
-                // 启动相机
-                // 启动笔记本自带摄像头
-                // HOperatorSet.OpenFramegrabber("DirectShow", 1, 1, 0, 0, 0, 0, "default", 8, "rgb", -1, "false", "default", "[0] ", 0, -1, out hv_AcqHandle);
-                HOperatorSet.OpenFramegrabber("GenICamTL", 0, 0, 0, 0, 0, 0, "progressive", -1, "default", -1, "false", "default", "", 0, -1, out hv_AcqHandle);
-                HOperatorSet.GrabImageStart(hv_AcqHandle, -1);
-                VisionPageModel.RealTimeName = "停止";
-                // 实时采集线程
-                cts = new();
-                Task.Run(() =>ContinuesGrab(cts));
-            }
-            else
-            {
-                // 释放
-                cts?.Cancel();
-                VisionPageModel.RealTimeName = "实时";
-                HOperatorSet.CloseFramegrabber(hv_AcqHandle);
-                ho_Image.Dispose();
-                hv_AcqHandle.Dispose();
-            }
-        }
-        /// <summary>
-        /// 定义实时采集函数
-        /// </summary>
-        private async Task ContinuesGrab(CancellationTokenSource cts)
-        {
-            ho_Window = HSmartWindowControl.HalconWindow;
-            while (!cts.Token.IsCancellationRequested)
-            {
-                // 先释放内存
-                ho_Image.Dispose();
-                HOperatorSet.GrabImageAsync(out ho_Image, hv_AcqHandle, -1);
-                HOperatorSet.GetImageSize(ho_Image, out HTuple width, out HTuple height);
-                HOperatorSet.DispObj(ho_Image, ho_Window);
-                // Halcon 图像自适应显示
-                if (IsFirstGrab)
-                {
-                    IsFirstGrab = false;
-                    // 在新的线程里用如下方式更新到界面
-                    _ = Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-                    {
-                        HSmartWindowControl.SetFullImagePart();
-                    });
-                }
-                await Task.Delay(100);
-            }
-        }
+
+
         #region 弹窗SnackbarService
 
         public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
@@ -144,13 +69,11 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         #endregion
 
-
         #region 赋值
 
         public void setHSmartWindowControl(HSmartWindowControlWPF HalconControl)
         {
             HSmartWindowControl = HalconControl;
-        
         }
 
         #endregion

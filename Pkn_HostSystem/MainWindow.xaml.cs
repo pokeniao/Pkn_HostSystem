@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using log4net.Config;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
@@ -9,13 +8,12 @@ using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
 
 namespace Pkn_HostSystem
 {
@@ -37,7 +35,7 @@ namespace Pkn_HostSystem
             //启动先自适应电脑主题
             ApplicationThemeManager.ApplySystemTheme();
             InitializeComponent();
-            
+
             // Loaded:当元素被布局、呈现并准备好进行交互时，将触发此事件
             // // Loaded += (_, _) => RootNavigation.Navigate(typeof(HomePage));
             Loaded += (_, _) =>
@@ -50,7 +48,7 @@ namespace Pkn_HostSystem
                 navigation.Navigate(typeof(HomePage));
                 _ = Starting();
             };
-         
+
         }
 
         private void PreLoad()
@@ -68,7 +66,7 @@ namespace Pkn_HostSystem
             GlobalManager.ArrayRegister = JsonTool<object[]>.Load();
             if (GlobalManager.ArrayRegister == null)
             {
-                GlobalManager. ArrayRegister = new object[100];
+                GlobalManager.ArrayRegister = new object[100];
             }
             GlobalManager.QueueRegister = JsonTool<List<ConcurrentQueue<object>>>.Load();
             if (GlobalManager.QueueRegister == null)
@@ -89,7 +87,7 @@ namespace Pkn_HostSystem
                     TraceContext.Name = connectPojo.Name;
                     Task startConnectModbusTask = homePageViewModel.StartConnect(connectPojo);
                     connectTasks.Add(startConnectModbusTask);
-                    TraceContext.Name =null;
+                    TraceContext.Name = null;
                 }
             }
 
@@ -170,7 +168,27 @@ namespace Pkn_HostSystem
         }
 
         #endregion
- 
 
+
+        private async void MainWindow_OnClosing(object? sender, CancelEventArgs e)
+        {
+    
+
+            SettingsPageViewModel viewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
+            if (viewModel.SettingsPageModel.OffSave)
+            {
+                var uiMessageBox = new Wpf.Ui.Controls.MessageBox { Title = "是否保存",Content = "          "};
+                uiMessageBox.PrimaryButtonText = "保存";
+                uiMessageBox.CloseButtonText = "不保存";
+                uiMessageBox.IsPrimaryButtonEnabled = true;
+                MessageBoxResult messageBoxResult = await uiMessageBox.ShowDialogAsync();
+
+                if (messageBoxResult == MessageBoxResult.Primary)
+                {
+                    viewModel.SaveAll();
+                }
+            }
+
+        }
     }
 }

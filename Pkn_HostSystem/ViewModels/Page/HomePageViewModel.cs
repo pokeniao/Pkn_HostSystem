@@ -3,18 +3,23 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
+using HalconDotNet;
+using Microsoft.Win32;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
+using Pkn_HostSystem.Base.Halcon;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
-using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.IO.Ports;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Threading;
 using System.Xml.Linq;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
@@ -29,6 +34,10 @@ public partial class HomePageViewModel : ObservableRecipient
 
     public HomePageModel HomePageModel { get; set; } = JsonTool<HomePageModel>.Load();
 
+    //页面显示Control
+    public HalconControl HalconControl { get; set; } = new HalconControl();
+
+    public HalconTool HalconTool { get; set; }
 
     public HomeSetConnectModel HomeSetConnectModel { get; set; } = new();
     public SnackbarService SnackbarService { get; set; } = new();
@@ -37,27 +46,39 @@ public partial class HomePageViewModel : ObservableRecipient
         ["ModbusTcp", "ModbusRtu", "Tcp客户端", "Tcp服务器", "基恩士上位链路通讯", "串口232/485"];
 
 
+    public List<CameraInterfaceEnum> CameraConnectMethodDictionary { get; set; } = Enum
+        .GetValues(typeof(CameraInterfaceEnum)).Cast<CameraInterfaceEnum>().ToList();
+
+
+    public List<ComBoxEnumItem<CameraShowSizeEnum>> CameraShowMethodList { get; set; } = Enum
+        .GetValues(typeof(CameraShowSizeEnum)).Cast<CameraShowSizeEnum>().Select(v =>
+            new ComBoxEnumItem<CameraShowSizeEnum>(
+            ) { Value = v, Display = v.GetDescription() }).ToList();
+
     public HomePageViewModel()
     {
         if (HomePageModel == null)
         {
-
             HomePageModel = new HomePageModel()
             {
                 SetConnectDg = new ObservableCollection<NetworkDetailed>(), //创建 设置连接列表的DataGrid 绑定对象
                 NetWorkList = new ObservableCollectionExtended<NetWork>()
             };
         }
+
+
+        HalconTool = new HalconTool(HalconControl);
+
+
+        GlobalManager.jdbcPath = HomePageModel.RealJdbcUrl; //设置全局jdbc连接路径
         //先添加 ,后绑定
         GlobalManager.NetWorkDictionary.AddOrUpdate(HomePageModel.NetWorkList);
         GlobalManager.NetWorkDictionary.Connect().Bind(HomePageModel.NetWorkList).Subscribe();
-        
+
         //获取到 HTTP的集合 引用类型并且绑定到HomePageModel.HttpLists
         var vm = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
         HomePageModel.HttpLists = vm.LoadMesPageModel.MesPojoList;
 
-        //获取到 连接相机的集合 引用类型并且绑定到HomePageModel.CameraList
-        HomePageModel.CameraList = Ioc.Default.GetRequiredService<VisionPageViewModel>().VisionPageModel.CameraList;
         Log = new LogControl<HomePageViewModel>(SnackbarService);
     }
 
@@ -75,7 +96,6 @@ public partial class HomePageViewModel : ObservableRecipient
     [RelayCommand]
     public void ScrollToBottom()
     {
-
     }
 
     #endregion
@@ -289,7 +309,7 @@ public partial class HomePageViewModel : ObservableRecipient
         if (!netWork.KeyenceHostLinkTool.IsConnected)
         {
             bool connect =
-               await netWork.KeyenceHostLinkTool.Connect(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port);
+                await netWork.KeyenceHostLinkTool.Connect(netWork.NetworkDetailed.IP, netWork.NetworkDetailed.Port);
             if (connect)
             {
                 if (netWork.KeyenceHostLinkTool.IsConnected)
@@ -419,6 +439,24 @@ public partial class HomePageViewModel : ObservableRecipient
 
     #endregion
 
+
+    #region 删除相机
+
+    [RelayCommand]
+    public void DeleteCameraDvg(HomePage page)
+    {
+        var item = page.CameraDvg.SelectedItem as CameraDetailed;
+        var source = page.CameraDvg.ItemsSource as ObservableCollection<CameraDetailed>;
+        if (item != null)
+            if (source.Count > 0 && item.CameraName != null)
+            {
+                HomePageModel.CameraList.Remove(item);
+                Log.SuccessAndShowTask("删除成功!", $"{item.CameraName} 相机被删除");
+            }
+    }
+
+    #endregion
+
     #region 设置网络配置
 
     [RelayCommand]
@@ -506,9 +544,119 @@ public partial class HomePageViewModel : ObservableRecipient
     #endregion
 
 
+    #region 视觉
+
+    /// <summary>
+    /// 触发画面
+    /// </summary>
+    [RelayCommand]
+    public async void VisionTrigger()
+    {
+        bool succeed = false;
+        string? message = null;
+        switch (HomePageModel.CollectMethod)
+        {
+            case CameraInterfaceEnum.图片:
+                ( succeed,  message) =
+                    await HalconTool.VisionTrigger(HomePageModel.CollectMethod, HomePageModel.PicturePath);
+
+                break;
+            case CameraInterfaceEnum.GenICamTL:
+                (succeed, message) =
+                    await HalconTool.VisionTrigger(HomePageModel.CollectMethod, HomePageModel.SelectCamera);
+                break;
+            case CameraInterfaceEnum.电脑摄像头:
+                (succeed, message) = await HalconTool.VisionTrigger(HomePageModel.CollectMethod, null);
+                break;
+        }
+        if (!succeed)
+        {
+            Log.ErrorAndShowTask( message);
+        }
+    }
+
+
+    CancellationTokenSource cts = null;
+
+    /// <summary>
+    /// 实时画面
+    /// </summary>
+    [RelayCommand]
+    public async void VisionRealTime()
+    {
+ 
+        bool succeed = false;
+        string? message = null;
+        if (HomePageModel.RealTimeName == "实时")
+        {
+            cts = new CancellationTokenSource();
+            switch (HomePageModel.CollectMethod)
+            {
+                case CameraInterfaceEnum.图片:
+                    (succeed, message) =
+                        await HalconTool.VisionRealTime(true, HomePageModel.CollectMethod, HomePageModel.PicturePath, cts);
+                    break;
+                case CameraInterfaceEnum.GenICamTL:
+                    (succeed, message) =
+                        await HalconTool.VisionRealTime(true, HomePageModel.CollectMethod, HomePageModel.SelectCamera, cts);
+                    break;
+                case CameraInterfaceEnum.电脑摄像头:
+                    (succeed, message) = await HalconTool.VisionRealTime(true, HomePageModel.CollectMethod,null, cts);
+                    break;
+            }
+            if (!succeed)
+            {
+                Log.ErrorAndShowTask( message);
+            }
+            // 切换到停止状态
+            HomePageModel.RealTimeName = "停止";
+        }
+        else if(HomePageModel.RealTimeName == "停止")
+        {
+            await HalconTool.VisionRealTime(false, HomePageModel.CollectMethod, null, cts);
+            // 切换到实时状态
+            HomePageModel.RealTimeName = "实时";
+        }
+
+
+    }
+
+
+    [RelayCommand]
+    public void OnOpenPicture()
+    {
+        OpenFileDialog openFileDialog = new()
+        {
+            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+            Filter = "Image files (*.bmp;*.jpg;*.jpeg;*.png)|*.bmp;*.jpg;*.jpeg;*.png|All files (*.*)|*.*",
+        };
+
+        if (openFileDialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        string fileName = openFileDialog.FileName;
+        if (!File.Exists(fileName))
+        {
+            return;
+        }
+
+        HomePageModel.PicturePath = fileName;
+    }
+
+    #endregion
+
+
     [RelayCommand]
     public void Save()
     {
         JsonTool<HomePageModel>.Save(HomePageModel);
+    }
+
+    //页面显示Control设置
+    public void setHSmartWindowControl(HSmartWindowControlWPF _halconControl)
+    {
+        HalconControl.HSmartWindowControl = _halconControl;
     }
 }
