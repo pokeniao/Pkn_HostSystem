@@ -38,7 +38,8 @@ namespace Pkn_HostSystem.Views.Pages
             DataContext = Ioc.Default.GetRequiredService<HomePageViewModel>();
             HomePageViewModel = (HomePageViewModel)DataContext;
             HomePageViewModel.setSnackbarPresenter(SnackbarPresenter);
-
+            // ViewModel.setSnackbarPresenter(SnackbarPresenter);
+            HomePageViewModel.setHSmartWindowControl(HalconControlHomePage);
         }
 
 
@@ -301,5 +302,9 @@ namespace Pkn_HostSystem.Views.Pages
         {
         }
 
+        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

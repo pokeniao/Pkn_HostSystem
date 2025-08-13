@@ -1,5 +1,6 @@
 ﻿using AspectCore.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using log4net;
 using log4net.Config;
 using log4net.Repository.Hierarchy;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ using System.Windows.Threading;
 using Wpf.Ui;
 using Wpf.Ui.DependencyInjection;
 using MessageBox = System.Windows.MessageBox;
+using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
 
 namespace Pkn_HostSystem
 {
@@ -33,6 +35,7 @@ namespace Pkn_HostSystem
             //记录启动时间
             GlobalManager.StartTime = DateTimeOffset.Now;
             AppRunOn();
+          
             OnStartupWindow onStartupWindow = new OnStartupWindow();
             onStartupWindow.Show();
 
@@ -190,14 +193,8 @@ namespace Pkn_HostSystem
         /// 程序结束的时候
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnExit(ExitEventArgs e)
+        protected override async void OnExit(ExitEventArgs e)
         {
-            SettingsPageViewModel viewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
-            if (viewModel.SettingsPageModel.OffSave)
-            {
-                viewModel.SaveAll();
-            }
-
             log4net.LogManager.GetLogger(typeof(App)).Info("Pkn_HostSystem程序退出");
             //通知 log4net 停止所有日志写入 ,避免程序关闭太快导致缓冲区未刷新
             log4net.LogManager.Shutdown();

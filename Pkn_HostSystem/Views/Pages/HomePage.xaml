@@ -1083,7 +1083,22 @@
                                     <RowDefinition Height="0.3*" />
                                 </Grid.RowDefinitions>
                                 <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
                                     <DataGrid
+                                        Name="CameraDvg"
+                                        Height="150"
                                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                         BorderThickness="1"
@@ -1094,8 +1109,58 @@
                                             <DataGridTextColumn Header="相机名" Width="*" Binding="{Binding CameraName}" />
                                             <DataGridTextColumn Header="相机GenICamTL" Width="*"
                                                                 Binding="{Binding GenICamTL}" />
+                                            <DataGridTemplateColumn Header="删除" Width="0.9*">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <CheckBox
+                                                                Command="{Binding DataContext.DeleteCameraDvgCommand  ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                CommandParameter="{Binding  RelativeSource={RelativeSource AncestorType=Page} }">
+                                                                <CheckBox.IsEnabled>
+                                                                    <MultiBinding
+                                                                        Converter="{StaticResource NewRowAllowButtonConverter}">
+                                                                        <Binding
+                                                                            RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                                            Path="IsNewItem" />
+                                                                        <Binding Path="IsNewLine" />
+                                                                    </MultiBinding>
+                                                                </CheckBox.IsEnabled>
+                                                            </CheckBox>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
                                         </DataGrid.Columns>
                                     </DataGrid>
+                                    <WrapPanel Grid.Row="1" >
+                                        <TextBlock Text="采集方式"  Margin="20 5 5 5" TextAlignment="Center" />
+                                        <ComboBox ItemsSource="{Binding CameraConnectMethodDictionary}"
+                                                                              SelectedValue="{Binding HomePageModel.CollectMethod , UpdateSourceTrigger=PropertyChanged }"
+                                                  />
+                                    </WrapPanel>
+                                    <WrapPanel Grid.Row="2" Margin="0 10 0 0" Visibility="{Binding HomePageModel.PictureFilePathShowVisibility}">
+                                        <TextBlock Text="文件夹路径" Margin="20 5 5 5" TextAlignment="Center" />
+                                        <Button Content="选择图片" Command="{Binding OpenPictureCommand}"/>
+                                    </WrapPanel>
+
+                                    <WrapPanel Grid.Row="2" Margin="0 10 0 0" Visibility="{Binding HomePageModel.ShowCameraVisibility}">
+                                        <TextBlock Text="选着相机" Margin="20 5 5 5" TextAlignment="Center" />
+                                        <ComboBox  ItemsSource="{Binding HomePageModel.CameraList }"
+                                                   DisplayMemberPath="CameraName"
+                                                   SelectedValuePath="GenICamTL"
+                                                   SelectedValue="{Binding HomePageModel.SelectCamera}"
+                                                   Width="150"
+                                                   
+                                                   />
+                                    </WrapPanel>
+
+                                    <WrapPanel Grid.Row="3" Margin="0 10 0 0">
+                                       
+                                    </WrapPanel>
+                                    <WrapPanel Grid.Row="4" Margin="0 10 0 0">
+                                        <Button Content="拍照"  Margin="20 0" Command="{Binding  VisionTriggerCommand}"/>
+                                        <Button Content="{Binding HomePageModel.RealTimeName}"  Margin="0"  Command="{Binding VisionRealTimeCommand }"/>
+                                    </WrapPanel>
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
@@ -1259,8 +1324,17 @@
             </Grid>
             <Grid Grid.Column="1" Grid.RowSpan="2" Cursor="Arrow">
                 <StackPanel>
-                    <TextBlock Text="视觉显示" Margin="10,0"/>
-                    <Border Height="300" >
+                    <WrapPanel>
+                        <TextBlock Text="视觉显示" Margin="10,5"  TextAlignment="Center"/>
+                        <ComboBox ItemsSource="{Binding CameraShowMethodList }" 
+                                  SelectedValue="{Binding HalconControl.CameraShowSize}"
+                                  SelectedValuePath="Value"
+                                  DisplayMemberPath="Display"
+                                  SelectionChanged="Selector_OnSelectionChanged"
+                                  Width="120"/>
+                    </WrapPanel>
+             
+                    <Border Height="300">
                         <halconDotNet:HSmartWindowControlWPF
                             Margin="10"
                             Name="HalconControlHomePage" />

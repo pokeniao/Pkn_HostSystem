@@ -19,7 +19,7 @@
                  WindowBackdropType="Mica"
                  WindowCornerPreference="Round"
                  SizeChanged="MainWindow_OnSizeChanged"
-
+                 Closing="MainWindow_OnClosing"
                  Name="Pkn_HostSystemMainWindow">
 
     <!-- ApplicationBackgroundBrush → 全局背景色（深色模式/浅色模式切换）。 -->
@@ -110,14 +110,14 @@
                         </ui:NavigationViewItem>
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
-                <ui:NavigationViewItem
-                    Content="内部寄存器"
-                    NavigationCacheMode="Enabled"
-                    TargetPageType="{x:Type pages:ProductivePage}">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:SymbolIcon Symbol="ArrowRepeatAll24" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
+                <!-- <ui:NavigationViewItem -->
+                <!--     Content="内部寄存器" -->
+                <!--     NavigationCacheMode="Enabled" -->
+                <!--     TargetPageType="{x:Type pages:ProductivePage}"> -->
+                <!--     <ui:NavigationViewItem.Icon> -->
+                <!--         <ui:SymbolIcon Symbol="ArrowRepeatAll24" /> -->
+                <!--     </ui:NavigationViewItem.Icon> -->
+                <!-- </ui:NavigationViewItem> -->
 
                 <ui:NavigationViewItem
                     Content="视觉"

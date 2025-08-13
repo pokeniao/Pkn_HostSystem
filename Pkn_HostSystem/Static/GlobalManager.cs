@@ -116,8 +116,6 @@ public static class GlobalManager
         DynDictionary = new SourceCache<LoadMesDynContent, string>(n => n.Name);
         //初始化工位字典
         StationDictionary = new SourceCache<IEachStation, string>(n => n.Header);
-        //数据库JDBC路径赋值
-        jdbcPath = JsonTool<HomePageModel>.Load()?.RealJdbcUrl;
         //初始化工位信息
         StationManager.InitStation();
     }
