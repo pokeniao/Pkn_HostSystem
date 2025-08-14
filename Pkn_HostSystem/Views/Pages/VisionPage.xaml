@@ -42,9 +42,9 @@
                     Name="HalconControl" />
             </Border>
         </Grid>
-        <Button
-            Grid.Row="2"
-            Content="运行"  Command="{Binding RunTestCommand}"/>
+        <!-- <Button -->
+        <!--     Grid.Row="2" -->
+        <!--     Content="运行"  Command="{Binding RunTestCommand}"/> -->
         <ui:SnackbarPresenter Grid.Row="1" Grid.ColumnSpan="2" Name="SnackbarPresenter" />
     </Grid>
 
