@@ -221,7 +221,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
     }
 
     [RelayCommand]
-    public async Task ReSetProgram()
+    public async Task ReSetProgram(SettingsPage Page)
     {
         var uiMessageBox = new Wpf.Ui.Controls.MessageBox { Title = "重置", Content = "是否确定重置,重置后配置会清空", };
         uiMessageBox.PrimaryButtonText = "确认重置";
@@ -231,6 +231,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         if (messageBoxResult == MessageBoxResult.Primary)
         {
             Reset();
+            Page.CloseToggleButton.IsChecked = false;
             Log.SuccessAndShowTask("重置成功");
         }
     }
@@ -243,6 +244,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         JsonTool<ProductiveModel>.Reset();
         JsonTool<SettingsPageModel>.Reset();
         JsonTool<VisionPageModel>.Reset();
+        JsonTool<LiveChartsModel>.Reset();
 
     }
 
@@ -282,7 +284,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         LiveChartsTestViewModel liveChartsTestViewModel = Ioc.Default.GetRequiredService<LiveChartsTestViewModel>();
         liveChartsTestViewModel.SaveCommand.Execute(null);
 
-        GlobalManager.SaveRegister();
+        StaticArrayRegister.SaveRegister();
 
         return true;
     }

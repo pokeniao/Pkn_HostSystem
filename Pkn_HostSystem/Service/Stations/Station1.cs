@@ -130,10 +130,10 @@ namespace Pkn_HostSystem.Service.Stations
                         TraceContext.UpdateParam("start", DateTime.Now);
                         Station1 station1 = new Station1();
                         station1.时间 = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
-                        station1.电阻上限 = Volatile.Read(ref GlobalManager.ArrayRegister[50]).ToString();
-                        station1.电阻下限 = Volatile.Read(ref GlobalManager.ArrayRegister[51]).ToString();
-                        station1.电压上限 = Volatile.Read(ref GlobalManager.ArrayRegister[52]).ToString();
-                        station1.电压下限 = Volatile.Read(ref GlobalManager.ArrayRegister[53]).ToString();
+                        station1.电阻上限 = Volatile.Read(ref StaticArrayRegister.ArrayRegister[50]).ToString();
+                        station1.电阻下限 = Volatile.Read(ref StaticArrayRegister.ArrayRegister[51]).ToString();
+                        station1.电压上限 = Volatile.Read(ref StaticArrayRegister.ArrayRegister[52]).ToString();
+                        station1.电压下限 = Volatile.Read(ref StaticArrayRegister.ArrayRegister[53]).ToString();
                         //添加一行数据到显示
                         eachStation.AddItem(station1);
                         //当前添加的是第几行
@@ -149,9 +149,9 @@ namespace Pkn_HostSystem.Service.Stations
                         TimeSpan t = DateTime.Now - TraceContext.GetParam("start");
                         //填入参数
                         eachStationItem.CT = t.Seconds.ToString();
-                        eachStationItem.电阻值 = Volatile.Read(ref GlobalManager.ArrayRegister[54]).ToString();
-                        eachStationItem.电压值 = Volatile.Read(ref GlobalManager.ArrayRegister[55]).ToString();
-                        eachStationItem.合格 = Volatile.Read(ref GlobalManager.ArrayRegister[56]).ToString();
+                        eachStationItem.电阻值 = Volatile.Read(ref StaticArrayRegister.ArrayRegister[54]).ToString();
+                        eachStationItem.电压值 = Volatile.Read(ref StaticArrayRegister.ArrayRegister[55]).ToString();
+                        eachStationItem.合格 = Volatile.Read(ref StaticArrayRegister.ArrayRegister[56]).ToString();
                         TraceContext.UpdateParam("step", 0);
                         return (true, null);
                     default:

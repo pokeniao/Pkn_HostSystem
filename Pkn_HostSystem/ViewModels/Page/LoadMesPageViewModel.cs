@@ -519,7 +519,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                                 //读取寄存器
                                                 var objects =
                                                     Volatile.Read(
-                                                        ref GlobalManager.ArrayRegister[
+                                                        ref StaticArrayRegister.ArrayRegister[
                                                             int.Parse(model.InteriorResponseIndex)]);
                                                 await netWork.ModbusBase.WriteRegister_06(
                                                     byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
@@ -612,7 +612,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                                 //读取寄存器
                                                 var objects =
                                                     Volatile.Read(
-                                                        ref GlobalManager.ArrayRegister[
+                                                        ref StaticArrayRegister.ArrayRegister[
                                                             int.Parse(model.InteriorResponseIndex)]);
                                                 await netWork.ModbusBase.WriteRegister_06(
                                                     byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
@@ -704,7 +704,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                                 //读取寄存器
                                                 var objects =
                                                     Volatile.Read(
-                                                        ref GlobalManager.ArrayRegister[
+                                                        ref StaticArrayRegister.ArrayRegister[
                                                             int.Parse(model.InteriorResponseIndex)]);
                                                 await netWork.KeyenceHostLinkTool.WriteDM(
                                                     int.Parse(model.StartAddress),

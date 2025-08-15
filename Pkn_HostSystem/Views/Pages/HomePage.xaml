@@ -134,22 +134,13 @@
                 <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="4.794" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
             </DoubleAnimationUsingKeyFrames>
-            <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="115.5"/> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="193.5"/> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="238.875"/> -->
-            <!-- </DoubleAnimationUsingKeyFrames> -->
+
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1.711" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="2.149" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3" />
             </DoubleAnimationUsingKeyFrames>
-            <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="-67.5"/> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="-109.125"/> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-106.875"/> -->
-            <!-- </DoubleAnimationUsingKeyFrames> -->
             <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="OrderBorder"
                                               Storyboard.TargetProperty="(Border.BorderThickness)">
                 <EasingThicknessKeyFrame KeyTime="00:00:00.1000000"
@@ -266,22 +257,13 @@
                 <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="4.496" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
             </DoubleAnimationUsingKeyFrames>
-            <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)"> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="32.438"/> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="40.313"/> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="91.688"/> -->
-            <!-- </DoubleAnimationUsingKeyFrames> -->
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder"
                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1.789" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="2.125" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3" />
             </DoubleAnimationUsingKeyFrames>
-            <!-- <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)"> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.1000000" Value="75"/> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="106.875"/> -->
-            <!--     <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="123.375"/> -->
-            <!-- </DoubleAnimationUsingKeyFrames> -->
+
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
@@ -508,6 +490,96 @@
                 </DiscreteObjectKeyFrame>
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
+        <!-- 展开动画 -->
+        <!-- 收缩动画 -->
+        <Storyboard x:Key="Register_Open">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid6"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.434782" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid6"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>5,5,5,5</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3,3,3,3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>2,2,2,2</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="Register_Close">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid6"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid6"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>5</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>7</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
     </Page.Resources>
 
     <Grid Name="HomeGrid">
@@ -595,7 +667,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <UniformGrid Margin="20,0">
+                <UniformGrid Margin="20,0"
+                             Columns="2">
                     <Grid Margin="20,0,20,5">
                         <ui:CardAction
                             Name="CA_ConnectPLC"
@@ -817,8 +890,8 @@
                                                                 <StackPanel Orientation="Horizontal" Margin="0 5">
                                                                     <Border VerticalAlignment="Center" Width="58">
                                                                         <TextBlock Text="端口号"
-                                                                            HorizontalAlignment="Right"
-                                                                            Margin="5" />
+                                                                                HorizontalAlignment="Right"
+                                                                                Margin="5" />
                                                                     </Border>
                                                                     <ComboBox Margin="0 0 10 0" Width="100"
                                                                               ItemsSource="{Binding HomeSetConnectModel.Coms}"
@@ -831,7 +904,7 @@
                                                                     <Border HorizontalAlignment="Center" Width="58"
                                                                             VerticalAlignment="Center">
                                                                         <TextBlock Text="波特率" Margin="5"
-                                                                            HorizontalAlignment="Right" />
+                                                                                HorizontalAlignment="Right" />
                                                                     </Border>
                                                                     <ComboBox Margin="0 0 10 0" Width="100"
                                                                               ItemsSource="{Binding HomeSetConnectModel.BaudRates}"
@@ -846,8 +919,8 @@
                                                                             VerticalAlignment="Center"
                                                                             Width="58">
                                                                         <TextBlock Text="数据位"
-                                                                            HorizontalAlignment="Right"
-                                                                            Margin="5" />
+                                                                                HorizontalAlignment="Right"
+                                                                                Margin="5" />
                                                                     </Border>
                                                                     <ComboBox Margin="0 0 10 0" Width="100"
                                                                               ItemsSource="{Binding HomeSetConnectModel.DataBits}"
@@ -859,7 +932,7 @@
                                                                     <Border HorizontalAlignment="Center" Width="58"
                                                                             VerticalAlignment="Center">
                                                                         <TextBlock Text="停止位" Margin="5"
-                                                                            HorizontalAlignment="Right" />
+                                                                                HorizontalAlignment="Right" />
                                                                     </Border>
                                                                     <ComboBox Width="100"
                                                                               ItemsSource="{Binding HomeSetConnectModel.StopBitsList}"
@@ -873,8 +946,8 @@
                                                                             VerticalAlignment="Center"
                                                                             Width="58">
                                                                         <TextBlock Text="校验位"
-                                                                            HorizontalAlignment="Right"
-                                                                            Margin="5" />
+                                                                                HorizontalAlignment="Right"
+                                                                                Margin="5" />
                                                                     </Border>
                                                                     <ComboBox Margin="0 0 10 0" Width="100"
                                                                               ItemsSource="{Binding HomeSetConnectModel.Parities}"
@@ -887,8 +960,8 @@
                                                                             VerticalAlignment="Center"
                                                                             Width="58">
                                                                         <TextBlock Text="结束符"
-                                                                            HorizontalAlignment="Right"
-                                                                            Margin="5" />
+                                                                                HorizontalAlignment="Right"
+                                                                                Margin="5" />
                                                                     </Border>
                                                                     <ComboBox Margin="0 0 10 0" Width="100"
                                                                               ItemsSource="{Binding HomeSetConnectModel.NewLines}"
@@ -905,11 +978,11 @@
                                                                             VerticalAlignment="Center"
                                                                             Width="128">
                                                                         <TextBlock Text="请求超时时长(ms)"
-                                                                            HorizontalAlignment="Right"
-                                                                            Margin="5" />
+                                                                                HorizontalAlignment="Right"
+                                                                                Margin="5" />
                                                                     </Border>
                                                                     <ui:NumberBox Margin="0 0 10 0" Width="125"
-                                                                        Value="{Binding HomeSetConnectModel.TimeOut , UpdateSourceTrigger= PropertyChanged}" />
+                                                                            Value="{Binding HomeSetConnectModel.TimeOut , UpdateSourceTrigger= PropertyChanged}" />
                                                                 </StackPanel>
                                                             </WrapPanel>
                                                         </StackPanel>
@@ -1040,7 +1113,7 @@
                             </Grid>
                         </Border>
                     </Grid>
-                    <Grid Margin="20,5,20,0">
+                    <Grid Margin="20,5,20,5">
                         <ui:CardAction
                             Name="CA_CameraSelect"
                             IsChevronVisible="False"
@@ -1132,34 +1205,34 @@
                                             </DataGridTemplateColumn>
                                         </DataGrid.Columns>
                                     </DataGrid>
-                                    <WrapPanel Grid.Row="1" >
-                                        <TextBlock Text="采集方式"  Margin="20 5 5 5" TextAlignment="Center" />
+                                    <WrapPanel Grid.Row="1">
+                                        <TextBlock Text="采集方式" Margin="20 5 5 5" TextAlignment="Center" />
                                         <ComboBox ItemsSource="{Binding CameraConnectMethodDictionary}"
-                                                                              SelectedValue="{Binding HomePageModel.CollectMethod , UpdateSourceTrigger=PropertyChanged }"
-                                                  />
+                                                  SelectedValue="{Binding HomePageModel.CollectMethod , UpdateSourceTrigger=PropertyChanged }" />
                                     </WrapPanel>
-                                    <WrapPanel Grid.Row="2" Margin="0 10 0 0" Visibility="{Binding HomePageModel.PictureFilePathShowVisibility}">
+                                    <WrapPanel Grid.Row="2" Margin="0 10 0 0"
+                                               Visibility="{Binding HomePageModel.PictureFilePathShowVisibility}">
                                         <TextBlock Text="文件夹路径" Margin="20 5 5 5" TextAlignment="Center" />
-                                        <Button Content="选择图片" Command="{Binding OpenPictureCommand}"/>
+                                        <Button Content="选择图片" Command="{Binding OpenPictureCommand}" />
                                     </WrapPanel>
 
-                                    <WrapPanel Grid.Row="2" Margin="0 10 0 0" Visibility="{Binding HomePageModel.ShowCameraVisibility}">
+                                    <WrapPanel Grid.Row="2" Margin="0 10 0 0"
+                                               Visibility="{Binding HomePageModel.ShowCameraVisibility}">
                                         <TextBlock Text="选着相机" Margin="20 5 5 5" TextAlignment="Center" />
-                                        <ComboBox  ItemsSource="{Binding HomePageModel.CameraList }"
-                                                   DisplayMemberPath="CameraName"
-                                                   SelectedValuePath="GenICamTL"
-                                                   SelectedValue="{Binding HomePageModel.SelectCamera}"
-                                                   Width="150"
-                                                   
-                                                   />
+                                        <ComboBox ItemsSource="{Binding HomePageModel.CameraList }"
+                                                  DisplayMemberPath="CameraName"
+                                                  SelectedValuePath="GenICamTL"
+                                                  SelectedValue="{Binding HomePageModel.SelectCamera}"
+                                                  Width="150" />
                                     </WrapPanel>
 
                                     <WrapPanel Grid.Row="3" Margin="0 10 0 0">
-                                       
+
                                     </WrapPanel>
                                     <WrapPanel Grid.Row="4" Margin="0 10 0 0">
-                                        <Button Content="拍照"  Margin="20 0" Command="{Binding  VisionTriggerCommand}"/>
-                                        <Button Content="{Binding HomePageModel.RealTimeName}"  Margin="0"  Command="{Binding VisionRealTimeCommand }"/>
+                                        <Button Content="拍照" Margin="20 0" Command="{Binding  VisionTriggerCommand}" />
+                                        <Button Content="{Binding HomePageModel.RealTimeName}" Margin="0"
+                                                Command="{Binding VisionRealTimeCommand }" />
                                     </WrapPanel>
                                 </Grid>
                                 <Grid Grid.Row="1">
@@ -1170,7 +1243,7 @@
                             </Grid>
                         </Border>
                     </Grid>
-                    <Grid x:Name="grid4" Margin="20,5,20,0" RenderTransformOrigin="0.5,0.5">
+                    <Grid x:Name="grid4" Margin="20,5,20,5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0*" />
                             <ColumnDefinition />
@@ -1213,7 +1286,7 @@
                             Opacity="0"
                             Height="102"
                             BorderThickness="0"
-                            RenderTransformOrigin="0.93,0.26"
+                            RenderTransformOrigin="0.92,0.27"
                             Grid.ColumnSpan="2"
                             Margin="0,4,0,4">
                             <Border.RenderTransform>
@@ -1320,20 +1393,143 @@
                             </Grid>
                         </Border>
                     </Grid>
+                    <!--动画参数 Border RenderTransform x=2.3 y=5.5 调整缩放,
+                    通过 RenderTransformOrigin="0.43,0.52"调整决定坐标(需要修改)-->
+                    <!--动画参数 内部Grid LayoutTransform参数 x=0.434782 y=0.18181818-->
+                    <Grid x:Name="grid5" Margin="20,5,20,5">
+
+                        <ui:CardAction
+                            Name="Register_CardAction"
+                            IsChevronVisible="False"
+
+                            VerticalAlignment="Stretch" Click="Register_OnClick" Grid.ColumnSpan="2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <ui:SymbolIcon Symbol="BoxSearch20" FontSize="40" />
+                                <ui:TextBlock Grid.Column="1" Text="系统寄存器" VerticalAlignment="Center" />
+                            </Grid>
+                        </ui:CardAction>
+                        <Border
+                            x:Name="Register_Border"
+                            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                            CornerRadius="10"
+                            Visibility="Collapsed"
+                            Opacity="0"
+                            Height="102"
+                            BorderThickness="0"
+                            Grid.ColumnSpan="2"
+                            Margin="0,4,0,4" RenderTransformOrigin="0,0.54">
+                            <Border.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </Border.RenderTransform>
+                            <Grid x:Name="grid6">
+                                <Grid.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </Grid.LayoutTransform>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.3*" />
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    
+
+                                    <TabControl>
+                                        <TabItem  Width="120">
+                                            <TabItem.Header>
+                                                <TextBlock Text="触发寄存器" Margin="5" TextAlignment="Center" />
+                                            </TabItem.Header>
+                                            <DataGrid
+                                                AutoGenerateColumns="False"
+                                                ItemsSource="{Binding HomePageModel.TriggerRegisterItems}">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="名称备注" Width="*"
+                                                                        Binding="{Binding Name}" />
+                                                    <DataGridTextColumn Header="地址" Width="*"
+                                                                        IsReadOnly="True"
+                                                                        Binding="{Binding Index}" />
+                                                    <DataGridTextColumn Header="值" Width="*"
+                                                                        Binding="{Binding Value}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </TabItem>
+                                        <TabItem  Width="120">
+                                            <TabItem.Header >
+                                                <TextBlock Text="保持寄存器" Margin="5" TextAlignment="Center"  />
+                                            </TabItem.Header>
+                                            <DataGrid
+                                                AutoGenerateColumns="False"
+                                                ItemsSource="{Binding HomePageModel.RegisterItems}">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="名称备注" Width="*"
+                                                                        Binding="{Binding Name}" />
+                                                    <DataGridTextColumn Header="地址" Width="*"
+                                                                        IsReadOnly="True"
+                                                                        Binding="{Binding Index}" />
+                                                    <DataGridTextColumn Header="值" Width="*"
+                                                                        Binding="{Binding Value}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </TabItem>
+
+                                        <TabItem  Width="120">
+                                            <TabItem.Header>
+                                                <TextBlock Grid.Row="4" Text="队列" Margin="5" TextAlignment="Center" />
+                                            </TabItem.Header>
+
+                                            <DataGrid Grid.Row="5"
+                                                      AutoGenerateColumns="False"
+                                                      ItemsSource="{Binding HomePageModel.QueueItems}">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="名称备注" Width="*"
+                                                                        Binding="{Binding Name}" />
+                                                    <DataGridTextColumn Header="地址" Width="*"
+                                                                        IsReadOnly="True"
+                                                                        Binding="{Binding Index}" />
+                                                    <DataGridTextColumn Header="值" Width="*"
+                                                                        Binding="{Binding Value}" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </TabItem>
+                                    </TabControl>
+
+
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
+                                        <Button Content="收起" Width="100" Margin="15,0" Click="Register_Close_OnClick" />
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
                 </UniformGrid>
             </Grid>
             <Grid Grid.Column="1" Grid.RowSpan="2" Cursor="Arrow">
                 <StackPanel>
                     <WrapPanel>
-                        <TextBlock Text="视觉显示" Margin="10,5"  TextAlignment="Center"/>
-                        <ComboBox ItemsSource="{Binding CameraShowMethodList }" 
+                        <TextBlock Text="视觉显示" Margin="10,5" TextAlignment="Center" />
+                        <ComboBox ItemsSource="{Binding CameraShowMethodList }"
                                   SelectedValue="{Binding HalconControl.CameraShowSize}"
                                   SelectedValuePath="Value"
                                   DisplayMemberPath="Display"
                                   SelectionChanged="Selector_OnSelectionChanged"
-                                  Width="120"/>
+                                  Width="150" />
                     </WrapPanel>
-             
+
                     <Border Height="300">
                         <halconDotNet:HSmartWindowControlWPF
                             Margin="10"
