@@ -6,7 +6,7 @@ using Pkn_HostSystem.Static;
 
 namespace Pkn_HostSystem.Base;
 // public class JsonTool<T> where T : class, new()  //不需要new() 因为没有地方需要new T()
-public class JsonTool<T> where T : class
+public class JsonTool<T> where T : class 
 {
     //1. Environment.SpecialFolder.ApplicationData 对应 C:\Users\你的用户名\AppData\Roaming
     //这是 Windows 推荐我们存放 用户级应用数据 的地方，比如配置文件、用户缓存、保存状态等。

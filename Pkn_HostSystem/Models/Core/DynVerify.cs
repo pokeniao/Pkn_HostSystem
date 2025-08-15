@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace Pkn_HostSystem.Models.Core
 {
@@ -28,14 +29,14 @@ namespace Pkn_HostSystem.Models.Core
         public string Value { get; set; }
 
         private Type complexValue;
-
+        [JsonIgnore]
         public Type ComplexValue
         {
             get => complexValue;
             set
             {
                 SetProperty(ref complexValue, value);
-                Value = value.Name;
+                Value = value.FullName;
             }
         }
 

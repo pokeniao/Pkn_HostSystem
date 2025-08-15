@@ -63,15 +63,15 @@ namespace Pkn_HostSystem
         private async Task Starting()
         {
 
-            GlobalManager.ArrayRegister = JsonTool<object[]>.Load();
-            if (GlobalManager.ArrayRegister == null)
+            StaticArrayRegister.ArrayRegister = JsonTool<object[]>.Load();
+            if (StaticArrayRegister.ArrayRegister == null)
             {
-                GlobalManager.ArrayRegister = new object[100];
+                StaticArrayRegister.ArrayRegister = new object[100];
             }
-            GlobalManager.QueueRegister = JsonTool<List<ConcurrentQueue<object>>>.Load();
-            if (GlobalManager.QueueRegister == null)
+            StaticArrayRegister.QueueRegister = JsonTool<List<ConcurrentQueue<object>>>.Load();
+            if (StaticArrayRegister.QueueRegister == null)
             {
-                GlobalManager.QueueRegister = Enumerable
+                StaticArrayRegister.QueueRegister = Enumerable
                     .Range(0, 100)
                     .Select(_ => new ConcurrentQueue<object>())
                     .ToList();

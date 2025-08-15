@@ -77,7 +77,7 @@
                     <ComboBox Width="200"
                               Margin=" 0, 0 0 5"
                               ItemsSource="{Binding  XMethod}" 
-                              SelectedValue="{Binding SetLiveChartsParamModel.XDayTimeMethod}"
+                              SelectedValue="{Binding SetLiveChartsParamModel.XDayTimeMethod, UpdateSourceTrigger=PropertyChanged}"
                               />
                 </WrapPanel>
 
@@ -92,6 +92,7 @@
                          BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                          Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                          Style="{x:Null}"
+                         Visibility="{Binding  SetLiveChartsParamModel.showxAxesDayTimeLabelsRunStopString}"
                          Text="{Binding SetLiveChartsParamModel.XAxesDayTimeLabelsYieldString  , UpdateSourceTrigger=PropertyChanged}" />
 
 
@@ -101,7 +102,7 @@
                 <WrapPanel Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin=" 0, 0 0 5">
                     <ComboBox Width="150"
                               ItemsSource="{Binding YMethod}" 
-                              SelectedValue="{Binding SetLiveChartsParamModel.YDayTimeMethod}"
+                              SelectedValue="{Binding SetLiveChartsParamModel.YDayTimeMethod , UpdateSourceTrigger=PropertyChanged}"
                               />
                 </WrapPanel>
                 <Button Grid.Row="6" Grid.Column="1"
@@ -208,7 +209,7 @@
                 <WrapPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
                     <ComboBox Width="200"
                               Margin=" 0, 0 0 5"
-                              SelectedValue="{Binding SetLiveChartsParamModel.XOeeMethod}"
+                              SelectedValue="{Binding SetLiveChartsParamModel.XOeeMethod ,UpdateSourceTrigger=PropertyChanged}"
                               ItemsSource="{Binding  XMethod}" />
                 </WrapPanel>
 
@@ -223,6 +224,7 @@
                          BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                          Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                          Style="{x:Null}"
+                         Visibility="{Binding  SetLiveChartsParamModel.showxAxesOeeLabelsYieldString}"
                          Text="{Binding SetLiveChartsParamModel.XAxesOeeLabelsYieldString  , UpdateSourceTrigger=PropertyChanged}" />
 
 
@@ -231,7 +233,7 @@
                            TextAlignment="Right" />
                 <WrapPanel Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin=" 0, 0 0 5">
                     <ComboBox Width="150"
-                              SelectedValue="{Binding SetLiveChartsParamModel.YOeeMethod}"
+                              SelectedValue="{Binding SetLiveChartsParamModel.YOeeMethod , UpdateSourceTrigger=PropertyChanged}"
                               ItemsSource="{Binding YMethod}" />
                 </WrapPanel>
                 <Button Grid.Row="6" Grid.Column="1"

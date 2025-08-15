@@ -187,7 +187,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                 new Axis
                 {
                     Name = "OEE",
-                    Labeler = value => $"{value / 100:P0}",
+                    Labeler = value => $"{value :P2}",
                     NamePaint = new SolidColorPaint(GlobalManager.ThemeSkColor)
                     {
                         SKTypeface = SKTypeface.FromFamilyName("Microsoft YaHei")
@@ -201,26 +201,37 @@ namespace Pkn_HostSystem.ViewModels.Page
             [
                 new ColumnSeries<ObservableValue>
                 {
-                    Values = LiveChartsModel.Oks,
-                    Fill = green,
+                    Values = LiveChartsModel.All,
+                    Fill = new SolidColorPaint(new SKColor(0 ,0 ,255)),
                     Stroke = null,
-                    MaxBarWidth = double.MaxValue,
-                    IgnoresBarPosition = true
+                    MaxBarWidth = 35,
+                    IgnoresBarPosition = true,
                 },
                 new ColumnSeries<ObservableValue>
                 {
-                    Values = LiveChartsModel.Ngs,
-                    Fill = red,
+                    Values = LiveChartsModel.Oks,
+                    Fill = new SolidColorPaint(new SKColor(0 ,255 ,0 )),
                     Stroke = null,
                     MaxBarWidth = 30,
                     IgnoresBarPosition = true
                 },
-                new LineSeries<ObservableValue> { Values = LiveChartsModel.All, Fill = null, GeometrySize = 0 }
+                //堆叠的柱状图StackedColumnSeries
+                new ColumnSeries<ObservableValue>
+                {
+                    Values = LiveChartsModel.Ngs,
+                    Fill = new SolidColorPaint(new SKColor(255 ,0 ,0)),
+                    Stroke = null,
+                    MaxBarWidth = 30,
+                    IgnoresBarPosition = true
+                },
+                
+
+                // new LineSeries<ObservableValue> { Values = LiveChartsModel.All, Fill = null, GeometrySize = 0 }
             ];
             //柱状图-OEE-数量统计
             OEEYieldSeries =
             [
-                new LineSeries<ObservableValue> { Values = LiveChartsModel.Oees, Fill = null, GeometrySize = 0 },
+                new LineSeries<ObservableValue> { Values = LiveChartsModel.Oees, Fill = null, GeometrySize = 10 },
             ];
 
 
@@ -398,7 +409,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                         if (!sueeced)
                         {
                             Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败");
-                            return;
+                            continue;
                         }
 
                         //解析JSON
@@ -407,7 +418,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                         if (!isJson)
                         {
                             Log.Error($"[{TraceContext.Name}]--产量统计解析JSON失败");
-                            return;
+                            continue;
                         }
 
 
@@ -479,7 +490,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                         if (!sueeced)
                         {
                             Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败");
-                            return;
+                            continue;
                         }
 
                         //解析JSON
@@ -488,7 +499,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                         if (!isJson)
                         {
                             Log.Error($"[{TraceContext.Name}]--停机运行时长统计解析JSON失败");
-                            return;
+                            continue;
                         }
 
                         JObject jObject2 = JObject.Parse(result);
@@ -517,7 +528,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                         if (!sueeced)
                         {
                             Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败");
-                            return;
+                            continue;
                         }
 
                         //解析JSON
@@ -526,7 +537,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                         if (!isJson)
                         {
                             Log.Error($"[{TraceContext.Name}]--产量统计解析JSON失败");
-                            return;
+                            continue;
                         }
 
                         jObject = JObject.Parse(result);
@@ -574,7 +585,6 @@ namespace Pkn_HostSystem.ViewModels.Page
 
                                     count = LiveChartsModel.LabelsXAxesOEEYield.Count;
 
-                                    oee = oee * 100;
                                     //写入到对应的
                                     liveChartsTestViewModel.LiveChartsModel.Oees[count - 1].Value = oee;
                                     break;

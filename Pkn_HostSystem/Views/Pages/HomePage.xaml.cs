@@ -124,6 +124,27 @@ namespace Pkn_HostSystem.Views.Pages
             showCloseCard(JDBC_Border, "JDBC_Close_Storyboard");
         }
 
+        /// <summary>
+        /// 展开内部寄存器卡片
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Register_OnClick(object sender, RoutedEventArgs e)
+        {
+            showOpenCard(Register_Border, "Register_Open");
+        }
+
+
+        /// <summary>
+        /// 收起数据库卡片
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Register_Close_OnClick(object sender, RoutedEventArgs e)
+        {
+            showCloseCard(Register_Border, "Register_Close");
+        }
+
         #endregion
 
         #region 卡片私有类
@@ -139,12 +160,13 @@ namespace Pkn_HostSystem.Views.Pages
             CA_pppOrderSelect.Visibility = Visibility.Hidden;
             CA_CameraSelect.Visibility = Visibility.Hidden;
             JDBC_CardAction.Visibility = Visibility.Hidden;
-
+            Register_CardAction.Visibility = Visibility.Hidden;
             //二. 所有border消失,重新选择
             ConnectPLCBorder.Visibility = Visibility.Collapsed;
             OrderBorder.Visibility = Visibility.Collapsed;
             CameraBorder.Visibility = Visibility.Collapsed;
             JDBC_Border.Visibility = Visibility.Collapsed;
+            Register_Border.Visibility = Visibility.Collapsed;
             //三. 展示当前点击的
             border.Visibility = Visibility.Visible;
             Storyboard? storyboard = FindResource(storyboardName) as Storyboard;
@@ -171,6 +193,7 @@ namespace Pkn_HostSystem.Views.Pages
                         CA_pppOrderSelect.Visibility = Visibility.Visible;
                         CA_CameraSelect.Visibility = Visibility.Visible;
                         JDBC_CardAction.Visibility = Visibility.Visible;
+                        Register_CardAction.Visibility = Visibility.Visible;
                     });
                 }
             );
@@ -284,10 +307,10 @@ namespace Pkn_HostSystem.Views.Pages
         private void SelectPppOrderButton(object sender, RoutedEventArgs e)
         {
             HomePageModel homePageModel = HomePageViewModel.HomePageModel;
-            Volatile.Write(ref GlobalManager.ArrayRegister[50], homePageModel.RHight);
-            Volatile.Write(ref GlobalManager.ArrayRegister[51], homePageModel.RLow);
-            Volatile.Write(ref GlobalManager.ArrayRegister[52], homePageModel.VHight);
-            Volatile.Write(ref GlobalManager.ArrayRegister[53], homePageModel.VLow);
+            Volatile.Write(ref StaticArrayRegister.ArrayRegister[50], homePageModel.RHight);
+            Volatile.Write(ref StaticArrayRegister.ArrayRegister[51], homePageModel.RLow);
+            Volatile.Write(ref StaticArrayRegister.ArrayRegister[52], homePageModel.VHight);
+            Volatile.Write(ref StaticArrayRegister.ArrayRegister[53], homePageModel.VLow);
         }
 
         #endregion

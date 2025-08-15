@@ -720,10 +720,10 @@ public class LoadMesService : ILoadMesService
                     {
                         case "读取(集合)":
                             message = _self.StaticMessage(message, itemKey,
-                                Volatile.Read(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex])?.ToString());
+                                Volatile.Read(ref StaticArrayRegister.ArrayRegister[item.InteriorArrayIndex])?.ToString());
                             break;
                         case "读取(队列)":
-                            bool tryPeek = GlobalManager.QueueRegister[item.InteriorQueueIndex]
+                            bool tryPeek = StaticArrayRegister.QueueRegister[item.InteriorQueueIndex]
                                 .TryDequeue(out object a);
 
                             if (!tryPeek)
@@ -742,12 +742,12 @@ public class LoadMesService : ILoadMesService
                             break;
                         case "写入(集合)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
-                            Volatile.Write(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex],
+                            Volatile.Write(ref StaticArrayRegister.ArrayRegister[item.InteriorArrayIndex],
                                 item.InteriorWriteMessage);
                             break;
                         case "写入(队列)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
-                            GlobalManager.QueueRegister[item.InteriorQueueIndex].Enqueue(item.InteriorWriteMessage);
+                            StaticArrayRegister.QueueRegister[item.InteriorQueueIndex].Enqueue(item.InteriorWriteMessage);
                             break;
                     }
                 }
@@ -1104,10 +1104,10 @@ public class LoadMesService : ILoadMesService
                     {
                         case "读取(集合)":
                             message = _self.StaticMessage(message, itemKey,
-                                Volatile.Read(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex])?.ToString());
+                                Volatile.Read(ref StaticArrayRegister.ArrayRegister[item.InteriorArrayIndex])?.ToString());
                             break;
                         case "读取(队列)":
-                            bool tryPeek = GlobalManager.QueueRegister[item.InteriorQueueIndex]
+                            bool tryPeek = StaticArrayRegister.QueueRegister[item.InteriorQueueIndex]
                                 .TryDequeue(out object a);
 
                             if (!tryPeek)
@@ -1126,12 +1126,12 @@ public class LoadMesService : ILoadMesService
                             break;
                         case "写入(集合)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
-                            Volatile.Write(ref GlobalManager.ArrayRegister[item.InteriorArrayIndex],
+                            Volatile.Write(ref StaticArrayRegister.ArrayRegister[item.InteriorArrayIndex],
                                 item.InteriorWriteMessage);
                             break;
                         case "写入(队列)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
-                            GlobalManager.QueueRegister[item.InteriorQueueIndex].Enqueue(item.InteriorWriteMessage);
+                            StaticArrayRegister.QueueRegister[item.InteriorQueueIndex].Enqueue(item.InteriorWriteMessage);
                             break;
                     }
                 }
@@ -1276,11 +1276,11 @@ public class LoadMesService : ILoadMesService
                 break;
             case "内部地址":
                 Volatile.Write(
-                    ref GlobalManager.ArrayRegister[int.Parse(model.TranspondModbusDetailed.InteriorAddress)],
+                    ref StaticArrayRegister.ArrayRegister[int.Parse(model.TranspondModbusDetailed.InteriorAddress)],
                     response);
                 break;
             case "队列":
-                GlobalManager.QueueRegister[int.Parse(model.TranspondModbusDetailed.InteriorAddress)].Enqueue(response);
+                StaticArrayRegister.QueueRegister[int.Parse(model.TranspondModbusDetailed.InteriorAddress)].Enqueue(response);
                 break;
         }
 
@@ -1566,7 +1566,7 @@ public class LoadMesService : ILoadMesService
                     return (false, message);
                 }
             case "自定义复杂逻辑校验":
-                Type ComplexValue = verify.ComplexValue;
+                Type ComplexValue = Type.GetType(verify.Value);
                 //实例化
                 var objInstance = Activator.CreateInstance(ComplexValue);
                 //获取方法
@@ -1823,7 +1823,7 @@ public class LoadMesService : ILoadMesService
                 break;
             case "内部地址":
                 sendMessage = Volatile.Read(
-                    ref GlobalManager.ArrayRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
+                    ref StaticArrayRegister.ArrayRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
                 );
 
                 if (sendMessage == null)
@@ -1836,7 +1836,7 @@ public class LoadMesService : ILoadMesService
                 break;
             case "队列":
 
-                GlobalManager.QueueRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
+                StaticArrayRegister.QueueRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
                     .TryDequeue(out sendMessage);
                 if (sendMessage == null)
                 {
@@ -1905,7 +1905,7 @@ public class LoadMesService : ILoadMesService
                     break;
                 case "内部地址":
                     sendMessage = Volatile.Read(
-                        ref GlobalManager.ArrayRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
+                        ref StaticArrayRegister.ArrayRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
                     );
 
                     if (sendMessage == null)
@@ -1918,7 +1918,7 @@ public class LoadMesService : ILoadMesService
                     break;
                 case "队列":
 
-                    GlobalManager.QueueRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
+                    StaticArrayRegister.QueueRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
                         .TryDequeue(out sendMessage);
                     if (sendMessage == null)
                     {

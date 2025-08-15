@@ -225,7 +225,7 @@ namespace Pkn_HostSystem.Models.Page
         [ObservableProperty] private int timeCyc = 100;
 
 
-        [ObservableProperty] private ObservableCollection<string> labelsXAxesOEEYield ;
+        [ObservableProperty] private ObservableCollection<string> labelsXAxesOEEYield  = new();
 
 
         [ObservableProperty] private ObservableCollection<string> labelsXAxesDayTimeYield =
@@ -259,6 +259,10 @@ namespace Pkn_HostSystem.Models.Page
 
         [ObservableProperty] private string xOeeMethod = "随月份更新(保存31天)";
         [ObservableProperty] private string yOeeMethod = "数量坐标";
+
+
+
+        
 
         /// <summary>
         /// 产量统计启动

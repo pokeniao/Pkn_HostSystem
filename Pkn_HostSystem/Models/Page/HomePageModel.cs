@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using DynamicData;
 using DynamicData.Binding;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Base.Enum;
@@ -91,6 +92,22 @@ public partial class HomePageModel : ObservableObject
     [ObservableProperty] private string vHight;
 
     #endregion
+
+
+    [ObservableProperty]
+    private ObservableCollection<RegisterItem> triggerRegisterItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100).Select(s => new RegisterItem()
+    {
+        Index = s.ToString()
+    }));
+    
+    [ObservableProperty] private ObservableCollection<RegisterItem> registerItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100).Select(s => new RegisterItem()
+    {
+        Index = s.ToString()
+    }));
+    [ObservableProperty] private ObservableCollection<RegisterItem> queueItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100).Select(s => new RegisterItem()
+    {
+        Index = s.ToString()
+    }));
 
     #endregion
 

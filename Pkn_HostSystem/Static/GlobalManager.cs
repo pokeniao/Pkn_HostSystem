@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
@@ -90,16 +91,16 @@ public static class GlobalManager
     /// 内部触发寄存器,不断电保存
     /// </summary>
     public static int[] Register = new int[100];
-
-    /// <summary>
-    /// 内部寄存器,断电保存
-    /// </summary>
-    public static object[] ArrayRegister;
-
-    /// <summary>
-    /// 内部队列 ,队列初始化器,断电保存
-    /// </summary>
-    public static List<ConcurrentQueue<object>> QueueRegister;
+    //
+    // /// <summary>
+    // /// 内部寄存器,断电保存
+    // /// </summary>
+    // public static object[] ArrayRegister;
+    //
+    // /// <summary>
+    // /// 内部队列 ,队列初始化器,断电保存
+    // /// </summary>
+    // public static List<ConcurrentQueue<object>> QueueRegister;
 
 
     static GlobalManager()
@@ -155,9 +156,27 @@ public static class GlobalManager
     }
 
 
+
+
+}
+
+
+public class StaticArrayRegister
+{
+    /// <summary>
+    /// 内部寄存器,断电保存
+    /// </summary>
+    public static object[] ArrayRegister { get; set; }
+
+    /// <summary>
+    /// 内部队列 ,队列初始化器,断电保存
+    /// </summary>
+    public static List<ConcurrentQueue<object>> QueueRegister { get; set; }
+
+
     public static void SaveRegister()
     {
-        JsonTool<object[]>.Save(ArrayRegister);
-        JsonTool<List<ConcurrentQueue<object>>>.Save(QueueRegister);
+        JsonTool<StaticArrayRegister>.Save(new StaticArrayRegister());
+        
     }
 }
