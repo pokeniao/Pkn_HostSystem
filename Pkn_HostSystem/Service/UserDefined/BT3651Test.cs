@@ -1,6 +1,6 @@
 ﻿using Pkn_HostSystem.Service.UserDefined.Interface;
 using Pkn_HostSystem.Static;
-using static OpenTK.Graphics.OpenGL.GL;
+
 
 namespace Pkn_HostSystem.Service.UserDefined
 {
@@ -26,20 +26,23 @@ namespace Pkn_HostSystem.Service.UserDefined
             double value2 = double.Parse(strings[1]);
             try
             {
-                double RHight = double.Parse(Volatile.Read(ref StaticArrayRegister.ArrayRegister[50]).ToString());
-                double RLow = double.Parse(Volatile.Read(ref StaticArrayRegister.ArrayRegister[51]).ToString());
-                double VHight = double.Parse(Volatile.Read(ref StaticArrayRegister.ArrayRegister[52]).ToString());
-                double VLow = double.Parse(Volatile.Read(ref StaticArrayRegister.ArrayRegister[53]).ToString());
+
+                
+                double RHight = double.Parse(StaticArrayRegister.ReadRegisterValue(50).ToString());
+                double RLow = double.Parse(StaticArrayRegister.ReadRegisterValue(51).ToString());
+                double VHight = double.Parse(StaticArrayRegister.ReadRegisterValue(52).ToString());
+                double VLow = double.Parse(StaticArrayRegister.ReadRegisterValue(53).ToString());
                 if (!(RHight > value && value > RLow))
                 {
-                    Volatile.Write(ref StaticArrayRegister.ArrayRegister[56], "NG");
+
+                    StaticArrayRegister.WriteRegisterValue(56, "NG");
 
                     objects = [true, "电测NG"];
                     return (true, objects);
                 }
                 if (!(VHight > value2 && value2 > VLow))
                 {
-                    Volatile.Write(ref StaticArrayRegister.ArrayRegister[56], "NG");
+                    StaticArrayRegister.WriteRegisterValue(56, "NG");
                     objects = [true, "电测NG"];
                     return (true, objects);
                 }
@@ -50,12 +53,12 @@ namespace Pkn_HostSystem.Service.UserDefined
                 return (false, objects);
             }
             //将电阻 电压写入到寄存器中
-
-            Volatile.Write(ref StaticArrayRegister.ArrayRegister[54], value);
-            Volatile.Write(ref StaticArrayRegister.ArrayRegister[55], value2);
+            StaticArrayRegister.WriteRegisterValue(54, value);
+            StaticArrayRegister.WriteRegisterValue(55, value2);
 
             //写入OK
-            Volatile.Write(ref StaticArrayRegister.ArrayRegister[56], "OK");
+            StaticArrayRegister.WriteRegisterValue(56, "OK");
+
             objects = [true, $"OK"];
             return (true, objects);
         }
@@ -76,11 +79,11 @@ namespace Pkn_HostSystem.Service.UserDefined
                 }
                 //阻值 单位mΩ
                 double value = double.Parse(strings[0]);
-
-                double RHight = double.Parse(Volatile.Read(ref StaticArrayRegister.ArrayRegister[50]).ToString());
-                double RLow = double.Parse(Volatile.Read(ref StaticArrayRegister.ArrayRegister[51]).ToString());
-                double VHight = double.Parse(Volatile.Read(ref StaticArrayRegister.ArrayRegister[52]).ToString());
-                double VLow = double.Parse(Volatile.Read(ref StaticArrayRegister.ArrayRegister[53]).ToString());
+                
+                double RHight = double.Parse(StaticArrayRegister.ReadRegisterValue(50).ToString());
+                double RLow = double.Parse(StaticArrayRegister.ReadRegisterValue(51).ToString());
+                double VHight = double.Parse(StaticArrayRegister.ReadRegisterValue(52).ToString());
+                double VLow = double.Parse(StaticArrayRegister.ReadRegisterValue(53).ToString());
                 if (!(RHight > value && value > RLow))
                 {
                     return "电阻未达到条件";

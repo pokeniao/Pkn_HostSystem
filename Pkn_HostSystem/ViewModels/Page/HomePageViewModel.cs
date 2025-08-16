@@ -62,10 +62,15 @@ public partial class HomePageViewModel : ObservableRecipient
             HomePageModel = new HomePageModel()
             {
                 SetConnectDg = new ObservableCollection<NetworkDetailed>(), //创建 设置连接列表的DataGrid 绑定对象
-                NetWorkList = new ObservableCollectionExtended<NetWork>()
+                NetWorkList = new ObservableCollectionExtended<NetWork>(),
+                RegisterItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100)
+                    .Select(index => new RegisterItem(index)))
             };
         }
 
+
+        // HomePageModel.RegisterItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100)
+        //     .Select(index => new RegisterItem(StaticArrayRegister.ArrayRegister, index)));
 
         HalconTool = new HalconTool(HalconControl);
 

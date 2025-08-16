@@ -518,9 +518,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                             case "内部寄存器":
                                                 //读取寄存器
                                                 var objects =
-                                                    Volatile.Read(
-                                                        ref StaticArrayRegister.ArrayRegister[
-                                                            int.Parse(model.InteriorResponseIndex)]);
+                                                    StaticArrayRegister.ReadRegisterValue(
+                                                        int.Parse(model.InteriorResponseIndex));
+                                                 
                                                 await netWork.ModbusBase.WriteRegister_06(
                                                     byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
                                                     ushort.Parse(objects.ToString()));
@@ -611,9 +611,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                             case "内部寄存器":
                                                 //读取寄存器
                                                 var objects =
-                                                    Volatile.Read(
-                                                        ref StaticArrayRegister.ArrayRegister[
-                                                            int.Parse(model.InteriorResponseIndex)]);
+                                                    StaticArrayRegister.ReadRegisterValue(
+                                                        int.Parse(model.InteriorResponseIndex));
                                                 await netWork.ModbusBase.WriteRegister_06(
                                                     byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
                                                     ushort.Parse(objects.ToString()));
@@ -703,9 +702,8 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                             case "内部寄存器":
                                                 //读取寄存器
                                                 var objects =
-                                                    Volatile.Read(
-                                                        ref StaticArrayRegister.ArrayRegister[
-                                                            int.Parse(model.InteriorResponseIndex)]);
+                                                    StaticArrayRegister.ReadRegisterValue(
+                                                        int.Parse(model.InteriorResponseIndex));
                                                 await netWork.KeyenceHostLinkTool.WriteDM(
                                                     int.Parse(model.StartAddress),
                                                     ushort.Parse(objects.ToString()), model.cts);
