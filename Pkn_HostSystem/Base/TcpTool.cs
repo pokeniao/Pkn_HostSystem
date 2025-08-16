@@ -14,12 +14,14 @@ namespace Pkn_HostSystem.Base
         /// 日志
         /// </summary>
         public LogBase<TcpTool> Log = new();
+
         /// <summary>
         /// CTS
         /// </summary>
         private CancellationTokenSource? _cts;
+
         //客户端集合
-        public  ConcurrentDictionary<string, TcpClient> _clients = new();
+        public ConcurrentDictionary<string, TcpClient> _clients = new();
         //维护一个接受客户端消息的集合, 最多储存10条历史数据
 
         public ConcurrentDictionary<string, List<string>> _clientsResponse = new();
@@ -28,18 +30,22 @@ namespace Pkn_HostSystem.Base
         /// 服务器
         /// </summary>
         private TcpListener? _server;
+
         /// <summary>
         /// 客户端
         /// </summary>
         public TcpClient? _client;
+
         /// <summary>
         /// 通讯流
         /// </summary>
         private NetworkStream? _clientStream;
+
         /// <summary>
         /// 服务器是否处于运行
         /// </summary>
         public bool IsServerRunning => _server != null;
+
         /// <summary>
         /// 客户端是否处于运行
         /// </summary>
@@ -49,17 +55,20 @@ namespace Pkn_HostSystem.Base
         /// 服务器 收到 客户端连接事件
         /// </summary>
         public event Action<string> OnClientConnected;
+
         /// <summary>
         /// 服务器 收到 客户端断开连接事件
         /// </summary>
         public event Action<string> OnClientDisconnected;
+
         /// <summary>
         /// 服务器 收到 客户端发送消息事件
         /// </summary>
         public event Action<string, string> OnMessageReceived;
 
         #region 服务器连接和断开
-        public async Task<bool> StartServerAsync(int port , bool isListen)
+
+        public async Task<bool> StartServerAsync(int port, bool isListen)
         {
             if (_server != null) return false;
 
@@ -75,6 +84,7 @@ namespace Pkn_HostSystem.Base
                 Log.Error(e.Message);
                 return false;
             }
+
             Log.Info($"[{TraceContext.Name}]--[Server] 启动监听端口 {port}");
 
             //开启一个异步线程监听客户端连接
@@ -89,7 +99,7 @@ namespace Pkn_HostSystem.Base
                         var ip = ((IPEndPoint)client.Client.RemoteEndPoint!).ToString();
                         //添加到客户端集合
                         _clients[ip] = client;
-                        _clientsResponse[ip] = new List<string>(); 
+                        _clientsResponse[ip] = new List<string>();
                         //调用客户端已执行委托
                         OnClientConnected?.Invoke(ip);
                         Log.Info($"[{TraceContext.Name}]--[Server] 客户端连接: {ip}");
@@ -118,6 +128,7 @@ namespace Pkn_HostSystem.Base
                 kv.Value.Close();
                 kv.Value.Dispose();
             }
+
             _clients.Clear();
             _server?.Stop();
             _server?.Dispose();
@@ -125,9 +136,11 @@ namespace Pkn_HostSystem.Base
             _clientsResponse = new();
             Log.Info($"[{TraceContext.Name}]--[Server] 已停止监听");
         }
+
         #endregion
 
         #region 服务器接受消息
+
         public async Task ServeListenReadClient(TcpClient client, string ip, CancellationToken token)
         {
             try
@@ -141,7 +154,7 @@ namespace Pkn_HostSystem.Base
                 {
                     //阻塞,等待读取成功
                     int count = await stream.ReadAsync(buffer, 0, buffer.Length, token);
-           
+
 
                     if (count == 0) break;
                     //读取到的消息msg
@@ -165,13 +178,14 @@ namespace Pkn_HostSystem.Base
             }
         }
 
-        public async Task<(bool succeed , string response)> ServeReadClientOneToOne(TcpClient client, string ip, CancellationToken token, int timeout = 3000)
+        public async Task<(bool succeed, string response)> ServeReadClientOneToOne(TcpClient client, string ip,
+            CancellationToken token, int timeout = 3000)
         {
             //创建客户端通讯流
             NetworkStream stream = null;
             try
             {
-                 stream = client.GetStream();
+                stream = client.GetStream();
             }
             catch (InvalidOperationException e)
             {
@@ -180,6 +194,7 @@ namespace Pkn_HostSystem.Base
                 _clientsResponse.TryRemove(ip, out _);
                 return (false, $"当前通讯对象[{ip}]已经断开");
             }
+
             var buffer = new byte[1024];
 
             Task<int> readTask = stream.ReadAsync(buffer, 0, buffer.Length, token);
@@ -187,7 +202,7 @@ namespace Pkn_HostSystem.Base
 
             var any = await Task.WhenAny(Task.Delay(timeout, token), readTask);
 
-            if (any== readTask)
+            if (any == readTask)
             {
                 int count = await readTask;
                 if (count > 0)
@@ -199,7 +214,7 @@ namespace Pkn_HostSystem.Base
                 else
                 {
                     Log.Error($"[{TraceContext.Name}]--[Server] 等待客户端消息返回空内容");
-                    return (false,null);
+                    return (false, null);
                 }
             }
             else
@@ -208,6 +223,7 @@ namespace Pkn_HostSystem.Base
                 return (false, null);
             }
         }
+
         #endregion
 
         #region 服务器发送消息
@@ -254,7 +270,7 @@ namespace Pkn_HostSystem.Base
         /// <param name="timeout"></param>
         /// <returns></returns>
         public async Task<(bool succeed, string? response)> ServerSendWaitResponseOneToOne(string message,
-            CancellationTokenSource cts,int timeout = 3000)
+            CancellationTokenSource cts, int timeout = 3000)
         {
             bool NoError = true;
             //等待返回消息
@@ -264,6 +280,7 @@ namespace Pkn_HostSystem.Base
                 Log.Error($"[{TraceContext.Name}]--服务器没有任何连接对象");
                 return (false, null);
             }
+
             var clinetList = _clients.ToArray();
 
             string ip = clinetList[0].Key;
@@ -282,6 +299,7 @@ namespace Pkn_HostSystem.Base
                     Log.Error($"[{TraceContext.Name}]--在服务器执行发送消息时, 服务器为null");
                     NoError = false;
                 }
+
                 // 发送消息
                 try
                 {
@@ -292,7 +310,7 @@ namespace Pkn_HostSystem.Base
                     //对方掉线,移除
                     _clients.TryRemove(clinetList[0]);
                     //递归
-                    (bool succeed, string? response) = await ServerSendWaitResponseOneToOne(message,cts);
+                    (bool succeed, string? response) = await ServerSendWaitResponseOneToOne(message, cts);
                     if (succeed)
                     {
                         return (true, response);
@@ -304,7 +322,7 @@ namespace Pkn_HostSystem.Base
                 {
                     //对方掉线,移除
                     _clients.TryRemove(clinetList[0]);
-                    (bool succeed, string? response) = await ServerSendWaitResponseOneToOne(message,cts);
+                    (bool succeed, string? response) = await ServerSendWaitResponseOneToOne(message, cts);
                     if (succeed)
                     {
                         return (true, response);
@@ -359,6 +377,7 @@ namespace Pkn_HostSystem.Base
                 Log.Error($"[Server] 广播到 {ip} 失败: {ex.Message}");
                 NoError = false;
             }
+
             if (NoError)
             {
                 return (true, msg);
@@ -436,39 +455,54 @@ namespace Pkn_HostSystem.Base
         #endregion
 
         #region 客户端接受消息事件
+
         public async Task ClientReceiveFromServer(NetworkStream stream)
         {
             var buffer = new byte[1024];
-         
-                while (IsClientConnected)
-                {
-                    try
-                    {
-                        //阻塞,等待读取成功
-                        int count = await stream.ReadAsync(buffer, 0, buffer.Length);
-                        if (count == 0) break;
 
-                        string msg = Encoding.UTF8.GetString(buffer, 0, count);
-                        OnMessageReceived?.Invoke($"{stream}", msg);
-                    }
-                    catch
-                    {
-                        break;
-                    }
+            while (IsClientConnected)
+            {
+                try
+                {
+                    //阻塞,等待读取成功
+                    int count = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    if (count == 0) break;
+
+                    string msg = Encoding.UTF8.GetString(buffer, 0, count);
+                    OnMessageReceived?.Invoke($"{stream}", msg);
                 }
+                catch
+                {
+                    break;
+                }
+            }
+
             Log.Info($"[Client] 与服务器断开连接");
         }
+
         #endregion
 
         #region 客户端发送消息
 
-        public async Task<(bool succeed, string? response)> SendAndWaitClientAsync(string message,CancellationTokenSource cts, int timeout = 3000)
+        public async Task<(bool succeed, string? response)> SendAndWaitClientAsync(string message,
+            CancellationTokenSource cts, int timeout = 3000)
         {
             if (_client == null || !_client.Connected || _clientStream == null)
             {
                 Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息时, 客户端未连接服务器");
                 return (false, null);
             }
+
+            byte[] buffer = new byte[1024];
+            ;
+            while (_clientStream.DataAvailable)
+            {
+                int readAsync = await _clientStream.ReadAsync(buffer, 0, buffer.Length);
+
+                Log.Info(
+                    $"[{TraceContext.Name}]--在客户端执行发送消息前, 读取到缓存区存在内容, 以进行清除 , 内容为: {Encoding.UTF8.GetString(buffer, 0, readAsync)}");
+            }
+
 
             // 发送消息
             try
@@ -487,7 +521,7 @@ namespace Pkn_HostSystem.Base
             try
             {
                 Log.Info($"[{TraceContext.Name}]--在客户端执行发送消息后,等待消息返回");
-                var buffer = new byte[1024];
+                buffer = new byte[1024];
                 var stream = _client.GetStream();
                 var startTime = Environment.TickCount; // 记录开始时间
                 while (!cts.Token.IsCancellationRequested)
@@ -530,16 +564,19 @@ namespace Pkn_HostSystem.Base
             await _clientStream.WriteAsync(data, 0, data.Length);
             return true;
         }
+
         #endregion
 
         #region 私有帮助方法
-        private void AddResponseList(string ip , string message)
+
+        private void AddResponseList(string ip, string message)
         {
             List<string> list = _clientsResponse[ip];
             if (list.Count >= 10)
             {
                 list.RemoveAt(0);
             }
+
             list.Add(message);
         }
 

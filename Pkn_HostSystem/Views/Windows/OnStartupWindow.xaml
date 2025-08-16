@@ -25,9 +25,9 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Image Grid.RowSpan="2" Grid.ColumnSpan="2" x:Name="MyGifImage"
-               wpfAnimatedGif:ImageBehavior.AnimatedSource="../../Assets/LoadingGIF.gif"
-               Stretch="None"/>
+        <!-- <Image Grid.RowSpan="2" Grid.ColumnSpan="2" x:Name="MyGifImage" -->
+        <!--        wpfAnimatedGif:ImageBehavior.AnimatedSource="../../Assets/LoadingGIF.gif" -->
+        <!--        Stretch="None"/> -->
 
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Starting...." FontSize="16" Margin="10" Foreground="#FF2218DA" FontFamily="Forte"/>
