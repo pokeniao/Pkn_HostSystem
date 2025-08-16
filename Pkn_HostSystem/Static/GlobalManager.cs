@@ -10,7 +10,6 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
-
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using System.Windows.Controls;
@@ -20,8 +19,6 @@ namespace Pkn_HostSystem.Static;
 
 public static class GlobalManager
 {
-
-
     /// <summary>
     /// 日志的富文本
     /// </summary>
@@ -155,21 +152,19 @@ public static class GlobalManager
             );
         return types.ToList();
     }
-
-
-
-
 }
-
 
 public class StaticArrayRegister
 {
+    // 真正存数据的数组（线程安全 + Volatile 可用）
+    private static object[] _dataArrayRegister = new object[100];
+
+    private static List<ConcurrentQueue<object>> _dataQueueRegister;
+
     /// <summary>
     /// 内部寄存器,断电保存
     /// </summary>
-    public static ObservableCollection<object>  ArrayRegister { get; set; }
-
-
+    public static ObservableCollection<object> ArrayRegister { get; set; }
 
 
     /// <summary>
@@ -177,10 +172,19 @@ public class StaticArrayRegister
     /// </summary>
     public static ObservableCollection<ConcurrentQueue<object>> QueueRegister { get; set; }
 
+    public static object GetRegisterValue(int index)
+    {
+        return Volatile.Read(ref _dataArrayRegister[index]);
+    }
+
+    public static void SetRegisterValue(int index, object value)
+    {
+        Volatile.Write(ref _dataArrayRegister[index], value);
+        ArrayRegister[index] = value;
+    }
 
     public static void SaveRegister()
     {
         JsonTool<StaticArrayRegister>.Save(new StaticArrayRegister());
-        
     }
 }
