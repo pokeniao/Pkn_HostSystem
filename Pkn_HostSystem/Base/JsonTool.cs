@@ -1,8 +1,9 @@
-﻿using System.IO;
-using System.Reflection;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Static;
+using System.IO;
+using System.Reflection;
 
 namespace Pkn_HostSystem.Base;
 // public class JsonTool<T> where T : class, new()  //不需要new() 因为没有地方需要new T()
@@ -53,7 +54,10 @@ public class JsonTool<T> where T : class
             if (!Directory.Exists(SaveFile))
                 Directory.CreateDirectory(SaveFile);
             //2.转成Json格式
-            var json = JsonConvert.SerializeObject(config, Formatting.Indented);
+            var json = JsonConvert.SerializeObject(config, Formatting.Indented, new JsonSerializerSettings
+            {
+                ContractResolver = new IncludeStaticResolver()
+            });
             //3.JSON字符串写入到本地
             File.WriteAllTextAsync(FilePath, json);
             Log.Info($"{typeof(T)}程序保存成功");
@@ -83,8 +87,13 @@ public class JsonTool<T> where T : class
                 var json = File.ReadAllText(FilePath);
                 //3. 将字符串转成类
                 //3.1 设置转换格式   new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }强制调用set方法 ,那么只要 get 不为 null，默认会走“就地填充”，不调用 set，即：如果在对象创建时就被初始化了（比如 constructor 或字段初始化），Newtonsoft 会把 JSON 中的数组元素一个个 .Add() 到 Numbers 里，而不是重新创建一个新 List 并调用 set Numbers(...)。
+                //3.1   ContractResolver = new IncludeStaticResolver(),静态的也要能解析
                 return JsonConvert.DeserializeObject<T>(json,
-                    new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }) ?? null;
+                    new JsonSerializerSettings
+                    {
+                        ContractResolver = new IncludeStaticResolver(),
+                        ObjectCreationHandling = ObjectCreationHandling.Replace
+                    }) ?? null;
             }
         }
         catch (Exception ex)
@@ -209,4 +218,29 @@ public class JsonTool<T> where T : class
 
     #endregion
 
+}
+// 默认情况下，Newtonsoft.Json 使用 DefaultContractResolver：
+// 👉 它只序列化 实例的 public 属性，不会管静态的，也不会管私有字段。
+//所以要解决“静态成员无法保存”的问题，就需要 重写 ContractResolver，让它把静态属性也纳入序列化。
+public class IncludeStaticResolver : DefaultContractResolver
+{
+    protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+    {
+        // 1. 获取实例成员 + 静态成员
+        //BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance 这行确保我们能拿到 实例属性 +静态属性。
+        // 设置 prop.Writable = true; prop.Readable = true; 确保即使某些属性没 set 方法，也能写入。
+        var props = type
+            .GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
+            .Select(p => base.CreateProperty(p, memberSerialization))
+            .ToList();
+
+        // 2. 设置属性可读可写
+        foreach (var prop in props)
+        {
+            prop.Writable = true;
+            prop.Readable = true;
+        }
+
+        return props;
+    }
 }

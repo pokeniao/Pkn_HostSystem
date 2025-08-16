@@ -94,20 +94,27 @@ public partial class HomePageModel : ObservableObject
     #endregion
 
 
-    [ObservableProperty]
-    private ObservableCollection<RegisterItem> triggerRegisterItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100).Select(s => new RegisterItem()
-    {
-        Index = s.ToString()
-    }));
+    // [ObservableProperty]
+    // private ObservableCollection<RegisterItem> triggerRegisterItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100).Select(s => new RegisterItem()
+    // {
+    //     Index = s.ToString()
+    // }));
+
+    private ObservableCollection<RegisterItem> registerItems;
     
-    [ObservableProperty] private ObservableCollection<RegisterItem> registerItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100).Select(s => new RegisterItem()
+    public ObservableCollection<RegisterItem> RegisterItems
     {
-        Index = s.ToString()
-    }));
-    [ObservableProperty] private ObservableCollection<RegisterItem> queueItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100).Select(s => new RegisterItem()
-    {
-        Index = s.ToString()
-    }));
+        get => registerItems;
+        set
+        {
+            SetProperty(ref registerItems, value);
+        }
+
+    }
+    // [ObservableProperty] private ObservableCollection<RegisterItem> queueItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100).Select(s => new RegisterItem()
+    // {
+    //     Index = s.ToString()
+    // }));
 
     #endregion
 
@@ -132,7 +139,7 @@ public partial class HomePageModel : ObservableObject
     [JsonIgnore]
     public Visibility PictureFilePathShowVisibility =>
         CollectMethod == CameraInterfaceEnum.图片 ? Visibility.Visible : Visibility.Collapsed;
-
+    [JsonIgnore]
     public Visibility ShowCameraVisibility =>
         CollectMethod == CameraInterfaceEnum.GenICamTL ? Visibility.Visible : Visibility.Collapsed;
 

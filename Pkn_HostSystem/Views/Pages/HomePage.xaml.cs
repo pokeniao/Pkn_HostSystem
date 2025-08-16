@@ -307,10 +307,10 @@ namespace Pkn_HostSystem.Views.Pages
         private void SelectPppOrderButton(object sender, RoutedEventArgs e)
         {
             HomePageModel homePageModel = HomePageViewModel.HomePageModel;
-            Volatile.Write(ref StaticArrayRegister.ArrayRegister[50], homePageModel.RHight);
-            Volatile.Write(ref StaticArrayRegister.ArrayRegister[51], homePageModel.RLow);
-            Volatile.Write(ref StaticArrayRegister.ArrayRegister[52], homePageModel.VHight);
-            Volatile.Write(ref StaticArrayRegister.ArrayRegister[53], homePageModel.VLow);
+            StaticArrayRegister.WriteRegisterValue(50, homePageModel.RHight);
+            StaticArrayRegister.WriteRegisterValue(51, homePageModel.RLow);
+            StaticArrayRegister.WriteRegisterValue(52, homePageModel.VHight);
+            StaticArrayRegister.WriteRegisterValue(53, homePageModel.VLow);
         }
 
         #endregion

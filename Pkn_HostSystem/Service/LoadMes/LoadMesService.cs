@@ -720,7 +720,7 @@ public class LoadMesService : ILoadMesService
                     {
                         case "读取(集合)":
                             message = _self.StaticMessage(message, itemKey,
-                                StaticArrayRegister.GetRegisterValue(item.InteriorArrayIndex).ToString());
+                                StaticArrayRegister.ReadRegisterValue(item.InteriorArrayIndex).ToString());
                             break;
                         case "读取(队列)":
                             bool tryPeek = StaticArrayRegister.QueueRegister[item.InteriorQueueIndex]
@@ -742,7 +742,7 @@ public class LoadMesService : ILoadMesService
                             break;
                         case "写入(集合)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
-                            StaticArrayRegister.SetRegisterValue(item.InteriorArrayIndex , item.InteriorWriteMessage);
+                            StaticArrayRegister.WriteRegisterValue(item.InteriorArrayIndex , item.InteriorWriteMessage);
 
                             break;
                         case "写入(队列)":
@@ -1104,8 +1104,7 @@ public class LoadMesService : ILoadMesService
                     {
                         case "读取(集合)":
                             message = _self.StaticMessage(message, itemKey,
-                                StaticArrayRegister.GetRegisterValue(item.InteriorArrayIndex)
-
+                                StaticArrayRegister.ReadRegisterValue(item.InteriorArrayIndex)
                                     .ToString());
                             break;
                         case "读取(队列)":
@@ -1128,8 +1127,7 @@ public class LoadMesService : ILoadMesService
                             break;
                         case "写入(集合)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
-                            Volatile.Write(ref StaticArrayRegister.ArrayRegister[item.InteriorArrayIndex],
-                                item.InteriorWriteMessage);
+                            StaticArrayRegister.WriteRegisterValue(item.InteriorArrayIndex , item.InteriorWriteMessage);
                             break;
                         case "写入(队列)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
@@ -1277,9 +1275,7 @@ public class LoadMesService : ILoadMesService
 
                 break;
             case "内部地址":
-                Volatile.Write(
-                    ref StaticArrayRegister.ArrayRegister[int.Parse(model.TranspondModbusDetailed.InteriorAddress)],
-                    response);
+                StaticArrayRegister.WriteRegisterValue(int.Parse(model.TranspondModbusDetailed.InteriorAddress) , response);
                 break;
             case "队列":
                 StaticArrayRegister.QueueRegister[int.Parse(model.TranspondModbusDetailed.InteriorAddress)].Enqueue(response);
@@ -1824,9 +1820,10 @@ public class LoadMesService : ILoadMesService
                 sendMessage = item.SocketSendMessage;
                 break;
             case "内部地址":
-                sendMessage = Volatile.Read(
-                    ref StaticArrayRegister.ArrayRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
-                );
+                sendMessage =
+                StaticArrayRegister.ReadRegisterValue(int.Parse(item.InteriorGetRegisterMessageIndex));
+
+
 
                 if (sendMessage == null)
                 {
@@ -1906,10 +1903,8 @@ public class LoadMesService : ILoadMesService
                     sendMessage = item.SerialSendMessage;
                     break;
                 case "内部地址":
-                    sendMessage = Volatile.Read(
-                        ref StaticArrayRegister.ArrayRegister[int.Parse(item.InteriorGetRegisterMessageIndex)]
-                    );
-
+                    sendMessage = 
+                    StaticArrayRegister.ReadRegisterValue(int.Parse(item.InteriorGetRegisterMessageIndex));
                     if (sendMessage == null)
                     {
                         Log.Error($"[{TraceContext.Name}]--执行Socket时--读取内部地址为null");

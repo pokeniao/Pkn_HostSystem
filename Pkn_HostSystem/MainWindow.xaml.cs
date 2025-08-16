@@ -53,6 +53,16 @@ namespace Pkn_HostSystem
 
         private void PreLoad()
         {
+            //初始化静态寄存器
+            StaticArrayRegister staticArrayRegister = JsonTool<StaticArrayRegister>.Load();
+            if (StaticArrayRegister.DataArrayRegister == null)
+            {
+                StaticArrayRegister.DataArrayRegister = new object[100];
+            }
+            StaticArrayRegister.ArrayRegister =
+                new ObservableCollection<object>(StaticArrayRegister.DataArrayRegister);
+
+
             _ = Ioc.Default.GetRequiredService<LiveChartsTestPage>();
             _ = Ioc.Default.GetRequiredService<HomePage>();
             _ = Ioc.Default.GetRequiredService<LoadMesPage>();
@@ -63,20 +73,6 @@ namespace Pkn_HostSystem
         private async Task Starting()
         {
 
-            StaticArrayRegister staticArrayRegister = JsonTool<StaticArrayRegister>.Load();
-            if (StaticArrayRegister.ArrayRegister == null)
-            {
-                StaticArrayRegister.ArrayRegister = new ObservableCollection<object>(
-                    Enumerable.Range(0, 100).Select(_ => "0"));
-            }
-       
-            if (StaticArrayRegister.QueueRegister == null)
-            {
-                StaticArrayRegister.QueueRegister = new ObservableCollection<ConcurrentQueue<object>>(
-                    Enumerable
-                        .Range(0, 100)
-                        .Select(_ => new ConcurrentQueue<object>()));
-            }
             //判断软件开启,启动的连接,自动进行连接
             HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
             ObservableCollection<NetworkDetailed> ConnectPojos = homePageViewModel.HomePageModel.SetConnectDg;
