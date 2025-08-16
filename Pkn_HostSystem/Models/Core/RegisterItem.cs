@@ -1,4 +1,6 @@
-﻿namespace Pkn_HostSystem.Models.Core
+﻿using System.Collections.ObjectModel;
+
+namespace Pkn_HostSystem.Models.Core
 {
     public class RegisterItem
     {
@@ -6,6 +8,7 @@
 
         public string Index { get; set; }
 
-        public string Value { get; set; }
+        public ObservableCollection<string> Value { get; set; }
+
     }
 }

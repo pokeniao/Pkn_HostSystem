@@ -720,7 +720,7 @@ public class LoadMesService : ILoadMesService
                     {
                         case "读取(集合)":
                             message = _self.StaticMessage(message, itemKey,
-                                Volatile.Read(ref StaticArrayRegister.ArrayRegister[item.InteriorArrayIndex])?.ToString());
+                                Volatile.Read( StaticArrayRegister.ArrayRegister[item.InteriorArrayIndex])?.ToString());
                             break;
                         case "读取(队列)":
                             bool tryPeek = StaticArrayRegister.QueueRegister[item.InteriorQueueIndex]

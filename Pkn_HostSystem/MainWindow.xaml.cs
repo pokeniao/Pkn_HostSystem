@@ -63,18 +63,19 @@ namespace Pkn_HostSystem
         private async Task Starting()
         {
 
-            StaticArrayRegister.ArrayRegister = JsonTool<object[]>.Load();
+            StaticArrayRegister staticArrayRegister = JsonTool<StaticArrayRegister>.Load();
             if (StaticArrayRegister.ArrayRegister == null)
             {
-                StaticArrayRegister.ArrayRegister = new object[100];
+                StaticArrayRegister.ArrayRegister = new ObservableCollection<object>(
+                    Enumerable.Range(0, 100).Select(_ => "0"));
             }
-            StaticArrayRegister.QueueRegister = JsonTool<List<ConcurrentQueue<object>>>.Load();
+       
             if (StaticArrayRegister.QueueRegister == null)
             {
-                StaticArrayRegister.QueueRegister = Enumerable
-                    .Range(0, 100)
-                    .Select(_ => new ConcurrentQueue<object>())
-                    .ToList();
+                StaticArrayRegister.QueueRegister = new ObservableCollection<ConcurrentQueue<object>>(
+                    Enumerable
+                        .Range(0, 100)
+                        .Select(_ => new ConcurrentQueue<object>()));
             }
             //判断软件开启,启动的连接,自动进行连接
             HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
