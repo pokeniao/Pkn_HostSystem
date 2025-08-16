@@ -720,7 +720,7 @@ public class LoadMesService : ILoadMesService
                     {
                         case "读取(集合)":
                             message = _self.StaticMessage(message, itemKey,
-                                Volatile.Read( StaticArrayRegister.ArrayRegister[item.InteriorArrayIndex])?.ToString());
+                                StaticArrayRegister.GetRegisterValue(item.InteriorArrayIndex).ToString());
                             break;
                         case "读取(队列)":
                             bool tryPeek = StaticArrayRegister.QueueRegister[item.InteriorQueueIndex]
@@ -742,8 +742,8 @@ public class LoadMesService : ILoadMesService
                             break;
                         case "写入(集合)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
-                            Volatile.Write(ref StaticArrayRegister.ArrayRegister[item.InteriorArrayIndex],
-                                item.InteriorWriteMessage);
+                            StaticArrayRegister.SetRegisterValue(item.InteriorArrayIndex , item.InteriorWriteMessage);
+
                             break;
                         case "写入(队列)":
                             message = _self.StaticMessage(message, itemKey, item.InteriorWriteMessage);
@@ -1104,7 +1104,9 @@ public class LoadMesService : ILoadMesService
                     {
                         case "读取(集合)":
                             message = _self.StaticMessage(message, itemKey,
-                                Volatile.Read(ref StaticArrayRegister.ArrayRegister[item.InteriorArrayIndex])?.ToString());
+                                StaticArrayRegister.GetRegisterValue(item.InteriorArrayIndex)
+
+                                    .ToString());
                             break;
                         case "读取(队列)":
                             bool tryPeek = StaticArrayRegister.QueueRegister[item.InteriorQueueIndex]
