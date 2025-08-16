@@ -7,6 +7,7 @@ using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
 using SkiaSharp;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 
@@ -166,12 +167,15 @@ public class StaticArrayRegister
     /// <summary>
     /// 内部寄存器,断电保存
     /// </summary>
-    public static object[] ArrayRegister { get; set; }
+    public static ObservableCollection<object>  ArrayRegister { get; set; }
+
+
+
 
     /// <summary>
     /// 内部队列 ,队列初始化器,断电保存
     /// </summary>
-    public static List<ConcurrentQueue<object>> QueueRegister { get; set; }
+    public static ObservableCollection<ConcurrentQueue<object>> QueueRegister { get; set; }
 
 
     public static void SaveRegister()
