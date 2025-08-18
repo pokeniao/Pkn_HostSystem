@@ -222,6 +222,11 @@ namespace Pkn_HostSystem.Base.Log
 
         public void LogRichTextBoxAdd(string type, string message)
         {
+            if (FlowDocument == null)
+            {
+                return;
+            }
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var paragraph = new Paragraph();
