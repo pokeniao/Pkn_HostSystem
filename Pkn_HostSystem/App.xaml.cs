@@ -35,9 +35,17 @@ namespace Pkn_HostSystem
             //记录启动时间
             GlobalManager.StartTime = DateTimeOffset.Now;
             AppRunOn();
-          
+
             OnStartupWindow onStartupWindow = new OnStartupWindow();
-            onStartupWindow.Show();
+            try
+            {
+                onStartupWindow.Show();
+            }
+            catch (InvalidOperationException
+                   exception)
+            {
+                return;
+            }
 
 
             await Task.Run(async () =>
