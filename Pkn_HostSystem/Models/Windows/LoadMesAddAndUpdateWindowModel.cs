@@ -98,6 +98,7 @@ namespace Pkn_HostSystem.Models.Windows
         /// <summary>
         /// 本地保存文件名
         /// </summary>
+        [JsonIgnore]
         public Visibility ShowSaveFileNameVisibility => LocalSaveFileNameMethod == "指定文件名"? Visibility.Visible
             : Visibility.Collapsed;
         /// <summary>

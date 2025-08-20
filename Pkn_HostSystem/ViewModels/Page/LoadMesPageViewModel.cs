@@ -14,6 +14,7 @@ using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
@@ -39,6 +40,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             LoadMesPageModel = new LoadMesPageModel()
             {
                 MesPojoList = new ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel>(),
+                LocalSaveDetailedsDictionary = new Dictionary<string, LocalSaveDetailed>()
             };
         }
 
@@ -998,7 +1000,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                         LoadMesPageModel.LocalSaveDetailedsDictionary.Add(model.Name,
                             new LocalSaveDetailed()
                             {
-                                TaskName = model.Name, Time = DateTime.Now.ToString("yyyy-MM-dd hh:mm")
+                                TaskName = model.Name, Time = DateTime.Now.ToString("yyyy-MM-dd HH:mm")
                             });
 
                         LocalSave(model, json);
@@ -1007,7 +1009,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                     else
                     {
                         //判断时间 是否满足条件
-                        DateTime dateTime = DateTime.Parse(value.Time);
+                        //CultureInfo.CurrentCulture → 跟随操作系统的区域设置（容易出问题）。
+                        // CultureInfo.InvariantCulture → 固定的、不会变的文化（推荐用于 数据存储 / 序列化）。
+                        DateTime dateTime = DateTime.ParseExact(value.Time, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
                         //判断是否是今天
                         if (dateTime.Day == DateTime.Now.Day)
                         {
@@ -1025,7 +1029,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                 //不符合时间段,需要重新保存
                                 LoadMesPageModel.LocalSaveDetailedsDictionary[model.Name] = new LocalSaveDetailed()
                                 {
-                                    TaskName = model.Name, Time = DateTime.Now.ToString("yyyy-MM-dd hh:mm")
+                                    TaskName = model.Name, Time = DateTime.Now.ToString("yyyy-MM-dd HH:mm")
                                 };
                                 LocalSave(model, json);
                             }
@@ -1035,7 +1039,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                             //不是今天,更新且保存
                             LoadMesPageModel.LocalSaveDetailedsDictionary[model.Name] = new LocalSaveDetailed()
                             {
-                                TaskName = model.Name, Time = DateTime.Now.ToString("yyyy-MM-dd hh:mm")
+                                TaskName = model.Name, Time = DateTime.Now.ToString("yyyy-MM-dd HH:mm")
                             };
                             LocalSave(model, json);
                         }
