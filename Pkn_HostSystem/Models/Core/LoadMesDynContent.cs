@@ -213,6 +213,7 @@ public class DynCondition : ObservableObject
     /// <summary>
     /// 用于显示当前参数的值
     /// </summary>
+    [JsonIgnore]
     public string ShowValue
     {
         get
@@ -341,34 +342,38 @@ public class DynCondition : ObservableObject
     /// <summary>
     /// 请求方式 :进行控制显示
     /// </summary>
+    [JsonIgnore]
     public bool showReadReg => MethodName == "读寄存器";
-
+    [JsonIgnore]
     public bool showReadCoil => MethodName == "读线圈";
-
+    [JsonIgnore]
     public bool showSocket => MethodName == "Socket返回";
-
+    [JsonIgnore]
     public bool showHostLinkReadReg => MethodName == "读DM寄存器";
+    [JsonIgnore]
     public bool showHostLinkReadCoid => MethodName == "读R线圈状态";
-
+    [JsonIgnore]
     public bool showHttp => MethodName == "Http";
-
+    [JsonIgnore]
     public bool showSerial => MethodName == "串口通讯";
-
+    [JsonIgnore]
     public bool showInteriorArrarySet => MethodName == "读取(集合)";
-
+    [JsonIgnore]
     public bool showInteriorArraryWriteSet => MethodName == "写入(集合)";
+    [JsonIgnore]
     public bool showInteriorQueueSet => MethodName == "读取(队列)";
-
+    [JsonIgnore]
     public bool showInteriorQueueWriteSet => MethodName  == "写入(队列)";
     /// <summary>
     /// 通讯名: 用于控制连接名显示
     /// </summary>
+    [JsonIgnore]
     public bool showConnectName => GetMessageType == "通讯";
-
+    [JsonIgnore]
     public bool showHttpName => GetMessageType == "HTTP";
-
+    [JsonIgnore]
     public bool showUserDefined => GetMessageType == "自定义";
-
+    [JsonIgnore]
     public bool showInterior => GetMessageType == "内部";
 }
 

@@ -18,7 +18,7 @@ public partial class LoadMesPageModel : ObservableObject
     [ObservableProperty]
     private ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel> mesPojoList;
 
-    public Dictionary<string, LocalSaveDetailed> LocalSaveDetailedsDictionary = new();
+    public Dictionary<string, LocalSaveDetailed> LocalSaveDetailedsDictionary { get; set; }
 
     #endregion
 

@@ -245,7 +245,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         JsonTool<SettingsPageModel>.Reset();
         JsonTool<VisionPageModel>.Reset();
         JsonTool<LiveChartsModel>.Reset();
-
+        JsonTool<StaticArrayRegister>.Reset();
     }
 
     #region 保存程序
