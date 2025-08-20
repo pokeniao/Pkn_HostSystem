@@ -1,13 +1,14 @@
 ﻿using DynamicData.Binding;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Input;
-using Pkn_HostSystem.ViewModels.Windows;
-using System.Windows.Controls;
-using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Service.LoadMes;
 using Pkn_HostSystem.Static;
+using Pkn_HostSystem.ViewModels.Windows;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Wpf.Ui.Controls;
+using LoadMesAddAndUpdateWindowModel = Pkn_HostSystem.Models.Windows.LoadMesAddAndUpdateWindowModel;
 
 namespace Pkn_HostSystem.Views.Windows
 {
@@ -21,7 +22,9 @@ namespace Pkn_HostSystem.Views.Windows
 
         public LoadMesAddWindow()
         {
-            InitializeComponent();
+
+            InitializeComponent(); 
+          
         }
 
         //添加
@@ -232,6 +235,12 @@ namespace Pkn_HostSystem.Views.Windows
             TabControlSelect();
         }
 
+        private void LocalSaveButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            viewModel.LoadMesAddAndUpdateWindowModel.ShowLocalSave = viewModel.LoadMesAddAndUpdateWindowModel.LocalSave;
+            TabControlSelect();
+        }
+
         /// <summary>
         /// Tab页面自动选择
         /// </summary>
@@ -260,6 +269,12 @@ namespace Pkn_HostSystem.Views.Windows
                         return;
                     }
                     break;
+                case 3:
+                    if (viewModel.LoadMesAddAndUpdateWindowModel.ShowLocalSave)
+                    {
+                        return;
+                    }
+                    break;
                 
             }
 
@@ -275,7 +290,12 @@ namespace Pkn_HostSystem.Views.Windows
             {
                 SetTabControl.SelectedIndex = 2;
             }
+            else if (viewModel.LoadMesAddAndUpdateWindowModel.ShowLocalSave)
+            {
+                SetTabControl.SelectedIndex = 3;
+            }
         }
-  
+
+
     }
 }

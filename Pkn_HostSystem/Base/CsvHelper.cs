@@ -3,15 +3,17 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Windows;
 
 namespace Pkn_HostSystem.Base;
 
 public class CsvHelper
 {
-    private readonly List<List<string>> _rows = new();
+    private  List<List<string>> _rows = new();
     private readonly string _filePath;
     private readonly Encoding _encoding;
-    private LogControl<CsvHelper> Log =new LogControl<CsvHelper>();
+    private LogControl<CsvHelper> Log = new LogControl<CsvHelper>();
+
     public CsvHelper(string filePath, Encoding encoding = null)
     {
         _filePath = filePath;
@@ -22,14 +24,50 @@ public class CsvHelper
     public void Load()
     {
         _rows.Clear();
+        //如果没有创建直接不用加载
         if (!File.Exists(_filePath)) return;
 
-        foreach (var line in File.ReadAllLines(_filePath, _encoding))
+        //如果创建了,先读取一下 
+        using var fs = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        using var reader = new StreamReader(fs, _encoding);
+        string? line;
+        while ((line = reader.ReadLine()) != null)
         {
             var fields = ParseCsvLine(line);
             _rows.Add(fields);
         }
+        //读取完毕后,再判断一下是否被打开占用了
+        try
+        {
+            //检查是否能正常打开,还是被占用了
+            using (File.Open(_filePath, FileMode.Open, FileAccess.Read, FileShare.None)) ;
+        }
+        catch (Exception e)
+        {
+            // 临时文件路径
+            string tempFile  = _filePath + ".tmp";
+            //被占用了,但临时文件还没有
+            if (!File.Exists(tempFile)) return;
+
+            //如果临时文件已经存在,读取临时文件
+            using var fs2 = new FileStream(tempFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var reader2 = new StreamReader(fs2, _encoding);
+            string? line2;
+            List<List<string>> _rows2 = new();
+            while ((line2 = reader2.ReadLine()) != null)
+            {
+                var fields = ParseCsvLine(line2);
+                _rows2.Add(fields);
+            }
+            //比较一下 那个内容长, 就取用那个的
+            if (_rows.Count < _rows2.Count)
+            {
+                _rows = _rows2;
+            }
+        }
     }
+    //读取长度
+    public int GetLineLength => _rows.Count;
 
     // 添加一行
     public void AddRow(params string[] fields)
@@ -73,12 +111,51 @@ public class CsvHelper
     // 保存到文件
     public void Save(CancellationToken token)
     {
-        using var writer = new StreamWriter(_filePath, false, _encoding);
-        foreach (var row in _rows)
+        //判断文件夹是否存在
+        if (File.Exists(_filePath))
         {
-            token.ThrowIfCancellationRequested(); // 检查取消,抛出异常
-            writer.WriteLine(string.Join(",", row.Select(EscapeCsv)));
+            //存在临时文件中，避免直接覆盖原文件导致数据丢失
+            string tempFile = _filePath + ".tmp";
+            // 先写到临时文件
+            using (var fs = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+            using (var writer = new StreamWriter(fs, _encoding))
+            {
+                foreach (var row in _rows)
+                {
+                    token.ThrowIfCancellationRequested(); // 检查取消,抛出异常
+                    writer.WriteLine(string.Join(",", row.Select(EscapeCsv)));
+                }
+            }
+
+            try
+            {
+                // 用临时文件替换目标文件（自动覆盖）
+                File.Replace(tempFile, _filePath, null);
+            }
+            catch (IOException)
+            {
+                // 如果目标文件被占用，保留临时文件，提示用户稍后重试
+                // 这样至少不会丢数据
+
+                Log.Error($"文件正被占用，保存失败。请关闭相关程序后再重试。\n临时文件已保存到: {tempFile}");
+            }
         }
+        // 如果文件不存在，直接创建新文件
+        else
+        {
+            using (var fs = new FileStream(_filePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+            using (var writer = new StreamWriter(fs, _encoding))
+            {
+                foreach (var row in _rows)
+                {
+                    token.ThrowIfCancellationRequested(); // 检查取消,抛出异常
+                    writer.WriteLine(string.Join(",", row.Select(EscapeCsv)));
+                }
+            }
+
+        }
+
+
     }
 
     // 添加多行对象到已有内容末尾（按属性顺序追加）
@@ -115,6 +192,7 @@ public class CsvHelper
             Log.Error($"{nameof(CsvHelper)}--本地保存失败,Json格式不正确:{e.Message}");
             return;
         }
+
         if (dict == null || dict.Count == 0) return;
 
         // 如果表头为空（CSV 没有 Load 或新建），就加表头
@@ -148,6 +226,7 @@ public class CsvHelper
             if (match != null)
                 propMap[i] = match;
         }
+
         for (int rowIndex = 1; rowIndex < _rows.Count; rowIndex++)
         {
             var row = _rows[rowIndex];
@@ -172,8 +251,10 @@ public class CsvHelper
                     // 忽略转换失败的字段
                 }
             }
+
             result.Add(obj);
         }
+
         return result;
     }
 
@@ -186,15 +267,17 @@ public class CsvHelper
             field = field.Replace("\"", "\"\"");
             return $"\"{field}\"";
         }
+
         return field;
     }
 
     private static List<string> ParseCsvLine(string line)
     {
-        var result = new List<string>();
-        var current = new StringBuilder();
-        bool inQuotes = false;
-
+        var result = new List<string>(); // 存解析后的字段
+        //一个单元格的数据
+        var current = new StringBuilder(); // 当前字段内容
+        bool inQuotes = false; // 是否在引号包裹的字段内
+        //获取单个字符
         for (int i = 0; i < line.Length; i++)
         {
             char c = line[i];
@@ -212,7 +295,7 @@ public class CsvHelper
                 }
                 else
                 {
-                    current.Append(c);
+                    current.Append(c); // 普通字符加入字段
                 }
             }
             else
@@ -221,14 +304,16 @@ public class CsvHelper
                 {
                     inQuotes = true;
                 }
+                //逗号是按列区分的分隔符
                 else if (c == ',')
                 {
-                    result.Add(current.ToString());
+                    result.Add(current.ToString()); //字段结束，加入列表
+                    //清除掉当前单元格的数据
                     current.Clear();
                 }
                 else
                 {
-                    current.Append(c);
+                    current.Append(c); // 普通字符加入字段
                 }
             }
         }
@@ -254,6 +339,4 @@ public class CsvHelper
 
         return Convert.ChangeType(value, targetType);
     }
-
-
 }

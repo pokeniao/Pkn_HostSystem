@@ -19,6 +19,8 @@ namespace Pkn_HostSystem.ViewModels.Windows;
 
 public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 {
+
+    public TimeSpan TimeSpan { get; set; } = new TimeSpan(1, 1, 1, 1);
     public LoadMesAddAndUpdateWindowModel LoadMesAddAndUpdateWindowModel { get; set; }
 
     public LoadMesAddAndUpdateWindowModel LoadMesAddAndUpdateWindowModelBefore { get; set; }
@@ -47,6 +49,12 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
 
     public List<string> TriggerReturnMethodList { get; set; } = ["常量返回", "内部寄存器"];
 
+
+    public List<string> LocalSaveMethod { get; set; } = ["直接保存", "特定时间保存(满足时间要求保存多次)", "特定小时保存(满足时间要求保存多次)", "特定时间保存(当前时间内只保存一次)", "特定小时保存(当前时间内只保存一次)"];
+
+    public List<string> LocalSaveDirectoryMethod { get; set; } = ["默认", "指定目录名"];
+    public List<string> LocalSaveFileNameMethod { get; set; } = ["默认", "指定文件名","时间命名(按天)","时间命名(按月)"];
+
     public ObservableCollectionExtended<LoadMesDynContent> Para_dyn { get; set; } = new();
 
     /// <summary>
@@ -56,6 +64,8 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
     //添加
     public LoadMesAddAndUpdateWindowsViewModel()
     {
+        
+
         LoadMesAddAndUpdateWindowModel = new LoadMesAddAndUpdateWindowModel()
         {
             Ajax = "POST",

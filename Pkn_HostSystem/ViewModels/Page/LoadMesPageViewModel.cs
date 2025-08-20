@@ -4,21 +4,17 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using DynamicData.Binding;
-using NModbus.Logging;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.Models.Core.Interface;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Service.LoadMes;
-using Pkn_HostSystem.Service.LoadMes.Interface;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Reactive.Subjects;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
@@ -40,10 +36,9 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         LoadMesPageModel = JsonTool<LoadMesPageModel>.Load();
         if (LoadMesPageModel == null)
         {
-         
             LoadMesPageModel = new LoadMesPageModel()
             {
-                MesPojoList = new ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel>(), 
+                MesPojoList = new ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel>(),
             };
         }
 
@@ -69,7 +64,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             Log.SuccessAndShowTask("添加MES成功");
         }
-
     }
 
     [RelayCommand]
@@ -268,7 +262,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     public async Task<(bool succeed, string? message)> ExecutionCondition(LoadMesAddAndUpdateWindowModel model)
     {
         Log.Info($"[{TraceContext.Name}]--开始执行触发和循环共同的代码");
- 
+
 
         Log.Info($"[{TraceContext.Name}]--消息体准备组装");
         //消息体打包
@@ -300,12 +294,12 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         if (model.LocalSave)
         {
             //打包后本地保存
-            LocalSave(model, request);
+            LocalSaveMethod(model, request);
             //如果是Http请求就需要进行对结果保存
-            if (model.HttpNeed)
-            {
-                LocalSave(model, response, "-response");
-            }
+            // if (model.HttpNeed)
+            // {
+            //     LocalSaveMethod(model, response, "-response");
+            // }
         }
 
         //判断一下是否需要转发
@@ -520,7 +514,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                                                 var objects =
                                                     StaticArrayRegister.ReadRegisterValue(
                                                         int.Parse(model.InteriorResponseIndex));
-                                                 
+
                                                 await netWork.ModbusBase.WriteRegister_06(
                                                     byte.Parse(model.StationAddress), ushort.Parse(model.StartAddress),
                                                     ushort.Parse(objects.ToString()));
@@ -950,7 +944,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             "Pkn_HostSystem" // 文件夹名
         );
 
-    private static readonly string SaveFile = Path.Combine(AppFolder, "Mes上传记录");
 
     /// <summary>
     /// 本地保存
@@ -958,18 +951,167 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
     /// <param name="model">当前HTTP请求的数据</param>
     /// <param name="json">需要本地保存csv的Json</param>
     /// <param name="lastName">需要本地保存的lastName</param>
-    public void LocalSave(LoadMesAddAndUpdateWindowModel model, string json, string lastName = "")
+    public void LocalSaveMethod(LoadMesAddAndUpdateWindowModel model, string json)
     {
+        //["直接保存", "特定时间保存(满足时间要求保存多次)", "特定小时保存(满足时间要求保存多次)", "特定时间保存(当前时间内只保存一次)", "特定小时保存(当前时间内只保存一次)"];
+        switch (model.LocalSaveMethod)
+        {
+            case "直接保存":
+                LocalSave(model, json);
+                break;
+            case "特定时间保存(满足时间要求保存多次)":
+
+                break;
+            case "特定小时保存(满足时间要求保存多次)":
+
+                if (
+                    DateTime.Now.Hour >= model.StartSelectedHour &&
+                    DateTime.Now.Hour <= model.EndSelectedHour &&
+                    DateTime.Now.Minute >= model.StartSelectedMinute &&
+                    DateTime.Now.Minute <= model.EndSelectedMinute
+                )
+                {
+                    LocalSave(model, json);
+                }
+
+                break;
+            case "特定时间保存(当前时间内只保存一次)":
+                break;
+            case "特定小时保存(当前时间内只保存一次)":
+                //需要一个Save表格去统计<当前时间,当前通讯>有没有保存,
+                //问题1.如何清理?
+                //方法一:本地维护一个表: 先获取当前通讯, 判断当前时间<天> 是否是同一天. 是同一<天> 保存过了, 不是同一天,更新
+                //方法二:获取本地表,表内时间,进行判断 ,优点:简单, 缺点:不一定稳定 ,而且表中必须要有时间,固定了表格的形式
+
+
+                if (
+                    DateTime.Now.Hour >= model.StartSelectedHour &&
+                    DateTime.Now.Hour <= model.EndSelectedHour &&
+                    DateTime.Now.Minute >= model.StartSelectedMinute &&
+                    DateTime.Now.Minute <= model.EndSelectedMinute
+                )
+                {
+                    //查询本地字典
+                    LoadMesPageModel.LocalSaveDetailedsDictionary.TryGetValue(model.Name, out LocalSaveDetailed value);
+                    if (value == null)
+                    {
+                        LoadMesPageModel.LocalSaveDetailedsDictionary.Add(model.Name,
+                            new LocalSaveDetailed()
+                            {
+                                TaskName = model.Name, Time = DateTime.Now.ToString("yyyy-MM-dd hh:mm")
+                            });
+
+                        LocalSave(model, json);
+                        break;
+                    }
+                    else
+                    {
+                        //判断时间 是否满足条件
+                        DateTime dateTime = DateTime.Parse(value.Time);
+                        //判断是否是今天
+                        if (dateTime.Day == DateTime.Now.Day)
+                        {
+                            //判断是否符合时间段
+                            if (dateTime.Hour >= model.StartSelectedHour &&
+                                dateTime.Hour <= model.EndSelectedHour &&
+                                dateTime.Minute >= model.StartSelectedMinute &&
+                                dateTime.Minute <= model.EndSelectedMinute)
+                            {
+                                //符合时间段保存过了,不需要进行保存
+                                break;
+                            }
+                            else
+                            {
+                                //不符合时间段,需要重新保存
+                                LoadMesPageModel.LocalSaveDetailedsDictionary[model.Name] = new LocalSaveDetailed()
+                                {
+                                    TaskName = model.Name, Time = DateTime.Now.ToString("yyyy-MM-dd hh:mm")
+                                };
+                                LocalSave(model, json);
+                            }
+                        }
+                        else
+                        {
+                            //不是今天,更新且保存
+                            LoadMesPageModel.LocalSaveDetailedsDictionary[model.Name] = new LocalSaveDetailed()
+                            {
+                                TaskName = model.Name, Time = DateTime.Now.ToString("yyyy-MM-dd hh:mm")
+                            };
+                            LocalSave(model, json);
+                        }
+                    }
+                }
+
+                break;
+        }
+    }
+
+    private static readonly string SaveFile = Path.Combine(AppFolder, "保存表格CSV");
+
+    public void LocalSave(LoadMesAddAndUpdateWindowModel model, string json)
+    {
+        string saveDirectory;
+        switch (model.LocalSaveDirectoryMethod)
+        {
+            case "默认":
+                saveDirectory = Path.Combine(SaveFile, $"{model.Name}");
+                break;
+            case "指定目录名":
+                if (model.LocalSaveDirectoryPath == null)
+                {
+                    saveDirectory = Path.Combine(SaveFile, $"{model.Name}");
+                }
+                else
+                {
+                    saveDirectory = Path.Combine(SaveFile, model.LocalSaveDirectoryPath);
+                }
+
+                break;
+            default:
+                saveDirectory = Path.Combine(SaveFile, $"{model.Name}");
+                break;
+        }
+
+        string flieName;
+        //"默认", "指定文件名","时间命名(按天)","时间命名(按月)"
+        switch (model.LocalSaveFileNameMethod)
+        {
+            case "默认":
+                flieName = model.Name;
+                break;
+            case "指定文件名":
+                if (model.LocalSaveFileName != null)
+                {
+                    flieName = model.Name;
+                }
+                else
+                {
+                    flieName = model.Name;
+                }
+
+                break;
+            case "时间命名(按天)":
+                flieName = DateTime.Now.ToString("yyyy年MM月dd日");
+                break;
+            case "时间命名(按月)":
+                flieName = DateTime.Now.ToString("yyyy年MM月");
+                break;
+            default:
+                flieName = model.Name;
+                break;
+        }
+
+
         //不存在,创建
-        if (!Directory.Exists(SaveFile))
-            Directory.CreateDirectory(SaveFile);
-        string FilePath = Path.Combine(SaveFile, model.Name + lastName + ".csv");
+        if (!Directory.Exists(saveDirectory))
+            Directory.CreateDirectory(saveDirectory);
+        string FilePath = Path.Combine(saveDirectory, flieName + ".csv");
         CsvHelper csvHelper = new CsvHelper(FilePath);
         csvHelper.Load();
         json = JsonTool<object>.TryFormatJson(json, out bool isJson);
         csvHelper.AddRowFromJson(json);
         csvHelper.Save(model.cts.Token);
-        Log.Info($"[{TraceContext.Name}] --本地保存{model.Name}{lastName}.csv  成功");
+        Log.Info($"[{TraceContext.Name}] --本地保存{flieName}.csv  成功");
     }
 
     #endregion

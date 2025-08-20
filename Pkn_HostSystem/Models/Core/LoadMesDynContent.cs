@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Windows.Markup;
 
@@ -79,7 +80,9 @@ public class DynCondition : ObservableObject
             OnPropertyChanged(nameof(showRegisterMessage));
         }
     }
+    [JsonIgnore]
     public bool showStaticMessage => SendMessageMethod == "常量";
+    [JsonIgnore]
     public bool showRegisterMessage => SendMessageMethod != "常量";
 
     /// <summary>

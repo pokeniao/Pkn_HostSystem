@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using Newtonsoft.Json;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 using System.Collections.ObjectModel;
 
@@ -16,6 +17,8 @@ public partial class LoadMesPageModel : ObservableObject
     /// </summary>
     [ObservableProperty]
     private ObservableCollectionExtended<LoadMesAddAndUpdateWindowModel> mesPojoList;
+
+    public Dictionary<string, LocalSaveDetailed> LocalSaveDetailedsDictionary = new();
 
     #endregion
 
