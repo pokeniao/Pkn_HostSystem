@@ -553,10 +553,13 @@ namespace Pkn_HostSystem.ViewModels.Page
                         if (b1 && b2 && b3 && b4 && b5 && b6 && b7)
                         {
                             double Quality = okProduction / totleProduction;
+                            StaticArrayRegister.WriteRegisterValue(10, $"{Quality:P2}");
                             double Availability = runTime / (alarmTime + waitTime + runTime);
+                            StaticArrayRegister.WriteRegisterValue(11, $"{Availability:P2}");
                             double Performance = totleProduction / needProduction;
+                            StaticArrayRegister.WriteRegisterValue(12, $"{Performance:P2}");
                             double oee = Quality * Availability * Performance;
-
+                            StaticArrayRegister.WriteRegisterValue(13, $"{oee:P2}");
 
                             switch (LiveChartsModel.XOeeMethod)
                             {

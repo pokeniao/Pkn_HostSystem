@@ -6,6 +6,8 @@
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:windows="clr-namespace:Pkn_HostSystem.ViewModels.Windows"
                  xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
+                 xmlns:pkn="clr-namespace:Pkn_HostSystem.MyControl"
+
                  d:DataContext="{d:DesignInstance windows:LoadMesAddAndUpdateWindowsViewModel}"
                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                  ExtendsContentIntoTitleBar="True"
@@ -65,10 +67,15 @@
                         <WrapPanel Margin="0,10,0,0">
                             <TextBlock Text="保存本地" Margin="5" VerticalAlignment="Center" />
                             <ui:ToggleSwitch Margin="5"
-                                             IsChecked="{Binding LoadMesAddAndUpdateWindowModel.LocalSave }" />
+                                             IsChecked="{Binding LoadMesAddAndUpdateWindowModel.LocalSave }"
+                                             Click="LocalSaveButton_OnClick" />
+                            <Border Width="2" Height="25"
+                                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}" />
                             <TextBlock Text="发送HTTP请求" Margin="5" VerticalAlignment="Center" />
                             <ui:ToggleSwitch Margin="5" IsChecked="{Binding LoadMesAddAndUpdateWindowModel.HttpNeed }"
                                              Click="ToggleButton_OnChecked" />
+                            <Border Width="2" Height="25"
+                                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}" />
                             <TextBlock Text="结果转发" Margin="5" VerticalAlignment="Center" />
                             <ui:ToggleSwitch Margin="5"
                                              IsChecked="{Binding LoadMesAddAndUpdateWindowModel.TranspondNeed }" />
@@ -347,7 +354,6 @@
                                     </StackPanel>
                                 </Grid>
                             </TabItem>
-
                             <TabItem
                                 Width="110"
                                 Visibility="{Binding  LoadMesAddAndUpdateWindowModel.ShowInteriorTriggerSet ,Converter={StaticResource BooleanVisibilityConverter}}">
@@ -367,61 +373,79 @@
                                     </StackPanel>
                                 </Grid>
                             </TabItem>
-                            <!-- <TabItem> -->
-                            <!--     <TabItem.Header> -->
-                            <!--         <TextBlock Text="转发设置" /> -->
-                            <!--     </TabItem.Header> -->
-                            <!--     <Grid> -->
-                            <!--         <StackPanel> -->
-                            <!--             <WrapPanel Margin="0,10,0,0"> -->
-                            <!--                 <TextBlock Text="转发方式" Margin="5" VerticalAlignment="Center" /> -->
-                            <!--                 <ComboBox ItemsSource="{Binding ForwardingMethod}" /> -->
-                            <!--             </WrapPanel> -->
-                            <!--             <TabControl Margin="0,10,0,0"> -->
-                            <!--                 <TabItem> -->
-                            <!--                     <TabItem.Header> -->
-                            <!--                         <TextBlock Text="通讯方式" /> -->
-                            <!--                     </TabItem.Header> -->
-                            <!--                     <Grid> -->
-                            <!--                         <StackPanel> -->
-                            <!--                             <WrapPanel Margin="0,10,0,0"> -->
-                            <!--                                 <TextBlock Text="通讯对象" Margin="5" -->
-                            <!--                                            VerticalAlignment="Center" /> -->
-                            <!--                                 <ComboBox -->
-                            <!--                                     ItemsSource="{Binding LoadMesAddAndUpdateWindowModel.NetWorkList}" -->
-                            <!--                                     SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.ForwardingName}" -->
-                            <!--                                     DisplayMemberPath="NetworkDetailed.Name" -->
-                            <!--                                     SelectedValuePath="NetworkDetailed.Name" /> -->
-                            <!--                             </WrapPanel> -->
-                            <!--                             <WrapPanel Margin="0,10,0,0"> -->
-                            <!--                                 <TextBlock Text="站地址" Margin="5" VerticalAlignment="Center" /> -->
-                            <!--                                 <ui:NumberBox -->
-                            <!--                                     Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingStationAddress}" /> -->
-                            <!--                             </WrapPanel> -->
-                            <!--                             <WrapPanel Margin="0,10,0,0"> -->
-                            <!--                                 <TextBlock Text="起始地址" Margin="5" -->
-                            <!--                                            VerticalAlignment="Center" /> -->
-                            <!--                                 <ui:NumberBox -->
-                            <!--                                     Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingStartAddress}" /> -->
-                            <!--                             </WrapPanel> -->
-                            <!--                             <WrapPanel Margin="0,10,0,0"> -->
-                            <!--                                 <TextBlock Text="长度" Margin="5" VerticalAlignment="Center" /> -->
-                            <!--                                 <ui:NumberBox -->
-                            <!--                                     Value="{Binding LoadMesAddAndUpdateWindowModel.ForWardingLen}" /> -->
-                            <!--                             </WrapPanel> -->
-                            <!--                         </StackPanel> -->
-                            <!--                     </Grid> -->
-                            <!--                 </TabItem> -->
-                            <!--                 <TabItem> -->
-                            <!--                     <TabItem.Header> -->
-                            <!--                         <TextBlock Text="队列"></TextBlock> -->
-                            <!--                     </TabItem.Header> -->
-                            <!--                 </TabItem> -->
-                            <!-- -->
-                            <!--             </TabControl> -->
-                            <!--         </StackPanel> -->
-                            <!--     </Grid> -->
-                            <!-- </TabItem> -->
+                            <TabItem
+                                Width="110"
+                                Visibility="{Binding LoadMesAddAndUpdateWindowModel.ShowLocalSave , Converter={StaticResource BooleanVisibilityConverter}}">
+                                <TabItem.Header>
+                                    <TextBlock Text="本地保存" />
+                                </TabItem.Header>
+                                <Grid>
+                                    <StackPanel>
+                                        <WrapPanel Margin="0 10">
+                                            <TextBlock Text="保存目录方式" Margin="5"
+                                                       TextAlignment="Center" />
+                                            <ComboBox ItemsSource="{Binding LocalSaveDirectoryMethod}"
+                                                      SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.LocalSaveDirectoryMethod , UpdateSourceTrigger= PropertyChanged}"
+                                                      Width="150" />
+                                        </WrapPanel>
+                                        <Grid
+                                            Visibility="{Binding LoadMesAddAndUpdateWindowModel.ShowSaveDirectoryVisibility}"
+                                            Margin=" 0 0 0 10">
+                                            <WrapPanel>
+                                                <TextBlock Text="目录名" Margin="5"
+                                                           TextAlignment="Center" />
+                                                <TextBox Text="{Binding LoadMesAddAndUpdateWindowModel.LocalSaveDirectoryPath ,UpdateSourceTrigger=PropertyChanged}" Width="150"/>
+                                            </WrapPanel>
+                                        </Grid>
+                                        <WrapPanel Margin="0 0 0 10">
+                                            <TextBlock Text="保存文件名方式" Margin="5"
+                                                       TextAlignment="Center" />
+                                            <ComboBox ItemsSource="{Binding LocalSaveFileNameMethod}"
+                                                      SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.LocalSaveFileNameMethod , UpdateSourceTrigger= PropertyChanged}"
+                                                      Width="150" />
+                                        </WrapPanel>
+
+                                        <Grid
+                                            Visibility="{Binding LoadMesAddAndUpdateWindowModel.ShowSaveFileNameVisibility}"
+                                            Margin=" 0 0 0 10">
+                                            <WrapPanel>
+                                                <TextBlock Text="文件名" Margin="5"
+                                                           TextAlignment="Center" />
+                                                <TextBox Text="{Binding LoadMesAddAndUpdateWindowModel.LocalSaveFileName ,UpdateSourceTrigger=PropertyChanged}" Width="150"/>
+                                            </WrapPanel>
+                                        </Grid>
+
+                                        <WrapPanel>
+                                            <TextBlock Text="保存方式"
+                                                       Margin="5"
+                                                       TextAlignment="Center" />
+                                            <ComboBox ItemsSource="{Binding LocalSaveMethod}"
+                                                      SelectedValue="{Binding LoadMesAddAndUpdateWindowModel.LocalSaveMethod , UpdateSourceTrigger= PropertyChanged}"
+                                                      Width="300" />
+                                        </WrapPanel>
+                                        <Grid
+                                            Visibility="{Binding LoadMesAddAndUpdateWindowModel.ShowDayLocalSaveVisibility}"
+                                            Margin="10">
+                                            <StackPanel>
+                                                <TextBlock Text="尚未完成" Foreground="Red" />
+                                                <pkn:PknDateTimePicker />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Grid
+                                            Visibility="{Binding LoadMesAddAndUpdateWindowModel.ShowTimeLocalSaveVisibility}"
+                                            Margin="10">
+                                            <pkn:PknTimePicker Width="270"
+                                                               StartSelectedHour="{Binding LoadMesAddAndUpdateWindowModel.StartSelectedHour , UpdateSourceTrigger=PropertyChanged}"
+                                                               StartSelectedMinute="{Binding LoadMesAddAndUpdateWindowModel.StartSelectedMinute , UpdateSourceTrigger=PropertyChanged}"
+                                                               EndSelectedHour="{Binding LoadMesAddAndUpdateWindowModel.EndSelectedHour , UpdateSourceTrigger=PropertyChanged}"
+                                                               EndSelectedMinute="{Binding LoadMesAddAndUpdateWindowModel.EndSelectedMinute , UpdateSourceTrigger=PropertyChanged}" />
+                                        </Grid>
+                                    </StackPanel>
+
+
+                                </Grid>
+                            </TabItem>
                         </TabControl>
                     </StackPanel>
                 </Grid>
@@ -505,7 +529,7 @@
                     <GroupBox Header="嵌入键值对" BorderThickness="0">
                         <DataGrid
                             Name="ReqDataGrid"
-                            Width="400" Height="170" BorderThickness="1" BorderBrush="AliceBlue"
+                            Width="400" Height="270" BorderThickness="1" BorderBrush="AliceBlue"
                             CanUserAddRows="True"
                             AutoGenerateColumns="False"
                             Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 
 namespace Pkn_HostSystem.Models.Core;
 
@@ -30,8 +31,11 @@ public class LoadMesCondition : ObservableObject
     /// <summary>
     /// 控制参数显示内容
     /// </summary>
+    [JsonIgnore]
     public bool show_para_dyn => method == "动态获取";
+    [JsonIgnore]
     public bool show_para_static => method == "常量";
+    [JsonIgnore]
     public bool show_method => method == "方法集";
 
     /// <summary>
@@ -87,6 +91,7 @@ public class LoadMesCondition : ObservableObject
     /// <summary>
     /// 显示参数值
     /// </summary>
+    [JsonIgnore]
     public string Value
     {
         get

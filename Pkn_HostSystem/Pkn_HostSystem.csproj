@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
-		<VersionPrefix>1.4.4</VersionPrefix>
+		<VersionPrefix>1.4.5</VersionPrefix>
 		<AssemblyName>Pkn_HostSystem</AssemblyName>
 		<UseWindowsForms>False</UseWindowsForms>
 		<RootNamespace>Pkn_HostSystem</RootNamespace>
@@ -48,28 +48,31 @@
 		<PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.4.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="DeepCloner" Version="0.10.4" />
-		<PackageReference Include="DynamicData" Version="9.2.1" />
+		<PackageReference Include="DynamicData" Version="9.4.1" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc5.4" />
-		<PackageReference Include="log4net" Version="3.0.4" />
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+		<PackageReference Include="log4net" Version="3.1.0" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="NModbus" Version="3.0.81" />
 		<PackageReference Include="NModbus.Serial" Version="3.0.81" />
 		<PackageReference Include="RestSharp" Version="112.1.0" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-		<PackageReference Include="System.Drawing.Common" Version="9.0.5" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.8" />
 		<PackageReference Include="System.Management" Version="9.0.8" />
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-		<PackageReference Include="WPF-UI" Version="4.0.2" />
-		<PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.2" />
+		<PackageReference Include="WPF-UI" Version="4.0.3" />
+		<PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.3" />
 		<PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Reference Include="halcondotnet">
 	    <HintPath>..\..\..\..\..\..\..\Program Files\MVTec\HALCON-23.11-Progress\bin\dotnet35\halcondotnet.dll</HintPath>
+	  </Reference>
+	  <Reference Include="System.Windows.Forms">
+	    <HintPath>..\..\..\..\..\.nuget\packages\microsoft.netframework.referenceassemblies.net462\1.0.3\build\.NETFramework\v4.6.2\System.Windows.Forms.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 
