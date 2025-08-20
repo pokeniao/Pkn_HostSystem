@@ -80,7 +80,7 @@ namespace Pkn_HostSystem.Views.Pages
         }
 
         /// <summary>
-        /// 123工单连接卡片的展开
+        ///  工单连接卡片的展开
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -90,7 +90,7 @@ namespace Pkn_HostSystem.Views.Pages
         }
 
         /// <summary>
-        /// 123工单连接卡片的收起
+        ///  工单连接卡片的收起
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -264,7 +264,7 @@ namespace Pkn_HostSystem.Views.Pages
 
         #endregion
 
-        #region 123工单Combobox
+        #region  工单Combobox
 
         /// <summary>
         /// 下拉Combobox
@@ -293,7 +293,7 @@ namespace Pkn_HostSystem.Views.Pages
             }
         }
         /// <summary>
-        /// 选择123工单
+        /// 选择 工单
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
