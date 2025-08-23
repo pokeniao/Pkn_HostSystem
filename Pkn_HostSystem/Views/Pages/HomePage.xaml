@@ -1526,7 +1526,6 @@
                                   SelectedValue="{Binding HalconControl.CameraShowSize}"
                                   SelectedValuePath="Value"
                                   DisplayMemberPath="Display"
-                                  SelectionChanged="Selector_OnSelectionChanged"
                                   Width="150" />
                     </WrapPanel>
 

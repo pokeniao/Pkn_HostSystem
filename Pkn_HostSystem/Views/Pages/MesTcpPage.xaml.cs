@@ -82,7 +82,7 @@ namespace Pkn_HostSystem.Views.Pages
                     break;
                 case "通讯":
                     //得到当前通讯方式
-                    string netMethod = selectedItem.NetWork.NetworkDetailed.NetMethod;
+                    string netMethod = selectedItem.NetWork?.NetworkDetailed.NetMethod;
                     //切换选项
                     ChangeParam(selectedItem);
                     SetDefault(selectedItem);
@@ -237,7 +237,7 @@ namespace Pkn_HostSystem.Views.Pages
         private void SetDefault(DynCondition dynCondition)
         {
             //得到当前通讯方式
-            string netMethod = dynCondition.NetWork.NetworkDetailed.NetMethod;
+            string netMethod = dynCondition.NetWork?.NetworkDetailed.NetMethod;
             switch (netMethod)
             {
                 case "ModbusTcp":

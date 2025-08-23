@@ -324,10 +324,5 @@ namespace Pkn_HostSystem.Views.Pages
         private void HomePage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
         }
-
-        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
     }
 }

@@ -402,13 +402,13 @@ namespace Pkn_HostSystem.ViewModels.Page
                     //产量统计
                     if (LiveChartsModel.DateTimeRun)
                     {
-             
                         var dayProductionDynName = LiveChartsModel.DayProductionDynName;
                         //执行当前动态嵌入内容
                         (sueeced, result) = await loadMesService.DynMessage(dayProductionDynName, cts, true);
                         if (!sueeced)
                         {
-                            Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败");
+                            Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败,等待5s后从试");
+                            await Task.Delay(5000, cts.Token);
                             continue;
                         }
 
@@ -417,7 +417,8 @@ namespace Pkn_HostSystem.ViewModels.Page
 
                         if (!isJson)
                         {
-                            Log.Error($"[{TraceContext.Name}]--产量统计解析JSON失败");
+                            Log.Error($"[{TraceContext.Name}]--产量统计解析JSON失败,等待5s后从试");
+                            await Task.Delay(5000, cts.Token);
                             continue;
                         }
 
@@ -489,7 +490,8 @@ namespace Pkn_HostSystem.ViewModels.Page
 
                         if (!sueeced)
                         {
-                            Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败");
+                            Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败,等待5s后从试");
+                            await Task.Delay(5000, cts.Token);
                             continue;
                         }
 
@@ -498,7 +500,8 @@ namespace Pkn_HostSystem.ViewModels.Page
 
                         if (!isJson)
                         {
-                            Log.Error($"[{TraceContext.Name}]--停机运行时长统计解析JSON失败");
+                            Log.Error($"[{TraceContext.Name}]--停机运行时长统计解析JSON失败,等待5s后从试");
+                            await Task.Delay(5000, cts.Token);
                             continue;
                         }
 
@@ -527,7 +530,8 @@ namespace Pkn_HostSystem.ViewModels.Page
                         (sueeced, result) = await loadMesService.DynMessage(LiveChartsModel.OeeDynName, cts, true);
                         if (!sueeced)
                         {
-                            Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败");
+                            Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败,等待5s后从试");
+                            await Task.Delay(5000, cts.Token);
                             continue;
                         }
 
@@ -536,7 +540,8 @@ namespace Pkn_HostSystem.ViewModels.Page
 
                         if (!isJson)
                         {
-                            Log.Error($"[{TraceContext.Name}]--产量统计解析JSON失败");
+                            Log.Error($"[{TraceContext.Name}]--产量统计解析JSON失败,等待5s后从试");
+                            await Task.Delay(5000, cts.Token);
                             continue;
                         }
 
