@@ -6,6 +6,13 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:ha="http://schemas.mvtec.com/halcondotnet"
+      xmlns:nodify="https://miroiu.github.io/nodify"
+      xmlns:node1="clr-namespace:Pkn_HostSystem.NodifyControl.Node"
+      xmlns:connector1="clr-namespace:Pkn_HostSystem.NodifyControl.Node.Connector"
+      xmlns:connection1="clr-namespace:Pkn_HostSystem.NodifyControl.Connection"
+      xmlns:converters="clr-namespace:Pkn_HostSystem.NodifyControl.Converters"
+      xmlns:nodifyControl="clr-namespace:Pkn_HostSystem.NodifyControl"
+
       mc:Ignorable="d"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -14,6 +21,12 @@
       d:DataContext="{d:DesignInstance page:DesignViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       Title="DesignPage">
+    <Page.Resources>
+        <nodifyControl:BindingProxy x:Key="EditorProxy"
+                             DataContext="{Binding  EditorViewModel}" />
+        <converters:ConnectorOffsetConverter x:Key="ConnectorOffsetConverter" />
+    </Page.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.2*" />
@@ -66,15 +79,97 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <WrapPanel Grid.Row="0">
-                        <ui:SymbolIcon Symbol="Branch20"  Margin="5"/>
+                        <ui:SymbolIcon Symbol="Branch20" Margin="5" />
                         <TextBlock Text="流程" Margin="0 5" />
                     </WrapPanel>
-  
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
+                    <!-- 流程图 -->
+                    <nodify:NodifyEditor Grid.Row="2"
+                                         x:Name="NodifyEditor"
+                                         DataContext="{Binding DataContext,Source={StaticResource EditorProxy}}"
+                                         ItemsSource="{Binding  Nodes }"
+                                         Connections="{Binding Connectors}"
+                                         PendingConnection="{Binding PendingConnection}"
+                                         DisconnectConnectorCommand="{Binding DisconnectConnectorCommand}"
+                                         RemoveConnectionCommand="{Binding RemoveConnectionCommand}">
+                    
+                        <!-- 控制Node节点 -->
+                        <nodify:NodifyEditor.ItemTemplate>
+                            <DataTemplate DataType="{x:Type node1:PNode}">
+                                <nodify:Node
+                                    Header="{Binding NodeName}"
+                                    Input="{Binding Input}"
+                                    Output="{Binding Output}">
+                                    <nodify:Node.InputConnectorTemplate>
+                                        <DataTemplate DataType="{x:Type connector1:Connector}">
+                                            <nodify:NodeInput
+                                                Header="{Binding ConnectorName}"
+                                                Anchor="{Binding Anchor, Mode=OneWayToSource}"
+                                                IsConnected="{Binding IsConnected}"
+                                            />
+                                        </DataTemplate>
+                                    </nodify:Node.InputConnectorTemplate>
+                                    <nodify:Node.OutputConnectorTemplate>
+                                        <DataTemplate DataType="{x:Type connector1:Connector}">
+                                            <nodify:NodeInput
+                                                Header="{Binding ConnectorName}"
+                                                Anchor="{Binding Anchor, Mode=OneWayToSource}"
+                                                IsConnected="{Binding IsConnected}"
+                                            />
+                                        </DataTemplate>
+                                    </nodify:Node.OutputConnectorTemplate>
+                                </nodify:Node>
+                            </DataTemplate>
+                        </nodify:NodifyEditor.ItemTemplate>
+                        <!-- 控制Node连接 -->
+                        <nodify:NodifyEditor.ConnectionTemplate>
+                            <DataTemplate DataType="{x:Type connection1:ConnectorViewModel}">
+                                <nodify:StepConnection 
+                                    Source="{Binding Source.Anchor}" 
+                                    Target="{Binding Target.Anchor}"
+                                    Tag ="{Binding}"
+                                    SourceOffset="{Binding Source.Size, Converter={StaticResource ConnectorOffsetConverter}, ConverterParameter=5}"
+                                    TargetOffset="{Binding Target.Size, Converter={StaticResource ConnectorOffsetConverter}, ConverterParameter=5}"
+                                    Spacing="0"
+                                    SourceOffsetMode="Edge"
+                                    TargetOffsetMode="Edge"
+                                    OutlineThickness="5"
+                                    >
+                                    <!-- 对线右键目录 -->
+                                    <nodify:StepConnection.ContextMenu>
+                                        <ContextMenu 
+                                            DataContext="{Binding DataContext,Source={StaticResource EditorProxy}}">
+                                            <!-- ContextMenu 并不是 VisualTree 的一部分，它会被弹出到一个独立的窗口里。因此它 不会继承原来的 DataContext。 -->
+                                            <MenuItem Header="_Delete"
+                                                      Command="{Binding RemoveConnectionCommand}"
+                                                      CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                        </ContextMenu>
+                                    </nodify:StepConnection.ContextMenu>
+                                </nodify:StepConnection>
+                            </DataTemplate>
+                        </nodify:NodifyEditor.ConnectionTemplate>
+                        <!-- 控制Node位置 -->
+                        <nodify:NodifyEditor.ItemContainerStyle>
+                            <Style TargetType="{x:Type nodify:ItemContainer}">
+                                <Setter Property="Location" 
+                                        Value="{Binding Location}" />
+                            </Style>
+                        </nodify:NodifyEditor.ItemContainerStyle>
+                        <!-- 控制预连接时的逻辑 -->
+                        <nodify:NodifyEditor.PendingConnectionTemplate>
+                            <DataTemplate DataType="{x:Type connection1:PendingConnectionViewModel}">
+                                <nodify:PendingConnection
+                                    AllowOnlyConnectors="True"
+                                    CompletedCommand="{Binding FinishCommand}"
+                                    StartedCommand="{Binding StartCommand}" />
+                            </DataTemplate>
+                        </nodify:NodifyEditor.PendingConnectionTemplate>
+
+                    </nodify:NodifyEditor>
                 </Grid>
             </Border>
             <Border
@@ -90,10 +185,10 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <WrapPanel Grid.Row="0">
-                        <ui:SymbolIcon Symbol="Alert16" Margin="5"/>
-                        <TextBlock  Text="Log"  Margin="0 5"/>
+                        <ui:SymbolIcon Symbol="Alert16" Margin="5" />
+                        <TextBlock Text="Log" Margin="0 5" />
                     </WrapPanel>
-                  
+
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
 
@@ -173,11 +268,11 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <WrapPanel  Grid.Row="0" >
-                        <ui:SymbolIcon Symbol="CalendarAgenda20" Margin="5"/>
+                    <WrapPanel Grid.Row="0">
+                        <ui:SymbolIcon Symbol="CalendarAgenda20" Margin="5" />
                         <TextBlock Text="参数" Margin="0 5" />
                     </WrapPanel>
-           
+
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
                 </Grid>

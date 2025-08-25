@@ -1,21 +1,13 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
-using Pkn_HostSystem.Models.Pojo;
-using Pkn_HostSystem.Service.UserDefined;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
-using System.Windows.Documents;
-using System.Windows.Input;
-using Wpf.Ui.Controls;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using MessageBox = Pkn_HostSystem.Views.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
 
