@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace Pkn_HostSystem.NodifyControl.Node.Connector
 {
-    public partial class Connector : ObservableObject
+    public partial class MyConnector : ObservableObject
     {
         /// <summary>
         /// 定义一个测试连接器的名称
@@ -20,6 +20,6 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
         /// <summary>
         /// 线大小
         /// </summary>
-        [ObservableProperty] private Size _size;
+        [ObservableProperty] private Size _size ;
     }
 }

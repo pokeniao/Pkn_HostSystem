@@ -15,7 +15,7 @@ namespace Pkn_HostSystem.NodifyControl.Connection
         private readonly EditorViewModel _editor;
 
         //开始 连接端子
-        private Connector _source;
+        private MyConnector _source;
 
 
         public PendingConnectionViewModel(EditorViewModel editor)
@@ -25,14 +25,14 @@ namespace Pkn_HostSystem.NodifyControl.Connection
 
         //记录开始连接端子
         [RelayCommand]
-        private void Start(Connector source)
+        private void Start(MyConnector source)
         {
             _source = source;
         }
 
         //预连接结束时判断 并进行连接
         [RelayCommand]
-        private void Finish(Connector target)
+        private void Finish(MyConnector target)
         {
             //完毕的时候目标不为空,且目标不为自己
             if (target != null && target!= _source)

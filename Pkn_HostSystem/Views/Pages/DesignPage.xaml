@@ -52,14 +52,15 @@
 
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
-                    <TreeView Grid.Row="2" AllowDrop="True">
-                        <TreeViewItem IsExpanded="True">
-                            <TreeViewItem.Header>
-                                <TextBlock FontSize="12" Text="Http" />
-                            </TreeViewItem.Header>
-
-                            <TreeViewItem Header="Feature Schedule" />
-                        </TreeViewItem>
+                    <TreeView Grid.Row="2" 
+                              AllowDrop="True"
+                              ItemsSource="{Binding DesignModel.Nodes }"
+                              MouseMove="UIElement_OnMouseMove">
+                        <TreeView.ItemTemplate >
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                <TextBlock Text="{Binding Name}" FontSize="12"/>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
                     </TreeView>
                 </Grid>
             </Border>
@@ -88,24 +89,30 @@
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
                     <!-- 流程图 -->
+                    <!-- AllowDrop允许拖拽放下 -->
                     <nodify:NodifyEditor Grid.Row="2"
                                          x:Name="NodifyEditor"
                                          DataContext="{Binding DataContext,Source={StaticResource EditorProxy}}"
+                                         
+                                         SelectedItems="{Binding SelectedConnectors}"
                                          ItemsSource="{Binding  Nodes }"
                                          Connections="{Binding Connectors}"
                                          PendingConnection="{Binding PendingConnection}"
                                          DisconnectConnectorCommand="{Binding DisconnectConnectorCommand}"
-                                         RemoveConnectionCommand="{Binding RemoveConnectionCommand}">
+                                         RemoveConnectionCommand="{Binding RemoveConnectionCommand}"
+                                         AllowDrop="True"
+                                         Drop="NodifyEditor_OnDrop"
+                                         >
                     
                         <!-- 控制Node节点 -->
                         <nodify:NodifyEditor.ItemTemplate>
-                            <DataTemplate DataType="{x:Type node1:PNode}">
+                            <DataTemplate DataType="{x:Type node1:MyNode}">
                                 <nodify:Node
                                     Header="{Binding NodeName}"
                                     Input="{Binding Input}"
                                     Output="{Binding Output}">
                                     <nodify:Node.InputConnectorTemplate>
-                                        <DataTemplate DataType="{x:Type connector1:Connector}">
+                                        <DataTemplate DataType="{x:Type connector1:MyConnector}">
                                             <nodify:NodeInput
                                                 Header="{Binding ConnectorName}"
                                                 Anchor="{Binding Anchor, Mode=OneWayToSource}"
@@ -114,7 +121,7 @@
                                         </DataTemplate>
                                     </nodify:Node.InputConnectorTemplate>
                                     <nodify:Node.OutputConnectorTemplate>
-                                        <DataTemplate DataType="{x:Type connector1:Connector}">
+                                        <DataTemplate DataType="{x:Type connector1:MyConnector}">
                                             <nodify:NodeInput
                                                 Header="{Binding ConnectorName}"
                                                 Anchor="{Binding Anchor, Mode=OneWayToSource}"
@@ -132,12 +139,13 @@
                                     Source="{Binding Source.Anchor}" 
                                     Target="{Binding Target.Anchor}"
                                     Tag ="{Binding}"
-                                    SourceOffset="{Binding Source.Size, Converter={StaticResource ConnectorOffsetConverter}, ConverterParameter=5}"
-                                    TargetOffset="{Binding Target.Size, Converter={StaticResource ConnectorOffsetConverter}, ConverterParameter=5}"
+                                    SourcePosition="Bottom"
+                                    TargetPosition="Top"
+                                    SourceOffset="{Binding Source.Size, Converter={StaticResource ConnectorOffsetConverter}, ConverterParameter='0'}"
+                                    TargetOffset="{Binding Target.Size, Converter={StaticResource ConnectorOffsetConverter}, ConverterParameter='0'}"
                                     Spacing="0"
                                     SourceOffsetMode="Edge"
                                     TargetOffsetMode="Edge"
-                                    OutlineThickness="5"
                                     >
                                     <!-- 对线右键目录 -->
                                     <nodify:StepConnection.ContextMenu>
@@ -168,7 +176,11 @@
                                     StartedCommand="{Binding StartCommand}" />
                             </DataTemplate>
                         </nodify:NodifyEditor.PendingConnectionTemplate>
-
+                        <!-- 按键逻辑绑定 -->
+                        <nodify:NodifyEditor.InputBindings>
+                            <KeyBinding Key="Delete"
+                                        Command="{Binding DeleteSelectionCommand}" />
+                        </nodify:NodifyEditor.InputBindings>
                     </nodify:NodifyEditor>
                 </Grid>
             </Border>

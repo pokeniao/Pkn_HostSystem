@@ -8,10 +8,10 @@ namespace Pkn_HostSystem.NodifyControl.Connection
     /// </summary>
     public class ConnectorViewModel
     {
-        public Connector Source { get; set; }
-        public Connector Target { get; set; }
+        public MyConnector Source { get; set; }
+        public MyConnector Target { get; set; }
 
-        public ConnectorViewModel(Connector source, Connector target)
+        public ConnectorViewModel(MyConnector source, MyConnector target)
         {
             Source = source;
             Target = target;
