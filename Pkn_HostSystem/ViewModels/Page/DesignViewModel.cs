@@ -65,7 +65,13 @@ namespace Pkn_HostSystem.ViewModels.Page
                     {
                         new TreeNodes()
                         {
-                            Name = "Http"
+                            Name = "Add",
+                            NodeType = NodeEnum.Add
+                        },
+                        new TreeNodes()
+                        {
+                            Name = "Sub",
+                            NodeType = NodeEnum.Subtract
                         }
                     }
                 }

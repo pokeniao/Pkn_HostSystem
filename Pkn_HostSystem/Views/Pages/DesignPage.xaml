@@ -82,10 +82,28 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <WrapPanel Grid.Row="0">
-                        <ui:SymbolIcon Symbol="Branch20" Margin="5" />
-                        <TextBlock Text="流程" Margin="0 5" />
-                    </WrapPanel>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ui:SymbolIcon Grid.Column="0" Symbol="Branch20" Margin="5" />
+                        <TextBlock  Grid.Column="1" Text="流程" Margin="0 5" />
+                        <Button Grid.Column="0" Grid.ColumnSpan="3" 
+                                HorizontalAlignment="Center"
+                                Padding="5 3"
+                                Margin="5  0"  
+                                >
+                            <Button.Content>
+                                <WrapPanel>
+                                    <ui:SymbolIcon  Grid.Column="0" Symbol="Play12" />
+                                    <TextBlock Text="run" FontSize="13" Margin="2 0"/>
+                                </WrapPanel>
+                            </Button.Content>
+                        </Button>
+
+                    </Grid>
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
                     <!-- 流程图 -->
@@ -147,6 +165,35 @@
                                     SourceOffsetMode="Edge"
                                     TargetOffsetMode="Edge"
                                     >
+                                    <nodify:StepConnection.Style>
+                                        <Style TargetType="{x:Type nodify:StepConnection}"
+                                               BasedOn="{StaticResource {x:Type nodify:StepConnection}}">
+                                            <Setter Property="OutlineBrush"
+                                                    Value="Transparent" />
+                                            <Setter Property="StrokeThickness"
+                                                    Value="3" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsActive}"
+                                                             Value="True">
+                                                    <Setter Property="Stroke"
+                                                            Value="Aqua" />
+                                                    <Setter Property="StrokeThickness"
+                                                            Value="6" />
+                                                </DataTrigger>
+                                                <Trigger Property="IsMouseOver"
+                                                         Value="True">
+                                                    <Setter Property="OutlineBrush">
+                                                        <Setter.Value>
+                                                            <SolidColorBrush Color="CadetBlue"
+                                                                             Opacity="0.15" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+
+                                        </Style>
+                                     
+                                    </nodify:StepConnection.Style>
                                     <!-- 对线右键目录 -->
                                     <nodify:StepConnection.ContextMenu>
                                         <ContextMenu 
@@ -240,8 +287,6 @@
                         </Grid.ColumnDefinitions>
                         <ui:SymbolIcon Symbol="Camera24" Margin="5" FontSize="16" />
                         <TextBlock Grid.Column="1" Text="视觉" Margin="0 5 0 5" />
-
-
                         <ComboBox Grid.Column="2"
                                   Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                                   ItemsSource="{Binding CameraShowMethodList}"

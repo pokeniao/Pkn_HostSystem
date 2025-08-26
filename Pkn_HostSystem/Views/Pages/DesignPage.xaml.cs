@@ -40,15 +40,8 @@ namespace Pkn_HostSystem.Views.Pages
                                                 && e.Data.GetData(typeof(TreeNodes)) is TreeNodes treeNodes)
             {
                 //创建一个Node
-                MyNode myNode = new MyNode()
-                {
-                    NodeName = "HelloWorld",
-                    Input = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输入" } },
-                    Output = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输出" } },
-                };
-
+                MyNode myNode = EditorViewModel.GetNode(treeNodes);
                 myNode.Location = editor.GetLocationInsideEditor(e);
-
                 editorViewModel.Nodes.Add(myNode);
                 
                 e.Handled = true;

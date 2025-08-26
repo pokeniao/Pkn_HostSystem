@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using Microsoft.Win32;
+using Nodify;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
@@ -66,7 +67,11 @@ public partial class SettingsPageViewModel : ObservableRecipient
     [RelayCommand]
     public void LightThemeRadioButtonChecked(SettingsPage page)
     {
+        //WPF主题
         ApplicationThemeManager.Apply(ApplicationTheme.Light);
+        //Nodity
+        ThemeManager.SetTheme("Light");
+
         //设置LiveCharts报表图片主题
         LiveCharts.Configure(config =>
         {
@@ -87,6 +92,9 @@ public partial class SettingsPageViewModel : ObservableRecipient
     public void DarkThemeRadioButtonChecked(SettingsPage page)
     {
         ApplicationThemeManager.Apply(ApplicationTheme.Dark);
+
+        //Nodify
+        ThemeManager.SetTheme("Dark");
         //设置LiveCharts报表图片主题
         LiveCharts.Configure(config =>
         {
@@ -112,6 +120,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
 
         if (systemTheme is SystemTheme.Light)
         {
+            ThemeManager.SetTheme("Light");
             //设置LiveCharts报表图片主题
             LiveCharts.Configure(config =>
             {
@@ -122,6 +131,7 @@ public partial class SettingsPageViewModel : ObservableRecipient
         }
         else if (systemTheme is SystemTheme.Dark)
         {
+            ThemeManager.SetTheme("Dark");
             //设置LiveCharts报表图片主题
             LiveCharts.Configure(config =>
             {

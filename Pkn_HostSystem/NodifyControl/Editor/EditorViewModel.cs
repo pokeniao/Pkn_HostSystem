@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
+using Pkn_HostSystem.Base.Enum;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Connection;
 using Pkn_HostSystem.NodifyControl.Node;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
@@ -82,32 +84,6 @@ namespace Pkn_HostSystem.NodifyControl.Editor
                     }
                 });
             });
-
-
-            MyNode myNode = new MyNode()
-            {
-                NodeName = "HelloWorld",
-                Input = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输入" } },
-                Output = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输出" } },
-            };
-
-            MyNode myNode2 = new MyNode()
-            {
-                NodeName = "HelloWorld2",
-                Input = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输入" } },
-                Location = new Point(50, 100)
-            };
-
-            MyNode myNode3 = new MyNode()
-            {
-                NodeName = "HelloWorld3",
-                Input = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输入" } },
-                Location = new Point(100, 100)
-            };
-            Nodes.Add(myNode);
-            Nodes.Add(myNode2);
-            Nodes.Add(myNode3);
-            Connectors.Add(new ConnectorViewModel(myNode.Output[0], myNode2.Input[0]));
         }
 
         //编辑器中的端子连接方法
@@ -153,7 +129,6 @@ namespace Pkn_HostSystem.NodifyControl.Editor
                             c.Target.IsConnected = false;
                         }
                     }
-                  
                 }
 
                 foreach (MyConnector myConnector in selectedConnector.Output)
@@ -183,6 +158,30 @@ namespace Pkn_HostSystem.NodifyControl.Editor
             }
 
             Nodes.Remove(l2);
+        }
+
+        public static MyNode GetNode(TreeNodes treeNodes)
+        {
+            switch (treeNodes.NodeType)
+            {
+                case NodeEnum.Add:
+                    return new MyNode()
+                    {
+                        NodeName = "Add",
+                        Input = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输入" } },
+                        Output = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输出" } },
+                    };
+                case NodeEnum.Subtract:
+                    return new MyNode()
+                    {
+                        NodeName = "Sub",
+                        Input = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输入" } },
+                        Output = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输出" } },
+                    };
+
+                default:
+                    return new MyNode() { };
+            }
         }
     }
 }
