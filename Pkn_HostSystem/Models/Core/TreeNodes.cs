@@ -6,6 +6,16 @@ namespace Pkn_HostSystem.Models.Core
 {
     public class TreeNodes
     {
+        public TreeNodes()
+        {
+        }
+
+        public TreeNodes(string name, NodeEnum nodeType)
+        {
+            Name = name;
+            NodeType = nodeType;
+        }
+
         public string Name { get; set; }
 
         public NodeEnum NodeType { get; set; }

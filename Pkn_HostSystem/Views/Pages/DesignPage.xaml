@@ -17,13 +17,13 @@
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-
+      SizeChanged="DesignPage_OnSizeChanged"
       d:DataContext="{d:DesignInstance page:DesignViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       Title="DesignPage">
     <Page.Resources>
         <nodifyControl:BindingProxy x:Key="EditorProxy"
-                             DataContext="{Binding  EditorViewModel}" />
+                                    DataContext="{Binding  EditorViewModel}" />
         <converters:ConnectorOffsetConverter x:Key="ConnectorOffsetConverter" />
     </Page.Resources>
 
@@ -52,13 +52,13 @@
 
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
-                    <TreeView Grid.Row="2" 
+                    <TreeView Grid.Row="2"
                               AllowDrop="True"
                               ItemsSource="{Binding DesignModel.Nodes }"
                               MouseMove="UIElement_OnMouseMove">
-                        <TreeView.ItemTemplate >
+                        <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                <TextBlock Text="{Binding Name}" FontSize="12"/>
+                                <TextBlock Text="{Binding Name}" FontSize="12" />
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>
@@ -84,21 +84,22 @@
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <ui:SymbolIcon Grid.Column="0" Symbol="Branch20" Margin="5" />
-                        <TextBlock  Grid.Column="1" Text="流程" Margin="0 5" />
-                        <Button Grid.Column="0" Grid.ColumnSpan="3" 
+                        <TextBlock Grid.Column="1" Text="流程" Margin="0 5" />
+                        <Button Grid.Column="0" Grid.ColumnSpan="3"
                                 HorizontalAlignment="Center"
                                 Padding="5 3"
-                                Margin="5  0"  
-                                >
+                                Margin="5  0"
+                                
+                                Command="{Binding EditorViewModel.RunCommand}">
                             <Button.Content>
                                 <WrapPanel>
-                                    <ui:SymbolIcon  Grid.Column="0" Symbol="Play12" />
-                                    <TextBlock Text="run" FontSize="13" Margin="2 0"/>
+                                    <ui:SymbolIcon Grid.Column="0" Symbol="Play12" />
+                                    <TextBlock Text="run" FontSize="13" Margin="2 0" />
                                 </WrapPanel>
                             </Button.Content>
                         </Button>
@@ -111,7 +112,7 @@
                     <nodify:NodifyEditor Grid.Row="2"
                                          x:Name="NodifyEditor"
                                          DataContext="{Binding DataContext,Source={StaticResource EditorProxy}}"
-                                         
+
                                          SelectedItems="{Binding SelectedConnectors}"
                                          ItemsSource="{Binding  Nodes }"
                                          Connections="{Binding Connectors}"
@@ -119,9 +120,8 @@
                                          DisconnectConnectorCommand="{Binding DisconnectConnectorCommand}"
                                          RemoveConnectionCommand="{Binding RemoveConnectionCommand}"
                                          AllowDrop="True"
-                                         Drop="NodifyEditor_OnDrop"
-                                         >
-                    
+                                         Drop="NodifyEditor_OnDrop">
+
                         <!-- 控制Node节点 -->
                         <nodify:NodifyEditor.ItemTemplate>
                             <DataTemplate DataType="{x:Type node1:MyNode}">
@@ -129,22 +129,22 @@
                                     Header="{Binding NodeName}"
                                     Input="{Binding Input}"
                                     Output="{Binding Output}">
+                                    <!-- 输入 -->
                                     <nodify:Node.InputConnectorTemplate>
                                         <DataTemplate DataType="{x:Type connector1:MyConnector}">
                                             <nodify:NodeInput
                                                 Header="{Binding ConnectorName}"
                                                 Anchor="{Binding Anchor, Mode=OneWayToSource}"
-                                                IsConnected="{Binding IsConnected}"
-                                            />
+                                                IsConnected="{Binding IsConnected}" />
                                         </DataTemplate>
                                     </nodify:Node.InputConnectorTemplate>
+                                    <!-- 输出 -->
                                     <nodify:Node.OutputConnectorTemplate>
                                         <DataTemplate DataType="{x:Type connector1:MyConnector}">
                                             <nodify:NodeInput
                                                 Header="{Binding ConnectorName}"
                                                 Anchor="{Binding Anchor, Mode=OneWayToSource}"
-                                                IsConnected="{Binding IsConnected}"
-                                            />
+                                                IsConnected="{Binding IsConnected}" />
                                         </DataTemplate>
                                     </nodify:Node.OutputConnectorTemplate>
                                 </nodify:Node>
@@ -153,18 +153,17 @@
                         <!-- 控制Node连接 -->
                         <nodify:NodifyEditor.ConnectionTemplate>
                             <DataTemplate DataType="{x:Type connection1:ConnectorViewModel}">
-                                <nodify:StepConnection 
-                                    Source="{Binding Source.Anchor}" 
+                                <nodify:StepConnection
+                                    Source="{Binding Source.Anchor}"
                                     Target="{Binding Target.Anchor}"
-                                    Tag ="{Binding}"
+                                    Tag="{Binding}"
                                     SourcePosition="Bottom"
                                     TargetPosition="Top"
                                     SourceOffset="{Binding Source.Size, Converter={StaticResource ConnectorOffsetConverter}, ConverterParameter='0'}"
                                     TargetOffset="{Binding Target.Size, Converter={StaticResource ConnectorOffsetConverter}, ConverterParameter='0'}"
                                     Spacing="0"
                                     SourceOffsetMode="Edge"
-                                    TargetOffsetMode="Edge"
-                                    >
+                                    TargetOffsetMode="Edge">
                                     <nodify:StepConnection.Style>
                                         <Style TargetType="{x:Type nodify:StepConnection}"
                                                BasedOn="{StaticResource {x:Type nodify:StepConnection}}">
@@ -173,13 +172,15 @@
                                             <Setter Property="StrokeThickness"
                                                     Value="3" />
                                             <Style.Triggers>
+                                                <!-- Active等于True执行颜色 -->
                                                 <DataTrigger Binding="{Binding IsActive}"
                                                              Value="True">
                                                     <Setter Property="Stroke"
-                                                            Value="Aqua" />
+                                                            Value="LimeGreen" />
                                                     <Setter Property="StrokeThickness"
                                                             Value="6" />
                                                 </DataTrigger>
+                                                <!-- 鼠标放上时执行颜色 -->
                                                 <Trigger Property="IsMouseOver"
                                                          Value="True">
                                                     <Setter Property="OutlineBrush">
@@ -192,26 +193,46 @@
                                             </Style.Triggers>
 
                                         </Style>
-                                     
+
                                     </nodify:StepConnection.Style>
                                     <!-- 对线右键目录 -->
                                     <nodify:StepConnection.ContextMenu>
-                                        <ContextMenu 
+                                        <ContextMenu
                                             DataContext="{Binding DataContext,Source={StaticResource EditorProxy}}">
                                             <!-- ContextMenu 并不是 VisualTree 的一部分，它会被弹出到一个独立的窗口里。因此它 不会继承原来的 DataContext。 -->
                                             <MenuItem Header="_Delete"
                                                       Command="{Binding RemoveConnectionCommand}"
-                                                      CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                                      CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" >
+                                                <MenuItem.Icon>
+                                                    <ui:SymbolIcon Symbol="Delete16" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+
                                         </ContextMenu>
                                     </nodify:StepConnection.ContextMenu>
                                 </nodify:StepConnection>
                             </DataTemplate>
                         </nodify:NodifyEditor.ConnectionTemplate>
-                        <!-- 控制Node位置 -->
+                        <!-- 控制Node位置,样式等 -->
                         <nodify:NodifyEditor.ItemContainerStyle>
+                            <!-- Node位置 -->
                             <Style TargetType="{x:Type nodify:ItemContainer}">
-                                <Setter Property="Location" 
+                                <Setter Property="Location"
                                         Value="{Binding Location}" />
+                                <!-- Node右键管理 -->
+                                <Setter Property="ContextMenu">
+                                    <Setter.Value>
+                                        <ContextMenu
+                                            DataContext="{Binding DataContext, Source={StaticResource EditorProxy}}">
+                                            <MenuItem Header="_Delete"
+                                                      Command="{Binding DeleteSelectionCommand}">
+                                                <MenuItem.Icon>
+                                                    <ui:SymbolIcon Symbol="Delete16" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </Setter.Value>
+                                </Setter>
                             </Style>
                         </nodify:NodifyEditor.ItemContainerStyle>
                         <!-- 控制预连接时的逻辑 -->
@@ -257,7 +278,8 @@
                         IsReadOnly="True"
                         Background="{ui:ThemeResource CardStrokeColorDefaultSolidBrush}"
                         VerticalScrollBarVisibility="Auto"
-                        FontSize="12">
+                        HorizontalScrollBarVisibility="Auto"
+                        FontSize="9">
                     </RichTextBox>
                 </Grid>
             </Border>

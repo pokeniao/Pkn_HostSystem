@@ -5,6 +5,7 @@ using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Editor;
 using Pkn_HostSystem.NodifyControl.Node;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
+using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
 using Pkn_HostSystem.ViewModels.Page;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -16,6 +17,7 @@ using DataObject = System.Windows.DataObject;
 using DragDropEffects = System.Windows.DragDropEffects;
 using DragEventArgs = System.Windows.DragEventArgs;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace Pkn_HostSystem.Views.Pages
 {
@@ -32,6 +34,7 @@ namespace Pkn_HostSystem.Views.Pages
             DataContext = ViewModel;
             ViewModel.setSnackbarPresenter(SnackbarPresenter);
             ViewModel.setHSmartWindowControl(HSmartWindowControlWPF);
+            ViewModel.SetLogRichTextBox(LogRichTextBox);
         }
             
         private void NodifyEditor_OnDrop(object sender, DragEventArgs e)
@@ -40,7 +43,7 @@ namespace Pkn_HostSystem.Views.Pages
                                                 && e.Data.GetData(typeof(TreeNodes)) is TreeNodes treeNodes)
             {
                 //创建一个Node
-                MyNode myNode = EditorViewModel.GetNode(treeNodes);
+                MyNode myNode = DesignTreeNode.GetNode(treeNodes);
                 myNode.Location = editor.GetLocationInsideEditor(e);
                 editorViewModel.Nodes.Add(myNode);
                 
@@ -75,6 +78,11 @@ namespace Pkn_HostSystem.Views.Pages
                 current = VisualTreeHelper.GetParent(current);
             }
             return null;
+        }
+
+        private void DesignPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            LogRichTextBox.MaxHeight = (e.NewSize.Height / 3) + 2;
         }
     }
 }

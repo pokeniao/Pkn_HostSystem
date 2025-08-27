@@ -6,6 +6,7 @@ using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Connection;
 using Pkn_HostSystem.NodifyControl.Node;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
+using Pkn_HostSystem.NodifyControl.Operation;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
@@ -100,7 +101,7 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         [RelayCommand]
         public void DeleteSelection()
         {
-            List<MyNode> l2 = new List<MyNode>();
+            List<MyNode> l2 = new();
             foreach (MyNode selectedConnector in SelectedConnectors)
             {
                 l2.Add(selectedConnector as MyNode);
@@ -160,27 +161,41 @@ namespace Pkn_HostSystem.NodifyControl.Editor
             Nodes.Remove(l2);
         }
 
-        public static MyNode GetNode(TreeNodes treeNodes)
+        [RelayCommand]
+        public void Run()
         {
-            switch (treeNodes.NodeType)
-            {
-                case NodeEnum.Add:
-                    return new MyNode()
-                    {
-                        NodeName = "Add",
-                        Input = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输入" } },
-                        Output = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输出" } },
-                    };
-                case NodeEnum.Subtract:
-                    return new MyNode()
-                    {
-                        NodeName = "Sub",
-                        Input = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输入" } },
-                        Output = new ObservableCollection<MyConnector>() { new MyConnector() { ConnectorName = "输出" } },
-                    };
+            //1. 寻找到IStartOperation节点,作为起始节点
 
-                default:
-                    return new MyNode() { };
+            MyNode startNode = Nodes.FirstOrDefault(n => n.Operation is IStartOperation);
+            if (startNode == null)
+            {
+                MessageBox.Show("未找到起始节点,请添加一个IStartOperation节点");
+                return;
+            }
+
+            //2. 执行起始节点的方法
+            IStartOperation startOperation = startNode.Operation as IStartOperation;
+            object[] results = startOperation.Execute();
+            //3. 递归执行后续节点的方法
+            ExecuteNextNodes(startNode, results);
+        }
+
+        private void ExecuteNextNodes(MyNode currentNode, object[] inputs)
+        {
+            //找到所有连接到当前节点输出端子的连接
+            var outgoingConnections = Connectors.Where(c => currentNode.Output.Contains(c.Source)).ToList();
+            //对于每个连接,找到连接的目标节点,并执行其方法
+            foreach (var connection in outgoingConnections)
+            {
+                MyNode nextNode = Nodes.FirstOrDefault(n => n.Input.Contains(connection.Target));
+                if (nextNode != null && nextNode.Operation != null)
+                {
+                    //执行下一个节点的方法
+                    var operation = nextNode.Operation;
+                    object[] results = operation.Execute(inputs);
+                    //递归执行下一个节点
+                    ExecuteNextNodes(nextNode, results);
+                }
             }
         }
     }

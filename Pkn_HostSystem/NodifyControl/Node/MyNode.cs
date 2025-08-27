@@ -1,6 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Azure;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
+using Pkn_HostSystem.NodifyControl.Operation;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -10,7 +12,21 @@ namespace Pkn_HostSystem.NodifyControl.Node
     {
         public string NodeName { get; set; }
 
+        /// <summary>
+        /// Node的类型
+        /// </summary>
         public NodeEnum NodeType { get; set; }
+
+        /// <summary>
+        /// 运行的方法
+        /// </summary>
+        private IOperation? _operation;
+        public IOperation? Operation
+        {
+            get => _operation;
+            set => SetProperty(ref _operation, value);
+        }
+
 
         [ObservableProperty] private Point _location;
 

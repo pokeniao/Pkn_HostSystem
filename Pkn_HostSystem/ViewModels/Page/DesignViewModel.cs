@@ -4,13 +4,13 @@ using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Halcon;
 using Pkn_HostSystem.Base.Log;
-using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Editor;
-using System.Collections.ObjectModel;
-using System.Windows.Forms;
+using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
+using System.Windows.Documents;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace Pkn_HostSystem.ViewModels.Page
 {
@@ -19,7 +19,7 @@ namespace Pkn_HostSystem.ViewModels.Page
 
 
         public SnackbarService SnackbarService { get; set; }
-        public LogControl<DesignViewModel> Log;
+        public static LogControl<DesignViewModel> Log;
 
         #region 视觉参数
 
@@ -56,28 +56,16 @@ namespace Pkn_HostSystem.ViewModels.Page
                 DesignModel = new DesignModel();
             }
 
-            DesignModel.Nodes = new ObservableCollection<TreeNodes>()
-            {
-                new TreeNodes()
-                {
-                    Name = "Mes",
-                    Children = new ObservableCollection<TreeNodes>()
-                    {
-                        new TreeNodes()
-                        {
-                            Name = "Add",
-                            NodeType = NodeEnum.Add
-                        },
-                        new TreeNodes()
-                        {
-                            Name = "Sub",
-                            NodeType = NodeEnum.Subtract
-                        }
-                    }
-                }
-            };
+            DesignModel.Nodes = DesignTreeNode.TreeNodesList;
         }
 
+
+        public void SetLogRichTextBox(RichTextBox richTextBox)
+        {
+            Log.RichTextBox = richTextBox;
+            Log.FlowDocument = richTextBox.Document;
+
+        }
         #region 弹窗SnackbarService
 
         public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
