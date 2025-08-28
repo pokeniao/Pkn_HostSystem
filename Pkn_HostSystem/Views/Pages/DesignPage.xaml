@@ -241,7 +241,7 @@
                                 <nodify:PendingConnection
                                     AllowOnlyConnectors="True"
                                     CompletedCommand="{Binding FinishCommand}"
-                                    StartedCommand="{Binding StartCommand}" />
+                                    StartedCommand="{Binding StartCommand}"/>
                             </DataTemplate>
                         </nodify:NodifyEditor.PendingConnectionTemplate>
                         <!-- 按键逻辑绑定 -->

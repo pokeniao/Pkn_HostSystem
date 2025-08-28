@@ -12,6 +12,8 @@ namespace Pkn_HostSystem.NodifyControl.Connection
         public MyConnector Source { get; set; }
         public MyConnector Target { get; set; }
 
+
+
         [ObservableProperty] private bool _isActive = false;
         public ConnectorViewModel(MyConnector source, MyConnector target)
         {

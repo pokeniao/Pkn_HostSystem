@@ -7,7 +7,7 @@
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
       xmlns:enums="clr-namespace:Pkn_HostSystem.Base.Enum"
-      xmlns:halconDotNet="clr-namespace:HalconDotNet;assembly=halcondotnet"
+      xmlns:gif="http://wpfanimatedgif.codeplex.com"
       d:DataContext="{d:DesignInstance page:HomePageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -589,73 +589,50 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" ColumnSpan="2">
-            <ui:CardControl Margin="5">
-                <ui:CardControl.Content>
-                    <Grid>
-                        <Grid Margin="8,0"
-                              Visibility="{Binding CurLoginState ,Converter={StaticResource LoginVisibilityConverter} ,ConverterParameter={x:Static enums:LoginPermissionEnum.UnLogIn}}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+            <Grid >
+                <Grid Margin="8,0"
+                      Visibility="{Binding CurLoginState ,Converter={StaticResource LoginVisibilityConverter} ,ConverterParameter={x:Static enums:LoginPermissionEnum.UnLogIn}}">
+                </Grid>
 
-                            <StackPanel Grid.Row="0"
-                                        Grid.Column="1" Orientation="Horizontal">
-
-                                <ui:Button Margin="3" Content="登入" Width="100" Appearance="Primary"
-                                           Command="{Binding LoginCommand}">
-                                    <ui:Button.Icon>
-                                        <ui:SymbolIcon Symbol="ContactCard24" FontSize="25" />
-                                    </ui:Button.Icon>
-                                </ui:Button>
-                            </StackPanel>
-
-                        </Grid>
-                        <Grid Margin="8,0"
-                              Visibility="{Binding CurLoginState , Converter={StaticResource LoginVisibilityConverter} , ConverterParameter= {x:Static enums:LoginPermissionEnum.LogIn}}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Ellipse
-                                x:Name="Ellipse"
-                                Grid.RowSpan="2"
-                                Width="32"
-                                Height="32"
-                                Margin="6"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Fill="{ui:ThemeResource ControlStrongStrokeColorDefaultBrush}" />
-                            <StackPanel Grid.Row="0"
-                                        Grid.Column="1" Orientation="Horizontal">
-                                <TextBlock
-                                    Margin="12,6,0,0"
-                                    FontWeight="Bold"
-                                    Text="管理员" />
-                                <ui:Button Margin="3" Opacity="0.5 " ToolTipService.ToolTip="切换登入">
-                                    <ui:SymbolIcon Symbol="ChevronDown24" FontSize="10" />
-                                </ui:Button>
-                            </StackPanel>
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Margin="12,0,0,6"
-                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                                Text="pokeniao" />
-                        </Grid>
-                    </Grid>
-
-
-                </ui:CardControl.Content>
-            </ui:CardControl>
+                <Grid Margin="8,0" HorizontalAlignment="Right"
+                     >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Ellipse
+                        x:Name="Ellipse"
+                        Grid.RowSpan="2"
+                        Width="32"
+                        Height="32"
+                        Margin="6"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Fill="{ui:ThemeResource ControlStrongStrokeColorDefaultBrush}" />
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock
+                            Margin="12,6,0,0"
+                            FontWeight="Bold"
+                            Text="管理员" />
+                        <ui:Button Margin="3" Opacity="0.5 " 
+                                   ToolTipService.ToolTip="切换登入"
+                                   Command="{Binding LoginCommand}">
+                            <ui:SymbolIcon Symbol="ChevronDown24" FontSize="10" />
+                        </ui:Button>
+                    </StackPanel>
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="12,0,0,6"
+                        Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                        Text="pokeniao" />
+                </Grid>
+            </Grid>
         </Grid>
         <Grid Grid.Row="1" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
@@ -669,7 +646,7 @@
                 </Grid.RowDefinitions>
                 <UniformGrid Margin="20,0"
                              Columns="2">
-                    <Grid Margin="20,0,20,5">
+                    <Grid Margin="20,0,20,10">
                         <ui:CardAction
                             Name="CA_ConnectPLC"
                             IsChevronVisible="False"
@@ -1027,7 +1004,7 @@
                             </Grid>
                         </Border>
                     </Grid>
-                    <Grid Margin="20,0,20,5">
+                    <Grid Margin="20,0,20,10">
                         <ui:CardAction
                             Name="CA_pppOrderSelect"
                             IsChevronVisible="False"
@@ -1113,7 +1090,7 @@
                             </Grid>
                         </Border>
                     </Grid>
-                    <Grid Margin="20,5,20,5">
+                    <Grid Margin="20,5,20,10">
                         <ui:CardAction
                             Name="CA_CameraSelect"
                             IsChevronVisible="False"
@@ -1243,7 +1220,7 @@
                             </Grid>
                         </Border>
                     </Grid>
-                    <Grid x:Name="grid4" Margin="20,5,20,5">
+                    <Grid x:Name="grid4" Margin="20,5,20,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0*" />
                             <ColumnDefinition />
@@ -1396,13 +1373,14 @@
                     <!--动画参数 Border RenderTransform x=2.3 y=5.5 调整缩放,
                     通过 RenderTransformOrigin="0.43,0.52"调整决定坐标(需要修改)-->
                     <!--动画参数 内部Grid LayoutTransform参数 x=0.434782 y=0.18181818-->
-                    <Grid x:Name="grid5" Margin="20,5,20,5">
+                    <Grid x:Name="grid5" Margin="20,5,20,10">
 
                         <ui:CardAction
                             Name="Register_CardAction"
                             IsChevronVisible="False"
-
-                            VerticalAlignment="Stretch" Click="Register_OnClick" Grid.ColumnSpan="2">
+                            VerticalAlignment="Stretch"
+                            Click="Register_OnClick"
+                            Grid.ColumnSpan="2">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -1445,30 +1423,30 @@
                                     <RowDefinition Height="0.3*" />
                                 </Grid.RowDefinitions>
                                 <Grid>
-                                    
+
 
                                     <TabControl>
-                                        <TabItem  Width="120">
+                                        <TabItem Width="120">
                                             <TabItem.Header>
                                                 <TextBlock Text="触发寄存器" Margin="5" TextAlignment="Center" />
                                             </TabItem.Header>
-                                            <DataGrid
-                                                AutoGenerateColumns="False"
-                                                ItemsSource="{Binding HomePageModel.TriggerRegisterItems}">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="名称备注" Width="*"
-                                                                        Binding="{Binding Name}" />
-                                                    <DataGridTextColumn Header="地址" Width="*"
-                                                                        IsReadOnly="True"
-                                                                        Binding="{Binding Index}" />
-                                                    <DataGridTextColumn Header="值" Width="*"
-                                                                        Binding="{Binding Value}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
+                                            <!-- <DataGrid -->
+                                            <!--     AutoGenerateColumns="False" -->
+                                            <!--     ItemsSource="{Binding HomePageModel.TriggerRegisterItems}"> -->
+                                            <!--     <DataGrid.Columns> -->
+                                            <!--         <DataGridTextColumn Header="名称备注" Width="*" -->
+                                            <!--                             Binding="{Binding Name}" /> -->
+                                            <!--         <DataGridTextColumn Header="地址" Width="*" -->
+                                            <!--                             IsReadOnly="True" -->
+                                            <!--                             Binding="{Binding Index}" /> -->
+                                            <!--         <DataGridTextColumn Header="值" Width="*" -->
+                                            <!--                             Binding="{Binding Value}" /> -->
+                                            <!--     </DataGrid.Columns> -->
+                                            <!-- </DataGrid> -->
                                         </TabItem>
-                                        <TabItem  Width="120">
-                                            <TabItem.Header >
-                                                <TextBlock Text="保持寄存器" Margin="5" TextAlignment="Center"  />
+                                        <TabItem Width="120">
+                                            <TabItem.Header>
+                                                <TextBlock Text="保持寄存器" Margin="5" TextAlignment="Center" />
                                             </TabItem.Header>
                                             <DataGrid
                                                 AutoGenerateColumns="False"
@@ -1485,24 +1463,24 @@
                                             </DataGrid>
                                         </TabItem>
 
-                                        <TabItem  Width="120">
+                                        <TabItem Width="120">
                                             <TabItem.Header>
                                                 <TextBlock Grid.Row="4" Text="队列" Margin="5" TextAlignment="Center" />
                                             </TabItem.Header>
 
-                                            <DataGrid Grid.Row="5"
-                                                      AutoGenerateColumns="False"
-                                                      ItemsSource="{Binding HomePageModel.QueueItems}">
-                                                <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="名称备注" Width="*"
-                                                                        Binding="{Binding Name}" />
-                                                    <DataGridTextColumn Header="地址" Width="*"
-                                                                        IsReadOnly="True"
-                                                                        Binding="{Binding Index}" />
-                                                    <DataGridTextColumn Header="值" Width="*"
-                                                                        Binding="{Binding Value}" />
-                                                </DataGrid.Columns>
-                                            </DataGrid>
+                                            <!-- <DataGrid Grid.Row="5" -->
+                                            <!--           AutoGenerateColumns="False" -->
+                                            <!--           ItemsSource="{Binding HomePageModel.QueueItems}"> -->
+                                            <!--     <DataGrid.Columns> -->
+                                            <!--         <DataGridTextColumn Header="名称备注" Width="*" -->
+                                            <!--                             Binding="{Binding Name}" /> -->
+                                            <!--         <DataGridTextColumn Header="地址" Width="*" -->
+                                            <!--                             IsReadOnly="True" -->
+                                            <!--                             Binding="{Binding Index}" /> -->
+                                            <!--         <DataGridTextColumn Header="值" Width="*" -->
+                                            <!--                             Binding="{Binding Value}" /> -->
+                                            <!--     </DataGrid.Columns> -->
+                                            <!-- </DataGrid> -->
                                         </TabItem>
                                     </TabControl>
 
@@ -1519,25 +1497,11 @@
                 </UniformGrid>
             </Grid>
             <Grid Grid.Column="1" Grid.RowSpan="2" Cursor="Arrow">
-                <StackPanel>
-                    <WrapPanel>
-                        <TextBlock Text="视觉显示" Margin="10,5" TextAlignment="Center" />
-                        <ComboBox ItemsSource="{Binding CameraShowMethodList }"
-                                  SelectedValue="{Binding HalconControl.CameraShowSize}"
-                                  SelectedValuePath="Value"
-                                  DisplayMemberPath="Display"
-                                  Width="150" />
-                    </WrapPanel>
-
-                    <Border Height="300">
-                        <halconDotNet:HSmartWindowControlWPF
-                            Margin="10"
-                            Name="HalconControlHomePage" />
-                    </Border>
-                </StackPanel>
+                <Border
+                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}">
+                  
+                </Border>
             </Grid>
-
-
         </Grid>
         <ui:SnackbarPresenter Grid.Row="2" Name="SnackbarPresenter" />
     </Grid>

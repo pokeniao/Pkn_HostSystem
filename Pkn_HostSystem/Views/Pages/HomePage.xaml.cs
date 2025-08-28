@@ -31,7 +31,7 @@ namespace Pkn_HostSystem.Views.Pages
             HomePageViewModel = (HomePageViewModel)DataContext;
             HomePageViewModel.setSnackbarPresenter(SnackbarPresenter);
             // ViewModel.setSnackbarPresenter(SnackbarPresenter);
-            HomePageViewModel.setHSmartWindowControl(HalconControlHomePage);
+
         }
 
 
@@ -315,6 +315,12 @@ namespace Pkn_HostSystem.Views.Pages
         /// <exception cref="NotImplementedException"></exception>
         private void HomePage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+        }
+
+        private void MyVideo_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            MyVideo.Position = TimeSpan.Zero;
+            MyVideo.Play();
         }
     }
 }

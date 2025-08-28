@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.NodifyControl.Connection;
 using System.Windows;
 
@@ -6,10 +7,24 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
 {
     public partial class MyConnector : ObservableObject
     {
+        public MyConnector(string Name, MyNode myNode , ConnectorTypeEnum connectorType )
+        {
+            ConnectorName = Name;
+            MyNode = myNode;
+            ConnectorType = connectorType;
+        }
+
         /// <summary>
         /// 定义一个测试连接器的名称
         /// </summary>
         public string ConnectorName { get; set; }
+
+        /// <summary>
+        /// 当前连接器所属的节点
+        /// </summary>
+        public MyNode MyNode  { get; set; }
+
+        public ConnectorTypeEnum ConnectorType { get; set; }
 
         /// <summary>
         /// 接口值

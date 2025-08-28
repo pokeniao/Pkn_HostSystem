@@ -34,20 +34,22 @@ namespace Pkn_HostSystem.NodifyControl.Node.DesignTreeNode
             switch (treeNodes.NodeType)
             {
                 case NodeEnum.Add:
-                    return new MyNode()
+                    MyNode myNode = new MyNode()
                     {
                         NodeName = treeNodes.Name,
-                        Input = [new() { ConnectorName = "输入" }],
-                        Output = [new() { ConnectorName = "输出" }],
                         Operation = new AddOperation()
                     };
+                    myNode.Input.Add(new MyConnector("输入" , myNode , ConnectorTypeEnum.Input));
+                    myNode.Output.Add(new MyConnector("输出", myNode, ConnectorTypeEnum.Output));
+                    return myNode;
                 case NodeEnum.DebugEnter:
-                    return new MyNode()
+                     myNode = new MyNode()
                     {
                         NodeName = treeNodes.Name,
-                        Output = [new() { ConnectorName = "输出" }],
                         Operation = new TestOperation()
                     };
+                    myNode.Output.Add(new MyConnector("输出", myNode , ConnectorTypeEnum.Output));
+                    return myNode;
                 default:
                     return new MyNode()
                     {
