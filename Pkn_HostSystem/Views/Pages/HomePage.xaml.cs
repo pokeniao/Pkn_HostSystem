@@ -316,11 +316,5 @@ namespace Pkn_HostSystem.Views.Pages
         private void HomePage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
         }
-
-        private void MyVideo_MediaEnded(object sender, RoutedEventArgs e)
-        {
-            MyVideo.Position = TimeSpan.Zero;
-            MyVideo.Play();
-        }
     }
 }
