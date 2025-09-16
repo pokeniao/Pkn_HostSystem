@@ -86,11 +86,14 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <ui:SymbolIcon Grid.Column="0" Symbol="Branch20" Margin="5" />
                         <TextBlock Grid.Column="1" Text="流程" Margin="0 5" />
-                        <Button Grid.Column="0" Grid.ColumnSpan="3"
+
+            
+                        <Button Grid.Column="0" Grid.ColumnSpan="4"
                                 HorizontalAlignment="Center"
                                 Padding="5 3"
                                 Margin="5  0"
@@ -103,7 +106,14 @@
                                 </WrapPanel>
                             </Button.Content>
                         </Button>
-
+                        <TextBox 
+                            IsReadOnly="True" 
+                            Style="{x:Null}"
+                            Background="{x:Null}" 
+                            BorderThickness="0"
+                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                            Width="100"
+                            Grid.Column="3"  TextWrapping="{Binding DesignModel.ProjectName}"  Margin="0 5" HorizontalAlignment="Right" />
                     </Grid>
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />

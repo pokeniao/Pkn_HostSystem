@@ -50,7 +50,9 @@
 
         <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" Grid.ColumnSpan="2" OpenPaneLength="220"
                            PaneClosed="RootNavigation_OnPaneClosed"
-                           PaneOpened="RootNavigation_OnPaneOpened">
+                           PaneOpened="RootNavigation_OnPaneOpened"
+                           Navigating="RootNavigation_OnNavigating"
+                           >
             <ui:NavigationView.AutoSuggestBox>
                 <ui:AutoSuggestBox x:Name="AutoSuggestBox" PlaceholderText="Search">
                     <ui:AutoSuggestBox.Icon>
@@ -93,7 +95,7 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                    Content="任务"
+                    Content="任务(旧)"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:LoadMesPage}">
                     <ui:NavigationViewItem.Icon>
@@ -111,7 +113,7 @@
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                    Content="测试"
+                    Content="任务(Demo)"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:DesignPage}">
                     <ui:NavigationViewItem.Icon>

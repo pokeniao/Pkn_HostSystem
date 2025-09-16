@@ -6,7 +6,6 @@ using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -14,10 +13,10 @@ using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
+using NavigatingCancelEventArgs = Wpf.Ui.Controls.NavigatingCancelEventArgs;
 
 namespace Pkn_HostSystem
 {
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -48,8 +47,8 @@ namespace Pkn_HostSystem
                 navigation.Navigate(typeof(HomePage));
                 _ = Starting();
             };
-
         }
+
 
         private void PreLoad()
         {
@@ -59,6 +58,7 @@ namespace Pkn_HostSystem
             {
                 StaticArrayRegister.DataArrayRegister = new object[100];
             }
+
             StaticArrayRegister.ArrayRegister =
                 new ObservableCollection<object>(StaticArrayRegister.DataArrayRegister);
 
@@ -72,7 +72,6 @@ namespace Pkn_HostSystem
 
         private async Task Starting()
         {
-
             //判断软件开启,启动的连接,自动进行连接
             HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
             ObservableCollection<NetworkDetailed> ConnectPojos = homePageViewModel.HomePageModel.SetConnectDg;
@@ -169,12 +168,10 @@ namespace Pkn_HostSystem
 
         private async void MainWindow_OnClosing(object? sender, CancelEventArgs e)
         {
-    
-
             SettingsPageViewModel viewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
             if (viewModel.SettingsPageModel.OffSave)
             {
-                var uiMessageBox = new Wpf.Ui.Controls.MessageBox { Title = "是否保存",Content = "          "};
+                var uiMessageBox = new Wpf.Ui.Controls.MessageBox { Title = "是否保存", Content = "          " };
                 uiMessageBox.PrimaryButtonText = "保存";
                 uiMessageBox.CloseButtonText = "不保存";
                 uiMessageBox.IsPrimaryButtonEnabled = true;
@@ -185,7 +182,24 @@ namespace Pkn_HostSystem
                     viewModel.SaveAll();
                 }
             }
+        }
+        //导航前拦截器设置
+        private async void RootNavigation_OnNavigating(NavigationView sender, NavigatingCancelEventArgs args)
+        {
+            if (args.Page.ToString() == typeof(DesignPage).FullName)
+            {
+                var vm = Ioc.Default.GetRequiredService<DesignViewModel>();
 
+                if (string.IsNullOrEmpty(vm.DesignModel.ProjectName))
+                {
+
+                    var messageBox = new Wpf.Ui.Controls.MessageBox { Title = "提示", Content = "当前未选中项目,将会自动创建" };
+                    MessageBoxResult messageBoxResult = await messageBox.ShowDialogAsync();
+                    // 用户取消 → 阻止导航
+                    args.Cancel = true;
+                    return;
+                }
+            }
         }
     }
 }

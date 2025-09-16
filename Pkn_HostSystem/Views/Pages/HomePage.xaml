@@ -589,13 +589,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" ColumnSpan="2">
-            <Grid >
+            <Grid>
                 <Grid Margin="8,0"
                       Visibility="{Binding CurLoginState ,Converter={StaticResource LoginVisibilityConverter} ,ConverterParameter={x:Static enums:LoginPermissionEnum.UnLogIn}}">
                 </Grid>
 
-                <Grid Margin="8,0" HorizontalAlignment="Right"
-                     >
+                <Grid Margin="8,0" HorizontalAlignment="Right">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="*" />
@@ -619,7 +618,7 @@
                             Margin="12,6,0,0"
                             FontWeight="Bold"
                             Text="管理员" />
-                        <ui:Button Margin="3" Opacity="0.5 " 
+                        <ui:Button Margin="3" Opacity="0.5 "
                                    ToolTipService.ToolTip="切换登入"
                                    Command="{Binding LoginCommand}">
                             <ui:SymbolIcon Symbol="ChevronDown24" FontSize="10" />
@@ -1496,11 +1495,71 @@
                     </Grid>
                 </UniformGrid>
             </Grid>
-            <Grid Grid.Column="1" Grid.RowSpan="2" Cursor="Arrow">
-                <Border
-                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}">
-                  
-                </Border>
+            <Grid Grid.Column="1" Grid.RowSpan="2" Cursor="Arrow"
+                  VerticalAlignment="Top">
+                <StackPanel>
+                    <ui:CardAction
+                        Margin="0,0,20,20"
+                        Padding="0"
+                        VerticalAlignment="Stretch"
+                        Height="100"
+                        IsChevronVisible="False">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:SymbolIcon Symbol="FolderAdd20" FontSize="65" Margin="30  0 0 0" />
+                            <StackPanel
+                                Grid.Column="1"
+                                Margin="24"
+                                VerticalAlignment="Center">
+                                <ui:TextBlock
+                                    Margin="0"
+                                    FontSize="35"
+                                    FontWeight="Bold"
+                                    FontFamily="FangSong"
+                                    Text="新建项目" />
+                            </StackPanel>
+                        </Grid>
+                    </ui:CardAction>
+                    <ui:CardAction
+                        Margin="0,0,20,0"
+                        Padding="0"
+                        VerticalAlignment="Stretch"
+                        Height="100"
+                        IsChevronVisible="False">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:SymbolIcon Symbol="FolderArrowLeft28" FontSize="65" Margin="30  0 0 0" />
+                            <StackPanel
+                                Grid.Column="1"
+                                Margin="24"
+                                VerticalAlignment="Center">
+                                <ui:TextBlock
+                                    Margin="0"
+                                    FontFamily="FangSong"
+                                    FontWeight="Bold"
+                                    FontSize="35"
+                                    Text="返回编辑"
+                                    TextWrapping="WrapWithOverflow" />
+                            </StackPanel>
+                        </Grid>
+                    </ui:CardAction>
+                    <Border
+                        Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        Margin=" 0 20 20 20"
+                        Height="300">
+                        <ListBox
+                            ItemsSource="">
+
+                        </ListBox>
+                    </Border>
+                </StackPanel>
+
             </Grid>
         </Grid>
         <ui:SnackbarPresenter Grid.Row="2" Name="SnackbarPresenter" />

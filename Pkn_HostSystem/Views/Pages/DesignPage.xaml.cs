@@ -16,6 +16,7 @@ using System.Windows.Media;
 using DataObject = System.Windows.DataObject;
 using DragDropEffects = System.Windows.DragDropEffects;
 using DragEventArgs = System.Windows.DragEventArgs;
+using MessageBox = System.Windows.Forms.MessageBox;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using RichTextBox = System.Windows.Controls.RichTextBox;
 
@@ -84,5 +85,6 @@ namespace Pkn_HostSystem.Views.Pages
         {
             LogRichTextBox.MaxHeight = (e.NewSize.Height / 3) + 2;
         }
+
     }
 }

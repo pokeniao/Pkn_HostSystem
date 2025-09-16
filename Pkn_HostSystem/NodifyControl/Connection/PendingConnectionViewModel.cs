@@ -6,7 +6,6 @@ using Pkn_HostSystem.NodifyControl.Node.Connector;
 
 namespace Pkn_HostSystem.NodifyControl.Connection
 {
-
     /// <summary>
     /// 预连接模块
     /// </summary>
@@ -35,13 +34,20 @@ namespace Pkn_HostSystem.NodifyControl.Connection
         [RelayCommand]
         private void Finish(MyConnector target)
         {
+            //完毕的时候目标不为空,且目标不为自己
+            if (target == null || target == _source)
+            {
+                return;
+            }
+
             //自己的输入不能连自己的输出
             if (_source.MyNode == target.MyNode)
             {
                 return;
             }
+
             //输入不能连输入,输出不能连输出
-            if (_source.ConnectorType == ConnectorTypeEnum.Input  && target.ConnectorType == ConnectorTypeEnum.Input)
+            if (_source.ConnectorType == ConnectorTypeEnum.Input && target.ConnectorType == ConnectorTypeEnum.Input)
             {
                 return;
             }
@@ -51,10 +57,8 @@ namespace Pkn_HostSystem.NodifyControl.Connection
                 return;
             }
 
-            //完毕的时候目标不为空,且目标不为自己
-            if (target != null && target!= _source)
-                _editor.Connect(_source, target);
-        }
 
+            _editor.Connect(_source, target);
+        }
     }
 }

@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using DynamicData;
 using DynamicData.Binding;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
-using Pkn_HostSystem.ViewModels.Page;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -101,7 +98,7 @@ public partial class HomePageModel : ObservableObject
     // }));
 
     private ObservableCollection<RegisterItem> registerItems;
-    
+
     public ObservableCollection<RegisterItem> RegisterItems
     {
         get => registerItems;
@@ -174,5 +171,11 @@ public partial class HomePageModel : ObservableObject
         }
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [JsonIgnore] public ObservableCollection<string> ProjectList { get; set; }
+
     #endregion
-}
+}   
