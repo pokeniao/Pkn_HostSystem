@@ -275,7 +275,6 @@ namespace Pkn_HostSystem.Views.Windows
                         return;
                     }
                     break;
-                
             }
 
             //判断那个是显示的就选中那个

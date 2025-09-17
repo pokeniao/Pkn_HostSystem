@@ -32,6 +32,7 @@ namespace Pkn_HostSystem.Views.Pages
             HomePageViewModel.setSnackbarPresenter(SnackbarPresenter);
             // ViewModel.setSnackbarPresenter(SnackbarPresenter);
 
+
         }
 
 

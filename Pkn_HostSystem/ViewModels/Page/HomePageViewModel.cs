@@ -77,12 +77,27 @@ public partial class HomePageViewModel : ObservableRecipient
 
         GlobalManager.jdbcPath = HomePageModel.RealJdbcUrl; //设置全局jdbc连接路径
         //先添加 ,后绑定
-        GlobalManager.NetWorkDictionary.AddOrUpdate(HomePageModel.NetWorkList);
+
+        if (HomePageModel.NetWorkList != null)
+        {
+            GlobalManager.NetWorkDictionary.AddOrUpdate(HomePageModel.NetWorkList);
+        }
+        else
+        {
+            HomePageModel.NetWorkList = new ObservableCollectionExtended<NetWork>();
+        }
+
+
         GlobalManager.NetWorkDictionary.Connect().Bind(HomePageModel.NetWorkList).Subscribe();
 
         //获取到 HTTP的集合 引用类型并且绑定到HomePageModel.HttpLists
         var vm = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
         HomePageModel.HttpLists = vm.LoadMesPageModel.MesPojoList;
+
+        var vm2 = Ioc.Default.GetRequiredService<DesignViewModel>();
+
+        HomePageModel.ProjectList = vm2.DesignModel.ProjectList;
+
 
         Log = new LogControl<HomePageViewModel>(SnackbarService);
     }
@@ -562,7 +577,7 @@ public partial class HomePageViewModel : ObservableRecipient
         switch (HomePageModel.CollectMethod)
         {
             case CameraInterfaceEnum.图片:
-                ( succeed,  message) =
+                (succeed, message) =
                     await HalconTool.VisionTrigger(HomePageModel.CollectMethod, HomePageModel.PicturePath);
 
                 break;
@@ -574,9 +589,10 @@ public partial class HomePageViewModel : ObservableRecipient
                 (succeed, message) = await HalconTool.VisionTrigger(HomePageModel.CollectMethod, null);
                 break;
         }
+
         if (!succeed)
         {
-            Log.ErrorAndShowTask( message);
+            Log.ErrorAndShowTask(message);
         }
     }
 
@@ -589,7 +605,6 @@ public partial class HomePageViewModel : ObservableRecipient
     [RelayCommand]
     public async void VisionRealTime()
     {
- 
         bool succeed = false;
         string? message = null;
         if (HomePageModel.RealTimeName == "实时")
@@ -599,32 +614,34 @@ public partial class HomePageViewModel : ObservableRecipient
             {
                 case CameraInterfaceEnum.图片:
                     (succeed, message) =
-                        await HalconTool.VisionRealTime(true, HomePageModel.CollectMethod, HomePageModel.PicturePath, cts);
+                        await HalconTool.VisionRealTime(true, HomePageModel.CollectMethod, HomePageModel.PicturePath,
+                            cts);
                     break;
                 case CameraInterfaceEnum.GenICamTL:
                     (succeed, message) =
-                        await HalconTool.VisionRealTime(true, HomePageModel.CollectMethod, HomePageModel.SelectCamera, cts);
+                        await HalconTool.VisionRealTime(true, HomePageModel.CollectMethod, HomePageModel.SelectCamera,
+                            cts);
                     break;
                 case CameraInterfaceEnum.电脑摄像头:
-                    (succeed, message) = await HalconTool.VisionRealTime(true, HomePageModel.CollectMethod,null, cts);
+                    (succeed, message) = await HalconTool.VisionRealTime(true, HomePageModel.CollectMethod, null, cts);
                     break;
             }
+
             if (!succeed)
             {
-                Log.ErrorAndShowTask( message);
+                Log.ErrorAndShowTask(message);
                 return;
             }
+
             // 切换到停止状态
             HomePageModel.RealTimeName = "停止";
         }
-        else if(HomePageModel.RealTimeName == "停止")
+        else if (HomePageModel.RealTimeName == "停止")
         {
             await HalconTool.VisionRealTime(false, HomePageModel.CollectMethod, null, cts);
             // 切换到实时状态
             HomePageModel.RealTimeName = "实时";
         }
-
-
     }
 
 

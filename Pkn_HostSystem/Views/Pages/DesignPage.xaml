@@ -113,7 +113,7 @@
                             BorderThickness="0"
                             Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                             Width="100"
-                            Grid.Column="3"  TextWrapping="{Binding DesignModel.ProjectName}"  Margin="0 5" HorizontalAlignment="Right" />
+                            Grid.Column="3"  Text="{Binding DesignModel.ProjectName,UpdateSourceTrigger=PropertyChanged}"  Margin="0 5" HorizontalAlignment="Right" />
                     </Grid>
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />

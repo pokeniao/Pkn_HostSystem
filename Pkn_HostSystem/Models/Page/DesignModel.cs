@@ -11,6 +11,6 @@ namespace Pkn_HostSystem.Models.Page
 
         [ObservableProperty] private string projectName;
 
-        [ObservableProperty] private ObservableCollection<string> projectList;
+        [ObservableProperty] private ObservableCollection<string> projectList = new ObservableCollection<string>();
     }
 }

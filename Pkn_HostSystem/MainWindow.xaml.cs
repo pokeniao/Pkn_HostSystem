@@ -6,6 +6,7 @@ using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages;
+using Pkn_HostSystem.Views.Windows;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -192,12 +193,17 @@ namespace Pkn_HostSystem
 
                 if (string.IsNullOrEmpty(vm.DesignModel.ProjectName))
                 {
+                    MenuSelectWindow menuSelectWindow = new MenuSelectWindow(vm.DesignModel.ProjectList);
 
-                    var messageBox = new Wpf.Ui.Controls.MessageBox { Title = "提示", Content = "当前未选中项目,将会自动创建" };
-                    MessageBoxResult messageBoxResult = await messageBox.ShowDialogAsync();
-                    // 用户取消 → 阻止导航
-                    args.Cancel = true;
-                    return;
+                    bool? showDialog = menuSelectWindow.ShowDialog();
+
+                    if (string.IsNullOrEmpty(vm.DesignModel.ProjectName))
+                    {
+                        // 用户取消 → 阻止导航
+                        args.Cancel = true;
+                        return;
+                    }
+                   
                 }
             }
         }
