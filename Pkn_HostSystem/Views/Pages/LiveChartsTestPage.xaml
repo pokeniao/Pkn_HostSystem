@@ -7,6 +7,8 @@
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
       xmlns:wpf="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+      xmlns:system="clr-namespace:System;assembly=mscorlib"
+ 
       mc:Ignorable="d"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -68,7 +70,7 @@
                     </TabItem>
                 </TabControl>
 
-          
+
             </Border>
 
 
@@ -79,6 +81,14 @@
                 IsReadOnly="True"
                 VerticalScrollBarVisibility="Auto"
                 FontSize="12">
+                <RichTextBox.ContextMenu>
+                    <ContextMenu  Opened="ContextMenu_OnOpened">
+                        <MenuItem Header="清空日志" Click="MenuItem_OnClick" />
+                        <!-- 复制 -->
+                        <MenuItem x:Name="CopyMenuItem" Header="复制" Click="CopySelected_OnClick"/>
+                    </ContextMenu>
+
+                </RichTextBox.ContextMenu>
             </RichTextBox>
 
         </Grid>

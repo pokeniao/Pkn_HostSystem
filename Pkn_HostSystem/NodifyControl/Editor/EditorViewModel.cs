@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
+using Newtonsoft.Json;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Connection;
@@ -23,13 +24,14 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         /// <summary>
         /// 连接点集合
         /// </summary>
-        public ObservableCollection<ConnectorViewModel> Connectors { get; } =
+        public ObservableCollection<ConnectorViewModel> Connectors { get; set; } =
             new ObservableCollection<ConnectorViewModel>();
 
         /// <summary>
         /// 添加连接预处理
         /// </summary>
-        public PendingConnectionViewModel PendingConnection { get; }
+        [JsonIgnore]
+        public PendingConnectionViewModel PendingConnection { get;  }
 
         /// <summary>
         /// 移除连接点预处理
@@ -41,7 +43,10 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         /// </summary>
         public ICommand RemoveConnectionCommand { get; }
 
-
+        /// <summary>
+        /// 选中的
+        /// </summary>
+        [JsonIgnore]
         public ObservableCollection<MyNode> SelectedConnectors { get; set; } =
             new ObservableCollection<MyNode>();
 

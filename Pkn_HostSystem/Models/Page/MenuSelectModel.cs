@@ -1,9 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using DynamicData.Binding;
+using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.Models.Page
 {
     public class MenuSelectModel
     {
-        public ObservableCollection<string> ProjectList { get; set; }
+        public ObservableCollectionExtended<DesignModel> ProjectList { get; set; }
     }
 }

@@ -1503,6 +1503,7 @@
                         Padding="0"
                         VerticalAlignment="Stretch"
                         Height="100"
+                        Command="{Binding CreateProjectCommand}"
                         IsChevronVisible="False">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -1528,6 +1529,8 @@
                         Padding="0"
                         VerticalAlignment="Stretch"
                         Height="100"
+                        Command="{Binding ReturnEditButtonCommand }"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
                         IsChevronVisible="False">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -1553,10 +1556,19 @@
                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         Margin=" 20 20 20 20"
                         Height="350">
+                        <Border.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="删除" Click="MenuItem_OnClick">
+                                </MenuItem>
+                            </ContextMenu>
+                        </Border.ContextMenu>
                         <ListBox
-                            ItemsSource="{Binding HomePageModel.ProjectList }">
+                            Name="HomeProjectListBox"
+                            DisplayMemberPath="ProjectName"
+                            SelectedValuePath="ProjectName"
+                            ItemsSource="{Binding HomePageModel.ProjectList }" />
 
-                        </ListBox>
+
                     </Border>
                 </StackPanel>
 

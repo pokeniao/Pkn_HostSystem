@@ -12,7 +12,7 @@
                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                  d:DesignHeight="714.5" d:DesignWidth="1000"
                  d:DataContext="{d:DesignInstance page:MenuSelectModel}"
-                 Title="MenuSelectWindow" Height="714.5" Width="300">
+                 Title="MenuSelectWindow" Height="414.5" Width="300">
 
 
     <Grid>
@@ -28,15 +28,18 @@
         </Grid>
 
         <ListBox Grid.Row="1"
+                 Margin="10"
                  Name="ListBox"
+                 DisplayMemberPath="ProjectName"
+                 SelectedValuePath="ProjectName"
                  ItemsSource="{Binding ProjectList }">
 
         </ListBox>
         <Grid Grid.Row="2">
-            <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="添加" Margin="10 0" Click="ButtonBase_OnClick3"/>
-                <Button Content="确认" Click="ButtonBase_OnClick2"/>
-                <Button Content="取消" Margin="10 0" Click="ButtonBase_OnClick"/>
+            <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right" Margin=" 0 0 0 10">
+                <Button Content="添加" Margin="20 0" Click="ButtonBase_OnClick3" Width="70"/>
+                <Button Content="确认" Click="ButtonBase_OnClick2" Width="70"/>
+                <Button Content="取消" Margin="20 0" Click="ButtonBase_OnClick" Width="70"/>
             </StackPanel>
         </Grid>
          

@@ -55,5 +55,26 @@ namespace Pkn_HostSystem.Views.Pages
         {
             LogRichTextBox.Height = Math.Max(50, e.NewSize.Height - e.NewSize.Height*55/100); // 50为最小高度
         }
+
+        private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            LogRichTextBox.Document.Blocks.Clear();
+        }
+
+        private void CopySelected_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(LogRichTextBox.Selection.Text))
+            {
+                Clipboard.SetText(LogRichTextBox.Selection.Text);
+            }
+        }
+
+        private void ContextMenu_OnOpened(object sender, RoutedEventArgs e)
+        {
+            // 判断是否有选中的文本
+            CopyMenuItem.Visibility = string.IsNullOrEmpty(LogRichTextBox.Selection.Text)
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+        }
     }
 }

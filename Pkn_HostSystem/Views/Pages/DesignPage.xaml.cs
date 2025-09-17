@@ -1,24 +1,19 @@
-﻿using Azure;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Nodify;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Editor;
 using Pkn_HostSystem.NodifyControl.Node;
-using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
 using Pkn_HostSystem.ViewModels.Page;
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using Clipboard = System.Windows.Clipboard;
 using DataObject = System.Windows.DataObject;
 using DragDropEffects = System.Windows.DragDropEffects;
 using DragEventArgs = System.Windows.DragEventArgs;
-using MessageBox = System.Windows.Forms.MessageBox;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace Pkn_HostSystem.Views.Pages
 {
@@ -37,7 +32,7 @@ namespace Pkn_HostSystem.Views.Pages
             ViewModel.setHSmartWindowControl(HSmartWindowControlWPF);
             ViewModel.SetLogRichTextBox(LogRichTextBox);
         }
-            
+
         private void NodifyEditor_OnDrop(object sender, DragEventArgs e)
         {
             if (e.Source is NodifyEditor editor && editor.DataContext is EditorViewModel editorViewModel
@@ -47,14 +42,14 @@ namespace Pkn_HostSystem.Views.Pages
                 MyNode myNode = DesignTreeNode.GetNode(treeNodes);
                 myNode.Location = editor.GetLocationInsideEditor(e);
                 editorViewModel.Nodes.Add(myNode);
-                
+
                 e.Handled = true;
             }
         }
 
         private void UIElement_OnMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed )
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
                 // 找到 TreeViewItem
                 var treeViewItem = FindAncestor<TreeViewItem>((DependencyObject)e.OriginalSource);
@@ -86,5 +81,25 @@ namespace Pkn_HostSystem.Views.Pages
             LogRichTextBox.MaxHeight = (e.NewSize.Height / 3) + 2;
         }
 
+        private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            LogRichTextBox.Document.Blocks.Clear();
+        }
+
+        private void CopySelected_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(LogRichTextBox.Selection.Text))
+            {
+                Clipboard.SetText(LogRichTextBox.Selection.Text);
+            }
+        }
+
+        private void ContextMenu_OnOpened(object sender, RoutedEventArgs e)
+        {
+            // 判断是否有选中的文本
+            CopyMenuItem.Visibility = string.IsNullOrEmpty(LogRichTextBox.Selection.Text)
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+        }
     }
 }

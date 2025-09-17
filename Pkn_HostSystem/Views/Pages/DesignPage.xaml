@@ -54,7 +54,7 @@
                             BorderThickness="1" />
                     <TreeView Grid.Row="2"
                               AllowDrop="True"
-                              ItemsSource="{Binding DesignModel.Nodes }"
+                              ItemsSource="{Binding Nodes }"
                               MouseMove="UIElement_OnMouseMove">
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate ItemsSource="{Binding Children}">
@@ -113,7 +113,7 @@
                             BorderThickness="0"
                             Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                             Width="100"
-                            Grid.Column="3"  Text="{Binding DesignModel.ProjectName,UpdateSourceTrigger=PropertyChanged}"  Margin="0 5" HorizontalAlignment="Right" />
+                            Grid.Column="3"  Text="{Binding ProjectName,UpdateSourceTrigger=PropertyChanged}"  Margin="0 5" HorizontalAlignment="Right" />
                     </Grid>
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
@@ -290,6 +290,13 @@
                         VerticalScrollBarVisibility="Auto"
                         HorizontalScrollBarVisibility="Auto"
                         FontSize="9">
+                        <RichTextBox.ContextMenu >
+                            <ContextMenu Opened="ContextMenu_OnOpened">
+                                <MenuItem  Header="清除日志" Click="MenuItem_OnClick"/>
+                                <!-- 复制 -->
+                                <MenuItem x:Name="CopyMenuItem" Header="复制" Click="CopySelected_OnClick"/>
+                            </ContextMenu>
+                        </RichTextBox.ContextMenu>
                     </RichTextBox>
                 </Grid>
             </Border>

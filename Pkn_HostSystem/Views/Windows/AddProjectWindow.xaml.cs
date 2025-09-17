@@ -1,4 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using DynamicData;
+using DynamicData.Kernel;
+using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.Static;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -11,10 +15,8 @@ namespace Pkn_HostSystem.Views.Windows
     {
         public string ProjectName { get; set; }
 
-        public ObservableCollection<string> ProjectList { get; set; }
-        public AddProjectWindow(ObservableCollection<string> projectList)
+        public AddProjectWindow()
         {
-            ProjectList = projectList;
             InitializeComponent();
             DataContext = this;
         }
@@ -33,13 +35,18 @@ namespace Pkn_HostSystem.Views.Windows
         /// <param name="e"></param>
         private void ButtonBase_OnClick2(object sender, RoutedEventArgs e)
         {
-            int indexOf = ProjectList.IndexOf(ProjectName);
 
-            if (indexOf == -1)
+            if (string.IsNullOrEmpty(ProjectName))
             {
-                ProjectList.Add(ProjectName);
+                return;
             }
 
+            bool hasValue = GlobalManager.ProjectDictionary.Lookup(ProjectName).HasValue;
+            if (!hasValue)
+            {
+                DesignModel designModel = new DesignModel { ProjectName = ProjectName };
+                GlobalManager.ProjectDictionary.AddOrUpdate(designModel);
+            }
             this.Close();
         }
         /// <summary>

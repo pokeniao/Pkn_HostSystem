@@ -175,7 +175,7 @@ public partial class HomePageModel : ObservableObject
     /// <summary>
     /// 
     /// </summary>
-    [JsonIgnore] public ObservableCollection<string> ProjectList { get; set; }
+    [JsonIgnore] public ObservableCollectionExtended<DesignModel> ProjectList { get; set; }
 
     #endregion
 }   

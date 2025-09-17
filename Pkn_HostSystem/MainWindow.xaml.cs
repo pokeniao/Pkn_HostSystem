@@ -191,13 +191,13 @@ namespace Pkn_HostSystem
             {
                 var vm = Ioc.Default.GetRequiredService<DesignViewModel>();
 
-                if (string.IsNullOrEmpty(vm.DesignModel.ProjectName))
+                if (vm.DesignModel == null)
                 {
-                    MenuSelectWindow menuSelectWindow = new MenuSelectWindow(vm.DesignModel.ProjectList);
+                    MenuSelectWindow menuSelectWindow = new MenuSelectWindow(vm.ProjectModel.ProjectList);
 
                     bool? showDialog = menuSelectWindow.ShowDialog();
 
-                    if (string.IsNullOrEmpty(vm.DesignModel.ProjectName))
+                    if (string.IsNullOrEmpty(vm.ProjectName))
                     {
                         // 用户取消 → 阻止导航
                         args.Cancel = true;

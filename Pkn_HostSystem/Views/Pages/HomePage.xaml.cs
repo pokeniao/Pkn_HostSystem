@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using DynamicData;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
@@ -31,11 +32,8 @@ namespace Pkn_HostSystem.Views.Pages
             HomePageViewModel = (HomePageViewModel)DataContext;
             HomePageViewModel.setSnackbarPresenter(SnackbarPresenter);
             // ViewModel.setSnackbarPresenter(SnackbarPresenter);
-
-
+            
         }
-
-
 
         #region 播放动画
 
@@ -208,7 +206,6 @@ namespace Pkn_HostSystem.Views.Pages
 
         #endregion
 
-
         #region 连接编辑提交,检测
 
         private async void SetConnectDg_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
@@ -316,6 +313,23 @@ namespace Pkn_HostSystem.Views.Pages
         /// <exception cref="NotImplementedException"></exception>
         private void HomePage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+        }
+        /// <summary>
+        /// 删除MenuItem
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            var selectedValue = HomeProjectListBox.SelectedValue?.ToString();
+
+            if (selectedValue != null)
+            {
+                GlobalManager.ProjectDictionary.Remove(selectedValue);
+                DesignViewModel designViewModel = Ioc.Default.GetRequiredService<DesignViewModel>();
+                designViewModel.DesignModel = null;
+                designViewModel.ProjectName = null;
+            }
         }
     }
 }

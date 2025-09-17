@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using DynamicData.Binding;
 using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.NodifyControl.Editor;
+using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using System;
 using System.Collections.Generic;
@@ -25,7 +28,7 @@ namespace Pkn_HostSystem.Views.Windows
     {
         public MenuSelectModel Model { get; set; } = new MenuSelectModel();
 
-        public MenuSelectWindow(ObservableCollection<string> projectList)
+        public MenuSelectWindow(ObservableCollectionExtended<DesignModel> projectList)
         {
             Model.ProjectList = projectList;
             InitializeComponent();
@@ -39,16 +42,17 @@ namespace Pkn_HostSystem.Views.Windows
                 this.DragMove();
             }
         }
+
         /// <summary>
         /// 取消按钮
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
+
         /// <summary>
         /// 确认按钮
         /// </summary>
@@ -57,16 +61,17 @@ namespace Pkn_HostSystem.Views.Windows
         /// <exception cref="NotImplementedException"></exception>
         private void ButtonBase_OnClick2(object sender, RoutedEventArgs e)
         {
-            string? s = ListBox.SelectedValue.ToString();
+            string? s = ListBox.SelectedValue?.ToString();
 
             if (!string.IsNullOrEmpty(s))
             {
                 var designViewModel = Ioc.Default.GetRequiredService<DesignViewModel>();
-
-                designViewModel.DesignModel.ProjectName = s;
+                designViewModel.DesignModel = GlobalManager.ProjectDictionary.Lookup(s).Value;
+                designViewModel.init();
                 this.Close();
             }
         }
+
         /// <summary>
         /// 添加按钮
         /// </summary>
@@ -75,9 +80,7 @@ namespace Pkn_HostSystem.Views.Windows
         /// <exception cref="NotImplementedException"></exception>
         private void ButtonBase_OnClick3(object sender, RoutedEventArgs e)
         {
-
-            bool? showDialog = new AddProjectWindow(Model.ProjectList).ShowDialog();
-
+            bool? showDialog = new AddProjectWindow().ShowDialog();
         }
     }
 }

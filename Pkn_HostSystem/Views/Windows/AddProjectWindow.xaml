@@ -11,12 +11,16 @@
                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"
    
                  d:DesignHeight="714.5" d:DesignWidth="1000"
-                 Title="AddProjectWindow" Height="200" Width="300">
+                 MinHeight="135"
+                 MaxHeight="135"
+                 MinWidth="350"
+                 MaxWidth="350"
+                 Title="AddProjectWindow" Height="135" Width="350">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Grid.ColumnSpan="2">
@@ -24,12 +28,14 @@
                 <TextBlock Text="添加项目" FontWeight="Black" FontSize="16" Margin="30,9" />
             </Border>
         </Grid>
-        <TextBox Grid.Row="1" Text="{Binding ProjectName , UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Row="1" 
+                 Margin="25 5"
+                 Text="{Binding ProjectName , UpdateSourceTrigger=PropertyChanged}"/>
 
-        <Grid Grid.Row="2">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="确认" Click="ButtonBase_OnClick2" />
-                <Button Content="取消" Margin="10 0" Click="ButtonBase_OnClick" />
+        <Grid Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0  0 0 10">
+                <Button Content="确认" Click="ButtonBase_OnClick2" Width="70" />
+                <Button Content="取消" Margin="20 0" Click="ButtonBase_OnClick" Width="70" />
             </StackPanel>
         </Grid>
 

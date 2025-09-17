@@ -1,13 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using HalconDotNet;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Halcon;
 using Pkn_HostSystem.Base.Log;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Editor;
 using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
-using System.Windows.Documents;
+using Pkn_HostSystem.Static;
+using System.Collections.ObjectModel;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using RichTextBox = System.Windows.Controls.RichTextBox;
@@ -16,10 +20,11 @@ namespace Pkn_HostSystem.ViewModels.Page
 {
     public partial class DesignViewModel : ObservableRecipient
     {
-
+        [ObservableProperty] private ObservableCollection<TreeNodes> nodes;
 
         public SnackbarService SnackbarService { get; set; }
         public static LogControl<DesignViewModel> Log;
+
 
         #region 视觉参数
 
@@ -38,27 +43,48 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         #region Nodify
 
-        public EditorViewModel EditorViewModel { get; set; }
+        [ObservableProperty] private EditorViewModel editorViewModel;
 
         #endregion
 
 
-        public DesignModel DesignModel { get; set; } = JsonTool<DesignModel>.Load();
+        public DesignModel DesignModel { get; set; }
 
+        /// <summary>
+        /// 用于显示
+        /// </summary>
+        [ObservableProperty] private string projectName;
+
+
+        public ProjectModel ProjectModel { get; set; } = JsonTool<ProjectModel>.Load();
         public DesignViewModel()
         {
             SnackbarService = new SnackbarService();
             Log = new LogControl<DesignViewModel>(SnackbarService);
             HalconTool = new HalconTool(HalconControl);
-            EditorViewModel = new EditorViewModel();
-            if (DesignModel == null)
-            {
-                DesignModel = new DesignModel();
-            }
 
-            DesignModel.Nodes = DesignTreeNode.TreeNodesList;
+            if (ProjectModel == null)
+            {
+                ProjectModel = new ProjectModel();
+            }
+            GlobalManager.ProjectDictionary.AddOrUpdate(ProjectModel.ProjectList);
+            GlobalManager.ProjectDictionary.Connect().Bind(ProjectModel.ProjectList).Subscribe(); //绑定
+
+
+
         }
 
+        /// <summary>
+        /// 需要更具项目单独进行初始化
+        /// </summary>
+        /// <param name="DesignModel"></param>
+        public void init()
+        {
+
+            EditorViewModel = DesignModel.EditorViewModel;
+            ProjectName = DesignModel.ProjectName;
+            Nodes = DesignTreeNode.TreeNodesList;
+        }
 
         public void SetLogRichTextBox(RichTextBox richTextBox)
         {
@@ -80,5 +106,10 @@ namespace Pkn_HostSystem.ViewModels.Page
         }
 
         #endregion
+        [RelayCommand]
+        public void Save()
+        {
+            JsonTool<ProjectModel>.Save(ProjectModel);
+        }
     }
 }

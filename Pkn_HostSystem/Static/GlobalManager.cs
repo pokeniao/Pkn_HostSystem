@@ -65,6 +65,10 @@ public static class GlobalManager
     /// </summary>
     public static SourceCache<LoadMesAddAndUpdateWindowModel, string> ProcessTask;
 
+
+    public static SourceCache<DesignModel, string> ProjectDictionary;
+
+
     /// <summary>
     /// 动态连接的字典
     /// </summary>
@@ -115,6 +119,9 @@ public static class GlobalManager
         DynDictionary = new SourceCache<LoadMesDynContent, string>(n => n.Name);
         //初始化工位字典
         StationDictionary = new SourceCache<IEachStation, string>(n => n.Header);
+        //初始化项目字典
+        ProjectDictionary = new SourceCache<DesignModel, string>(n => n.ProjectName);
+
         //初始化工位信息
         StationManager.InitStation();
     }
@@ -153,4 +160,3 @@ public static class GlobalManager
         return types.ToList();
     }
 }
-

@@ -96,7 +96,7 @@ public partial class HomePageViewModel : ObservableRecipient
 
         var vm2 = Ioc.Default.GetRequiredService<DesignViewModel>();
 
-        HomePageModel.ProjectList = vm2.DesignModel.ProjectList;
+        HomePageModel.ProjectList = vm2.ProjectModel.ProjectList;
 
 
         Log = new LogControl<HomePageViewModel>(SnackbarService);
@@ -681,5 +681,30 @@ public partial class HomePageViewModel : ObservableRecipient
     public void setHSmartWindowControl(HSmartWindowControlWPF _halconControl)
     {
         HalconControl.HSmartWindowControl = _halconControl;
+    }
+
+    [RelayCommand]
+    public void ReturnEditButton(HomePage page)
+    {
+        string? Value = page.HomeProjectListBox.SelectedValue?.ToString();
+
+        if (!string.IsNullOrEmpty(Value))
+        {
+            DesignViewModel designViewModel = Ioc.Default.GetRequiredService<DesignViewModel>();
+            DesignModel designModel = GlobalManager.ProjectDictionary.Lookup(Value).Value;
+            designViewModel.DesignModel = designModel;
+            designViewModel.init();
+        }
+        var navigationService = Ioc.Default.GetRequiredService<INavigationService>();
+        navigationService.Navigate(typeof(DesignPage));
+    }
+
+    [RelayCommand]
+    public void CreateProject()
+    {
+        AddProjectWindow addProjectWindow = new AddProjectWindow();
+
+        bool? showDialog = addProjectWindow.ShowDialog();
+
     }
 }

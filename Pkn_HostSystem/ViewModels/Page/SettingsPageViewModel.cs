@@ -294,6 +294,9 @@ public partial class SettingsPageViewModel : ObservableRecipient
         LiveChartsTestViewModel liveChartsTestViewModel = Ioc.Default.GetRequiredService<LiveChartsTestViewModel>();
         liveChartsTestViewModel.SaveCommand.Execute(null);
 
+
+        DesignViewModel designViewModel = Ioc.Default.GetRequiredService<DesignViewModel>();
+       designViewModel.SaveCommand.Execute(null);
         StaticArrayRegister.SaveRegister();
 
         return true;
