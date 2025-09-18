@@ -6,6 +6,12 @@ namespace Pkn_HostSystem.Service.UserDefined
 {
     public class BT3651Test : IUserDefined
     {
+        /// <summary>
+        /// 已经占用50,51,52,53, 54 ,55 ,56 , 57
+        /// </summary>
+        /// <param name="cts"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts, params object[] args)
         {
             string message = args[0] as string;
@@ -24,6 +30,11 @@ namespace Pkn_HostSystem.Service.UserDefined
             double value = double.Parse(strings[0]);
             //电压 单位V
             double value2 = double.Parse(strings[1]);
+
+            //将电阻 电压写入到寄存器中
+
+            Volatile.Write(ref GlobalManager.ArrayRegister[54], value);
+            Volatile.Write(ref GlobalManager.ArrayRegister[55], value2);
             try
             {
                 double RHight = double.Parse(Volatile.Read(ref GlobalManager.ArrayRegister[50]).ToString());
@@ -49,11 +60,6 @@ namespace Pkn_HostSystem.Service.UserDefined
                 objects = [false, $"{e.ToString()}"];
                 return (false, objects);
             }
-            //将电阻 电压写入到寄存器中
-
-            Volatile.Write(ref GlobalManager.ArrayRegister[54], value);
-            Volatile.Write(ref GlobalManager.ArrayRegister[55], value2);
-
             //写入OK
             Volatile.Write(ref GlobalManager.ArrayRegister[56], "OK");
             objects = [true, $"OK"];

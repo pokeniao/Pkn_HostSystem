@@ -22,6 +22,15 @@ namespace Pkn_HostSystem.Service.Stations
             }
         }
 
+        private string _条码;
+        public string 条码
+        {
+            get => _条码;
+            set
+            {
+                SetProperty(ref _条码, value);
+            }
+        }
 
         private string _电阻上限;
 
@@ -134,6 +143,7 @@ namespace Pkn_HostSystem.Service.Stations
                         station1.电阻下限 = Volatile.Read(ref GlobalManager.ArrayRegister[51]).ToString();
                         station1.电压上限 = Volatile.Read(ref GlobalManager.ArrayRegister[52]).ToString();
                         station1.电压下限 = Volatile.Read(ref GlobalManager.ArrayRegister[53]).ToString();
+                        station1.条码 = Volatile.Read(ref GlobalManager.ArrayRegister[57]).ToString();
                         //添加一行数据到显示
                         eachStation.AddItem(station1);
                         //当前添加的是第几行
