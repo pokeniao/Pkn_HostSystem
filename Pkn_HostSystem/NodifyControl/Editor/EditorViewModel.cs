@@ -95,11 +95,11 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         //编辑器中的端子连接方法
         public void Connect(MyConnector source, MyConnector target)
         {
-            var newConnection = new ConnectorViewModel(source, target);
             //检查是否已存在相同的连接
-            if (!Connectors.Contains(newConnection))
+            var exists = Connectors.Any(c => c.Source == source && c.Target == target);
+            if (!exists)
             {
-                Connectors.Add(newConnection);
+                Connectors.Add(new ConnectorViewModel(source, target));
             }
         }
 

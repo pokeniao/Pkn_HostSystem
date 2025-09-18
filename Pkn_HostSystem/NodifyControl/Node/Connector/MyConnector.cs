@@ -7,10 +7,10 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
 {
     public partial class MyConnector : ObservableObject
     {
-        public MyConnector(string Name, MyNode myNode , ConnectorTypeEnum connectorType )
+        public MyConnector(string Name, string nodeId , ConnectorTypeEnum connectorType )
         {
             ConnectorName = Name;
-            MyNode = myNode;
+            NodeId = nodeId;
             ConnectorType = connectorType;
         }
 
@@ -20,9 +20,9 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
         public string ConnectorName { get; set; }
 
         /// <summary>
-        /// 当前连接器所属的节点
+        /// 当前连接器所属的节点ID
         /// </summary>
-        public MyNode MyNode  { get; set; }
+        public string NodeId { get; set; }
 
         public ConnectorTypeEnum ConnectorType { get; set; }
 

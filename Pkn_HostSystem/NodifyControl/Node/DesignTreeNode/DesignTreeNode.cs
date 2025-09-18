@@ -39,8 +39,8 @@ namespace Pkn_HostSystem.NodifyControl.Node.DesignTreeNode
                         NodeName = treeNodes.Name,
                         Operation = new AddOperation()
                     };
-                    myNode.Input.Add(new MyConnector("输入" , myNode , ConnectorTypeEnum.Input));
-                    myNode.Output.Add(new MyConnector("输出", myNode, ConnectorTypeEnum.Output));
+                    myNode.Input.Add(new MyConnector("输入" , myNode.Id , ConnectorTypeEnum.Input));
+                    myNode.Output.Add(new MyConnector("输出", myNode.Id, ConnectorTypeEnum.Output));
                     return myNode;
                 case NodeEnum.DebugEnter:
                      myNode = new MyNode()
@@ -48,7 +48,7 @@ namespace Pkn_HostSystem.NodifyControl.Node.DesignTreeNode
                         NodeName = treeNodes.Name,
                         Operation = new TestOperation()
                     };
-                    myNode.Output.Add(new MyConnector("输出", myNode , ConnectorTypeEnum.Output));
+                    myNode.Output.Add(new MyConnector("输出", myNode.Id, ConnectorTypeEnum.Output));
                     return myNode;
                 default:
                     return new MyNode()

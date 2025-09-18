@@ -1,5 +1,6 @@
 ﻿using Azure;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation;
@@ -10,6 +11,9 @@ namespace Pkn_HostSystem.NodifyControl.Node
 {
     public partial class MyNode: ObservableObject
     {
+        
+        public string Id { get; set; } = new SnowflakeIdGenerator(1, 1).GetId().ToString();
+
         public string NodeName { get; set; }
 
         /// <summary>

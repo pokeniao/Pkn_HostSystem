@@ -41,7 +41,7 @@ namespace Pkn_HostSystem.NodifyControl.Connection
             }
 
             //自己的输入不能连自己的输出
-            if (_source.MyNode == target.MyNode)
+            if (_source.NodeId == target.NodeId)
             {
                 return;
             }
@@ -56,6 +56,14 @@ namespace Pkn_HostSystem.NodifyControl.Connection
             {
                 return;
             }
+
+            //输入 不能 指向 输出
+
+            if (_source.ConnectorType == ConnectorTypeEnum.Input && target.ConnectorType == ConnectorTypeEnum.Output)
+            {
+                return;
+            }
+        
 
 
             _editor.Connect(_source, target);
