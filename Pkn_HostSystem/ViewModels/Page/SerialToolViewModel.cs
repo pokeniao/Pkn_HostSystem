@@ -43,7 +43,13 @@ namespace Pkn_HostSystem.ViewModels.Page
             {
                 try
                 {
-                    ScpiSerialTool.Open(SerialToolModel.Com,int.Parse(SerialToolModel.BaudRate), SerialToolModel.Paritie , int.Parse(SerialToolModel.DataBits) ,SerialToolModel.StopBits , SerialToolModel.TimeOut , SerialToolModel.NewLine);
+                    bool open = ScpiSerialTool.Open(SerialToolModel.Com,int.Parse(SerialToolModel.BaudRate), SerialToolModel.Paritie , int.Parse(SerialToolModel.DataBits) ,SerialToolModel.StopBits , SerialToolModel.TimeOut , SerialToolModel.NewLine);
+
+                    if (!open)
+                    {
+                        Log.ErrorAndShowTask($"连接失败");
+                        return;
+                    }
                 }
                 catch (Exception e)
                 {

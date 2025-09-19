@@ -85,7 +85,7 @@ namespace Pkn_HostSystem.Service.LoadMes.Interface
         /// <param name="model"></param>
         /// <param name="response"></param>
         /// <returns></returns>
-        Task<(bool succeed, string message)> Transpond(DynCondition model, string response);
+        Task<(bool succeed, string message)> Transpond(DynCondition model, string response, CancellationTokenSource cts);
 
         /// <summary>
         /// Verity校验方法

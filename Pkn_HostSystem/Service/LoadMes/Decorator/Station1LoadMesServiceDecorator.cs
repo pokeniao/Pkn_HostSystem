@@ -94,9 +94,9 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             return await _loadMesService.DynMessage(DynName, cts , noLog);
         }
 
-        public async Task<(bool succeed, string message)> Transpond(DynCondition model, string response)
+        public async Task<(bool succeed, string message)> Transpond(DynCondition model, string response, CancellationTokenSource cts)
         {
-            return await _loadMesService.Transpond(model, response);
+            return await _loadMesService.Transpond(model, response,cts);
         }
 
         public async Task<(bool succeed, string response)> VerityMessage(string message, DynVerify verify,

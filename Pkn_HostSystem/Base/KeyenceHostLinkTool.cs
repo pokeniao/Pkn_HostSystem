@@ -80,7 +80,14 @@ namespace Pkn_HostSystem.Base
         #endregion
 
         #region 读取写入DM
-
+        /// <summary>
+        /// 读单寄存器
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="address"></param>
+        /// <param name="cts"></param>
+        /// <param name="noLog"></param>
+        /// <returns></returns>
         public async Task<(bool, T)> ReadDM<T>(int address, CancellationTokenSource cts, bool noLog = false)
             where T : struct
         {
@@ -114,7 +121,14 @@ namespace Pkn_HostSystem.Base
                 return (false, default);
             }
         }
-
+        /// <summary>
+        /// 写单寄存器
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="address"></param>
+        /// <param name="value"></param>
+        /// <param name="cts"></param>
+        /// <returns></returns>
         public async Task<bool> WriteDM<T>(int address, T value, CancellationTokenSource cts) where T : struct
         {
             Log.Info($"WriteDM执行,address:{address} ,value: {value}");
@@ -135,7 +149,7 @@ namespace Pkn_HostSystem.Base
         }
 
         /// <summary>
-        /// 读取多个
+        /// 读取多个寄存器
         /// </summary>
         /// <param name="startAddress"></param>
         /// <param name="count"></param>
@@ -144,6 +158,12 @@ namespace Pkn_HostSystem.Base
             CancellationTokenSource cts)
         {
             (bool succeed, string response) = await SendCommand($"RD DM{startAddress} {count}", cts);
+
+            if (!succeed)
+            {
+                return (false, null);
+            }
+
 
             if (!succeed)
             {
@@ -167,6 +187,47 @@ namespace Pkn_HostSystem.Base
             }
 
             return (true, values);
+        }
+        /// <summary>
+        /// 写字符串
+        /// </summary>
+        /// <param name="startAddress"></param>
+        /// <param name="text"></param>
+        /// <param name="cts"></param>
+        /// <returns></returns>
+        public async Task<bool> WriteDMString(int startAddress, string text, CancellationTokenSource cts)
+        {
+            // 转成 ASCII 字节
+            byte[] bytes = Encoding.ASCII.GetBytes(text);
+            // 如果不是偶数个字节，补 0（或者补空格也行）
+            if (bytes.Length % 2 != 0)
+            {
+                Array.Resize(ref bytes, bytes.Length + 1);
+                bytes[bytes.Length - 1] = 00; // 0x20 是空格
+            }
+
+            int wordCount = bytes.Length / 2;
+            ushort[] words = new ushort[wordCount];
+            for (int i = 0; i < wordCount; i++)
+            {
+                byte low = bytes[i * 2];       // 低位
+                byte high = bytes[i * 2 + 1];  // 高位
+                words[i] = (ushort)((low << 8) | high); // 和你读时的反向逻辑一致
+            }
+            // 拼接 WR 命令
+            StringBuilder cmdBuilder = new StringBuilder();
+            cmdBuilder.Append($"WR DM{startAddress} {wordCount}");
+            foreach (ushort w in words)
+            {
+                cmdBuilder.Append(" ");
+                cmdBuilder.Append(w.ToString("X4"));
+            }
+
+            string command = cmdBuilder.ToString();
+            // 发送
+            (bool succeed, string response) = await SendCommand(command, cts);
+
+            return succeed;
         }
 
         #endregion

@@ -1143,6 +1143,8 @@ public class LoadMesService : ILoadMesService
         return (true, message);
     }
 
+ 
+
     #region 执行可选后期处理
 
     public async Task<(bool succeed, string message)> LateProcess(DynCondition item, string response,
@@ -1180,7 +1182,7 @@ public class LoadMesService : ILoadMesService
             if (ResultTranspond)
             {
                 Log.Info($"[{TraceContext.Name}]--需要对当前结果进行转发");
-                (bool succeed3, string message1) = await _self.Transpond(item, response);
+                (bool succeed3, string message1) = await _self.Transpond(item, response,cts);
                 if (!succeed3)
                 {
                     Log.Info($"[{TraceContext.Name}]--转发失败");
@@ -1212,7 +1214,7 @@ public class LoadMesService : ILoadMesService
     /// <param name="model"></param>
     /// <param name="response"></param>
     /// <returns></returns>
-    public async Task<(bool succeed, string message)> Transpond(DynCondition model, string response)
+    public async Task<(bool succeed, string message)> Transpond(DynCondition model, string response, CancellationTokenSource cts)
     {
         switch (model.TranspondModbusDetailed.TranspondMethod)
         {
@@ -1264,6 +1266,9 @@ public class LoadMesService : ILoadMesService
                             //将字符串转换为字节数组
                             
                             // await netWorkKeyenceHostLinkTool.WriteDM(model.TranspondModbusDetailed.StartAddress,string ,cts );
+                            
+                            await netWorkKeyenceHostLinkTool.WriteDMString(int.Parse(model.TranspondModbusDetailed.StartAddress),
+                                response, cts);
                         }
                         catch (Exception e)
                         {

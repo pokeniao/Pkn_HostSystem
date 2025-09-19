@@ -677,9 +677,18 @@
                                                           Minimum="0"
                                                           Margin="0 0 0 5"
                                                           Width="150" />
-                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="模式" Margin="5"
+                                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                                       Text="长度"
+                                                       Margin="5"
                                                        TextAlignment="Right" />
-                                            <ComboBox Grid.Row="1" Grid.Column="1"
+                                            <ui:NumberBox Grid.Row="1" Grid.Column="1"
+                                                          Value="{Binding EndAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                                          Minimum="0"
+                                                          Margin="0 0 0 5"
+                                                          Width="150" />
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="模式" Margin="5"
+                                                       TextAlignment="Right" />
+                                            <ComboBox Grid.Row="2" Grid.Column="1"
                                                       Margin="0 0 0 5"
                                                       SelectedValue="{Binding FunctionCode ,UpdateSourceTrigger=PropertyChanged}"
                                                       ItemsSource="{Binding DataContext.MesTcpModel.FunctionCodeList, RelativeSource={RelativeSource AncestorType=Page}}"

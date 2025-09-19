@@ -40,7 +40,7 @@ namespace Pkn_HostSystem.Base
         /// <summary>
         /// 获取波特率
         /// </summary>
-        public static List<string> BaudRates = ["9600", "14400", "19200"];
+        public static List<string> BaudRates = ["4800","9600", "14400", "19200", "38400","56000","576000","115200","128000"];
 
         /// <summary>
         /// 获取数据位
@@ -117,8 +117,9 @@ namespace Pkn_HostSystem.Base
             }
             catch (Exception e)
             {
-                return false;
+                Log.Error($"[{TraceContext.Name}]--{e}");
             }
+            return false;
         }
 
         /// <summary>
@@ -200,6 +201,11 @@ namespace Pkn_HostSystem.Base
                     catch (TimeoutException)
                     {
                         // 串口设置的 ReadTimeout 到时间，但数据还没来，继续等待,  ReadTimeout 在serialPort.ReadLine(); 没有读取到东西,过一段时间就会超时,所以需要跳过这个
+                        return null;
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error($"[{TraceContext.Name}]--{e}");
                         return null;
                     }
                 });

@@ -93,9 +93,6 @@
 		<None Update="lib\halcon.dll">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="lib\halcondl.dll">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Update="lib\hcanvas.dll">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
