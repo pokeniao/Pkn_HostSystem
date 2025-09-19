@@ -1,10 +1,12 @@
 ﻿using Azure;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation;
 using System.Collections.ObjectModel;
+
 using System.Windows;
 
 namespace Pkn_HostSystem.NodifyControl.Node
@@ -25,6 +27,7 @@ namespace Pkn_HostSystem.NodifyControl.Node
         /// 运行的方法
         /// </summary>
         private IOperation? _operation;
+        [JsonIgnore]
         public IOperation? Operation
         {
             get => _operation;

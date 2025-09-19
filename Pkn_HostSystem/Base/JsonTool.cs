@@ -228,18 +228,10 @@ public class IncludeStaticResolver : DefaultContractResolver
     {
         // 1. 获取实例成员 + 静态成员
         //BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance 这行确保我们能拿到 实例属性 +静态属性。
-        // 设置 prop.Writable = true; prop.Readable = true; 确保即使某些属性没 set 方法，也能写入。
         var props = type
             .GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance)
             .Select(p => base.CreateProperty(p, memberSerialization))
             .ToList();
-
-        // 2. 设置属性可读可写
-        foreach (var prop in props)
-        {
-            prop.Writable = true;
-            prop.Readable = true;
-        }
 
         return props;
     }

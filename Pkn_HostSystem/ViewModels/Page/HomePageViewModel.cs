@@ -698,7 +698,9 @@ public partial class HomePageViewModel : ObservableRecipient
         var navigationService = Ioc.Default.GetRequiredService<INavigationService>();
         navigationService.Navigate(typeof(DesignPage));
     }
-
+    /// <summary>
+    /// 创建项目
+    /// </summary>
     [RelayCommand]
     public void CreateProject()
     {

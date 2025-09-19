@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using Newtonsoft.Json;
-using Pkn_HostSystem.Base.Enum;
-using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Connection;
 using Pkn_HostSystem.NodifyControl.Node;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
@@ -30,7 +28,6 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         /// <summary>
         /// 添加连接预处理
         /// </summary>
-        [JsonIgnore]
         public PendingConnectionViewModel PendingConnection { get;  }
 
         /// <summary>
@@ -39,7 +36,7 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         public ICommand DisconnectConnectorCommand { get; }
 
         /// <summary>
-        /// 移除连接线
+        /// 移除连接线事件
         /// </summary>
         public ICommand RemoveConnectionCommand { get; }
 
@@ -52,9 +49,10 @@ namespace Pkn_HostSystem.NodifyControl.Editor
 
         public EditorViewModel()
         {
+            //1.实例化预添加
             PendingConnection = new PendingConnectionViewModel(this);
 
-
+            //2. 实例化移除连接线事件
             RemoveConnectionCommand = new RelayCommand<ConnectorViewModel>(c =>
             {
                 Connectors.Remove(c);
@@ -70,7 +68,7 @@ namespace Pkn_HostSystem.NodifyControl.Editor
                     c.Target.IsConnected = false;
                 }
             });
-
+            //3. 实例化移除连接点事件
             DisconnectConnectorCommand = new RelayCommand<MyConnector>(connector =>
             {
                 var connections = Connectors.Where(c => c.Source == connector || c.Target == connector).ToList();
@@ -92,7 +90,11 @@ namespace Pkn_HostSystem.NodifyControl.Editor
             });
         }
 
-        //编辑器中的端子连接方法
+        /// <summary>
+        /// 编辑器中的端子连接方法
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
         public void Connect(MyConnector source, MyConnector target)
         {
             //检查是否已存在相同的连接

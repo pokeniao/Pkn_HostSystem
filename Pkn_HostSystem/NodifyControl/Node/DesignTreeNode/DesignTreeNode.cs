@@ -28,7 +28,11 @@ namespace Pkn_HostSystem.NodifyControl.Node.DesignTreeNode
                 ]
             }
         };
-
+        /// <summary>
+        /// 更具TreeNodes创建一个MyNode
+        /// </summary>
+        /// <param name="treeNodes"></param>
+        /// <returns></returns>
         public static MyNode GetNode(TreeNodes treeNodes)
         {
             switch (treeNodes.NodeType)

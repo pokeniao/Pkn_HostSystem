@@ -11,7 +11,7 @@ namespace Pkn_HostSystem.Static
         public static object[] DataArrayRegister { get; set; }
         public static List<ConcurrentQueue<object>> DataQueueRegister { get; set; }
         /// <summary>
-        /// 内部寄存器,断电保存
+        /// 内部寄存器,为了响应UI显示
         /// </summary>
         [JsonIgnore]
         public static ObservableCollection<object> ArrayRegister { get; set; }

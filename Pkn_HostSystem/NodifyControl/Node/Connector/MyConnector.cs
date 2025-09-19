@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.NodifyControl.Connection;
 using System.Windows;
@@ -13,6 +14,9 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
             NodeId = nodeId;
             ConnectorType = connectorType;
         }
+        
+
+        public string Id = new SnowflakeIdGenerator(1, 1).GetId().ToString();
 
         /// <summary>
         /// 定义一个测试连接器的名称
@@ -46,7 +50,7 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
         /// <summary>
         /// 用于存储所有连接到该连接器的连接器
         /// </summary>
-        public List<MyConnector> ValueObservers { get; } = new List<MyConnector>();
+        public List<MyConnector> ValueObservers { get; set; } = new List<MyConnector>();
         /// <summary>
         /// 我们拖动节点时连接端子需要跟随移动，连接线也应随之改变，所以需要记录其位置锚点，在xaml中会将其绑定到节点的依赖属性Anchor上
         /// </summary>
