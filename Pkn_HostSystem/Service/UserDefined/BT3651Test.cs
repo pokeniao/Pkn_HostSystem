@@ -21,7 +21,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                 return (false, objects);
             }
             //阻值 单位mΩ
-            double value = double.Parse(strings[0]);
+            double value = double.Parse(strings[0])*1000;
             //电压 单位V
             double value2 = double.Parse(strings[1]);
             try
