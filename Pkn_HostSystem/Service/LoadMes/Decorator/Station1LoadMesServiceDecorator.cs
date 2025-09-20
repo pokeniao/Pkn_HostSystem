@@ -68,8 +68,6 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             Volatile.Write(ref GlobalManager.ArrayRegister[54],0);
             Volatile.Write(ref GlobalManager.ArrayRegister[55],0);
             Volatile.Write(ref GlobalManager.ArrayRegister[56],"NG");
-            Volatile.Write(ref GlobalManager.ArrayRegister[57],0);
-            
             var eachStation = TraceContext.GetParam("EachStation");
             EachStation<Station1>? station1 = eachStation as EachStation<Station1>;
             station1.Station.Main(cts);

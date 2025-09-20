@@ -1005,7 +1005,7 @@
                                 </Grid.RowDefinitions>
                                 <StackPanel Margin="50,10">
                                     <WrapPanel Margin="0,10,0,0">
-                                        <TextBlock Text="电阻上限设置(Ω)" Margin="10" />
+                                        <TextBlock Text="电阻上限设置(mΩ)" Margin="10" />
                                         <ui:NumberBox 
                                             SmallChange="0.001"
                                             Width="150"
@@ -1013,7 +1013,7 @@
                                          
                                     </WrapPanel>
                                     <WrapPanel Margin="0,10,0,0">
-                                        <TextBlock Text="电阻下限设置(Ω)" Margin="10" />
+                                        <TextBlock Text="电阻下限设置(mΩ)" Margin="10" />
                                         <ui:NumberBox  Width="150"
                                                        SmallChange="0.001"
                                                        Value="{Binding HomePageModel.RLow ,UpdateSourceTrigger=PropertyChanged }"/>

@@ -60,25 +60,6 @@ namespace Pkn_HostSystem.Base
         #endregion
 
 
-        #region 读ZF写ZF
-
-        public async Task<(bool succeed, string? response)> ReadZF(string address, CancellationTokenSource cts)
-        {
-            Log.Info($"[{TraceContext.Name}]--读ZF,地址:{address}");
-            return await SendCommand($"RD ZF{address}", cts);
-        }
-
-        public async Task<bool> WriteZF(string address, bool value, CancellationTokenSource cts)
-        {
-            Log.Info($"[{TraceContext.Name}]--写ZF,地址:{address},值{value}");
-            string cmd = value ? $"ST ZF{address}" : $"RS ZF{address}";
-
-            (bool succeed, string? response) = await SendCommand(cmd, cts);
-            return response.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase);
-        }
-
-        #endregion
-
         #region 读取写入DM
         /// <summary>
         /// 读单寄存器
@@ -157,16 +138,12 @@ namespace Pkn_HostSystem.Base
         public async Task<(bool succeed, ushort[] response)> ReadDMWords(int startAddress, int count,
             CancellationTokenSource cts)
         {
-            (bool succeed, string response) = await SendCommand($"RD DM{startAddress} {count}", cts);
+            (bool succeed, string response) = await SendCommand($"RDS DM{startAddress}.H {count}", cts);
 
             if (!succeed)
             {
                 return (false, null);
             }
-
-
-            if (response.StartsWith("+"))
-                response = response.Substring(1);
 
             // 统一去掉空格、换行
             response = response.Replace(" ", "").Trim();
@@ -182,6 +159,10 @@ namespace Pkn_HostSystem.Base
 
             return (true, values);
         }
+
+
+
+
         /// <summary>
         /// 写字符串
         /// </summary>
@@ -210,7 +191,7 @@ namespace Pkn_HostSystem.Base
             }
             // 拼接 WR 命令
             StringBuilder cmdBuilder = new StringBuilder();
-            cmdBuilder.Append($"WR DM{startAddress} {wordCount}");
+            cmdBuilder.Append($"WRS DM{startAddress}.H {wordCount}");
             foreach (ushort w in words)
             {
                 cmdBuilder.Append(" ");
@@ -218,9 +199,12 @@ namespace Pkn_HostSystem.Base
             }
 
             string command = cmdBuilder.ToString();
+
+            Log.Info($"[{TraceContext.Name}]--基恩士写入字符串:{command}");
             // 发送
             (bool succeed, string response) = await SendCommand(command, cts);
 
+            Log.Info($"[{TraceContext.Name}]--基恩士写入字符串后收到:{response}");
             return succeed;
         }
 
@@ -243,7 +227,7 @@ namespace Pkn_HostSystem.Base
 
         private static readonly SemaphoreSlim _commLock = new(1, 1);
         /// <summary>
-        /// 发送消息
+        /// 发送消息,并等待基恩士PLC返回
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
@@ -339,7 +323,7 @@ namespace Pkn_HostSystem.Base
     public static class KeyenceMcDataConverter
     {
         /// <summary>
-        /// 返回消息格式转换
+        /// 返回消息格式转换成 C# 对应的数据类型
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="response"></param>
@@ -380,6 +364,15 @@ namespace Pkn_HostSystem.Base
             throw new NotSupportedException($"不支持的数据类型: {typeof(T)}");
         }
 
+
+
+        /// <summary>
+        /// 将ushort,short,uint,int,float 转成 无符号16位或32位
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException"></exception>
         public static string ConvertToWriteData<T>(T value) where T : struct
         {
             if (value is ushort)
