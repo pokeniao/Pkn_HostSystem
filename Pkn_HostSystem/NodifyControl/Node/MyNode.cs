@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation;
 using System.Collections.ObjectModel;
@@ -18,6 +19,10 @@ namespace Pkn_HostSystem.NodifyControl.Node
 
         public string NodeName { get; set; }
 
+        /// <summary>
+        /// 实例化当前节点的TreeNodes
+        /// </summary>
+        public TreeNodes TreeNodes { get; set; }
         /// <summary>
         /// Node的类型
         /// </summary>

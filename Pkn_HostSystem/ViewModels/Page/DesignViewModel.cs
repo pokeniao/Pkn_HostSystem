@@ -9,6 +9,7 @@ using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Editor;
+using Pkn_HostSystem.NodifyControl.LocalSave;
 using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
 using Pkn_HostSystem.Static;
 using System.Collections.ObjectModel;
@@ -56,7 +57,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         [ObservableProperty] private string projectName;
 
 
-        public ProjectModel ProjectModel { get; set; } = JsonTool<ProjectModel>.Load();
+        public ProjectModel ProjectModel { get; set; } =  LocalSaveNodifyMethod.Load();
         public DesignViewModel()
         {
             SnackbarService = new SnackbarService();
@@ -80,7 +81,6 @@ namespace Pkn_HostSystem.ViewModels.Page
         /// <param name="DesignModel"></param>
         public void init()
         {
-
             EditorViewModel = DesignModel.EditorViewModel;
             ProjectName = DesignModel.ProjectName;
             Nodes = DesignTreeNode.TreeNodesList;
@@ -109,6 +109,9 @@ namespace Pkn_HostSystem.ViewModels.Page
         [RelayCommand]
         public void Save()
         {
+            //保存当前的节点和连接线
+
+            LocalSaveNodifyMethod.Save();
             JsonTool<ProjectModel>.Save(ProjectModel);
         }
     }

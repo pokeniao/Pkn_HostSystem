@@ -45,6 +45,8 @@ namespace Pkn_HostSystem.Views.Pages
             {
                 //创建一个Node
                 MyNode myNode = DesignTreeNode.GetNode(treeNodes);
+                //赋值TreeNodes方便后续节点的实例化
+                myNode.TreeNodes= treeNodes;
                 //设置位置
                 myNode.Location = editor.GetLocationInsideEditor(e);
                 editorViewModel.Nodes.Add(myNode);
