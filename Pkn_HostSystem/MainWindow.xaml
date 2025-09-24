@@ -159,6 +159,14 @@
                                 <ui:SymbolIcon Symbol="Wrench16" />
                             </ui:NavigationViewItem.Icon>
                         </ui:NavigationViewItem>
+                        <ui:NavigationViewItem
+                            Content="西门子S7"
+                            NavigationCacheMode="Enabled"
+                            TargetPageType="{x:Type pages:S7ToolPage}">
+                            <ui:NavigationViewItem.Icon>
+                                <ui:SymbolIcon Symbol="Wrench16" />
+                            </ui:NavigationViewItem.Icon>
+                        </ui:NavigationViewItem>
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>

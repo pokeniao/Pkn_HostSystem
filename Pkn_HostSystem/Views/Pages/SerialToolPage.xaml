@@ -25,7 +25,8 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
-            <GroupBox Header="配置串口" Margin="10">
+            <GroupBox Header="配置串口" Margin="10"
+                      BorderThickness="0.25">
                 <Border Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                     <Grid HorizontalAlignment="Center">
@@ -95,7 +96,8 @@
             </GroupBox>
         </Grid>
         <Grid Grid.Column="1">
-            <GroupBox Header="接受发送" Margin="10">
+            <GroupBox Header="接受发送" Margin="10"
+                      BorderThickness="0.25">
                 <Border Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                     <Grid>
@@ -108,7 +110,7 @@
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <GroupBox Grid.Row="0" Header="接收">
+                            <GroupBox Grid.Row="0" Header="接收" BorderThickness="0.25">
                                 <TextBox
                                     Name="AcceptMessageTextBox"
                                     Style="{x:Null}"
@@ -136,7 +138,7 @@
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <GroupBox Header="发送">
+                            <GroupBox Header="发送" BorderThickness="0.25">
                                 <TextBox
                                     Name="SendMessageTextBox"
                                     Style="{x:Null}"

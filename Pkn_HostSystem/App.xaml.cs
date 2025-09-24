@@ -181,6 +181,7 @@ namespace Pkn_HostSystem
                     .AddSingleton<ProductivePage>()
                     .AddSingleton<SettingsPage>()
                     .AddSingleton<ModbusToolPage>()
+                    .AddSingleton<S7ToolPage>()
                     .AddSingleton<TcpToolPage>()
                     .AddSingleton<LiveChartsTestPage>() //AddTransient每次导航会new 一个新对象
                     // .BuildServiceProvider()  Microsoft.Extensions.DependencyInjection原生

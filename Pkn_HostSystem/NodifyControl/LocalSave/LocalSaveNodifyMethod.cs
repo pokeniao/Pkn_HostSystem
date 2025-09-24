@@ -42,6 +42,12 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave
         {
             ProjectModel load = JsonTool<ProjectModel>.Load();
 
+            if (load == null)
+            {
+                return null;
+            }
+
+
             //获取保存的ProjectList
             var projectList = load.ProjectList;
             //从ProjectList中取出designModel
