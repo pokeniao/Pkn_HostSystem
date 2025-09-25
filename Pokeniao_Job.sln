@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pkn_HostSystem_Wix_V4_Boots
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pkn_HostSystem_Wix_.NETCore", "Pkn_HostSystem_Wix_.NETCore\Pkn_HostSystem_Wix_.NETCore.csproj", "{587A64FC-62A4-F0AF-C181-CE022A31236B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSA", "GetPassword\RSA.csproj", "{AEAE947D-B7EE-4C1F-BD39-F14156E7DC01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSA", "RSA\RSA.csproj", "{6D7B2E16-A956-DE74-443A-14A4E2FD6FE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,14 +66,14 @@ Global
 		{587A64FC-62A4-F0AF-C181-CE022A31236B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{587A64FC-62A4-F0AF-C181-CE022A31236B}.Release|x86.ActiveCfg = Release|Any CPU
 		{587A64FC-62A4-F0AF-C181-CE022A31236B}.Release|x86.Build.0 = Release|Any CPU
-		{AEAE947D-B7EE-4C1F-BD39-F14156E7DC01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AEAE947D-B7EE-4C1F-BD39-F14156E7DC01}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AEAE947D-B7EE-4C1F-BD39-F14156E7DC01}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{AEAE947D-B7EE-4C1F-BD39-F14156E7DC01}.Debug|x86.Build.0 = Debug|Any CPU
-		{AEAE947D-B7EE-4C1F-BD39-F14156E7DC01}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AEAE947D-B7EE-4C1F-BD39-F14156E7DC01}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AEAE947D-B7EE-4C1F-BD39-F14156E7DC01}.Release|x86.ActiveCfg = Release|Any CPU
-		{AEAE947D-B7EE-4C1F-BD39-F14156E7DC01}.Release|x86.Build.0 = Release|Any CPU
+		{6D7B2E16-A956-DE74-443A-14A4E2FD6FE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D7B2E16-A956-DE74-443A-14A4E2FD6FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D7B2E16-A956-DE74-443A-14A4E2FD6FE9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6D7B2E16-A956-DE74-443A-14A4E2FD6FE9}.Debug|x86.Build.0 = Debug|Any CPU
+		{6D7B2E16-A956-DE74-443A-14A4E2FD6FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D7B2E16-A956-DE74-443A-14A4E2FD6FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D7B2E16-A956-DE74-443A-14A4E2FD6FE9}.Release|x86.ActiveCfg = Release|Any CPU
+		{6D7B2E16-A956-DE74-443A-14A4E2FD6FE9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

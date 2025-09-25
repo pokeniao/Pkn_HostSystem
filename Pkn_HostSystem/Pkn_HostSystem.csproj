@@ -13,7 +13,7 @@
 		<StartupObject>Pkn_HostSystem.App</StartupObject>
 		<ApplicationIcon>Assets\pokeniao_logo_圆角_128.ico</ApplicationIcon>
 		<PackageIcon></PackageIcon>
-		<Company>深圳市欧盛自动化有限公司</Company>
+		<Company></Company>
 		<Authors>潘智高</Authors>
 		<Copyright>© 2025 潘智高;Pkn上位机(All rights reserved)</Copyright>
 	</PropertyGroup>
@@ -72,9 +72,6 @@
 	<ItemGroup>
 	  <Reference Include="halcondotnet">
 	    <HintPath>..\..\..\..\..\..\..\Program Files\MVTec\HALCON-23.11-Progress\bin\dotnet35\halcondotnet.dll</HintPath>
-	  </Reference>
-	  <Reference Include="System.Windows.Forms">
-	    <HintPath>..\..\..\..\..\.nuget\packages\microsoft.netframework.referenceassemblies.net462\1.0.3\build\.NETFramework\v4.6.2\System.Windows.Forms.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 
