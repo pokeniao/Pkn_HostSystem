@@ -46,7 +46,7 @@ namespace Pkn_HostSystem.ViewModels.Page
                     S7ToolModel.Port);
                 if (succeed)
                 {
-
+                    S7Base.OnSendString += S7Base_OnSendStringHandler;
                     S7ToolModel.RunButton = "断开";
                 }
                 else
@@ -57,19 +57,25 @@ namespace Pkn_HostSystem.ViewModels.Page
             else
             {
                 S7Base.Close();
+                S7Base.OnSendString -= S7Base_OnSendStringHandler;
                 S7ToolModel.RunButton = "连接";
             }
+        }
+
+        private void S7Base_OnSendStringHandler(string obj)
+        {
+            S7ToolModel.SendMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{obj}\n";
         }
 
         [RelayCommand]
         public async void Read()
         {
             //检测是否连接成功
-            // if (!S7Base.IsConnected)
-            // {
-            //     Log.ErrorAndShowTask("未连接请先连接通讯");
-            //     return;
-            // }
+            if (!S7Base.IsConnected)
+            {
+                Log.ErrorAndShowTask("未连接请先连接通讯");
+                return;
+            }
             S7MethodEnum s7MethodEnum = S7ToolModel.Method;
             string dataArea = S7ToolModel.DataArea;
             int numberData = S7ToolModel.NumberData;
@@ -82,28 +88,188 @@ namespace Pkn_HostSystem.ViewModels.Page
                 return;
             }
 
+            bool succeed;
+            object? message;
+
             switch (s7MethodEnum)
             {
                 case S7MethodEnum.位:
-                    await S7Base.Read<bool>(s7MethodEnum, dataArea, numberData, offset, num);
+                    ( succeed,  message, bool responseBool, bool[] responseBytes)  = await S7Base.Read<bool>(s7MethodEnum, dataArea, numberData, offset, num);
+
+                    if (succeed)
+                    {
+                        if (responseBytes == null)
+                        {
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{responseBool}\n";
+                        }
+                        else
+                        {
+                            string value = null;
+                            foreach (bool b in responseBytes)
+                            {
+                                value += b.ToString() + " ";
+                            }
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{value}\n";
+                        }
+                    }
+                    else
+                    {
+                        Log.ErrorAndShowTask(message.ToString());
+                        return;
+                    }
                     break;
                 case S7MethodEnum.Byte8位:
-                    await S7Base.Read<byte>(s7MethodEnum, dataArea, numberData, offset, num);
+                    (succeed, message, byte responseByte, byte[] bytes) = await S7Base.Read<byte>(s7MethodEnum, dataArea, numberData, offset, num);
+                    if (succeed)
+                    {
+                        if (bytes == null)
+                        {
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{responseByte}\n";
+                        }
+                        else
+                        {
+                            string value = null;
+                            foreach (byte b in bytes)
+                            {
+                                value += b.ToString() + " ";
+                            }
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{value}\n";
+                        }
+                    }
+                    else
+                    {
+                        Log.ErrorAndShowTask(message.ToString());
+                        return;
+                    }
+
                     break;
                 case S7MethodEnum.无符号16位:
-                    await S7Base.Read<ushort>(s7MethodEnum, dataArea, numberData, offset, num);
+                    (succeed, message, ushort responseUshort, ushort[] ushorts) = await S7Base.Read<ushort>(s7MethodEnum, dataArea, numberData, offset, num);
+
+                    if (succeed)
+                    {
+                        if (ushorts == null)
+                        {
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{responseUshort}\n";
+                        }
+                        else
+                        {
+                            string value = null;
+                            foreach (ushort b in ushorts)
+                            {
+                                value += b.ToString() + " ";
+                            }
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{value}\n";
+                        }
+                    }
+                    else
+                    {
+                        Log.ErrorAndShowTask(message.ToString());
+                        return;
+                    }
+
                     break;
                 case S7MethodEnum.有符号16位:
-                    await S7Base.Read<short>(s7MethodEnum, dataArea, numberData, offset, num);
+                    (succeed, message, short responseShort, short[] shorts) = await S7Base.Read<short>(s7MethodEnum, dataArea, numberData, offset, num);
+
+                    if (succeed)
+                    {
+                        if (shorts == null)
+                        {
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{responseShort}\n";
+                        }
+                        else
+                        {
+                            string value = null;
+                            foreach (short b in shorts)
+                            {
+                                value += b.ToString() + " ";
+                            }
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{value}\n";
+                        }
+                    }
+                    else
+                    {
+                        Log.ErrorAndShowTask(message.ToString());
+                        return;
+                    }
+
+
                     break;
                 case S7MethodEnum.无符号32位:
-                    await S7Base.Read<uint>(s7MethodEnum, dataArea, numberData, offset, num);
+                    (succeed, message, uint responseUint, uint[] uints) = await S7Base.Read<uint>(s7MethodEnum, dataArea, numberData, offset, num);
+
+                    if (succeed)
+                    {
+                        if (uints == null)
+                        {
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{responseUint}\n";
+                        }
+                        else
+                        {
+                            string value = null;
+                            foreach (uint b in uints)
+                            {
+                                value += b.ToString() + " ";
+                            }
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{value}\n";
+                        }
+                    }
+                    else
+                    {
+                        Log.ErrorAndShowTask(message.ToString());
+                        return;
+                    }
                     break;
                 case S7MethodEnum.有符号32位:
-                    await S7Base.Read<int>(s7MethodEnum, dataArea, numberData, offset, num);
+                    (succeed, message, int responseint, int[] ints) = await S7Base.Read<int>(s7MethodEnum, dataArea, numberData, offset, num);
+
+                    if (succeed)
+                    {
+                        if (ints == null)
+                        {
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{responseint}\n";
+                        }
+                        else
+                        {
+                            string value = null;
+                            foreach (int b in ints)
+                            {
+                                value += b.ToString() + " ";
+                            }
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{value}\n";
+                        }
+                    }
+                    else
+                    {
+                        Log.ErrorAndShowTask(message.ToString());
+                        return;
+                    }
                     break;
                 case S7MethodEnum.浮点数:
-                    await S7Base.Read<float>(s7MethodEnum, dataArea, numberData, offset, num);
+                    (succeed, message, float responseFloat, float[] floats) = await S7Base.Read<float>(s7MethodEnum, dataArea, numberData, offset, num);
+
+                    if (succeed)
+                    {
+                        if (floats == null)
+                        {
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{responseFloat}\n";
+                        }
+                        else
+                        {
+                            string value = null;
+                            foreach (float b in floats)
+                            {
+                                value += b.ToString() + " ";
+                            }
+                            S7ToolModel.AcceptMessageText += $"{DateTime.Now:yyyy-MM-dd hh:mm:ss}--{value}\n";
+                        }
+                    }
+                    else
+                    {
+                        Log.ErrorAndShowTask(message.ToString());
+                        return;
+                    }
                     break;
                 case S7MethodEnum.字符串:
                     break;

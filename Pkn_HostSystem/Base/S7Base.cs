@@ -17,8 +17,10 @@ namespace Pkn_HostSystem.Base
         /// </summary>
         public static List<CpuType> CpuTypes { get; set; } =
             System.Enum.GetValues(typeof(CpuType)).Cast<CpuType>().ToList();
-
-
+        /// <summary>
+        /// 发送字符串事件
+        /// </summary>
+        public event Action<string> OnSendString;
 
         public LogControl<S7Base> Log = new LogControl<S7Base>();
         /// <summary>
@@ -124,6 +126,7 @@ namespace Pkn_HostSystem.Base
                     try
                     {
                         object? readAsync = await SiemPlc.ReadAsync(value);
+                        OnSendString?.Invoke(value);
                         return (true, null, (T)readAsync, null);
                     }
                     catch (Exception e)
@@ -150,6 +153,7 @@ namespace Pkn_HostSystem.Base
                         try
                         {
                             object? readAsync = await SiemPlc.ReadAsync(value);
+                            OnSendString?.Invoke(value);
                             return (true, null, (T)readAsync, null);
                         }
                         catch (Exception e)
@@ -167,6 +171,8 @@ namespace Pkn_HostSystem.Base
                             {
                                 byte[] readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.DataBlock, numberData, result, num);
+                                value = $"DB{numberData},DBB{result},读取{num}个字节";
+                                OnSendString?.Invoke(value);
                                 return (true, null, default(T), readBytesAsync as T[]);
                             }
                             catch (Exception e)
@@ -180,6 +186,8 @@ namespace Pkn_HostSystem.Base
                             {
                                 byte[] readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.Memory, 0, numberData, num);
+                                value = $"MB{numberData},读取{num}个字节";
+                                OnSendString?.Invoke(value);
                                 return (true, null, default(T), readBytesAsync as T[]);
                             }
                             catch (Exception e)
@@ -193,6 +201,8 @@ namespace Pkn_HostSystem.Base
                             {
                                 byte[] readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.Input, 0, numberData, num);
+                                value = $"IB{numberData},读取{num}个字节";
+                                OnSendString?.Invoke(value);
                                 return (true, null, default(T), readBytesAsync as T[]);
                             }
                             catch (Exception e)
@@ -206,6 +216,9 @@ namespace Pkn_HostSystem.Base
                             {
                                 byte[] readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.Output, 0, numberData, num);
+
+                                value = $"QB{numberData},读取{num}个字节";
+                                OnSendString?.Invoke(value);
                                 return (true, null, default(T), readBytesAsync as T[]);
                             }
                             catch (Exception e)
@@ -241,7 +254,8 @@ namespace Pkn_HostSystem.Base
                         //发送
                         try
                         {
-                            object? readAsync = await SiemPlc?.ReadAsync(value);
+                            object? readAsync = await SiemPlc.ReadAsync(value);
+                            OnSendString?.Invoke(value);
                             return (true, null, (T)readAsync, null);
                         }
                         catch (Exception e)
@@ -260,6 +274,8 @@ namespace Pkn_HostSystem.Base
                             {
                                 readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.DataBlock, numberData, result, num * 2);
+                                value = $"DB{numberData},DBB{result},读取{num*2}个字节";
+                                OnSendString?.Invoke(value);
                             }
                             catch (Exception e)
                             {
@@ -294,6 +310,8 @@ namespace Pkn_HostSystem.Base
                             {
                                 byte[] readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.Memory, 0, numberData, num * 2);
+                                value = $"MW{numberData},读取{num}个16位";
+                                OnSendString?.Invoke(value);
 
                                 if (s7Method == S7MethodEnum.无符号16位)
                                 {
@@ -327,7 +345,8 @@ namespace Pkn_HostSystem.Base
                             {
                                 byte[] readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.Input, 0, numberData, num * 2);
-
+                                value = $"IW{numberData},读取{num}个16位";
+                                OnSendString?.Invoke(value);
                                 if (s7Method == S7MethodEnum.无符号16位)
                                 {
                                     ushort[] shorts = new ushort[num];
@@ -360,6 +379,8 @@ namespace Pkn_HostSystem.Base
                             {
                                 byte[] readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.Output, 0, numberData, num * 2);
+                                value = $"QW{numberData},读取{num}个16位";
+                                OnSendString?.Invoke(value);
                                 if (s7Method == S7MethodEnum.无符号16位)
                                 {
                                     ushort[] shorts = new ushort[num];
@@ -414,6 +435,7 @@ namespace Pkn_HostSystem.Base
                         try
                         {
                             object? readAsync = await SiemPlc.ReadAsync(value);
+                            OnSendString?.Invoke(value);
                             return (true, null, (T)readAsync, null);
                         }
                         catch (Exception e)
@@ -432,6 +454,8 @@ namespace Pkn_HostSystem.Base
                             {
                                 readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.DataBlock, numberData, result, num * 4);
+                                value = $"DB{numberData},DBB{result},读取{num*4}个字节";
+                                OnSendString?.Invoke(value);
                             }
                             catch (Exception e)
                             {
@@ -475,7 +499,8 @@ namespace Pkn_HostSystem.Base
                             {
                                 byte[] readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.Memory, 0, numberData, num * 4);
-
+                                value = $"MD{numberData},读取{num}个32位";
+                                OnSendString?.Invoke(value);
                                 if (s7Method == S7MethodEnum.无符号32位)
                                 {
                                     uint[] uints = new uint[num];
