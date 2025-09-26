@@ -49,15 +49,16 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
             var eachStation = TraceContext.GetParam("EachStation");
             EachStation<Station1>? station1 = eachStation as EachStation<Station1>;
 
-            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station, request , false);
+            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station, request, false);
             (bool succeed, string? response) = await _loadMesService.SendHttp(item, request, cts);
             if (succeed)
             {
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station, response , false);
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, item.Station, response, false);
             }
             else
             {
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station, response, false);
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, item.Station, response,
+                    false);
             }
 
             return (succeed, response);
@@ -65,14 +66,26 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
 
         public async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
         {
-            Volatile.Write(ref GlobalManager.ArrayRegister[54],0);
-            Volatile.Write(ref GlobalManager.ArrayRegister[55],0);
-            Volatile.Write(ref GlobalManager.ArrayRegister[56],"NG");
+            Volatile.Write(ref GlobalManager.ArrayRegister[54], 0);
+            Volatile.Write(ref GlobalManager.ArrayRegister[55], 0);
+            Volatile.Write(ref GlobalManager.ArrayRegister[56], "NG");
             var eachStation = TraceContext.GetParam("EachStation");
             EachStation<Station1>? station1 = eachStation as EachStation<Station1>;
-            station1.Station.Main(cts);
-            (bool succeed, string? value) = await _loadMesService.PackRequest(httpName, cts);
-            station1.Station.Main(cts);
+            bool succeed;
+            string message;
+           (succeed,  message) = await station1.Station.Main(cts);
+            if (!succeed)
+            {
+                return (succeed, message);
+            }
+            //执行流程
+            ( succeed, string? value) = await _loadMesService.PackRequest(httpName, cts);
+
+            (succeed, message) = await station1.Station.Main(cts);
+            if (!succeed)
+            {
+                return (succeed, message);
+            }
             return (succeed, value);
         }
 
@@ -87,17 +100,19 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
         }
 
         public async Task<(bool sueeced, string? result)> DynMessage(string request, string DynName,
-            CancellationTokenSource cts ,bool noLog)
+            CancellationTokenSource cts, bool noLog)
         {
             return await _loadMesService.DynMessage(request, DynName, cts, noLog);
         }
 
-        public async Task<(bool sueeced, string? result)> DynMessage(string DynName, CancellationTokenSource cts, bool noLog = false)
+        public async Task<(bool sueeced, string? result)> DynMessage(string DynName, CancellationTokenSource cts,
+            bool noLog = false)
         {
-            return await _loadMesService.DynMessage(DynName, cts , noLog);
+            return await _loadMesService.DynMessage(DynName, cts, noLog);
         }
 
-        public async Task<(bool succeed, string message)> Transpond(DynCondition model, string response, CancellationTokenSource cts)
+        public async Task<(bool succeed, string message)> Transpond(DynCondition model, string response,
+            CancellationTokenSource cts)
         {
             return await _loadMesService.Transpond(model, response, cts);
         }

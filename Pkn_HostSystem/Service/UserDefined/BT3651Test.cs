@@ -7,10 +7,18 @@ namespace Pkn_HostSystem.Service.UserDefined
     public class BT3651Test : IUserDefined
     {
         /// <summary>
-        /// 已经占用50,51,52,53, 54 ,55 ,56 , 57
+        /// 主入口
+        /// 50 电阻上线
+        /// 51 电阻下线
+        /// 52 电压上线
+        /// 53 电压下线
+        /// 54 电阻值
+        /// 55 电压值
+        /// 56 合格 NG/OK
+        /// 57 条码
+        /// 58 型号
+        /// 59 批号
         /// </summary>
-        /// <param name="cts"></param>
-        /// <param name="args"></param>
         /// <returns></returns>
         public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts, params object[] args)
         {

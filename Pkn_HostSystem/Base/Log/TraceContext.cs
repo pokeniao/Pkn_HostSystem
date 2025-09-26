@@ -54,6 +54,12 @@
         /// <param name="value"></param>
         public static void UpdateParam(string key , object value)
         {
+
+            if (TraceContext.Param == null)
+            {
+                
+            }
+
             bool tryGetValue = TraceContext.Param.TryGetValue(key, out _);
 
             if (tryGetValue)
