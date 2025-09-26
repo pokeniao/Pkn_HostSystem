@@ -17,12 +17,14 @@ namespace Pkn_HostSystem.Base
         /// </summary>
         public static List<CpuType> CpuTypes { get; set; } =
             System.Enum.GetValues(typeof(CpuType)).Cast<CpuType>().ToList();
+
         /// <summary>
         /// 发送字符串事件
         /// </summary>
         public event Action<string> OnSendString;
 
         public LogControl<S7Base> Log = new LogControl<S7Base>();
+
         /// <summary>
         /// PLC的实例化对象
         /// </summary>
@@ -56,7 +58,7 @@ namespace Pkn_HostSystem.Base
             try
             {
                 SiemPlc = new Plc(cpuType, ip, port, (short)rack, (short)slot);
-                SiemPlc.OpenAsync();
+                await SiemPlc.OpenAsync();
             }
             catch (Exception e)
             {
@@ -95,6 +97,7 @@ namespace Pkn_HostSystem.Base
             {
                 return (false, "未连接", default(T), null);
             }
+
             //组合字符串
             string value = null;
             //偏移量转换
@@ -274,7 +277,7 @@ namespace Pkn_HostSystem.Base
                             {
                                 readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.DataBlock, numberData, result, num * 2);
-                                value = $"DB{numberData},DBB{result},读取{num*2}个字节";
+                                value = $"DB{numberData},DBB{result},读取{num * 2}个字节";
                                 OnSendString?.Invoke(value);
                             }
                             catch (Exception e)
@@ -454,7 +457,7 @@ namespace Pkn_HostSystem.Base
                             {
                                 readBytesAsync =
                                     await SiemPlc.ReadBytesAsync(DataType.DataBlock, numberData, result, num * 4);
-                                value = $"DB{numberData},DBB{result},读取{num*4}个字节";
+                                value = $"DB{numberData},DBB{result},读取{num * 4}个字节";
                                 OnSendString?.Invoke(value);
                             }
                             catch (Exception e)
@@ -473,7 +476,7 @@ namespace Pkn_HostSystem.Base
 
                                 return (true, null, default(T), uints as T[]);
                             }
-                            else if  (s7Method == S7MethodEnum.有符号32位)
+                            else if (s7Method == S7MethodEnum.有符号32位)
                             {
                                 int[] ints = new int[num];
                                 for (int i = 0; i < ints.Length; i++)
@@ -490,6 +493,7 @@ namespace Pkn_HostSystem.Base
                                 {
                                     doubles[i] = BitConverter.ToDouble(readBytesAsync, i * 4);
                                 }
+
                                 return (true, null, default(T), doubles as T[]);
                             }
                         }
@@ -528,6 +532,7 @@ namespace Pkn_HostSystem.Base
                                     {
                                         doubles[i] = BitConverter.ToDouble(readBytesAsync, i * 4);
                                     }
+
                                     return (true, null, default(T), doubles as T[]);
                                 }
                             }
@@ -537,6 +542,7 @@ namespace Pkn_HostSystem.Base
                             }
                         }
                     }
+
                     break;
 
                 case S7MethodEnum.字符串:
