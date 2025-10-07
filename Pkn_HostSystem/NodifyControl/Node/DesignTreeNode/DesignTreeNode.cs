@@ -1,8 +1,10 @@
-﻿using DynamicData;
+﻿
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation;
+using Pkn_HostSystem.NodifyControl.Operation.StartOperation;
 using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.NodifyControl.Node.DesignTreeNode
@@ -16,7 +18,7 @@ namespace Pkn_HostSystem.NodifyControl.Node.DesignTreeNode
                 Name = "程序入口",
                 Children =
                 [
-                    new TreeNodes(name: "手动触发进入", nodeType: NodeEnum.DebugEnter)
+                    new TreeNodes(name: "入口", nodeType: NodeEnum.Enter)
                 ]
             },
             new()
@@ -33,29 +35,16 @@ namespace Pkn_HostSystem.NodifyControl.Node.DesignTreeNode
         /// </summary>
         /// <param name="treeNodes"></param>
         /// <returns></returns>
-        public static MyNode GetNode(TreeNodes treeNodes)
+        public static PknNode GetNode(NodeEnum NodeType)
         {
-            switch (treeNodes.NodeType)
+            switch (NodeType)
             {
                 case NodeEnum.Add:
-                    MyNode myNode = new MyNode()
-                    {
-                        NodeName = treeNodes.Name,
-                        Operation = new AddOperation()
-                    };
-                    myNode.Input.Add(new MyConnector("输入" , myNode.Id , ConnectorTypeEnum.Input));
-                    myNode.Output.Add(new MyConnector("输出", myNode.Id, ConnectorTypeEnum.Output));
-                    return myNode;
-                case NodeEnum.DebugEnter:
-                     myNode = new MyNode()
-                    {
-                        NodeName = treeNodes.Name,
-                        Operation = new TestOperation()
-                    };
-                    myNode.Output.Add(new MyConnector("输出", myNode.Id, ConnectorTypeEnum.Output));
-                    return myNode;
+                    return new AddOperationNode();
+                case NodeEnum.Enter:
+                    return new EnterOperationNode();
                 default:
-                    return new MyNode()
+                    return new Base.PknNode()
                     {
 
                     };

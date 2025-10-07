@@ -1,15 +1,12 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 
-namespace Pkn_HostSystem.MyControl
+namespace Pkn_HostSystem.Views.UserControls.TimePicker
 {
     /// <summary>
     /// PknDateTimePicker.xaml 的交互逻辑
     /// </summary>
-    public partial class PknDateTimePicker : UserControl
+    public partial class PknDateTimePicker : System.Windows.Controls.UserControl
     {
         public PknDateTimePicker()
         {

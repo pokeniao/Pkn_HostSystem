@@ -15,13 +15,23 @@ namespace Pkn_HostSystem.NodifyControl.Connection
 
 
         [ObservableProperty] private bool _isActive = false;
+
+        /// <summary>
+        /// 已连接上,创建连接逻辑
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
         public ConnectorViewModel(MyConnector source, MyConnector target)
         {
          
             Source = source;
             Target = target;
 
+            //添加到连接器的观察者列表中
             Source.ValueObservers.Add(Target);
+            
+            //连接的时候把结果给过去
+            Target.InputValue.Add(Source.Value);
             Source.IsConnected = true;
             Target.IsConnected = true;
         }

@@ -1,28 +1,30 @@
-﻿using Azure;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DynamicData.Binding;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation;
+using Pkn_HostSystem.NodifyControl.Operation.Interface;
 using System.Collections.ObjectModel;
-
 using System.Windows;
 
-namespace Pkn_HostSystem.NodifyControl.Node
+namespace Pkn_HostSystem.NodifyControl.Node.Base
 {
-    public partial class MyNode: ObservableObject
+    public partial class PknNode: ObservableObject
     {
         
         public string Id { get; set; } = new SnowflakeIdGenerator(1, 1).GetId().ToString();
 
         public string NodeName { get; set; }
 
+
         /// <summary>
-        /// 实例化当前节点的TreeNodes
+        /// 输入
         /// </summary>
-        public TreeNodes TreeNodes { get; set; }
+        [ObservableProperty] private ObservableCollectionExtended<OperationParam> inputParams = new ObservableCollectionExtended<OperationParam>();
+
         /// <summary>
         /// Node的类型
         /// </summary>

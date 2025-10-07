@@ -3,6 +3,7 @@ using Nodify;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Editor;
 using Pkn_HostSystem.NodifyControl.Node;
+using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
 using Pkn_HostSystem.ViewModels.Page;
 using System.Windows;
@@ -44,12 +45,10 @@ namespace Pkn_HostSystem.Views.Pages
                                                 && e.Data.GetData(typeof(TreeNodes)) is TreeNodes treeNodes)
             {
                 //创建一个Node
-                MyNode myNode = DesignTreeNode.GetNode(treeNodes);
-                //赋值TreeNodes方便后续节点的实例化
-                myNode.TreeNodes= treeNodes;
+                PknNode pknNode = DesignTreeNode.GetNode(treeNodes.NodeType);
                 //设置位置
-                myNode.Location = editor.GetLocationInsideEditor(e);
-                editorViewModel.Nodes.Add(myNode);
+                pknNode.Location = editor.GetLocationInsideEditor(e);
+                editorViewModel.Nodes.Add(pknNode);
 
                 e.Handled = true;
             }
@@ -114,6 +113,19 @@ namespace Pkn_HostSystem.Views.Pages
             CopyMenuItem.Visibility = string.IsNullOrEmpty(LogRichTextBox.Selection.Text)
                 ? Visibility.Collapsed
                 : Visibility.Visible;
+        }
+
+        /// <summary>
+        /// 节点改变
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NodifyEditor_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            NodifyEditor? nodifyEditor = sender as NodifyEditor;
+            PknNode? myNode = nodifyEditor?.SelectedValue as PknNode;
+
+            ParamPanel.Content = myNode?.Operation?.GetConfigView();
         }
     }
 }

@@ -12,6 +12,7 @@
       xmlns:connection1="clr-namespace:Pkn_HostSystem.NodifyControl.Connection"
       xmlns:converters="clr-namespace:Pkn_HostSystem.NodifyControl.Converters"
       xmlns:nodifyControl="clr-namespace:Pkn_HostSystem.NodifyControl"
+      xmlns:base="clr-namespace:Pkn_HostSystem.NodifyControl.Node.Base"
 
       mc:Ignorable="d"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -122,7 +123,7 @@
                     <nodify:NodifyEditor Grid.Row="2"
                                          x:Name="NodifyEditor"
                                          DataContext="{Binding DataContext,Source={StaticResource EditorProxy}}"
-
+                                         SelectionChanged="NodifyEditor_OnSelectionChanged"
                                          SelectedItems="{Binding SelectedConnectors}"
                                          ItemsSource="{Binding  Nodes }"
                                          Connections="{Binding Connectors}"
@@ -134,7 +135,7 @@
 
                         <!-- 控制Node节点 -->
                         <nodify:NodifyEditor.ItemTemplate>
-                            <DataTemplate DataType="{x:Type node1:MyNode}">
+                            <DataTemplate DataType="{x:Type base:PknNode}">
                                 <nodify:Node
                                     Header="{Binding NodeName}"
                                     Input="{Binding Input}"
@@ -368,9 +369,12 @@
                         <ui:SymbolIcon Symbol="CalendarAgenda20" Margin="5" />
                         <TextBlock Text="参数" Margin="0 5" />
                     </WrapPanel>
-
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
+                    <Grid  Grid.Row="2">
+                        <!-- 控件显示 -->
+                        <ContentPresenter  x:Name="ParamPanel"/>
+                    </Grid>
                 </Grid>
             </Border>
         </Grid>

@@ -321,7 +321,13 @@ namespace Pkn_HostSystem.Views.Pages
         /// <param name="e"></param>
         private void MenuItem_OnClick(object sender, RoutedEventArgs e)
         {
-            var selectedValue = HomeProjectListBox.SelectedValue?.ToString();
+            DesignModel? model = HomeProjectDataGrid.SelectedValue as DesignModel;
+            if (model == null)
+            {
+                return;
+            }
+
+            var selectedValue = model.ProjectName;
 
             if (selectedValue != null)
             {

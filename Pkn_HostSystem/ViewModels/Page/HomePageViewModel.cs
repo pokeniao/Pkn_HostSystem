@@ -11,6 +11,7 @@ using Pkn_HostSystem.Base.Halcon;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
@@ -677,16 +678,19 @@ public partial class HomePageViewModel : ObservableRecipient
         JsonTool<HomePageModel>.Save(HomePageModel);
     }
 
-    //页面显示Control设置
-    public void setHSmartWindowControl(HSmartWindowControlWPF _halconControl)
-    {
-        HalconControl.HSmartWindowControl = _halconControl;
-    }
 
     [RelayCommand]
     public void ReturnEditButton(HomePage page)
     {
-        string? Value = page.HomeProjectListBox.SelectedValue?.ToString();
+        DesignModel model = page.HomeProjectDataGrid.SelectedValue as DesignModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        string Value = model.ProjectName;
+
 
         if (!string.IsNullOrEmpty(Value))
         {
@@ -695,9 +699,11 @@ public partial class HomePageViewModel : ObservableRecipient
             designViewModel.DesignModel = designModel;
             designViewModel.init();
         }
+
         var navigationService = Ioc.Default.GetRequiredService<INavigationService>();
         navigationService.Navigate(typeof(DesignPage));
     }
+
     /// <summary>
     /// 创建项目
     /// </summary>
@@ -705,8 +711,70 @@ public partial class HomePageViewModel : ObservableRecipient
     public void CreateProject()
     {
         AddProjectWindow addProjectWindow = new AddProjectWindow();
-
         bool? showDialog = addProjectWindow.ShowDialog();
+    }
 
+
+    [RelayCommand]
+    public void RunProject(HomePage page)
+    {
+        DesignModel model = page.HomeProjectDataGrid.SelectedValue as DesignModel;
+        if (model == null)
+        {
+            return;
+        }
+
+        if (model.RunTask)
+        {
+            //1.判断是否有遗留
+            if (model.cts != null)
+            {
+                model.cts.Cancel();
+            }
+            //创建任务 ,并且启动
+            model.cts = new CancellationTokenSource();
+            //创建任务
+            model.Task = new Lazy<Task>(() => RunProjectTask(model));
+            //运行任务
+            Task taskValue = model.Task.Value;
+            Log.Info($"[{TraceContext.Name}]--循环型,任务已开启");
+        }
+        else
+        {
+            //停止
+            model.cts.Cancel();
+            model.Task = new Lazy<Task>(() => RunProjectTask(model));
+            Log.Info($"[{TraceContext.Name}]--任务已关闭");
+        }
+    }
+
+    /// <summary>
+    /// 任务循环
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public async Task RunProjectTask(DesignModel model)
+    {
+        try
+        {
+            while (!model.cts.Token.IsCancellationRequested)
+            {
+
+                await Task.Delay(1000, model.cts.Token);
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            Log.Info($"[{TraceContext.Name}]--触发任务被取消");
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"[{TraceContext.Name}]--触发任务出现异常: {ex}");
+        }
+        finally
+        {
+            model.RunTask = false;
+            Log.Info($"[{TraceContext.Name}]--退出循环触发");
+        }
     }
 }

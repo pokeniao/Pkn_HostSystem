@@ -66,7 +66,15 @@ public static class GlobalManager
     public static SourceCache<LoadMesAddAndUpdateWindowModel, string> ProcessTask;
 
 
+
+
+    /// <summary>
+    /// 项目字典 ,通过项目名称索引
+    /// </summary>
     public static SourceCache<DesignModel, string> ProjectDictionary;
+
+
+
 
 
     /// <summary>

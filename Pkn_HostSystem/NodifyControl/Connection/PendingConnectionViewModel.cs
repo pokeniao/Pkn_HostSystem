@@ -7,7 +7,7 @@ using Pkn_HostSystem.NodifyControl.Node.Connector;
 namespace Pkn_HostSystem.NodifyControl.Connection
 {
     /// <summary>
-    /// 预连接模块
+    /// 预连接模块,点击连接端子时开始连接,松开鼠标时结束连接 , 进行连接判断,并进行连接
     /// </summary>
     public partial class PendingConnectionViewModel : ObservableObject
     {

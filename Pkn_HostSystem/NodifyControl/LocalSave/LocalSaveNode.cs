@@ -1,4 +1,5 @@
-﻿using Pkn_HostSystem.Models.Core;
+﻿using Pkn_HostSystem.Base.Enum;
+using Pkn_HostSystem.Models.Core;
 using System.Windows;
 
 namespace Pkn_HostSystem.NodifyControl.LocalSave
@@ -7,7 +8,7 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave
     {
         public string Id { get; set; }
 
-        public TreeNodes TreeNodes { get; set; }
+        public NodeEnum NodeType { get; set; }
 
         public Point Location { get; set; }
 

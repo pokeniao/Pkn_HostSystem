@@ -6,7 +6,7 @@
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:windows="clr-namespace:Pkn_HostSystem.ViewModels.Windows"
                  xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
-                 xmlns:pkn="clr-namespace:Pkn_HostSystem.MyControl"
+                 xmlns:timePicker="clr-namespace:Pkn_HostSystem.Views.UserControls.TimePicker"
 
                  d:DataContext="{d:DesignInstance windows:LoadMesAddAndUpdateWindowsViewModel}"
                  Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -428,14 +428,14 @@
                                             Margin="10">
                                             <StackPanel>
                                                 <TextBlock Text="尚未完成" Foreground="Red" />
-                                                <pkn:PknDateTimePicker />
+                                                <timePicker:PknDateTimePicker />
                                             </StackPanel>
                                         </Grid>
 
                                         <Grid
                                             Visibility="{Binding LoadMesAddAndUpdateWindowModel.ShowTimeLocalSaveVisibility}"
                                             Margin="10">
-                                            <pkn:PknTimePicker Width="270"
+                                            <timePicker:PknTimePicker Width="270"
                                                                StartSelectedHour="{Binding LoadMesAddAndUpdateWindowModel.StartSelectedHour , UpdateSourceTrigger=PropertyChanged}"
                                                                StartSelectedMinute="{Binding LoadMesAddAndUpdateWindowModel.StartSelectedMinute , UpdateSourceTrigger=PropertyChanged}"
                                                                EndSelectedHour="{Binding LoadMesAddAndUpdateWindowModel.EndSelectedHour , UpdateSourceTrigger=PropertyChanged}"

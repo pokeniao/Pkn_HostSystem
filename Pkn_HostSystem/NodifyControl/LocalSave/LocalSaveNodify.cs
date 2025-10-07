@@ -1,6 +1,7 @@
 ﻿using Nodify;
 using Pkn_HostSystem.NodifyControl.Connection;
 using Pkn_HostSystem.NodifyControl.Node;
+using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using System.Collections.ObjectModel;
 
@@ -13,17 +14,17 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave
         public List<LocalSaveConnection> Connections { get; set; } = new List<LocalSaveConnection>();
 
 
-        public List<LocalSaveNode> SaveNodes(ObservableCollection<MyNode> Nodes)
+        public List<LocalSaveNode> SaveNodes(ObservableCollection<PknNode> Nodes)
         {
             List<LocalSaveNode> localSaveNodes = new List<LocalSaveNode>();
-            List<MyNode> myNodes = Nodes.ToList();
-            foreach (MyNode myNode in myNodes)
+            List<PknNode> myNodes = Nodes.ToList();
+            foreach (PknNode myNode in myNodes)
             {
                 LocalSaveNode localSaveNode = new LocalSaveNode()
                 {
                     Id = myNode.Id,
                     Location = myNode.Location,
-                    TreeNodes = myNode.TreeNodes,
+                    NodeType = myNode.NodeType,
                     Input = new List<LocalSaveConnector>(),
                     Output = new List<LocalSaveConnector>()
                 };

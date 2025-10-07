@@ -6,6 +6,7 @@ using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Connection;
 using Pkn_HostSystem.NodifyControl.Editor;
 using Pkn_HostSystem.NodifyControl.Node;
+using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
 using Pkn_HostSystem.ViewModels.Page;
@@ -59,7 +60,7 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave
                 EditorViewModel designModelEditorViewModel = designModel.EditorViewModel;
 
                 //EVM中的Nodes
-                ObservableCollection<MyNode> Nodes = designModelEditorViewModel.Nodes;
+                ObservableCollection<PknNode> Nodes = designModelEditorViewModel.Nodes;
                 //EVM中的Connectors
                 ObservableCollection<ConnectorViewModel> Connectors = designModelEditorViewModel.Connectors;
                 //转成EVM
@@ -67,13 +68,13 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave
                 List<LocalSaveNode> localSaveNodes = designModelLocalSaveNodify.Nodes;
                 foreach (LocalSaveNode localSaveNode in localSaveNodes)
                 {
-                    MyNode myNode = DesignTreeNode.GetNode(localSaveNode.TreeNodes);
-                    myNode.Id = localSaveNode.Id;
-                    myNode.Location = localSaveNode.Location;
-                    myNode.Input = designModelLocalSaveNodify.GetInputOrOutput(localSaveNode.Input);
-                    myNode.Output = designModelLocalSaveNodify.GetInputOrOutput(localSaveNode.Output);
+                    PknNode pknNode = DesignTreeNode.GetNode(localSaveNode.NodeType);
+                    pknNode.Id = localSaveNode.Id;
+                    pknNode.Location = localSaveNode.Location;
+                    pknNode.Input = designModelLocalSaveNodify.GetInputOrOutput(localSaveNode.Input);
+                    pknNode.Output = designModelLocalSaveNodify.GetInputOrOutput(localSaveNode.Output);
 
-                    Nodes.Add(myNode);
+                    Nodes.Add(pknNode);
                 }
                 //在获得线
                 List<LocalSaveConnection> localSaveConnections = designModelLocalSaveNodify.Connections;
@@ -86,7 +87,7 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave
                     MyConnector sourceMyConnector =null;
                     MyConnector targetMyConnector = null;
                     //找到对应端子的实例化对象
-                    foreach (MyNode myNode in Nodes)
+                    foreach (PknNode myNode in Nodes)
                     {
                         foreach (var connector in myNode.Output)
                         {

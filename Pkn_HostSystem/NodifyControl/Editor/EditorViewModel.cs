@@ -4,8 +4,10 @@ using DynamicData;
 using Newtonsoft.Json;
 using Pkn_HostSystem.NodifyControl.Connection;
 using Pkn_HostSystem.NodifyControl.Node;
+using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation;
+using Pkn_HostSystem.NodifyControl.Operation.Interface;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
@@ -17,7 +19,7 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         /// <summary>
         /// 节点集合
         /// </summary>
-        public ObservableCollection<MyNode> Nodes { get; set; } = new ObservableCollection<MyNode>();
+        public ObservableCollection<PknNode> Nodes { get; set; } = new ObservableCollection<PknNode>();
 
         /// <summary>
         /// 连接点集合
@@ -44,18 +46,22 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         /// 选中的
         /// </summary>
         [JsonIgnore]
-        public ObservableCollection<MyNode> SelectedConnectors { get; set; } =
-            new ObservableCollection<MyNode>();
+        public ObservableCollection<PknNode> SelectedConnectors { get; set; } =
+            new ObservableCollection<PknNode>();
 
         public EditorViewModel()
         {
             //1.实例化预添加
             PendingConnection = new PendingConnectionViewModel(this);
 
-            //2. 实例化移除连接线事件
+            //2. 实例化移除 连接线 事件
             RemoveConnectionCommand = new RelayCommand<ConnectorViewModel>(c =>
             {
+                //从观察中删除
+                c?.Source.ValueObservers.Remove(c.Target);
+                c?.Target.InputValue.Remove(c.Source.Value);
                 Connectors.Remove(c);
+
                 var ic = Connectors.Count(con => con.Source == c.Source || con.Target == c.Source);
                 var oc = Connectors.Count(con => con.Source == c.Target || con.Target == c.Target);
                 if (ic == 0)
@@ -68,12 +74,15 @@ namespace Pkn_HostSystem.NodifyControl.Editor
                     c.Target.IsConnected = false;
                 }
             });
-            //3. 实例化移除连接点事件
+            //3. 实例化移除 连接点 事件
             DisconnectConnectorCommand = new RelayCommand<MyConnector>(connector =>
             {
                 var connections = Connectors.Where(c => c.Source == connector || c.Target == connector).ToList();
                 connections.ForEach(c =>
                 {
+                    //从观察中删除
+                    c?.Source.ValueObservers.Remove(c.Target);
+                    c?.Target.InputValue.Remove(c.Source.Value);
                     Connectors.Remove(c);
                     var ic = Connectors.Count(con => con.Source == c.Source || con.Target == c.Source);
                     var oc = Connectors.Count(con => con.Source == c.Target || con.Target == c.Target);
@@ -104,27 +113,34 @@ namespace Pkn_HostSystem.NodifyControl.Editor
                 Connectors.Add(new ConnectorViewModel(source, target));
             }
         }
-
+        /// <summary>
+        /// 删除节点
+        /// </summary>
         [RelayCommand]
         public void DeleteSelection()
         {
-            List<MyNode> l2 = new();
-            foreach (MyNode selectedConnector in SelectedConnectors)
+            List<PknNode> l2 = new();
+            foreach (PknNode selectedConnector in SelectedConnectors)
             {
-                l2.Add(selectedConnector as MyNode);
+                l2.Add(selectedConnector as PknNode);
 
-
+                //获取到当前Node的Input
                 foreach (MyConnector myConnector in selectedConnector.Input)
                 {
                     //匹配
                     List<ConnectorViewModel> myConnectors = Connectors.Where(c =>
                         c.Source == myConnector ||
                         c.Target == myConnector).ToList();
+
+                    
                     //移除线
                     Connectors.Remove(myConnectors);
                     //清理节点
                     foreach (ConnectorViewModel c in myConnectors)
                     {
+                        c?.Source.ValueObservers.Remove(c.Target);
+                        c?.Target.InputValue.Remove(c.Source.Value);
+
                         var ic = Connectors.Count(con => con.Source == c.Source || con.Target == c.Source);
                         var oc = Connectors.Count(con => con.Source == c.Target || con.Target == c.Target);
                         if (ic == 0)
@@ -138,7 +154,7 @@ namespace Pkn_HostSystem.NodifyControl.Editor
                         }
                     }
                 }
-
+                //获取到当前Node的OutPut
                 foreach (MyConnector myConnector in selectedConnector.Output)
                 {
                     //匹配
@@ -150,6 +166,8 @@ namespace Pkn_HostSystem.NodifyControl.Editor
                     //清理节点
                     foreach (ConnectorViewModel c in myConnectors)
                     {
+                        c?.Source.ValueObservers.Remove(c.Target);
+                        c?.Target.InputValue.Remove(c.Source.Value);
                         var ic = Connectors.Count(con => con.Source == c.Source || con.Target == c.Source);
                         var oc = Connectors.Count(con => con.Source == c.Target || con.Target == c.Target);
                         if (ic == 0)
@@ -173,7 +191,7 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         {
             //1. 寻找到IStartOperation节点,作为起始节点
 
-            MyNode startNode = Nodes.FirstOrDefault(n => n.Operation is IStartOperation);
+            PknNode startNode = Nodes.FirstOrDefault(n => n.Operation is IStartOperation);
             if (startNode == null)
             {
                 MessageBox.Show("未找到起始节点,请添加一个IStartOperation节点");
@@ -182,26 +200,26 @@ namespace Pkn_HostSystem.NodifyControl.Editor
 
             //2. 执行起始节点的方法
             IStartOperation startOperation = startNode.Operation as IStartOperation;
-            object[] results = startOperation.Execute();
+             startOperation.Execute();
             //3. 递归执行后续节点的方法
-            ExecuteNextNodes(startNode, results);
+            ExecuteNextNodes(startNode);
         }
 
-        private void ExecuteNextNodes(MyNode currentNode, object[] inputs)
+        private void ExecuteNextNodes(PknNode currentNode)
         {
             //找到所有连接到当前节点输出端子的连接
             var outgoingConnections = Connectors.Where(c => currentNode.Output.Contains(c.Source)).ToList();
             //对于每个连接,找到连接的目标节点,并执行其方法
             foreach (var connection in outgoingConnections)
             {
-                MyNode nextNode = Nodes.FirstOrDefault(n => n.Input.Contains(connection.Target));
+                PknNode nextNode = Nodes.FirstOrDefault(n => n.Input.Contains(connection.Target));
                 if (nextNode != null && nextNode.Operation != null)
                 {
                     //执行下一个节点的方法
                     var operation = nextNode.Operation;
-                    object[] results = operation.Execute(inputs);
+                    operation.Execute();
                     //递归执行下一个节点
-                    ExecuteNextNodes(nextNode, results);
+                    ExecuteNextNodes(nextNode);
                 }
             }
         }

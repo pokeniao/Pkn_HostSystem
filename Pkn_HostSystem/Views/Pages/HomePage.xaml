@@ -1562,11 +1562,44 @@
                                 </MenuItem>
                             </ContextMenu>
                         </Border.ContextMenu>
-                        <ListBox
-                            Name="HomeProjectListBox"
-                            DisplayMemberPath="ProjectName"
-                            SelectedValuePath="ProjectName"
-                            ItemsSource="{Binding HomePageModel.ProjectList }" />
+
+                        <DataGrid
+                            Name="HomeProjectDataGrid"
+                            AutoGenerateColumns ="False"
+                            ItemsSource="{Binding HomePageModel.ProjectList}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn 
+                                    IsReadOnly="True"
+                                    Header="项目名" Width="*" Binding="{Binding ProjectName}" />
+                                <DataGridTemplateColumn Header="运行" Width="0.9*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <CheckBox
+                                                    Command="{Binding DataContext.RunProjectCommand  ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                                    CommandParameter="{Binding  RelativeSource={RelativeSource AncestorType=Page} }"
+                                                    IsChecked="{Binding RunTask ,UpdateSourceTrigger=PropertyChanged}">
+                                                    <CheckBox.IsEnabled>
+                                                        <MultiBinding
+                                                            Converter="{StaticResource NewRowAllowButtonConverter}">
+                                                            <Binding
+                                                                RelativeSource="{RelativeSource AncestorType=DataGridRow}"
+                                                                Path="IsNewItem" />
+                                                            <Binding Path="RunTask" />
+                                                        </MultiBinding>
+                                                    </CheckBox.IsEnabled>
+                                                </CheckBox>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <!-- <ListBox -->
+                        <!--     Name="HomeProjectListBox" -->
+                        <!--     DisplayMemberPath="ProjectName" -->
+                        <!--     SelectedValuePath="ProjectName" -->
+                        <!--     ItemsSource="{Binding HomePageModel.ProjectList }" /> -->
 
 
                     </Border>
