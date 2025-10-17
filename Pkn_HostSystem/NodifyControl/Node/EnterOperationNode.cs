@@ -5,6 +5,7 @@ using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation.StartOperation;
+using Pkn_HostSystem.NodifyControl.ParamOperationModel;
 using System.Collections.ObjectModel;
 
 namespace Pkn_HostSystem.NodifyControl.Node
@@ -12,7 +13,10 @@ namespace Pkn_HostSystem.NodifyControl.Node
     public partial class EnterOperationNode : PknNode
     {
         [ObservableProperty]
-        private ObservableCollectionExtended<OperationParam> outputParams = new ObservableCollectionExtended<OperationParam>();
+        private ObservableCollectionExtended<OperationParamModel> outputParams = new ObservableCollectionExtended<OperationParamModel>();
+
+        [ObservableProperty]
+        private EnterParamOperationModel model = new EnterParamOperationModel();
 
         public EnterOperationNode()
         {

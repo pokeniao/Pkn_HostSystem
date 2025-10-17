@@ -6,6 +6,7 @@ using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Connection;
+using Pkn_HostSystem.NodifyControl.ParamOperationModel;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -39,9 +40,9 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
         /// <summary>
         /// 输入值
         /// </summary>
-        public List<ObservableCollection<OperationParam>> _inputValue = new List<ObservableCollection<OperationParam>>();
+        public List<ObservableCollection<OperationParamModel>> _inputValue = new List<ObservableCollection<OperationParamModel>>();
 
-        public List<ObservableCollection<OperationParam>> InputValue
+        public List<ObservableCollection<OperationParamModel>> InputValue
         {
             get => _inputValue;
             set
@@ -53,9 +54,9 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
         /// <summary>
         /// 输出接口值 output
         /// </summary>
-        private ObservableCollectionExtended<OperationParam> _value;
+        private ObservableCollectionExtended<OperationParamModel> _value;
 
-        public ObservableCollectionExtended<OperationParam> Value
+        public ObservableCollectionExtended<OperationParamModel> Value
         {
             get => _value;
             set
@@ -81,7 +82,7 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
                         //将值传递给连接到该连接器的所有连接器
                         ValueObservers.ForEach(o =>
                         {
-                            List<ObservableCollection<OperationParam>> inputValue = o.InputValue;
+                            List<ObservableCollection<OperationParamModel>> inputValue = o.InputValue;
 
                             if (Value != null)
                             {

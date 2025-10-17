@@ -57,13 +57,13 @@ namespace Pkn_HostSystem.ViewModels.Page
         [ObservableProperty] private string projectName;
 
 
-        public ProjectModel ProjectModel { get; set; } =  LocalSaveNodifyMethod.Load();
+        public ProjectModel ProjectModel { get; set; } 
         public DesignViewModel()
         {
             SnackbarService = new SnackbarService();
             Log = new LogControl<DesignViewModel>(SnackbarService);
             HalconTool = new HalconTool(HalconControl);
-
+            ProjectModel = LocalSaveNodifyMethod.Load();
             if (ProjectModel == null)
             {
                 ProjectModel = new ProjectModel();

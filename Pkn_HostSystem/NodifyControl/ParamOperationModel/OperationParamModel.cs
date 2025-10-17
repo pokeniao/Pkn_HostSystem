@@ -1,10 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using RestSharp;
 using System.Windows;
 
-namespace Pkn_HostSystem.Models.Core
+namespace Pkn_HostSystem.NodifyControl.ParamOperationModel
 {
-    public partial class OperationParam : ObservableObject
+    public partial class OperationParamModel : ObservableObject
     {
         //姓名
         [ObservableProperty] private string name;
@@ -26,14 +25,13 @@ namespace Pkn_HostSystem.Models.Core
         /// <summary>
         /// 动态值
         /// </summary>
-        [ObservableProperty] private OperationParam dynParam;
+        [ObservableProperty] private OperationParamModel _dynParam;
 
-        partial void OnDynParamChanged(OperationParam value)
+        partial void OnDynParamChanged(OperationParamModel value)
         {
             //用于显示
             DynName = DynParam?.Name;
         }
-
         /// <summary>
         /// 禁止修改
         /// </summary>

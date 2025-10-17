@@ -13,7 +13,7 @@
       xmlns:converters="clr-namespace:Pkn_HostSystem.NodifyControl.Converters"
       xmlns:nodifyControl="clr-namespace:Pkn_HostSystem.NodifyControl"
       xmlns:base="clr-namespace:Pkn_HostSystem.NodifyControl.Node.Base"
-
+      xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
       mc:Ignorable="d"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -21,11 +21,13 @@
       SizeChanged="DesignPage_OnSizeChanged"
       d:DataContext="{d:DesignInstance page:DesignViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
+
       Title="DesignPage">
     <Page.Resources>
         <nodifyControl:BindingProxy x:Key="EditorProxy"
                                     DataContext="{Binding  EditorViewModel}" />
         <converters:ConnectorOffsetConverter x:Key="ConnectorOffsetConverter" />
+        <converter:MultiplyConverter x:Key="MultiplyConverter" />
     </Page.Resources>
 
     <Grid>
@@ -37,6 +39,7 @@
         <Grid Grid.Column="0">
             <Border
                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                VerticalAlignment="Stretch"
                 Margin="10 0 0 10"
                 BorderThickness="1"
                 CornerRadius="3">
@@ -73,11 +76,13 @@
                 <RowDefinition Height="4*" />
             </Grid.RowDefinitions>
             <Border
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch"
                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                 Margin="10 0 10 10 "
                 BorderThickness="1"
                 CornerRadius="3">
-                <Grid>
+                <Grid VerticalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -93,12 +98,12 @@
                         <ui:SymbolIcon Grid.Column="0" Symbol="Branch20" Margin="5" />
                         <TextBlock Grid.Column="1" Text="流程" Margin="0 5" />
 
-            
+
                         <Button Grid.Column="0" Grid.ColumnSpan="4"
                                 HorizontalAlignment="Center"
                                 Padding="5 3"
                                 Margin="5  0"
-                                
+
                                 Command="{Binding EditorViewModel.RunCommand}">
                             <Button.Content>
                                 <WrapPanel>
@@ -107,14 +112,15 @@
                                 </WrapPanel>
                             </Button.Content>
                         </Button>
-                        <TextBox 
-                            IsReadOnly="True" 
+                        <TextBox
+                            IsReadOnly="True"
                             Style="{x:Null}"
-                            Background="{x:Null}" 
+                            Background="{x:Null}"
                             BorderThickness="0"
                             Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                             Width="100"
-                            Grid.Column="3"  Text="{Binding ProjectName,UpdateSourceTrigger=PropertyChanged}"  Margin="0 5" HorizontalAlignment="Right" />
+                            Grid.Column="3" Text="{Binding ProjectName,UpdateSourceTrigger=PropertyChanged}"
+                            Margin="0 5" HorizontalAlignment="Right" />
                     </Grid>
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
@@ -122,6 +128,8 @@
                     <!-- AllowDrop允许拖拽放下 -->
                     <nodify:NodifyEditor Grid.Row="2"
                                          x:Name="NodifyEditor"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch"
                                          DataContext="{Binding DataContext,Source={StaticResource EditorProxy}}"
                                          SelectionChanged="NodifyEditor_OnSelectionChanged"
                                          SelectedItems="{Binding SelectedConnectors}"
@@ -213,7 +221,7 @@
                                             <!-- ContextMenu 并不是 VisualTree 的一部分，它会被弹出到一个独立的窗口里。因此它 不会继承原来的 DataContext。 -->
                                             <MenuItem Header="_Delete"
                                                       Command="{Binding RemoveConnectionCommand}"
-                                                      CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" >
+                                                      CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
                                                 <MenuItem.Icon>
                                                     <ui:SymbolIcon Symbol="Delete16" />
                                                 </MenuItem.Icon>
@@ -252,7 +260,7 @@
                                 <nodify:PendingConnection
                                     AllowOnlyConnectors="True"
                                     CompletedCommand="{Binding FinishCommand}"
-                                    StartedCommand="{Binding StartCommand}"/>
+                                    StartedCommand="{Binding StartCommand}" />
                             </DataTemplate>
                         </nodify:NodifyEditor.PendingConnectionTemplate>
                         <!-- 按键逻辑绑定 -->
@@ -264,6 +272,9 @@
                 </Grid>
             </Border>
             <Border
+                Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource MultiplyConverter}, ConverterParameter=0.4}"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch"
                 Grid.Row="1"
                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                 Margin="10  0 10 10"
@@ -284,6 +295,7 @@
                             BorderThickness="1" />
 
                     <RichTextBox
+
                         Grid.Row="2" BorderThickness="0"
                         Name="LogRichTextBox"
                         IsReadOnly="True"
@@ -291,11 +303,11 @@
                         VerticalScrollBarVisibility="Auto"
                         HorizontalScrollBarVisibility="Auto"
                         FontSize="9">
-                        <RichTextBox.ContextMenu >
+                        <RichTextBox.ContextMenu>
                             <ContextMenu Opened="ContextMenu_OnOpened">
-                                <MenuItem  Header="清除日志" Click="MenuItem_OnClick"/>
+                                <MenuItem Header="清除日志" Click="MenuItem_OnClick" />
                                 <!-- 复制 -->
-                                <MenuItem x:Name="CopyMenuItem" Header="复制" Click="CopySelected_OnClick"/>
+                                <MenuItem x:Name="CopyMenuItem" Header="复制" Click="CopySelected_OnClick" />
                             </ContextMenu>
                         </RichTextBox.ContextMenu>
                     </RichTextBox>
@@ -354,6 +366,7 @@
 
             </Border>
             <Border
+                Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource MultiplyConverter}, ConverterParameter=0.6}"
                 Grid.Row="1"
                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                 Margin="0   10 10 10"
@@ -363,7 +376,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <WrapPanel Grid.Row="0">
                         <ui:SymbolIcon Symbol="CalendarAgenda20" Margin="5" />
@@ -371,10 +384,11 @@
                     </WrapPanel>
                     <Border Grid.Row="1" BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1" />
-                    <Grid  Grid.Row="2">
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                         <!-- 控件显示 -->
-                        <ContentPresenter  x:Name="ParamPanel"/>
-                    </Grid>
+                        <ContentPresenter
+                            x:Name="ParamPanel" />
+                    </ScrollViewer>
                 </Grid>
             </Border>
         </Grid>

@@ -139,7 +139,15 @@ namespace Pkn_HostSystem
             //AutoFlush = true —— 保证每次写入立即刷到文件，不会缓存在内存里。
             Console.SetOut(new StreamWriter(debugPath, append: true) { AutoFlush = true });
 
-            XmlConfigurator.ConfigureAndWatch(new FileInfo("Config\\log4net.config"));
+            // ✅ 确保路径基于程序目录，而不是当前工作目录 ,自动启动时，当前工作目录可能不是程序目录
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            string configPath = Path.Combine(baseDir, "Config", "log4net.config");
+            if (!File.Exists(configPath))
+            {
+                File.AppendAllText(debugPath, $"[{DateTime.Now}] 未找到配置文件: {configPath}\n");
+            }
+
+            XmlConfigurator.ConfigureAndWatch(new FileInfo(configPath));
         }
 
         /// <summary>

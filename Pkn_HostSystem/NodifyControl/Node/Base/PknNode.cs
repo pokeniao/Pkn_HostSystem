@@ -7,6 +7,7 @@ using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation;
 using Pkn_HostSystem.NodifyControl.Operation.Interface;
+using Pkn_HostSystem.NodifyControl.ParamOperationModel;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -23,7 +24,7 @@ namespace Pkn_HostSystem.NodifyControl.Node.Base
         /// <summary>
         /// 输入
         /// </summary>
-        [ObservableProperty] private ObservableCollectionExtended<OperationParam> inputParams = new ObservableCollectionExtended<OperationParam>();
+        [ObservableProperty] private ObservableCollectionExtended<OperationParamModel> inputParams = new ObservableCollectionExtended<OperationParamModel>();
 
         /// <summary>
         /// Node的类型

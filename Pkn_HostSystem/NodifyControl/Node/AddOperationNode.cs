@@ -1,21 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
-using Nodify;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
-using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation.MiddleOperation;
+using Pkn_HostSystem.NodifyControl.ParamOperationModel;
 
 namespace Pkn_HostSystem.NodifyControl.Node
 {
-    public partial class AddOperationNode :PknNode
+    public partial class AddOperationNode : PknNode
     {
         /// <summary>
         /// 输出
         /// </summary>
-        [ObservableProperty] private ObservableCollectionExtended<OperationParam> outputParams = new ObservableCollectionExtended<OperationParam>();
+        [ObservableProperty] private ObservableCollectionExtended<OperationParamModel> outputParams = new ObservableCollectionExtended<OperationParamModel>();
 
         public AddOperationNode()
         {
@@ -31,16 +30,16 @@ namespace Pkn_HostSystem.NodifyControl.Node
             myConnector.Value = outputParams;
             Output.Add(myConnector);
 
-            OperationParam operationParam = new()
+            OperationParamModel operationParamModel = new()
             {
-                Name = new SnowflakeIdGenerator(1,1).GetId().ToString(),
+                Name = new SnowflakeIdGenerator(1, 1).GetId().ToString(),
                 ParamMethod = "常量",
                 IsEnable = false,
                 NoDelete = true
             };
 
             //固定输出
-            OutputParams.Add(operationParam);
+            OutputParams.Add(operationParamModel);
         }
     }
 }

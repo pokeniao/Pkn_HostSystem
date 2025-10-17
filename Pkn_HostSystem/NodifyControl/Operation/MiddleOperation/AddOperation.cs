@@ -4,6 +4,7 @@ using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Node;
 using Pkn_HostSystem.NodifyControl.Operation.Base;
 using Pkn_HostSystem.NodifyControl.Operation.Interface;
+using Pkn_HostSystem.NodifyControl.ParamOperationModel;
 using Pkn_HostSystem.ViewModels.Page;
 using System.Windows;
 
@@ -31,7 +32,7 @@ namespace Pkn_HostSystem.NodifyControl.Operation.MiddleOperation
             var Params = node.InputParams;
             double sum = 0;
             double a = 0;
-            foreach (OperationParam operationParam in Params)
+            foreach (OperationParamModel operationParam in Params)
             {
 
                 bool tryParse = double.TryParse(GetParamValue(operationParam), out a);
