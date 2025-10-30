@@ -3,6 +3,7 @@ using DynamicData.Binding;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Models.Windows;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -67,27 +68,7 @@ public partial class HomePageModel : ObservableObject
 
     #region 自定义页
 
-    // /// <summary>
-    // /// 工单集合
-    // /// </summary>
-    // [ObservableProperty] private ObservableCollection<PppOrderList> pppOrderLists;
-    // /// <summary>
-    // /// 当前选中的工单
-    // /// </summary>
-    // [ObservableProperty] private PppOrderList currentSelectPppOrder;
-
-    //低电阻
-    [ObservableProperty] private string rLow;
-
-    //高电阻
-    [ObservableProperty] private string rHight;
-
-    //低电压
-    [ObservableProperty] private string vLow;
-
-    //高电压
-    [ObservableProperty] private string vHight;
-
+    public VOCPojo VocPojo { get; set; }= new VOCPojo();
     #endregion
 
 

@@ -1,108 +1,155 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json.Linq;
-using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
-using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Service.Stations.Interface;
 using Pkn_HostSystem.Static;
-
 namespace Pkn_HostSystem.Service.Stations
 {
     public partial class Station1 : ObservableObject, IStation
     {
         //这样写的原因:[ObservableProperty]无法生成大写的中文
-        private string _时间;
+        private string _电芯条码1;
 
-        public string 时间
+        public string 电芯条码1
         {
-            get => _时间;
+            get => _电芯条码1;
             set
             {
-                SetProperty(ref _时间, value);
+                SetProperty(ref _电芯条码1, value);
             }
         }
 
 
-        private string _电阻上限;
-
-        public string 电阻上限
+        private string _电芯条码2;
+        public string 电芯条码2
         {
-            get => _电阻上限;
+            get => _电芯条码2;
             set
             {
-                SetProperty(ref _电阻上限, value);
+                SetProperty(ref _电芯条码2, value);
             }
         }
 
-        private string _电阻值;
-
-        public string 电阻值
+        private string _VOC最大值;
+        public string VOC最大值
         {
-            get => _电阻值;
+            get => _VOC最大值;
             set
             {
-                SetProperty(ref _电阻值, value);
+                SetProperty(ref _VOC最大值, value);
             }
         }
 
-        private string _电阻下限;
-
-        public string 电阻下限
+        private string _腔体号;
+        public string 腔体号
         {
-            get => _电阻下限;
+            get => _腔体号;
             set
             {
-                SetProperty(ref _电阻下限, value);
-            }
-        }
-
-
-        private string _电压上限;
-
-        public string 电压上限
-        {
-            get => _电压上限;
-            set
-            {
-                SetProperty(ref _电压上限, value);
-            }
-        }
-
-        private string _电压值;
-
-        public string 电压值
-        {
-            get => _电压值;
-            set
-            {
-                SetProperty(ref _电压值, value);
-            }
-        }
-
-        private string _电压下限;
-
-        public string 电压下限
-        {
-            get => _电压下限;
-            set
-            {
-                SetProperty(ref _电压下限, value);
+                SetProperty(ref _腔体号, value);
             }
         }
 
 
-        [ObservableProperty] private string cT;
-
-        private string _合格;
-
-        public string 合格
+        private string _正压值;
+        public string 正压值
         {
-            get => _合格;
+            get => _正压值;
             set
             {
-                SetProperty(ref _合格, value);
+                SetProperty(ref _正压值, value);
             }
         }
+
+        private string _负压值;
+        public string 负压值
+        {
+            get => _负压值;
+            set
+            {
+                SetProperty(ref _负压值, value);
+            }
+        }
+
+        private string _结果;
+        public string 结果
+        {
+            get => _结果;
+            set
+            {
+                SetProperty(ref _结果, value);
+            }
+        }
+
+        private string voc_1s;
+        public string Voc_1s
+        {
+            get => voc_1s;
+            set
+            {
+                SetProperty(ref voc_1s, value);
+            }
+        }
+
+        private string voc_2s;
+        public string Voc_2s
+        {
+            get => voc_2s;
+            set
+            {
+                SetProperty(ref voc_2s, value);
+            }
+        }
+
+        private string voc_3s;
+        public string Voc_3s
+        {
+            get => voc_3s;
+            set
+            {
+                SetProperty(ref voc_3s, value);
+            }
+        }
+
+        private string voc_4s;
+        public string Voc_4s
+        {
+            get => voc_4s;
+            set
+            {
+                SetProperty(ref voc_4s, value);
+            }
+        }
+
+        private string voc_5s;
+        public string Voc_5s
+        {
+            get => voc_5s;
+            set
+            {
+                SetProperty(ref voc_5s, value);
+            }
+        }
+
+        private string voc_6s;
+        public string Voc_6s
+        {
+            get => voc_6s;
+            set
+            {
+                SetProperty(ref voc_6s, value);
+            }
+        }
+
+        private string voc_7s;
+        public string Voc_7s
+        {
+            get => voc_7s;
+            set
+            {
+                SetProperty(ref voc_7s, value);
+            }
+        }
+
 
 
         /// <summary>
@@ -116,7 +163,7 @@ namespace Pkn_HostSystem.Service.Stations
                 //从TraceContext中获取参数
                 var eachStation = TraceContext.GetParam("EachStation");
 
-                if ( TraceContext.GetParam("step") == null || TraceContext.GetParam("step") ==0)
+                if (TraceContext.GetParam("step") == null || TraceContext.GetParam("step") == 0)
                 {
                     TraceContext.UpdateParam("step", 1);
                 }
@@ -127,35 +174,35 @@ namespace Pkn_HostSystem.Service.Stations
                     //第一步
                     case 1:
 
-                        TraceContext.UpdateParam("start", DateTime.Now);
-                        Station1 station1 = new Station1();
-                        station1.时间 = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
-
-                
-                        station1.电阻上限 = StaticArrayRegister.ReadRegisterValue(50).ToString();
-                        station1.电阻下限 = StaticArrayRegister.ReadRegisterValue(51).ToString();
-                        station1.电压上限 = StaticArrayRegister.ReadRegisterValue(52).ToString();
-                        station1.电压下限 = StaticArrayRegister.ReadRegisterValue(53).ToString();
-                        //添加一行数据到显示
-                        eachStation.AddItem(station1);
-                        //当前添加的是第几行
-                        TraceContext.UpdateParam("curIndex", eachStation.Items.Count);
-                        //流程跳转
-                        TraceContext.UpdateParam("step", 2);
-                        return (true, null);
+                        
+                        // TraceContext.UpdateParam("start", DateTime.Now);
+                        // Station1 station1 = new Station1();
+                        // station1.时间 = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                        //
+                        // station1.电阻上限 = StaticArrayRegister.ReadRegisterValue(50).ToString();
+                        // station1.电阻下限 = StaticArrayRegister.ReadRegisterValue(51).ToString();
+                        // station1.电压上限 = StaticArrayRegister.ReadRegisterValue(52).ToString();
+                        // station1.电压下限 = StaticArrayRegister.ReadRegisterValue(53).ToString();
+                        // //添加一行数据到显示
+                        // eachStation.AddItem(station1);
+                        // //当前添加的是第几行
+                        // TraceContext.UpdateParam("curIndex", eachStation.Items.Count);
+                        // //流程跳转
+                        // TraceContext.UpdateParam("step", 2);
+                        // return (true, null);
                     //第二步
                     case 2:
-                        //获取到当前的一行数据
-                        Station1 eachStationItem = eachStation.Items[TraceContext.GetParam("curIndex") - 1];
-                        //计算CT
-                        TimeSpan t = DateTime.Now - TraceContext.GetParam("start");
-                        //填入参数
-                        eachStationItem.CT = t.Seconds.ToString();
-                        eachStationItem.电阻值 = StaticArrayRegister.ReadRegisterValue(54).ToString();
-                        eachStationItem.电压值 = StaticArrayRegister.ReadRegisterValue(55).ToString();
-                        eachStationItem.合格 = StaticArrayRegister.ReadRegisterValue(56).ToString();
-                        TraceContext.UpdateParam("step", 0);
-                        return (true, null);
+                        // //获取到当前的一行数据
+                        // Station1 eachStationItem = eachStation.Items[TraceContext.GetParam("curIndex") - 1];
+                        // //计算CT
+                        // TimeSpan t = DateTime.Now - TraceContext.GetParam("start");
+                        // //填入参数
+                        // eachStationItem.CT = t.Seconds.ToString();
+                        // eachStationItem.电阻值 = StaticArrayRegister.ReadRegisterValue(54).ToString();
+                        // eachStationItem.电压值 = StaticArrayRegister.ReadRegisterValue(55).ToString();
+                        // eachStationItem.合格 = StaticArrayRegister.ReadRegisterValue(56).ToString();
+                        // TraceContext.UpdateParam("step", 0);
+                        // return (true, null);
                     default:
                         TraceContext.UpdateParam("step", 0);
                         return (false, "流程步走到default中");

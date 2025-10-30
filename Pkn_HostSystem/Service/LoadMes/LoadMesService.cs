@@ -1081,7 +1081,7 @@ public class LoadMesService : ILoadMesService
                     var method = userDefined.GetMethod("Main");
 
                     //执行方法
-                    var invoke = method.Invoke(objInstance, [cts]);
+                    var invoke = method.Invoke(objInstance, [cts, null]);
 
                     // 转换为具体元组类型
                     var (succeed, returnValue) = await (Task<(bool Succeed, object Return)>)invoke;
@@ -1089,7 +1089,7 @@ public class LoadMesService : ILoadMesService
                     if (succeed)
                     {
                         //静态嵌入
-                        message = _self.StaticMessage(message, itemKey, returnValue.ToString());
+                        message = _self.StaticMessage(message, itemKey, returnValue?.ToString());
                     }
                     else
                     {
@@ -2095,7 +2095,7 @@ public class LoadMesService : ILoadMesService
                         var ByteLow = byte.Parse(low, NumberStyles.HexNumber);
                         var ByteHigh = byte.Parse(high, NumberStyles.HexNumber);
 
-                        //低位在前
+                        //高位在前
                         result_4.Add(ByteLow);
                         result_4.Add(ByteHigh);
                     }

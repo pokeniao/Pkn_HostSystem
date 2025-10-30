@@ -18,8 +18,8 @@
     <Grid>
      <Grid.RowDefinitions>
          <RowDefinition Height="*"/>
-         <RowDefinition Height="*"/>
-         <RowDefinition Height="Auto"/>
+         <RowDefinition Height="0.5*"/>
+
      </Grid.RowDefinitions>
             <TabControl Name="LogTabControl" Grid.Row="0" ItemsSource="{Binding StationModel.Stations}" SelectionChanged="LogTabControl_OnSelectionChanged">
             <TabControl.ItemTemplate>
@@ -37,7 +37,7 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <DataGrid Name="LogDataGrid"  Grid.Row="0" ItemsSource="{Binding Items}" ColumnWidth="*" AutoGenerateColumns="True" CanUserAddRows ="False" MaxHeight="300" IsReadOnly="True"/>
+                        <DataGrid Name="LogDataGrid"  Grid.Row="0" ItemsSource="{Binding Items}" ColumnWidth="*" AutoGenerateColumns="True" CanUserAddRows ="False" MaxHeight="400" IsReadOnly="True"/>
 
                     </Grid>
                 </DataTemplate>
@@ -52,7 +52,14 @@
                     VerticalScrollBarVisibility="Auto"
                     Loaded="UserLogRichTextBox_Loaded"
                     FontSize="12"
-                />
+                >
+                    <RichTextBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="滑动到底部" Click="ScrollDown_OnClick"/>
+                            <MenuItem Header="清空日志" Click="ClearLog_OnClick"/>
+                        </ContextMenu>
+                    </RichTextBox.ContextMenu>
+                </RichTextBox>
             </TabItem>
             <TabItem Header="错误日志">
                 <RichTextBox
@@ -62,7 +69,15 @@
                     VerticalScrollBarVisibility="Auto"
                     FontFamily="Consolas"
                     FontSize="12"
-                    BorderThickness="0"/>
+                    BorderThickness="0">
+                    <RichTextBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="滑动到底部" Click="ScrollDown_OnClick"/>
+                            <MenuItem Header="清空日志" Click="ClearLog_OnClick"/>
+                        </ContextMenu>
+                    </RichTextBox.ContextMenu>
+                </RichTextBox>
+
             </TabItem>
             <TabItem Header="开发者日志">
                 <RichTextBox
@@ -72,14 +87,17 @@
                     VerticalScrollBarVisibility="Auto"
                     FontFamily="Consolas"
                     FontSize="12"
-                    BorderThickness="0"/>
+                    BorderThickness="0">
+                    <RichTextBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="滑动到底部" Click="ScrollDown_OnClick"/>
+                            <MenuItem Header="清空日志" Click="ClearLog_OnClick"/>
+                        </ContextMenu>
+                    </RichTextBox.ContextMenu>
+                </RichTextBox>
+
             </TabItem>
         </TabControl>
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Content ="滑动到底部" Click="ScrollDown_OnClick" Margin="10, 0 0 5"/>
-            <Button Content ="清空日志" Click="ClearLog_OnClick" Margin="10, 0 0 5"/>
-            <Button Content ="测试" Click="ClearLog_OnClick1"/>
-        </StackPanel>
-        <ui:SnackbarPresenter Name="SnackbarPresenter" />
+        <ui:SnackbarPresenter Grid.Row="1" Name="SnackbarPresenter" />
     </Grid>
 </Page>

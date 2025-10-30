@@ -221,7 +221,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         {
             item.cts.Cancel();
         }
-
         //初始化
         InitRun(item);
         item.Task = new Lazy<Task>(() => RunHttpCyc(item));

@@ -65,11 +65,11 @@ namespace Pkn_HostSystem.Service.LoadMes.Decorator
 
         public async Task<(bool succeed, string? value)> PackRequest(string httpName, CancellationTokenSource cts)
         {
-            var eachStation = TraceContext.GetParam("EachStation");
-            EachStation<Station1>? station1 = eachStation as EachStation<Station1>;
-            station1.Station.Main(cts);
+            // var eachStation = TraceContext.GetParam("EachStation");
+            // EachStation<Station1>? station1 = eachStation as EachStation<Station1>;
+            // station1.Station.Main(cts);
             (bool succeed, string? value) = await _loadMesService.PackRequest(httpName, cts);
-            station1.Station.Main(cts);
+            // station1.Station.Main(cts);
             return (succeed, value);
         }
 

@@ -200,13 +200,11 @@ public partial class LoadMesAddAndUpdateWindowsViewModel : ObservableRecipient
                 Log.WarningAndShowTask("触发消息不能未null", "用户添加或修改时,触发消息不能未null");
                 return false;
             }
-
             if (verifyObject.SuccessResponseMessage == null)
             {
                 Log.WarningAndShowTask("触发成功返回消息不能未null", "用户添加或修改时,触发成功返回消息不能未null");
                 return false;
             }
-
             if (verifyObject.FailResponseMessage ==null)
             {
                 Log.WarningAndShowTask("触发失败消息不能未null", "用户添加或修改时,触发失败返回消息不能未null");

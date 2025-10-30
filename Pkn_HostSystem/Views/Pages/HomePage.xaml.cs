@@ -4,6 +4,7 @@ using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using System.Windows;
@@ -297,10 +298,11 @@ namespace Pkn_HostSystem.Views.Pages
         private void SelectPppOrderButton(object sender, RoutedEventArgs e)
         {
             HomePageModel homePageModel = HomePageViewModel.HomePageModel;
-            StaticArrayRegister.WriteRegisterValue(50, homePageModel.RHight);
-            StaticArrayRegister.WriteRegisterValue(51, homePageModel.RLow);
-            StaticArrayRegister.WriteRegisterValue(52, homePageModel.VHight);
-            StaticArrayRegister.WriteRegisterValue(53, homePageModel.VLow);
+            VOCPojo vocPojo = homePageModel.VocPojo;
+
+            vocPojo.TestTime = vocPojo.SetValueTestTime;
+            vocPojo.TriggerMax = vocPojo.SetValueTriggerMax;
+
         }
 
         #endregion

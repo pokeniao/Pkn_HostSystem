@@ -19,6 +19,8 @@ namespace Pkn_HostSystem.Base
         /// </summary>
         public bool IsOpen => serialPort?.IsOpen ?? false;
 
+        
+
 
         private TaskCompletionSource<bool> _connectTcs = new TaskCompletionSource<bool>();
 
@@ -71,6 +73,8 @@ namespace Pkn_HostSystem.Base
         /// </summary>
         private StringBuilder lineBuffer = new();
 
+        private Task CycReadLineTask;
+
 
         #region 打开和关闭串口
 
@@ -122,11 +126,15 @@ namespace Pkn_HostSystem.Base
             return false;
         }
 
+
+
         /// <summary>
         /// 关闭串口通讯
         /// </summary>
         public void Close()
         {
+            CycReadLineTask = null;
+            OnMessageReceived = null;
             if (serialPort != null && serialPort.IsOpen)
             {
                 serialPort.Close();
@@ -136,6 +144,8 @@ namespace Pkn_HostSystem.Base
 
         public void Dispose()
         {
+            CycReadLineTask = null;
+            OnMessageReceived = null;
             serialPort.Close();
             serialPort.Dispose();
         }
@@ -243,6 +253,18 @@ namespace Pkn_HostSystem.Base
             {
                 return (false, $"{e}");
             }
+        }
+
+        public void ClearSerialChannel()
+        {
+            if (serialPort == null)
+            {
+                return;
+            }
+            // 清除旧数据
+            serialPort.DiscardInBuffer();
+            serialPort.DiscardOutBuffer();
+
         }
 
         /// <summary>

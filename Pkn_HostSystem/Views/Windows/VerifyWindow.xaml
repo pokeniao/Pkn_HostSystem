@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Pkn_HostSystem.Views.Windows"
         xmlns:page="clr-namespace:Pkn_HostSystem.Models.Page"
         mc:Ignorable="d"
-        Title="证书授权" Height="350" Width="600"
+        Title="" Height="350" Width="600"
         d:DataContext="{d:DesignInstance page:OnStartupModel}"
         WindowStartupLocation="CenterScreen"
         >
@@ -28,7 +28,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="证书" Margin="10 2"  />
+            <TextBlock Grid.Row="0" Text="填入在此" Margin="10 2"  />
             <TextBox Grid.Row="1" 
                      Text="{Binding License ,UpdateSourceTrigger=PropertyChanged}" 
                      TextWrapping="Wrap"
@@ -38,7 +38,7 @@
                      Style="{x:Null}"
                      />
         </Grid>
-        <Button Content="授权" Grid.Row="2" 
+        <Button Content="确认" Grid.Row="2" 
                 Click="ButtonBase_OnClick" 
                 HorizontalAlignment="Center"
                 Margin="0 10"
