@@ -26,8 +26,6 @@ namespace Pkn_HostSystem.Service.UserDefined
             double value2 = double.Parse(strings[1]);
             try
             {
-
-                
                 double RHight = double.Parse(StaticArrayRegister.ReadRegisterValue(50).ToString());
                 double RLow = double.Parse(StaticArrayRegister.ReadRegisterValue(51).ToString());
                 double VHight = double.Parse(StaticArrayRegister.ReadRegisterValue(52).ToString());

@@ -1235,6 +1235,7 @@ public class LoadMesService : ILoadMesService
                 switch (networkDetailedNetMethod)
                 {
                     case "ModbusTcp":
+                        //按高低位写入
                         ModbusBase modbusBase = netWork.ModbusBase;
                         List<ushort> list = new List<ushort>();
                         try

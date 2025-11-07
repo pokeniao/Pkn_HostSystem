@@ -11,10 +11,6 @@
         private static AsyncLocal<Dictionary<string , dynamic>> _param = new AsyncLocal<Dictionary<string, dynamic>>();
 
 
-        // static TraceContext()
-        // {
-        //     Param = new Dictionary<string, dynamic>();
-        // }
 
         public static Dictionary<string, dynamic>? Param
         {
@@ -54,15 +50,16 @@
         /// <param name="value"></param>
         public static void UpdateParam(string key , object value)
         {
-            bool tryGetValue = TraceContext.Param.TryGetValue(key, out _);
+
+            bool tryGetValue = Param.TryGetValue(key, out _);
 
             if (tryGetValue)
             {
-                TraceContext.Param[key] = value;
+                Param[key] = value;
             }
             else
             {
-                TraceContext.Param.TryAdd(key, value);
+                Param.TryAdd(key, value);
             }
         }
     }

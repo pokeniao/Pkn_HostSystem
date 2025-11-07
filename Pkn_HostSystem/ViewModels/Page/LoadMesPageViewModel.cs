@@ -141,14 +141,13 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
             Log.WarningAndShowTask("请停止后手动");
             return;
         }
-
-
-        //初始化
-        InitRun(item);
-
         //保存堆栈信息
         TraceContext.Name = item.Name;
         TraceContext.Param = new Dictionary<string, dynamic>();
+        //初始化
+        InitRun(item);
+
+
 
         //进行一次数据组装
         (bool succeed, string? message) = await ExecutionCondition(item);
