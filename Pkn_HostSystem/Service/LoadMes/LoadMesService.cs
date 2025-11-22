@@ -1105,7 +1105,7 @@ public class LoadMesService : ILoadMesService
                         case "读取(集合)":
                             message = _self.StaticMessage(message, itemKey,
                                 StaticArrayRegister.ReadRegisterValue(item.InteriorArrayIndex)
-                                    .ToString());
+                                   ?.ToString());
                             break;
                         case "读取(队列)":
                             bool tryPeek = StaticArrayRegister.QueueRegister[item.InteriorQueueIndex]
@@ -2054,17 +2054,17 @@ public class LoadMesService : ILoadMesService
                         ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.BigEndian);
                     return (true, string.Join(",", Array.ConvertAll(floatList1.ToArray(), p => $"{p}")));
                 case "32位浮点数;LittleEndian":
-                    List<float> floatList2 =
-                        ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.LittleEndian);
-                    return (true, string.Join(",", Array.ConvertAll(floatList2.ToArray(), p => $"{p}")));
-                case "32位浮点数;WordSwap":
                     List<float> floatList3 =
                         ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.WordSwap);
                     return (true, string.Join(",", Array.ConvertAll(floatList3.ToArray(), p => $"{p}")));
-                case "32位浮点数;ByteSwap":
+                case "32位浮点数;WordSwap":
                     List<float> floatList4 =
                         ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.ByteSwap);
                     return (true, string.Join(",", Array.ConvertAll(floatList4.ToArray(), p => $"{p}")));
+                case "32位浮点数;ByteSwap":
+                    List<float> floatList2 =
+                        ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.LittleEndian);
+                    return (true, string.Join(",", Array.ConvertAll(floatList2.ToArray(), p => $"{p}")));
                 case "ASCII字符串(低高位)":
                     var result_3 = new List<byte>();
                     foreach (var itemUshort in holdingRegisters03)

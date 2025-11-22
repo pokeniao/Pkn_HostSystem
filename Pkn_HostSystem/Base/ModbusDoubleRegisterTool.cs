@@ -57,7 +57,7 @@
                             bytes = new byte[] { bytes[2], bytes[3], bytes[0], bytes[1] };
                             break;
                         case ModbusEndian.ByteSwap:
-                            Array.Reverse(bytes);
+                            bytes = new byte[] { bytes[1], bytes[0], bytes[3], bytes[2] };
                             break;
                     }
                 }

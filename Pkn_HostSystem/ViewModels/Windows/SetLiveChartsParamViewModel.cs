@@ -187,6 +187,36 @@ namespace Pkn_HostSystem.ViewModels.Windows
             GlobalManager.DynDictionary.AddOrUpdate(loadMesDynContent);
             LiveChartsModel.RunStopTimeDynName = "停机运行时长";
         }
+
+
+
+        /// <summary>
+        /// OKNG配置
+        /// </summary>
+        [RelayCommand]
+        public void OkNgImportButton()
+        {
+            ObservableCollection<DynCondition> observableCollection = new();
+            observableCollection.Add(new DynCondition() { Name = "NG总数" });
+            observableCollection.Add(new DynCondition() { Name = "OK总数" });
+
+            LoadMesDynContent loadMesDynContent = new()
+            {
+                Name = "良品统计",
+                DynCondition = observableCollection,
+                Message = "{\r\n\"NG总数\":\"[NG总数]\",\r\n\"OK总数\":\"[OK总数]\"\r\n}\r\n"
+            };
+
+            if (GlobalManager.DynDictionary.Lookup("良品统计").HasValue)
+            {
+                Log.WarningAndShowTask($"添加动态通讯名称已存在: 良品统计");
+                return;
+            }
+
+
+            GlobalManager.DynDictionary.AddOrUpdate(loadMesDynContent);
+            LiveChartsModel.OkNgDynName = "良品统计";
+        }
         /// <summary>
         /// 运行按钮
         /// </summary>

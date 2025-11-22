@@ -40,6 +40,8 @@ public partial class HomePageViewModel : ObservableRecipient
 
     public HalconTool HalconTool { get; set; }
 
+
+    public UserLoginModel UserLoginModel { get; set; } = new UserLoginModel();
     public HomeSetConnectModel HomeSetConnectModel { get; set; } = new();
     public SnackbarService SnackbarService { get; set; } = new();
 

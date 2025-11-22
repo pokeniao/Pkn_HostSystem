@@ -40,7 +40,6 @@ namespace Pkn_HostSystem.Base
         #endregion
 
         #region 读取R线圈和写R线圈
-
         public async Task<(bool succeed, string? response)> ReadR(string address, CancellationTokenSource cts)
         {
             Log.Info($"[{TraceContext.Name}]--读取R线圈,地址:{address}");
@@ -56,7 +55,6 @@ namespace Pkn_HostSystem.Base
 
             return response.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase);
         }
-
         #endregion
 
 

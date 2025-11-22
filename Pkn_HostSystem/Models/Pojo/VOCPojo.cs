@@ -13,5 +13,18 @@ namespace Pkn_HostSystem.Models.Pojo
         [ObservableProperty] private double testTime =0;
         //触发阈值
         [ObservableProperty] private double triggerMax =0;
+
+        //设备编号
+        [ObservableProperty] private string machineId;
+
+        [ObservableProperty] private string setMachineId;
+
+        //工序
+        [ObservableProperty] private string groupCode;
+
+        [ObservableProperty] private string setGroupCode;
+
+        //上传mes启用
+        [ObservableProperty] private bool mesOn =false;
     }
 }

@@ -2,8 +2,6 @@
 {
     public interface IUserDefined
     {
-
-
         /// <summary>
         /// 执行主入口
         /// </summary>

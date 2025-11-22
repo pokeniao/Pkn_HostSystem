@@ -303,6 +303,8 @@ namespace Pkn_HostSystem.Views.Pages
             vocPojo.TestTime = vocPojo.SetValueTestTime;
             vocPojo.TriggerMax = vocPojo.SetValueTriggerMax;
 
+            vocPojo.MachineId = vocPojo.SetMachineId;
+            vocPojo.GroupCode = vocPojo.SetGroupCode;
         }
 
         #endregion

@@ -23,7 +23,7 @@ namespace Pkn_HostSystem.Static
         /// <param name="station"></param>
         /// <param name="message"></param>
         public static void StationLog(StationLogEnum logMethod, InfoAndErrorEnum logInfoAndErrorEnum, string station,
-            string message , bool baseNeed = true)
+            string? message , bool baseNeed = true)
         {
             if (station == null)
             {

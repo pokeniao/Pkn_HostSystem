@@ -3,7 +3,7 @@
 namespace Pkn_HostSystem.NodifyControl
 {
     /// <summary>
-    /// BindingProxy 继承自 Freezable。Freezable 有一个特性：它能在资源字典中持有 DataContext，并且可以被绑定。
+    /// BindingProxy 继承自 Freezable。Freezable 有一个特性：它能在资源字典中持有 DataContext，并且可以被绑定。相当于定义了一个全局变量的DataContext,方便在其他页面获取
     /// 
     /// </summary>
     public class BindingProxy : Freezable

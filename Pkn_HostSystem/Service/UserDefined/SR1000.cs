@@ -26,7 +26,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                 return (false, "工站信息获取失败");
             }
 
-            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "开始VOC测试", false);
+            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "开始扫码", false);
 
             //获取串口
             //获得网络,遍历获取对应的网络
@@ -56,6 +56,10 @@ namespace Pkn_HostSystem.Service.UserDefined
             string[] strings = response.Split(":");
             //获取第一段
             response = strings[0];
+
+            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"条码:{response}", false);
+
+
             //获取PLC的 ModbusBase
             ModbusBase PlcModbusTcp = netWork2.ModbusBase;
 

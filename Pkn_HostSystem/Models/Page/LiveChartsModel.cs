@@ -217,6 +217,9 @@ namespace Pkn_HostSystem.Models.Page
 
         [ObservableProperty] private string runStopTimeDynName;
 
+        [ObservableProperty] private string okNgDynName;
+
+
         /// <summary>
         /// 运行LiveCharts进行数据展示按钮
         /// </summary>
@@ -261,21 +264,25 @@ namespace Pkn_HostSystem.Models.Page
         [ObservableProperty] private string yOeeMethod = "数量坐标";
 
 
-
-        
-
         /// <summary>
         /// 产量统计启动
         /// </summary>
         [ObservableProperty] private bool dateTimeRun = false;
+
         /// <summary>
         /// oee启动
         /// </summary>
         [ObservableProperty] private bool oeeRun = false;
+
         /// <summary>
         /// 运行停机报警启动
         /// </summary>
         [ObservableProperty] private bool waitAlarmRun = false;
+
+        /// <summary>
+        /// OkNG的启动暂停
+        /// </summary>
+        [ObservableProperty] private bool okNgRun = false;
 
         #endregion
     }

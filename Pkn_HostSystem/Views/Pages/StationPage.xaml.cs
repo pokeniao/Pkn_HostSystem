@@ -1,12 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Models.Core.Interface;
-using Pkn_HostSystem.Models.Mapper;
-using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using System.Windows;
 using System.Windows.Controls;
-using Station1 = Pkn_HostSystem.Service.Stations.Station1;
 
 namespace Pkn_HostSystem.Views.Pages
 {
@@ -33,7 +29,7 @@ namespace Pkn_HostSystem.Views.Pages
 
             IEachStation selectedItem = LogTabControl.SelectedItem as IEachStation;
             if (selectedItem == null)
-            {return; }
+            { return; }
 
             selectedItem.UserLog.RichTextBox = rtb;
             rtb.Document = selectedItem.UserLog.FlowDocument;

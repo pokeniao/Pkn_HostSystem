@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:Pkn_HostSystem.Views.Pages"
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:s="clr-namespace:Pkn_HostSystem.Static"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance page:StationViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
@@ -34,17 +35,55 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-
-                        <DataGrid Name="LogDataGrid"  Grid.Row="0" ItemsSource="{Binding Items}" ColumnWidth="*" AutoGenerateColumns="True" CanUserAddRows ="False" MaxHeight="400" IsReadOnly="True"/>
-
+                        <DataGrid Name="LogDataGrid"  Grid.Row="0" ItemsSource="{Binding Items}" HorizontalScrollBarVisibility="Visible"  AutoGenerateColumns="True" CanUserAddRows ="False" MaxHeight="400" IsReadOnly="True"/>
                     </Grid>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
 
         <TabControl Grid.Row="1" MaxHeight="300" Name="TabControl2">
+            <TabItem Header="生产参数">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition  Width="*"/>
+                        <ColumnDefinition  Width="0.2*"/>
+                        <ColumnDefinition  Width="*"/>
+                        <ColumnDefinition  Width="Auto"/>
+                        <ColumnDefinition  Width="0.2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="良率" Margin="10" VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Source={x:Static s:StaticArrayRegister.ArrayRegister}, Path=[2], StringFormat={}{0}%}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="入料数量" Margin="10"/>
+                   <!-- <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding VocStations[0].EntryCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/> -->
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Source={x:Static s:StaticArrayRegister.ArrayRegister}, Path=[3], StringFormat={}{0}}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="良品数量" Margin="10"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Source={x:Static s:StaticArrayRegister.ArrayRegister}, Path=[4], StringFormat={}{0}}" VerticalAlignment="Center" />
+                    
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="不良品数量" Margin="10"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Source={x:Static s:StaticArrayRegister.ArrayRegister}, Path=[5], StringFormat={}{0}}" VerticalAlignment="Center" />
+
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="运行时间" Margin="10"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding Source={x:Static s:StaticArrayRegister.ArrayRegister}, Path=[6], StringFormat={}{0}h:}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="0" Grid.Column="4" Text="{Binding Source={x:Static s:StaticArrayRegister.ArrayRegister}, Path=[7], StringFormat={}{0}min}" VerticalAlignment="Center" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="停机时间" Margin="10"/>
+                    <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Source={x:Static s:StaticArrayRegister.ArrayRegister}, Path=[8], StringFormat={}{0}h:}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="1" Grid.Column="4" Text="{Binding Source={x:Static s:StaticArrayRegister.ArrayRegister}, Path=[9], StringFormat={}{0}min}" VerticalAlignment="Center" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="报警时间" Margin="10"/>
+                    <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Source={x:Static s:StaticArrayRegister.ArrayRegister}, Path=[10], StringFormat={}{0}h:}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="2" Grid.Column="4" Text="{Binding Source={x:Static s:StaticArrayRegister.ArrayRegister}, Path=[11], StringFormat={}{0}min}" VerticalAlignment="Center" />
+                </Grid>
+                
+            </TabItem>
             <TabItem Header="用户日志">
                 <RichTextBox
                     Name="UserRichTextBox"

@@ -275,8 +275,17 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         }
 
         Log.Info($"[{TraceContext.Name}]--组装完成,返回request  \r\n {request}");
-        //判断一下是否需要发送Http
 
+
+        //判断是否需要本地保存,
+        if (model.LocalSave)
+        {
+            //打包后本地保存
+            LocalSaveMethod(model, request);
+        }
+
+
+        //判断一下是否需要发送Http
         string? response = null;
         if (model.HttpNeed)
         {
@@ -288,18 +297,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                 Log.Error($"[{TraceContext.Name}]--Http请求发送,返回失败");
                 return (succeed2, response);
             }
-        }
-
-        //判断是否需要本地保存,
-        if (model.LocalSave)
-        {
-            //打包后本地保存
-            LocalSaveMethod(model, request);
-            //如果是Http请求就需要进行对结果保存
-            // if (model.HttpNeed)
-            // {
-            //     LocalSaveMethod(model, response, "-response");
-            // }
         }
 
         //判断一下是否需要转发
@@ -938,13 +935,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
 
     #region 本地保存当前发送Mes的记录
 
-    private static readonly string AppFolder =
-        Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Pkn_HostSystem" // 文件夹名
-        );
-
-
     /// <summary>
     /// 本地保存
     /// </summary>
@@ -1048,7 +1038,7 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         }
     }
 
-    private static readonly string SaveFile = Path.Combine(AppFolder, "保存表格CSV");
+
 
     public void LocalSave(LoadMesAddAndUpdateWindowModel model, string json)
     {
@@ -1056,21 +1046,21 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
         switch (model.LocalSaveDirectoryMethod)
         {
             case "默认":
-                saveDirectory = Path.Combine(SaveFile, $"{model.Name}");
+                saveDirectory = Path.Combine(GlobalManager.SaveFile, $"{model.Name}");
                 break;
             case "指定目录名":
                 if (model.LocalSaveDirectoryPath == null)
                 {
-                    saveDirectory = Path.Combine(SaveFile, $"{model.Name}");
+                    saveDirectory = Path.Combine(GlobalManager.SaveFile, $"{model.Name}");
                 }
                 else
                 {
-                    saveDirectory = Path.Combine(SaveFile, model.LocalSaveDirectoryPath);
+                    saveDirectory = Path.Combine(GlobalManager.SaveFile, model.LocalSaveDirectoryPath);
                 }
 
                 break;
             default:
-                saveDirectory = Path.Combine(SaveFile, $"{model.Name}");
+                saveDirectory = Path.Combine(GlobalManager.SaveFile, $"{model.Name}");
                 break;
         }
 

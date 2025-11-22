@@ -475,9 +475,47 @@ namespace Pkn_HostSystem.ViewModels.Page
                             }
                         }
 
-                        //良率饼图统计
-                        liveChartsTestViewModel.LiveChartsModel.Ok.Value = OksTotal;
-                        liveChartsTestViewModel.LiveChartsModel.Ng.Value = NgsTotal;
+
+                    }
+
+                    //良率饼图统计
+                    if (LiveChartsModel.OkNgRun)
+                    {
+                        string okNgDynName = LiveChartsModel.OkNgDynName;
+
+                        //执行当前动态嵌入内容
+                        (sueeced, result) = await loadMesService.DynMessage(okNgDynName, cts, true);
+
+                        if (!sueeced)
+                        {
+                            Log.Error($"[{TraceContext.Name}]--进行动态嵌入返回失败,等待5s后从试");
+                            await Task.Delay(5000, cts.Token);
+                            continue;
+                        }
+
+                        //解析JSON
+                        tryFormatJson = JsonTool<object>.TryFormatJson(result, out isJson);
+
+                        if (!isJson)
+                        {
+                            Log.Error($"[{TraceContext.Name}]--停机运行时长统计解析JSON失败,等待5s后从试");
+                            await Task.Delay(5000, cts.Token);
+                            continue;
+                        }
+                        JObject jObject2 = JObject.Parse(result);
+
+                        if (double.TryParse(jObject2.SelectToken("NG总数")?.ToString(), out double value))
+                        {
+                            liveChartsTestViewModel.LiveChartsModel.Ng.Value = value;
+                        }
+
+                        if (double.TryParse(jObject2.SelectToken("OK总数")?.ToString(), out double value2))
+                        {
+                          
+                            liveChartsTestViewModel.LiveChartsModel.Ok.Value = value2;
+                        }
+                      
+                        
                     }
 
                     //运行和停止时间统计
@@ -507,17 +545,17 @@ namespace Pkn_HostSystem.ViewModels.Page
 
                         JObject jObject2 = JObject.Parse(result);
 
-                        if (double.TryParse(jObject2.SelectToken("运行总时长").ToString(), out double value3))
+                        if (double.TryParse(jObject2.SelectToken("运行总时长")?.ToString(), out double value3))
                         {
                             liveChartsTestViewModel.LiveChartsModel.RunTime.Value = value3;
                         }
 
-                        if (double.TryParse(jObject2.SelectToken("报警总时长").ToString(), out double value4))
+                        if (double.TryParse(jObject2.SelectToken("报警总时长")?.ToString(), out double value4))
                         {
                             liveChartsTestViewModel.LiveChartsModel.ErrorTime.Value = value4;
                         }
 
-                        if (double.TryParse(jObject2.SelectToken("待机总时长").ToString(), out double value5))
+                        if (double.TryParse(jObject2.SelectToken("待机总时长")?.ToString(), out double value5))
                         {
                             liveChartsTestViewModel.LiveChartsModel.StopTime.Value = value5;
                         }
@@ -547,13 +585,13 @@ namespace Pkn_HostSystem.ViewModels.Page
 
                         jObject = JObject.Parse(result);
 
-                        bool b1 = double.TryParse(jObject.SelectToken("运行时间").ToString(), out double runTime);
-                        bool b2 = double.TryParse(jObject.SelectToken("报警时间").ToString(), out double alarmTime);
-                        bool b3 = double.TryParse(jObject.SelectToken("待机时间").ToString(), out double waitTime);
-                        bool b4 = double.TryParse(jObject.SelectToken("当日总产量").ToString(), out double totleProduction);
-                        bool b5 = double.TryParse(jObject.SelectToken("合格产量").ToString(), out double okProduction);
-                        bool b6 = double.TryParse(jObject.SelectToken("CT").ToString(), out double CT);
-                        bool b7 = double.TryParse(jObject.SelectToken("额定产量").ToString(), out double needProduction);
+                        bool b1 = double.TryParse(jObject.SelectToken("运行时间")?.ToString(), out double runTime);
+                        bool b2 = double.TryParse(jObject.SelectToken("报警时间")?.ToString(), out double alarmTime);
+                        bool b3 = double.TryParse(jObject.SelectToken("待机时间")?.ToString(), out double waitTime);
+                        bool b4 = double.TryParse(jObject.SelectToken("当日总产量")?.ToString(), out double totleProduction);
+                        bool b5 = double.TryParse(jObject.SelectToken("合格产量")?.ToString(), out double okProduction);
+                        bool b6 = double.TryParse(jObject.SelectToken("CT")?.ToString(), out double CT);
+                        bool b7 = double.TryParse(jObject.SelectToken("额定产量")?.ToString(), out double needProduction);
 
                         if (b1 && b2 && b3 && b4 && b5 && b6 && b7)
                         {

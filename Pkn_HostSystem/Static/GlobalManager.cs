@@ -55,6 +55,7 @@ public static class GlobalManager
             AssemblyName // 文件夹名
         );
 
+    public static readonly string SaveFile = Path.Combine(AppFolder, "保存表格CSV");
     /// <summary>
     /// 管理 连接的线程池
     /// </summary>

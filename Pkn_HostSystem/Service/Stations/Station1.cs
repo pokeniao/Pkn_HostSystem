@@ -80,6 +80,16 @@ namespace Pkn_HostSystem.Service.Stations
             }
         }
 
+        private string mes上传;
+        public string Mes上传
+        {
+            get => mes上传;
+            set
+            {
+                SetProperty(ref mes上传, value);
+            }
+        }
+
         private string voc_1s;
         public string Voc_1s
         {
@@ -139,7 +149,6 @@ namespace Pkn_HostSystem.Service.Stations
                 SetProperty(ref voc_6s, value);
             }
         }
-
         private string voc_7s;
         public string Voc_7s
         {
@@ -147,6 +156,124 @@ namespace Pkn_HostSystem.Service.Stations
             set
             {
                 SetProperty(ref voc_7s, value);
+            }
+        }
+        private string voc_8s;
+        public string Voc_8s
+        {
+            get => voc_8s;
+            set
+            {
+                SetProperty(ref voc_8s, value);
+            }
+        }
+
+        private string voc_9s;
+        public string Voc_9s
+        {
+            get => voc_9s;
+            set
+            {
+                SetProperty(ref voc_9s, value);
+            }
+        }
+        private string voc_10s;
+        public string Voc_10s
+        {
+            get => voc_10s;
+            set
+            {
+                SetProperty(ref voc_10s, value);
+            }
+        }
+        private string voc_11s;
+        public string Voc_11s
+        {
+            get => voc_11s;
+            set
+            {
+                SetProperty(ref voc_11s, value);
+            }
+        }
+        private string voc_12s;
+        public string Voc_12s
+        {
+            get => voc_12s;
+            set
+            {
+                SetProperty(ref voc_12s, value);
+            }
+        }
+        private string voc_13s;
+        public string Voc_13s
+        {
+            get => voc_13s;
+            set
+            {
+                SetProperty(ref voc_13s, value);
+            }
+        }
+        private string voc_14s;
+        public string Voc_14s
+        {
+            get => voc_14s;
+            set
+            {
+                SetProperty(ref voc_14s, value);
+            }
+        }
+        private string voc_15s;
+        public string Voc_15s
+        {
+            get => voc_15s;
+            set
+            {
+                SetProperty(ref voc_15s, value);
+            }
+        }
+        private string voc_16s;
+        public string Voc_16s
+        {
+            get => voc_16s;
+            set
+            {
+                SetProperty(ref voc_16s, value);
+            }
+        }
+        private string voc_17s;
+        public string Voc_17s
+        {
+            get => voc_17s;
+            set
+            {
+                SetProperty(ref voc_17s, value);
+            }
+        }
+        private string voc_18s;
+        public string Voc_18s
+        {
+            get => voc_18s;
+            set
+            {
+                SetProperty(ref voc_18s, value);
+            }
+        }
+        private string voc_19s;
+        public string Voc_19s
+        {
+            get => voc_19s;
+            set
+            {
+                SetProperty(ref voc_19s, value);
+            }
+        }
+        private string voc_20s;
+        public string Voc_20s
+        {
+            get => voc_20s;
+            set
+            {
+                SetProperty(ref voc_20s, value);
             }
         }
 

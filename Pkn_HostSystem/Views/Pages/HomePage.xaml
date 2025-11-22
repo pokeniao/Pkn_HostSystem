@@ -617,7 +617,7 @@
                         <TextBlock
                             Margin="12,6,0,0"
                             FontWeight="Bold"
-                            Text="管理员" />
+                            Text="{Binding UserLoginModel.Emp}" />
                         <ui:Button Margin="3" Opacity="0.5 "
                                    ToolTipService.ToolTip="切换登入"
                                    Command="{Binding LoginCommand}">
@@ -629,7 +629,7 @@
                         Grid.Column="1"
                         Margin="12,0,0,6"
                         Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                        Text="pokeniao" />
+                        Text="{Binding UserLoginModel.Name}" />
                 </Grid>
             </Grid>
         </Grid>
@@ -1056,6 +1056,9 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -1067,8 +1070,10 @@
                                     <TextBlock Grid.Row="0" Grid.Column="2"  Text="当前值" HorizontalAlignment="Center" Margin="10" />
                                     <TextBlock Grid.Row="1" Grid.Column="0" Text="测试时间" Margin="10" />
                                     <ui:NumberBox Grid.Row="1" Grid.Column="1"
-                                        SmallChange="0.001"
+                                        SmallChange="1"
                                         Width="140"
+                                        Maximum="20"
+                                        Minimum="0"
                                         Value="{Binding HomePageModel.VocPojo.SetValueTestTime , UpdateSourceTrigger= PropertyChanged}" />
                                     <TextBlock Grid.Row="1" Grid.Column="2" 
                                                HorizontalAlignment="Center"
@@ -1082,6 +1087,24 @@
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                Text="{Binding HomePageModel.VocPojo.TriggerMax}"/>
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="设备编号" Margin="10" />
+                                    <ui:TextBox Grid.Row="3" Grid.Column="1" Width="140"
+                                                  Text="{Binding HomePageModel.VocPojo.SetMachineId ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="3" Grid.Column="2" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding HomePageModel.VocPojo.MachineId}"/>
+
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="工序" Margin="10" />
+                                    <ui:TextBox Grid.Row="4" Grid.Column="1" Width="140"
+                                                Text="{Binding HomePageModel.VocPojo.SetGroupCode ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="4" Grid.Column="2" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding HomePageModel.VocPojo.GroupCode}"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="启用上传mes" Margin="10" />
+                                    <ui:ToggleSwitch Grid.Row="5" Grid.Column="1" IsChecked="{Binding HomePageModel.VocPojo.MesOn}"/>
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
