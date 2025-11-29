@@ -127,6 +127,8 @@ namespace Pkn_HostSystem.Views.Pages
         }
 
 
+
+
         /// <summary>
         /// 收起数据库卡片
         /// </summary>
@@ -135,6 +137,26 @@ namespace Pkn_HostSystem.Views.Pages
         private void Register_Close_OnClick(object sender, RoutedEventArgs e)
         {
             showCloseCard(Register_Border, "Register_Close");
+        }
+
+        /// <summary>
+        /// 展开plc报警
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlcAlarm_OnClick(object sender, RoutedEventArgs e)
+        {
+            showOpenCard(PlcAlarmBorder, "PLcAlarm_Open");
+        }
+
+        /// <summary>
+        /// 收起数据库卡片
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlcAlarm_Close_OnClick(object sender, RoutedEventArgs e)
+        {
+            showCloseCard(PlcAlarmBorder, "PLcAlarm_Close");
         }
 
         #endregion
@@ -153,12 +175,14 @@ namespace Pkn_HostSystem.Views.Pages
             CA_CameraSelect.Visibility = Visibility.Hidden;
             JDBC_CardAction.Visibility = Visibility.Hidden;
             Register_CardAction.Visibility = Visibility.Hidden;
+            PlcAlarmCardAction.Visibility = Visibility.Hidden;
             //二. 所有border消失,重新选择
             ConnectPLCBorder.Visibility = Visibility.Collapsed;
             OrderBorder.Visibility = Visibility.Collapsed;
             CameraBorder.Visibility = Visibility.Collapsed;
             JDBC_Border.Visibility = Visibility.Collapsed;
             Register_Border.Visibility = Visibility.Collapsed;
+            PlcAlarmBorder.Visibility = Visibility.Collapsed;
             //三. 展示当前点击的
             border.Visibility = Visibility.Visible;
             Storyboard? storyboard = FindResource(storyboardName) as Storyboard;
@@ -186,6 +210,7 @@ namespace Pkn_HostSystem.Views.Pages
                         CA_CameraSelect.Visibility = Visibility.Visible;
                         JDBC_CardAction.Visibility = Visibility.Visible;
                         Register_CardAction.Visibility = Visibility.Visible;
+                        PlcAlarmCardAction.Visibility = Visibility.Visible;
                     });
                 }
             );
@@ -305,6 +330,8 @@ namespace Pkn_HostSystem.Views.Pages
 
             vocPojo.MachineId = vocPojo.SetMachineId;
             vocPojo.GroupCode = vocPojo.SetGroupCode;
+
+            vocPojo.MesHttp = vocPojo.SetMesHttp;
         }
 
         #endregion

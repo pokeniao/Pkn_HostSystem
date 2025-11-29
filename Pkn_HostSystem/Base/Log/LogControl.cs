@@ -210,13 +210,19 @@ namespace Pkn_HostSystem.Base.Log
         public void InfoToRichTextBox(string message, bool baseNeed = true)
         {
             LogRichTextBoxAdd("Info", message);
-
+            if (baseNeed)
+            {
+                Info(message);
+            }
         }
 
         public void ErrorToRichTextBox(string message, bool baseNeed = true)
         {
             LogRichTextBoxAdd("Error", message);
-         
+            if (baseNeed)
+            {
+                Error(message);
+            }
         }
 
 

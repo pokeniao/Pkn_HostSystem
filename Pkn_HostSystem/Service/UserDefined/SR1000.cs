@@ -1,14 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using log4net;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Service.Stations;
+using Pkn_HostSystem.Service.Stations.Interface;
 using Pkn_HostSystem.Service.UserDefined.Interface;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
+using RestSharp;
 using System.Net.Sockets;
 
 namespace Pkn_HostSystem.Service.UserDefined
@@ -25,7 +30,9 @@ namespace Pkn_HostSystem.Service.UserDefined
             {
                 return (false, "工站信息获取失败");
             }
-
+            HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
+            //获取参数
+            VOCPojo vocPojo = homePageViewModel.HomePageModel.VocPojo;
             StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "开始扫码", false);
 
             //获取串口
@@ -84,6 +91,55 @@ namespace Pkn_HostSystem.Service.UserDefined
                 StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, $"扫码结果写入PLC失败{e}", false);
                 return (false, null);
             }
+
+            //
+            if (vocPojo.MesOn)
+            {
+                try
+                {
+                    //上传Mes
+                    RestClient restClient = new RestClient(vocPojo.MesHttp);
+                    RestRequest restRequest = new RestRequest("/GroupCheck", Method.Post);
+                    UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
+                    var data = new
+                    {
+                        GroupCode = $"{vocPojo.GroupCode}",
+                        MachineId = $"{vocPojo.MachineId}",
+                        OperatorId = $"{userLoginModel.Id}",
+                        TimeStamp = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+                        ProductSn = $"{response}",
+                        SnType = "cell"
+                    };
+                    string json = JsonConvert.SerializeObject(data);
+                    restRequest.AddParameter("jsonData", json);
+                    RestResponse httpResponse = await restClient.ExecuteAsync(restRequest);
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"上传Json:{json}", true);
+                    if (httpResponse.IsSuccessStatusCode)
+                    {
+                        JObject jObject = JObject.Parse(httpResponse.Content);
+
+
+                        if (jObject["status"]?.ToString() == "true")
+                        {
+                            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "mes进站成功", true);
+                        }
+                        else
+                        {
+                            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, $"mes进站失败,{jObject["result"]?.ToString()}", true);
+                        }
+                    }
+                    else
+                    {
+                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, httpResponse.ErrorMessage == null ? httpResponse.Content : httpResponse.ErrorMessage, true);
+                    }
+                }
+                catch (Exception e)
+                {
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, e.Message, true);
+                }
+
+            }
+
 
             // 检测时长
             return (true, default);

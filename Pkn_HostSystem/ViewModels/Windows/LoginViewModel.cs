@@ -9,6 +9,7 @@ using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages.LoginWindowPage;
 using RestSharp;
+using System.Reactive;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -32,58 +33,115 @@ namespace Pkn_HostSystem.ViewModels.Windows
         public async void LoginButton(LoginWindowPage1 page)
         {
             //获取到当前密码
-            LoginModel.PassWord = page.PasswordBox.Password;
-            //执行HTTP请求
-
-            RestClient restClient = new RestClient("http://10.169.253.53:9005/lx-test-mesapi");
-            RestRequest restRequest = new RestRequest("/LoginCheck", Method.Post);
-
-            // 设置 Content-Type
-            //restRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-
-            var data = new
+            try
             {
-                MachineId = LoginModel.MachineId,
-                Mi = LoginModel.Mi,
-                UserNumber = LoginModel.UserNumber,
-                PassWord = LoginModel.PassWord,
-                Formula=""
-            };
-            string json = JsonConvert.SerializeObject(data);
-            restRequest.AddParameter("jsonData",json);
-            RestResponse response = await restClient.ExecuteAsync(restRequest);
-
-            if (response.IsSuccessStatusCode)
-            {
-                JObject jObject = JObject.Parse(response.Content);
-
+                LoginModel.PassWord = page.PasswordBox.Password;
                 var homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
-
                 UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
-                if (jObject["status"]?.ToString() == "true")
+                HomePageModel homePageModel = homePageViewModel.HomePageModel;
+                //执行HTTP请求
+
+                RestClient restClient = new RestClient(homePageModel.VocPojo.MesHttp);
+                RestRequest restRequest = new RestRequest("/LoginCheck", Method.Post);
+
+                // 设置 Content-Type
+                //restRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                var data = new
                 {
-                    //登入账号result储存
-                    string result = jObject["result"]?.ToString();
-                    userLoginModel.Id = result;
+                    MachineId = LoginModel.MachineId,
+                    Mi = LoginModel.Mi,
+                    UserNumber = LoginModel.UserNumber,
+                    PassWord = LoginModel.PassWord,
+                    Formula=""
+                };
+                string json = JsonConvert.SerializeObject(data);
+                restRequest.AddParameter("jsonData",json);
+                RestResponse response = await restClient.ExecuteAsync(restRequest);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    JObject jObject = JObject.Parse(response.Content);
+
+
+                    if (jObject["status"]?.ToString() == "true")
+                    {
+                        //登入账号result储存
+                        string result = jObject["result"]?.ToString();
+                        userLoginModel.Id = result;
                
-                    //姓名
-                    string name = jObject.SelectToken("testResultDetails[0].EmpName")?.ToString();
-                    userLoginModel.Name = name;
-                    //职位
-                    string emp = jObject.SelectToken("testResultDetails[0].TcdpCode")?.ToString();
-                    userLoginModel.Emp = emp;
-                    Log.SuccessAndShowTask("登录成功");
+                        //姓名
+                        string name = jObject.SelectToken("testResultDetails[0].EmpName")?.ToString();
+                        userLoginModel.Name = name;
+                        //职位
+                        string emp = jObject.SelectToken("testResultDetails[0].TcdpCode")?.ToString();
+                        userLoginModel.Emp = emp;
+                        Log.SuccessAndShowTask("登录成功");
+                        //获取参数下发
+                        restClient = new RestClient(homePageModel.VocPojo.MesHttp);
+                        restRequest = new RestRequest("/GetSpecifications", Method.Post);
+                        var data2 = new
+                        {
+                            MachineId = LoginModel.MachineId,
+                            TimeStamp = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+                            OperatorId = result,
+                            Sn = LoginModel.Mi,
+                            Type = "MI",
+                            GroupCode = homePageModel.VocPojo.GroupCode,
+                        };
+                        json = JsonConvert.SerializeObject(data2);
+                        restRequest.AddParameter("jsonData", json);
+                        response = await restClient.ExecuteAsync(restRequest);
+                        jObject = JObject.Parse(response.Content);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            Log.Info($"参数下发{response.Content}");
+                            if (jObject["status"]?.ToString() == "true")
+                            {
+                                JArray? jArray = jObject["testResultDetails"] as JArray;
+                                if (jArray != null)
+                                {
+                                    foreach (var item in jArray)
+                                    {
+                                        switch (item["ItemCode"]?.ToString())
+                                        {
+                                            case "TEST_TIME":
+                                                if (double.TryParse(item["LowerLimit"]?.ToString(), out double ttResult))
+                                                {
+                                                    homePageModel.VocPojo.TestTime = ttResult;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Log.Error($"参数下发获取失败,{jObject["result"]?.ToString()}");
+                            }
+                        }
+                        else
+                        {
+                            Log.Error(response.ErrorMessage == null
+                                ? $"参数下发获取失败:\r\n{response.Content}"
+                                : $"参数下发获取失败:\r\n{response.ErrorMessage}");
+                        }
+                    }
+                    else
+                    {
+                        Log.ErrorAndShowTask($"登录失败,{jObject["result"]?.ToString()}");
+                    }
                 }
                 else
                 {
-                    Log.ErrorAndShowTask($"登录失败,{jObject["result"]?.ToString()}");
+                    Log.ErrorAndShowTask(response.ErrorMessage == null
+                        ? $"登入失败:\r\n{response.Content}"
+                        : $"登入失败:\r\n{response.ErrorMessage}");
                 }
             }
-            else
+            catch (Exception e)
             {
-                 Log.Error(response.ErrorMessage == null
-                     ? $"登入失败:\r\n{response.Content}"
-                     : $"登入失败:\r\n{response.ErrorMessage}");
+                Log.ErrorAndShowTask(e.Message);
             }
         }
 

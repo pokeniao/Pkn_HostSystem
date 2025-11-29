@@ -94,6 +94,18 @@ public partial class HomePageModel : ObservableObject
     //     Index = s.ToString()
     // }));
 
+
+   [ObservableProperty] private ObservableCollection<PlcAlarmItem> plcAlarmItems;
+
+   [ObservableProperty] private string plcAlarmRunButton = "启用";
+
+
+   //起始地址
+   [ObservableProperty] private ushort plcAlarmStartAddress = 1;
+   //站地址
+   [ObservableProperty] private byte plcAlarmSlaveAddress = 1;
+   //连接名
+   [ObservableProperty] private string plcAlarmConnectName;
     #endregion
 
 

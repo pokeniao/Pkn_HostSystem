@@ -26,5 +26,10 @@ namespace Pkn_HostSystem.Models.Pojo
 
         //上传mes启用
         [ObservableProperty] private bool mesOn =false;
+
+        //上传mes地址
+        [ObservableProperty] private string mesHttp;
+
+        [ObservableProperty] private string setMesHttp;
     }
 }

@@ -87,6 +87,12 @@ namespace Pkn_HostSystem
                     TraceContext.Name = null;
                 }
             }
+            //开启plc报警
+            if (homePageViewModel.HomePageModel.PlcAlarmRunButton == "停止")
+            {
+             homePageViewModel.PlcAlarmRun();   
+            }
+
 
             //判断 Http请求是否开启的,自动进行连接
             LoadMesPageViewModel loadMesPageViewModel = Ioc.Default.GetRequiredService<LoadMesPageViewModel>();
@@ -104,24 +110,28 @@ namespace Pkn_HostSystem
                 }
             }
 
-            //判断消费者和生产者模式是否开启,自动连接
-            ProductiveViewModel productiveViewModel = Ioc.Default.GetRequiredService<ProductiveViewModel>();
-            ObservableCollection<Productive> productiveModelProductives =
-                productiveViewModel.ProductiveModel.Productives;
+            // //判断消费者和生产者模式是否开启,自动连接
+            // ProductiveViewModel productiveViewModel = Ioc.Default.GetRequiredService<ProductiveViewModel>();
+            // ObservableCollection<Productive> productiveModelProductives =
+            //     productiveViewModel.ProductiveModel.Productives;
+            //
+            // foreach (var productive in productiveModelProductives)
+            // {
+            //     if (productive.Run)
+            //     {
+            //         TraceContext.Name = productive.Name;
+            //         productiveViewModel.TriggerCyc(productive);
+            //         TraceContext.Name = null;
+            //     }
+            // }
 
-            foreach (var productive in productiveModelProductives)
-            {
-                if (productive.Run)
-                {
-                    TraceContext.Name = productive.Name;
-                    productiveViewModel.TriggerCyc(productive);
-                    TraceContext.Name = null;
-                }
-            }
+
 
             //运行统计
             LiveChartsTestViewModel liveChartsTestViewModel = Ioc.Default.GetRequiredService<LiveChartsTestViewModel>();
             liveChartsTestViewModel.ReStart();
+
+
         }
 
         #region 自动伸缩的Navigation

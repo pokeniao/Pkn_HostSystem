@@ -314,7 +314,9 @@ namespace Pkn_HostSystem.Base
             await _semaphore.WaitAsync();
             try
             {
-                return await modbusMaster.ReadCoilsAsync(slaveAddress, startAddress, ReadCount);
+                //2025-11-28 .将modbusMaster.ReadHoldingRegistersAsync 异步写法改成同步,因为NModbus的异步并不能保证读写一致,会出现事务问题System.0.l0Exception:Response was not of expected transaction iD, Expected 3597, received 3594
+                return await Task.Run(() => modbusMaster.ReadCoils(slaveAddress, startAddress, ReadCount));
+                // await modbusMaster.ReadCoilsAsync(slaveAddress, startAddress, ReadCount);
             }
             catch (Exception e)
             {
@@ -349,7 +351,9 @@ namespace Pkn_HostSystem.Base
             await _semaphore.WaitAsync();
             try
             {
-                return await modbusMaster.ReadInputsAsync(slaveAddress, startAddress, ReadCount);
+                //2025-11-28 .将modbusMaster.ReadHoldingRegistersAsync 异步写法改成同步,因为NModbus的异步并不能保证读写一致,会出现事务问题System.0.l0Exception:Response was not of expected transaction iD, Expected 3597, received 3594
+                return await Task.Run(() => modbusMaster.ReadInputs(slaveAddress, startAddress, ReadCount));
+                //await modbusMaster.ReadInputsAsync(slaveAddress, startAddress, ReadCount);
             }
             catch (Exception e)
             {
@@ -385,7 +389,8 @@ namespace Pkn_HostSystem.Base
             await _semaphore.WaitAsync();
             try
             {
-                return await modbusMaster.ReadHoldingRegistersAsync(slaveAddress, startAddress, ReadCount);
+                //2025-11-28 .将modbusMaster.ReadHoldingRegistersAsync 异步写法改成同步,因为NModbus的异步并不能保证读写一致,会出现事务问题System.0.l0Exception:Response was not of expected transaction iD, Expected 3597, received 3594
+                return await Task.Run( () => modbusMaster.ReadHoldingRegisters(slaveAddress, startAddress, ReadCount));
             }
             catch (Exception e)
             {
@@ -420,7 +425,9 @@ namespace Pkn_HostSystem.Base
             await _semaphore.WaitAsync();
             try
             {
-                return await modbusMaster.ReadInputRegistersAsync(slaveAddress, startAddress, ReadCount);
+                //2025-11-28 .将modbusMaster.ReadHoldingRegistersAsync 异步写法改成同步,因为NModbus的异步并不能保证读写一致,会出现事务问题System.0.l0Exception:Response was not of expected transaction iD, Expected 3597, received 3594
+                return await Task.Run(() => modbusMaster.ReadInputRegisters(slaveAddress, startAddress, ReadCount));
+                // await modbusMaster.ReadInputRegistersAsync(slaveAddress, startAddress, ReadCount);
             }
             catch (Exception e)
             {
@@ -578,5 +585,19 @@ namespace Pkn_HostSystem.Base
         }
 
         #endregion
+
+
+        private void ClearTcpBuffer()
+        {
+            if (tcpClient == null || !tcpClient.Connected) return;
+
+            var stream = tcpClient.GetStream();
+            while (tcpClient.Available > 0)
+            {
+                byte[] discard = new byte[tcpClient.Available];
+                stream.Read(discard, 0, discard.Length);
+            }
+        }
+
     }
 }

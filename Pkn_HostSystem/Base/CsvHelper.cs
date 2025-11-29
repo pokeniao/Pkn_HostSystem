@@ -118,6 +118,7 @@ public class CsvHelper
             string tempFile = _filePath + ".tmp";
             // 先写到临时文件
             using (var fs = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
+                //创建临时文件写入流
             using (var writer = new StreamWriter(fs, _encoding))
             {
                 foreach (var row in _rows)

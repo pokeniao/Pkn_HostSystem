@@ -31,12 +31,12 @@
                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid2"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ConnectPlcGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.4347826" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid2"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ConnectPlcGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.18181818" />
@@ -77,11 +77,11 @@
                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid2"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ConnectPlcGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid2"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ConnectPlcGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
@@ -111,7 +111,7 @@
                     </DiscreteObjectKeyFrame.Value>
                 </DiscreteObjectKeyFrame>
             </ObjectAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="grid2"
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ConnectPlcGrid"
                                            Storyboard.TargetProperty="(UIElement.Visibility)">
                 <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000" Value="{x:Static Visibility.Visible}" />
             </ObjectAnimationUsingKeyFrames>
@@ -120,11 +120,11 @@
         <!-- 展开动画 -->
         <!-- 收缩动画 -->
         <Storyboard x:Key="OpenPppOrder">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.434782" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
             </DoubleAnimationUsingKeyFrames>
@@ -180,11 +180,11 @@
             </Int32AnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="ClosePppOrder">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OrderGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
             </DoubleAnimationUsingKeyFrames>
@@ -264,11 +264,11 @@
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3" />
             </DoubleAnimationUsingKeyFrames>
 
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.434782" />
             </DoubleAnimationUsingKeyFrames>
@@ -353,11 +353,11 @@
                     </DiscreteObjectKeyFrame.Value>
                 </DiscreteObjectKeyFrame>
             </ObjectAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.462748" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid1"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CameraGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.17143836" />
             </DoubleAnimationUsingKeyFrames>
@@ -381,11 +381,11 @@
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.833" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid3"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JdbcGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.4347826" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid3"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JdbcGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
             </DoubleAnimationUsingKeyFrames>
@@ -441,11 +441,11 @@
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1.833" />
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid3"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JdbcGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid3"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="JdbcGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
             </DoubleAnimationUsingKeyFrames>
@@ -501,11 +501,11 @@
                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid6"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RegisterGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.434782" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid6"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RegisterGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
             </DoubleAnimationUsingKeyFrames>
@@ -549,11 +549,11 @@
                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid6"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RegisterGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="grid6"
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RegisterGrid"
                                            Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
             </DoubleAnimationUsingKeyFrames>
@@ -562,6 +562,98 @@
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Register_Border"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>5</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>7</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
+
+
+        <!-- 展开动画 -->
+        <!-- 收缩动画 -->
+        <Storyboard x:Key="PLcAlarm_Open">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="2.3" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="5.5" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmGrid"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.434782" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmGrid"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.18181818" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmBorder"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmBorder"
+                                           Storyboard.TargetProperty="(Border.CornerRadius)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>5,5,5,5</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>3,3,3,3</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.3000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <CornerRadius>2,2,2,2</CornerRadius>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="PLcAlarm_Close">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmBorder"
+                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmGrid"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmGrid"
+                                           Storyboard.TargetProperty="(FrameworkElement.LayoutTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmBorder"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlcAlarmBorder"
                                            Storyboard.TargetProperty="(Border.CornerRadius)">
                 <DiscreteObjectKeyFrame KeyTime="00:00:00.1000000">
                     <DiscreteObjectKeyFrame.Value>
@@ -645,11 +737,11 @@
                 </Grid.RowDefinitions>
                 <UniformGrid Margin="20,0"
                              Columns="2">
+                    <!-- 添加通讯 -->
                     <Grid Margin="20,0,20,10">
                         <ui:CardAction
                             Name="CA_ConnectPLC"
                             IsChevronVisible="False"
-
                             VerticalAlignment="Stretch" Click="CA_ConnectPLC_Click">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -678,7 +770,7 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </Border.RenderTransform>
-                            <Grid x:Name="grid2">
+                            <Grid x:Name="ConnectPlcGrid">
                                 <Grid.LayoutTransform>
                                     <TransformGroup>
                                         <ScaleTransform />
@@ -1003,6 +1095,7 @@
                             </Grid>
                         </Border>
                     </Grid>
+                    <!-- 电测参数 -->
                     <Grid Margin="20,0,20,10">
                         <ui:CardAction
                             Name="CA_pppOrderSelect"
@@ -1036,7 +1129,7 @@
                                 </TransformGroup>
                             </Border.RenderTransform>
 
-                            <Grid x:Name="grid"
+                            <Grid x:Name="OrderGrid"
                                   RenderTransformOrigin="0.5,0.5">
                                 <Grid.LayoutTransform>
                                     <TransformGroup>
@@ -1059,6 +1152,7 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -1068,43 +1162,66 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="设置值" HorizontalAlignment="Center" Margin="10" />
                                     <TextBlock Grid.Row="0" Grid.Column="2"  Text="当前值" HorizontalAlignment="Center" Margin="10" />
+
+                                    <!-- 测试时间 -->
                                     <TextBlock Grid.Row="1" Grid.Column="0" Text="测试时间" Margin="10" />
                                     <ui:NumberBox Grid.Row="1" Grid.Column="1"
                                         SmallChange="1"
                                         Width="140"
                                         Maximum="20"
                                         Minimum="0"
+                                        Margin="0  0 0 5"
                                         Value="{Binding HomePageModel.VocPojo.SetValueTestTime , UpdateSourceTrigger= PropertyChanged}" />
                                     <TextBlock Grid.Row="1" Grid.Column="2" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                Text="{Binding HomePageModel.VocPojo.TestTime}"/>
+
+                                    <!-- 触发阈值 -->
                                     <TextBlock Grid.Row="2" Grid.Column="0" Text="VOC NG触发阈值" Margin="10" />
                                     <ui:NumberBox Grid.Row="2" Grid.Column="1" Width="140"
                                                   SmallChange="0.001"
+                                                  Margin="0  0 0 5"
                                                   Value="{Binding HomePageModel.VocPojo.SetValueTriggerMax ,UpdateSourceTrigger=PropertyChanged }" />
                                     <TextBlock Grid.Row="2" Grid.Column="2" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                Text="{Binding HomePageModel.VocPojo.TriggerMax}"/>
 
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="设备编号" Margin="10" />
+                                    <!-- 上传地址 -->
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="上传地址" Margin="10" />
                                     <ui:TextBox Grid.Row="3" Grid.Column="1" Width="140"
-                                                  Text="{Binding HomePageModel.VocPojo.SetMachineId ,UpdateSourceTrigger=PropertyChanged }" />
+                                                Margin="0  0 0 5"
+                                                Text="{Binding HomePageModel.VocPojo.SetMesHttp ,UpdateSourceTrigger=PropertyChanged }" />
                                     <TextBlock Grid.Row="3" Grid.Column="2" 
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding HomePageModel.VocPojo.MesHttp}"/>
+
+
+                                    <!-- 设备编号 -->
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="设备编号" Margin="10" />
+                                    <ui:TextBox Grid.Row="4" Grid.Column="1" Width="140"
+                                                Margin="0  0 0 5"
+                                                Text="{Binding HomePageModel.VocPojo.SetMachineId ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="4" Grid.Column="2" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                Text="{Binding HomePageModel.VocPojo.MachineId}"/>
 
-                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="工序" Margin="10" />
-                                    <ui:TextBox Grid.Row="4" Grid.Column="1" Width="140"
+                                    <!-- 工序 -->
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="工序" Margin="10" />
+                                    <ui:TextBox Grid.Row="5" Grid.Column="1" Width="140"
+                                                Margin="0  0 0 5"
                                                 Text="{Binding HomePageModel.VocPojo.SetGroupCode ,UpdateSourceTrigger=PropertyChanged }" />
-                                    <TextBlock Grid.Row="4" Grid.Column="2" 
+                                    <TextBlock Grid.Row="5" Grid.Column="2" 
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                Text="{Binding HomePageModel.VocPojo.GroupCode}"/>
-                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="启用上传mes" Margin="10" />
-                                    <ui:ToggleSwitch Grid.Row="5" Grid.Column="1" IsChecked="{Binding HomePageModel.VocPojo.MesOn}"/>
+
+                                    <!-- 上传mes -->
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="启用上传mes" Margin="10" />
+                                    <ui:ToggleSwitch Grid.Row="6" Grid.Column="1" IsChecked="{Binding HomePageModel.VocPojo.MesOn}"/>
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
@@ -1115,6 +1232,7 @@
                             </Grid>
                         </Border>
                     </Grid>
+                    <!-- 相机添加 -->
                     <Grid Margin="20,5,20,10">
                         <ui:CardAction
                             Name="CA_CameraSelect"
@@ -1144,7 +1262,7 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </Border.RenderTransform>
-                            <Grid x:Name="grid1">
+                            <Grid x:Name="CameraGrid">
                                 <Grid.LayoutTransform>
                                     <TransformGroup>
                                         <ScaleTransform />
@@ -1245,7 +1363,8 @@
                             </Grid>
                         </Border>
                     </Grid>
-                    <Grid x:Name="grid4" Margin="20,5,20,10">
+                    <!-- 数据库 -->
+                    <Grid  Margin="20,5,20,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0*" />
                             <ColumnDefinition />
@@ -1299,7 +1418,7 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </Border.RenderTransform>
-                            <Grid x:Name="grid3" RenderTransformOrigin="0.5,0.5">
+                            <Grid x:Name="JdbcGrid" RenderTransformOrigin="0.5,0.5">
                                 <Grid.LayoutTransform>
                                     <TransformGroup>
                                         <ScaleTransform />
@@ -1398,8 +1517,8 @@
                     <!--动画参数 Border RenderTransform x=2.3 y=5.5 调整缩放,
                     通过 RenderTransformOrigin="0.43,0.52"调整决定坐标(需要修改)-->
                     <!--动画参数 内部Grid LayoutTransform参数 x=0.434782 y=0.18181818-->
-                    <Grid x:Name="grid5" Margin="20,5,20,10">
-
+                    <!-- 系统寄存器 -->
+                    <Grid  Margin="20,5,20,10">
                         <ui:CardAction
                             Name="Register_CardAction"
                             IsChevronVisible="False"
@@ -1434,7 +1553,7 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </Border.RenderTransform>
-                            <Grid x:Name="grid6">
+                            <Grid x:Name="RegisterGrid">
                                 <Grid.LayoutTransform>
                                     <TransformGroup>
                                         <ScaleTransform />
@@ -1448,27 +1567,25 @@
                                     <RowDefinition Height="0.3*" />
                                 </Grid.RowDefinitions>
                                 <Grid>
-
-
                                     <TabControl>
-                                        <TabItem Width="120">
-                                            <TabItem.Header>
-                                                <TextBlock Text="触发寄存器" Margin="5" TextAlignment="Center" />
-                                            </TabItem.Header>
-                                            <!-- <DataGrid -->
-                                            <!--     AutoGenerateColumns="False" -->
-                                            <!--     ItemsSource="{Binding HomePageModel.TriggerRegisterItems}"> -->
-                                            <!--     <DataGrid.Columns> -->
-                                            <!--         <DataGridTextColumn Header="名称备注" Width="*" -->
-                                            <!--                             Binding="{Binding Name}" /> -->
-                                            <!--         <DataGridTextColumn Header="地址" Width="*" -->
-                                            <!--                             IsReadOnly="True" -->
-                                            <!--                             Binding="{Binding Index}" /> -->
-                                            <!--         <DataGridTextColumn Header="值" Width="*" -->
-                                            <!--                             Binding="{Binding Value}" /> -->
-                                            <!--     </DataGrid.Columns> -->
-                                            <!-- </DataGrid> -->
-                                        </TabItem>
+                                        <!-- <TabItem Width="120"> -->
+                                        <!--     <TabItem.Header> -->
+                                        <!--         <TextBlock Text="触发寄存器" Margin="5" TextAlignment="Center" /> -->
+                                        <!--     </TabItem.Header> -->
+                                        <!--     <DataGrid -->
+                                        <!--         AutoGenerateColumns="False" -->
+                                        <!--         ItemsSource="{Binding HomePageModel.TriggerRegisterItems}"> -->
+                                        <!--         <DataGrid.Columns> -->
+                                        <!--             <DataGridTextColumn Header="名称备注" Width="*" -->
+                                        <!--                                 Binding="{Binding Name}" /> -->
+                                        <!--             <DataGridTextColumn Header="地址" Width="*" -->
+                                        <!--                                 IsReadOnly="True" -->
+                                        <!--                                 Binding="{Binding Index}" /> -->
+                                        <!--             <DataGridTextColumn Header="值" Width="*" -->
+                                        <!--                                 Binding="{Binding Value}" /> -->
+                                        <!--         </DataGrid.Columns> -->
+                                        <!--     </DataGrid> -->
+                                        <!-- </TabItem> -->
                                         <TabItem Width="120">
                                             <TabItem.Header>
                                                 <TextBlock Text="保持寄存器" Margin="5" TextAlignment="Center" />
@@ -1477,43 +1594,166 @@
                                                 AutoGenerateColumns="False"
                                                 ItemsSource="{Binding HomePageModel.RegisterItems}">
                                                 <DataGrid.Columns>
-                                                    <DataGridTextColumn Header="名称备注" Width="*"
-                                                                        Binding="{Binding Name}" />
                                                     <DataGridTextColumn Header="地址" Width="*"
                                                                         IsReadOnly="True"
                                                                         Binding="{Binding Index}" />
+                                                    <DataGridTextColumn Header="名称备注" Width="*"
+                                                                        Binding="{Binding Name}" />
                                                     <DataGridTextColumn Header="值" Width="*"
                                                                         Binding="{Binding Value}" />
                                                 </DataGrid.Columns>
                                             </DataGrid>
                                         </TabItem>
 
-                                        <TabItem Width="120">
-                                            <TabItem.Header>
-                                                <TextBlock Grid.Row="4" Text="队列" Margin="5" TextAlignment="Center" />
-                                            </TabItem.Header>
-
-                                            <!-- <DataGrid Grid.Row="5" -->
-                                            <!--           AutoGenerateColumns="False" -->
-                                            <!--           ItemsSource="{Binding HomePageModel.QueueItems}"> -->
-                                            <!--     <DataGrid.Columns> -->
-                                            <!--         <DataGridTextColumn Header="名称备注" Width="*" -->
-                                            <!--                             Binding="{Binding Name}" /> -->
-                                            <!--         <DataGridTextColumn Header="地址" Width="*" -->
-                                            <!--                             IsReadOnly="True" -->
-                                            <!--                             Binding="{Binding Index}" /> -->
-                                            <!--         <DataGridTextColumn Header="值" Width="*" -->
-                                            <!--                             Binding="{Binding Value}" /> -->
-                                            <!--     </DataGrid.Columns> -->
-                                            <!-- </DataGrid> -->
-                                        </TabItem>
+                                        <!-- <TabItem Width="120"> -->
+                                        <!--     <TabItem.Header> -->
+                                        <!--         <TextBlock Grid.Row="4" Text="队列" Margin="5" TextAlignment="Center" /> -->
+                                        <!--     </TabItem.Header> -->
+                                        <!-- -->
+                                        <!--     ~1~ <DataGrid Grid.Row="5" @1@ -->
+                                        <!--     ~1~           AutoGenerateColumns="False" @1@ -->
+                                        <!--     ~1~           ItemsSource="{Binding HomePageModel.QueueItems}"> @1@ -->
+                                        <!--     ~1~     <DataGrid.Columns> @1@ -->
+                                        <!--     ~1~         <DataGridTextColumn Header="名称备注" Width="*" @1@ -->
+                                        <!--     ~1~                             Binding="{Binding Name}" /> @1@ -->
+                                        <!--     ~1~         <DataGridTextColumn Header="地址" Width="*" @1@ -->
+                                        <!--     ~1~                             IsReadOnly="True" @1@ -->
+                                        <!--     ~1~                             Binding="{Binding Index}" /> @1@ -->
+                                        <!--     ~1~         <DataGridTextColumn Header="值" Width="*" @1@ -->
+                                        <!--     ~1~                             Binding="{Binding Value}" /> @1@ -->
+                                        <!--     ~1~     </DataGrid.Columns> @1@ -->
+                                        <!--     ~1~ </DataGrid> @1@ -->
+                                        <!-- </TabItem> -->
                                     </TabControl>
-
-
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
                                         <Button Content="收起" Width="100" Margin="15,0" Click="Register_Close_OnClick" />
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <!-- PLC报警 -->
+                    <Grid  Margin="20,5,20,10">
+                        <ui:CardAction
+                        Name="PlcAlarmCardAction"
+                        IsChevronVisible="False"
+                        VerticalAlignment="Stretch"
+                        Click="PlcAlarm_OnClick"
+                        Grid.ColumnSpan="2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <ui:SymbolIcon Symbol="AlertOn20" FontSize="35" />
+                                <ui:TextBlock Grid.Column="1" Text="Plc报警" VerticalAlignment="Center" />
+                            </Grid>
+                        </ui:CardAction>
+                        <Border
+                            x:Name="PlcAlarmBorder"
+                            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                            CornerRadius="10"
+                            Visibility="Collapsed"
+                            Opacity="0"
+                            Height="102"
+                            BorderThickness="0"
+                            Grid.ColumnSpan="2"
+                            Margin="0,4,0,4" 
+                            RenderTransformOrigin="0.92,0.54">
+                            <Border.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </Border.RenderTransform>
+                            <Grid x:Name="PlcAlarmGrid">
+                                <Grid.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </Grid.LayoutTransform>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.3*" />
+                                </Grid.RowDefinitions>
+                                <Grid >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition  Height="Auto"/>
+                                            <RowDefinition  Height="Auto"/>
+                                            <RowDefinition  Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition  Width="0.4*"/>
+                                            <ColumnDefinition  Width="0.6*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="通讯对象" Margin="90 5 5 5"  HorizontalAlignment="Left"/>
+                                        <ComboBox 
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Width="150"
+                                            Margin="0 0 0 5"
+                                            HorizontalAlignment="Left"
+                                            ItemsSource="{Binding DataContext.HomePageModel.NetWorkList ,RelativeSource={RelativeSource AncestorType=Page}}"
+                                            SelectedValue="{Binding HomePageModel.PlcAlarmConnectName}"
+                                            DisplayMemberPath="NetworkDetailed.Name"
+                                            SelectedValuePath="NetworkDetailed.Name"
+                                        />
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="站地址" Margin="90 5 5 5" HorizontalAlignment="Left"/>
+                                        <ui:NumberBox 
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Width="150"
+                                            Margin="0 0 0 5"
+                                            HorizontalAlignment="Left"
+                                            ClearButtonEnabled="False"
+                                            Value="{Binding HomePageModel.PlcAlarmSlaveAddress}"/>
+                                        <TextBlock
+                                            Grid.Row="2"
+                                            Grid.Column="0"
+                                            Margin="90 5 5 5" HorizontalAlignment="Left"
+                                            Text="起始地址"/>
+                                        <ui:NumberBox
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            Width="150"
+                                            HorizontalAlignment="Left"
+                                            ClearButtonEnabled="False"
+                                            Value="{Binding HomePageModel.PlcAlarmStartAddress}" />
+                                    </Grid>
+                                    <DataGrid
+                                        Grid.Row="1"
+                                        Margin="10"
+                                        AutoGenerateColumns ="False"
+                                        ItemsSource="{Binding HomePageModel.PlcAlarmItems}"
+                                        HorizontalScrollBarVisibility="Visible">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="序号"
+                                                                Binding="{Binding Id}"
+                                                                Width="0.5*"
+                                                                IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="报警内容"
+                                                                Width="*"
+                                                                Binding="{Binding Alarm}"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
+                                        <Button Content="{Binding HomePageModel.PlcAlarmRunButton}" Width="100" Margin="15,0" Command="{Binding PlcAlarmRunCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
+                                        <Button Content="收起" Width="100" Margin="15,0" Click="PlcAlarm_Close_OnClick" />
                                     </StackPanel>
                                 </Grid>
                             </Grid>
@@ -1536,7 +1776,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon Symbol="FolderAdd20" FontSize="65" Margin="30  0 0 0" />
+                            <ui:SymbolIcon Symbol="DocumentAdd24" FontSize="48" Margin="30  0 0 0" />
                             <StackPanel
                                 Grid.Column="1"
                                 Margin="24"
@@ -1546,7 +1786,7 @@
                                     FontSize="30"
                                     FontWeight="Bold"
                                     FontFamily="FangSong"
-                                    Text="Create Project" />
+                                    Text="创建项目" />
                             </StackPanel>
                         </Grid>
                     </ui:CardAction>
@@ -1563,7 +1803,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ui:SymbolIcon Symbol="FolderArrowLeft28" FontSize="65" Margin="30  0 0 0" />
+                            <ui:SymbolIcon Symbol="DocumentArrowLeft24" FontSize="48" Margin="30  0 0 0" />
                             <StackPanel
                                 Grid.Column="1"
                                 Margin="24"
@@ -1573,7 +1813,7 @@
                                     FontFamily="FangSong"
                                     FontWeight="Bold"
                                     FontSize="30"
-                                    Text="Return Edit"
+                                    Text="返回编辑"
                                     TextWrapping="WrapWithOverflow" />
                             </StackPanel>
                         </Grid>
@@ -1621,18 +1861,11 @@
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
-                        <!-- <ListBox -->
-                        <!--     Name="HomeProjectListBox" -->
-                        <!--     DisplayMemberPath="ProjectName" -->
-                        <!--     SelectedValuePath="ProjectName" -->
-                        <!--     ItemsSource="{Binding HomePageModel.ProjectList }" /> -->
-
-
                     </Border>
                 </StackPanel>
 
             </Grid>
         </Grid>
-        <ui:SnackbarPresenter Grid.Row="2" Name="SnackbarPresenter" />
+        <ui:SnackbarPresenter Grid.Row="1" Name="SnackbarPresenter" />
     </Grid>
 </Page>

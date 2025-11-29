@@ -15,6 +15,7 @@ using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
+using S7.Net;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Ports;
@@ -67,7 +68,8 @@ public partial class HomePageViewModel : ObservableRecipient
                 SetConnectDg = new ObservableCollection<NetworkDetailed>(), //创建 设置连接列表的DataGrid 绑定对象
                 NetWorkList = new ObservableCollectionExtended<NetWork>(),
                 RegisterItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100)
-                    .Select(index => new RegisterItem(index)))
+                    .Select(index => new RegisterItem(index))),
+                PlcAlarmItems = new ObservableCollection<PlcAlarmItem>(Enumerable.Range(0,1000).Select(index => new PlcAlarmItem(index)))
             };
         }
 
@@ -673,6 +675,88 @@ public partial class HomePageViewModel : ObservableRecipient
 
     #endregion
 
+
+    public CancellationTokenSource plcAlarmRunCts;
+    [RelayCommand]
+    public void PlcAlarmRun(HomePage page)
+    {
+        if (HomePageModel.PlcAlarmRunButton == "启用")
+        {
+            PlcAlarmRun();
+            HomePageModel.PlcAlarmRunButton = "停止";
+        } 
+        else
+        {
+            if (plcAlarmRunCts!=null) 
+            {
+                plcAlarmRunCts.Cancel();
+            }
+            HomePageModel.PlcAlarmRunButton = "启用";
+        }
+    }
+
+
+    public async void PlcAlarmRun()
+    {
+        plcAlarmRunCts = new CancellationTokenSource();
+        await PlcAlarmRunCyc(plcAlarmRunCts);
+    }
+
+    public async Task PlcAlarmRunCyc(CancellationTokenSource cts)
+    {
+        try
+        {
+            while (!cts.Token.IsCancellationRequested)
+            {
+                //读线圈,连续1000个地址
+                NetWork netWork = GlobalManager.GetNetWork(HomePageModel.PlcAlarmConnectName);
+                //读线圈数量
+                bool[] readCoils01 = await  netWork.ModbusBase.ReadCoils_01(HomePageModel.PlcAlarmSlaveAddress,HomePageModel.PlcAlarmStartAddress,1000);
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    if (readCoils01[i])
+                    {
+                        //检查是否存储记忆
+                        //记忆为真,不需要重新记录
+                        if (HomePageModel.PlcAlarmItems[i].OldMemory)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            //需要进行记录
+                            //本地保存
+                            //不存在,创建
+                            string saveDirectory = Path.Combine(GlobalManager.SaveFile, "Plc报警");
+                            if (!Directory.Exists(saveDirectory))
+                                Directory.CreateDirectory(saveDirectory);
+                            string FilePath = Path.Combine(saveDirectory, $"{DateTime.Now:yyyy-MM-dd}.csv");
+                            CsvHelper csvHelper = new CsvHelper(FilePath);
+                            csvHelper.Load();
+                            csvHelper.AddRow([$"{DateTime.Now:yyyy-MM-dd HH:mm:ss}",$"{HomePageModel.PlcAlarmItems[i].Alarm}"]);
+                            csvHelper.Save(cts.Token);
+                            HomePageModel.PlcAlarmItems[i].OldMemory = true;
+                        }
+                    }
+                    else
+                    {
+                        //清空记忆
+                        HomePageModel.PlcAlarmItems[i].OldMemory = false;
+                    }
+                }
+                await Task.Delay(300);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Error($"PLC报警记录报错:{e}");
+            plcAlarmRunCts.Cancel();
+            //重试机制
+            await Task.Delay(1000);
+            PlcAlarmRun();
+        }
+    }
 
     [RelayCommand]
     public void Save()

@@ -2,6 +2,7 @@
 using HalconDotNet;
 using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
 using log4net;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
@@ -43,7 +44,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                 Station1 station1 = new Station1();
                 //添加一行数据到显示
                 StationBase.AddItem(station1);
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "开始VOC测试", false);
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "开始VOC测试", true);
                 HomePageViewModel homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
                 //获取参数
                 VOCPojo vocPojo = homePageViewModel.HomePageModel.VocPojo;
@@ -52,7 +53,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                 var netWork = GlobalManager.GetNetWork("VOC检漏仪器1(不能修改名称不然会运行失败)");
                 if (netWork == null)
                 {
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "获取不到串口网络",false);
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "获取不到串口网络", true);
                     return (false, "获取不到串口网络");
                 }
                 // 获取串口
@@ -61,13 +62,13 @@ namespace Pkn_HostSystem.Service.UserDefined
                 var netWork2 = GlobalManager.GetNetWork("PLC(不能修改名称不然会运行失败)");
                 if (netWork2 == null)
                 {
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "获取不到PLC网络", false);
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "获取不到PLC网络", true);
                     return (false, "获取不到PLC网络");
                 }
                 //获取PLC的 ModbusBase
                 ModbusBase PlcModbusTcp = netWork2.ModbusBase;
-                station1.电芯条码1 = GetString(await PlcModbusTcp.ReadHoldingRegisters_03(1, 40, 20)).Trim('\0').Trim('\n').Trim('\r');
-                station1.电芯条码2 = GetString(await PlcModbusTcp.ReadHoldingRegisters_03(1, 60, 20)).Trim('\0').Trim('\n').Trim('\r');
+                station1.电芯条码1 = GetString(await PlcModbusTcp.ReadHoldingRegisters_03(1, 40, 10)).Trim('\0').Trim('\n').Trim('\r');
+                station1.电芯条码2 = GetString(await PlcModbusTcp.ReadHoldingRegisters_03(1, 60, 10)).Trim('\0').Trim('\n').Trim('\r');
                 station1.腔体号 = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 120, 2)).ToString();
                 station1.正压值 = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 122, 2)).ToString();
                 station1.负压值 = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 124, 2)).ToString();
@@ -121,7 +122,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                     (bool succeed, string response) = await scpiSerialTool.ReadLine();
                     if (!succeed)
                     {
-                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "串口读取超时/失败", false);
+                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "串口读取超时/失败", true);
                         return (false, "串口读取超时/失败");
                     }
 
@@ -133,10 +134,10 @@ namespace Pkn_HostSystem.Service.UserDefined
                     succeed = double.TryParse(response, out double responseDouble);
                     if (!succeed)
                     {
-                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "数据转成double类型失败", false);
+                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "数据转成double类型失败", true);
                         return (false, "数据转成double类型失败");
                     }
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"检测腔体{station1.腔体号},第{i}秒,VOC数据:{responseDouble}", false);
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"检测腔体{station1.腔体号},第{i}秒,VOC数据:{responseDouble}", true);
                     //存储最大的数值
                     if (responseDouble > MaxValue)
                     {
@@ -213,14 +214,14 @@ namespace Pkn_HostSystem.Service.UserDefined
                 if(MaxValue > vocPojo.TriggerMax)
                 {
                     station1.结果 = "NG";
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "结果NG", false);
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "结果NG", true);
                     //将电阻 电压写入到寄存器中
                     StaticArrayRegister.WriteRegisterValue(0, 3);
                 }
                 else
                 {
                     station1.结果 = "OK";
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "结果OK", false);
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "结果OK", true);
                     StaticArrayRegister.WriteRegisterValue(0, 2);
                 }
 
@@ -231,33 +232,35 @@ namespace Pkn_HostSystem.Service.UserDefined
                string saveDirectory = Path.Combine(GlobalManager.SaveFile,"VOC");
                 if (!Directory.Exists(saveDirectory))
                     Directory.CreateDirectory(saveDirectory);
-                string FilePath = Path.Combine(saveDirectory, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}.csv");
+                string FilePath = Path.Combine(saveDirectory, $"{DateTime.Now:yyyy-MM-dd}.csv");
                 CsvHelper csvHelper = new CsvHelper(FilePath);
                 csvHelper.Load();
                 save = JsonTool<object>.TryFormatJson(save, out bool isJson);
                 csvHelper.AddRowFromJson(save);
                 csvHelper.Save(cts.Token);
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "本地日志已更新", false);
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "本地日志已更新", true);
 
                 if (vocPojo.MesOn)
                 {
-                    //上传Mes
-                    RestClient restClient = new RestClient("http://10.169.253.53:9005/lx-test-mesapi");
-                    RestRequest restRequest = new RestRequest("/ProductionGroupInfo", Method.Post);
-                    UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
-                    var data = new
+                    if (!station1.电芯条码1.IsNullOrEmpty())
                     {
-                        GroupCode = $"{vocPojo.GroupCode}",
-                        MachineId = $"{vocPojo.MachineId}",
-                        OperatorId = $"{userLoginModel.Id}",
-                        TimeStamp = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}",
-                        ProductSn = $"{station1.电芯条码1},{station1.电芯条码2}",
-                        SnType = "cell",
-                        SubSn = "",
-                        TestResult = station1.结果 == "OK" ? 0 : 1,
-                        NgCode = "",
-                        TestData = new[]
+                        //上传Mes
+                        RestClient restClient = new RestClient(vocPojo.MesHttp);
+                        RestRequest restRequest = new RestRequest("/ProductionGroupInfo", Method.Post);
+                        UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
+                        var data = new
                         {
+                            GroupCode = $"{vocPojo.GroupCode}",
+                            MachineId = $"{vocPojo.MachineId}",
+                            OperatorId = $"{userLoginModel.Id}",
+                            TimeStamp = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+                            ProductSn = $"{station1.电芯条码1}",
+                            SnType = "cell",
+                            SubSn = "",
+                            TestResult = station1.结果 == "OK" ? 0 : 1,
+                            NgCode = "",
+                            TestData = new[]
+                            {
                         new
                         {
                             ItemCode = "HOLDING_TIME",
@@ -315,8 +318,8 @@ namespace Pkn_HostSystem.Service.UserDefined
                             ItemResult = "0"
                         }
                     },
-                        StepData = new[]
-                        {
+                            StepData = new[]
+                            {
                         new
                         {
                             TRAY_ID = "",
@@ -345,32 +348,168 @@ namespace Pkn_HostSystem.Service.UserDefined
                         }
                     },
 
-                    };
-                    string json = JsonConvert.SerializeObject(data);
-                    restRequest.AddParameter("jsonData", json);
-                    RestResponse httpResponse = await restClient.ExecuteAsync(restRequest);
-
-                    if (httpResponse.IsSuccessStatusCode)
-                    {
-                        JObject jObject = JObject.Parse(httpResponse.Content);
-
-
-                        if (jObject["status"]?.ToString() == "true")
+                        };
+                        string json = JsonConvert.SerializeObject(data);
+                        restRequest.AddParameter("jsonData", json);
+                        RestResponse httpResponse = await restClient.ExecuteAsync(restRequest);
+                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"上传Json:{json}", true);
+                        if (httpResponse.IsSuccessStatusCode)
                         {
-                            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "上传mes成功", false);
-                            station1.Mes上传 = "成功";
+                            JObject jObject = JObject.Parse(httpResponse.Content);
+
+
+                            if (jObject["status"]?.ToString() == "true")
+                            {
+                                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "上传mes成功", true);
+                                station1.Mes上传 = "成功";
+                            }
+                            else
+                            {
+                                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, $"上传mes失败,{jObject["result"]?.ToString()}", true);
+                                station1.Mes上传 = "失败";
+                            }
                         }
                         else
                         {
-                            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, $"上传mes失败,{jObject["result"]?.ToString()}", false);
+                            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, httpResponse.ErrorMessage == null ? httpResponse.Content : httpResponse.ErrorMessage, true);
                             station1.Mes上传 = "失败";
                         }
                     }
-                    else
+
+                    if (!station1.电芯条码2.IsNullOrEmpty())
                     {
-                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, httpResponse.ErrorMessage == null ? httpResponse.Content : httpResponse.ErrorMessage, false);
-                        station1.Mes上传 = "失败";
+                        //上传Mes
+                        RestClient restClient = new RestClient(vocPojo.MesHttp);
+                        RestRequest restRequest = new RestRequest("/ProductionGroupInfo", Method.Post);
+                        UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
+                        var data = new
+                        {
+                            GroupCode = $"{vocPojo.GroupCode}",
+                            MachineId = $"{vocPojo.MachineId}",
+                            OperatorId = $"{userLoginModel.Id}",
+                            TimeStamp = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}",
+                            ProductSn = $"{station1.电芯条码2}",
+                            SnType = "cell",
+                            SubSn = "",
+                            TestResult = station1.结果 == "OK" ? 0 : 1,
+                            NgCode = "",
+                            TestData = new[]
+                            {
+                        new
+                        {
+                            ItemCode = "HOLDING_TIME",
+                            ItemName = "保压时间",
+                            Value = holeTime,
+                            ItemResult = "0"
+                        },
+                        new
+                        {
+                            ItemCode = "PRESSURE_RELIEF_TIME",
+                            ItemName = "泄压时间",
+                            Value = preTime,
+                            ItemResult = "0"
+                        },
+                        new
+                        {
+                            ItemCode = "CHARGING_TIME",
+                            ItemName = "充正压时间",
+                            Value = preTime,
+                            ItemResult = "0"
+                        },
+                        new
+                        {
+                            ItemCode = "TEST_TIME",
+                            ItemName = "测试时间",
+                            Value = $"{vocPojo.TestTime}",
+                            ItemResult = "0"
+                        },
+                        new
+                        {
+                            ItemCode = "POSITIVE_PRESSURE",
+                            ItemName = "正压压力",
+                            Value = station1.正压值,
+                            ItemResult = "0"
+                        },
+                        new
+                        {
+                            ItemCode = "NEGATIVE_PRESSURE",
+                            ItemName = "负压压力",
+                            Value = station1.负压值,
+                            ItemResult = "0"
+                        },
+                        new
+                        {
+                            ItemCode = "OCV_MAXVALUE",
+                            ItemName = "VOC最大值",
+                            Value = station1.VOC最大值,
+                            ItemResult = "0"
+                        },
+                        new
+                        {
+                            ItemCode = "CHANNEL_NUMBER",
+                            ItemName = "通道号",
+                            Value = station1.腔体号,
+                            ItemResult = "0"
+                        }
+                    },
+                            StepData = new[]
+                            {
+                        new
+                        {
+                            TRAY_ID = "",
+                            TypeName = "",
+                            StepNo = "",
+                            CHANNEL_ID = "",
+                            BATCH_ID = "",
+                            STEP = "",
+                            STEP_NAME = "",
+                            START_DATE = "",
+                            END_DATE = "",
+                            CIRCULATING_NUMBER = "",
+                            TURN_TIME = "",
+                            END_ELECTRICITY = "",
+                            CAPACITY = "",
+                            ENERGY = "",
+                            CONSTANT_CURRENT = "",
+                            START_VOL = "",
+                            MID_VOL = "",
+                            END_VOL = "",
+                            CHARGE_ELECTRICITY = "",
+                            MARKING = "",
+                            EndTemperature = "",
+                            AVG_VOL = "",
+                            ItemResult = ""
+                        }
+                    },
+
+                        };
+                        string json = JsonConvert.SerializeObject(data);
+                        restRequest.AddParameter("jsonData", json);
+                        RestResponse httpResponse = await restClient.ExecuteAsync(restRequest);
+                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"上传Json:{json}", true);
+                        if (httpResponse.IsSuccessStatusCode)
+                        {
+                            JObject jObject = JObject.Parse(httpResponse.Content);
+
+
+                            if (jObject["status"]?.ToString() == "true")
+                            {
+                                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "上传mes成功", true);
+                                station1.Mes上传 = "成功";
+                            }
+                            else
+                            {
+                                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, $"上传mes失败,{jObject["result"]?.ToString()}", true);
+                                station1.Mes上传 = "失败";
+                            }
+                        }
+                        else
+                        {
+                            StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, httpResponse.ErrorMessage == null ? httpResponse.Content : httpResponse.ErrorMessage, true);
+                            station1.Mes上传 = "失败";
+                        }
                     }
+
                 }
                 else
                 {
