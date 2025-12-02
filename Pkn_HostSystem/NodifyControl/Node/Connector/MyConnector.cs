@@ -38,7 +38,7 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
         public ConnectorTypeEnum ConnectorType { get; set; }
 
         /// <summary>
-        /// 输入值
+        /// 节点的所有输入
         /// </summary>
         public List<ObservableCollection<OperationParamModel>> _inputValue = new List<ObservableCollection<OperationParamModel>>();
 
@@ -52,7 +52,7 @@ namespace Pkn_HostSystem.NodifyControl.Node.Connector
         }
 
         /// <summary>
-        /// 输出接口值 output
+        /// 节点的输出
         /// </summary>
         private ObservableCollectionExtended<OperationParamModel> _value;
 

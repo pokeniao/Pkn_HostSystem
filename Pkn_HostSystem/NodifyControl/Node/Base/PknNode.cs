@@ -24,6 +24,7 @@ namespace Pkn_HostSystem.NodifyControl.Node.Base
         /// </summary>
         public NodeEnum NodeType { get; set; }
 
+        public IOperationModel IModel { get; set; }
         /// <summary>
         /// 运行的方法
         /// </summary>
@@ -50,6 +51,7 @@ namespace Pkn_HostSystem.NodifyControl.Node.Base
         /// </summary>
         [ObservableProperty] private ObservableCollectionExtended<OperationParamModel> inputParams = new ObservableCollectionExtended<OperationParamModel>();
 
+        [ObservableProperty] private ObservableCollectionExtended<OperationParamModel> outputParams = new ObservableCollectionExtended<OperationParamModel>();
 
         /// <summary>
         /// 输入节点

@@ -37,7 +37,7 @@ namespace Pkn_HostSystem.NodifyControl.Node.DesignTreeNode
         /// </summary>
         /// <param name="treeNodes"></param>
         /// <returns></returns>
-        public static PknNode CreateNode(NodeEnum NodeType, DesignModel designModel)
+        public static PknNode CreateNode(NodeEnum NodeType, DesignModel designModel , Object model = null)
         {
             PknNode pknNode;
 
@@ -47,7 +47,6 @@ namespace Pkn_HostSystem.NodifyControl.Node.DesignTreeNode
                     pknNode = new AddOperationNode(designModel);
                     break;
                 case NodeEnum.Enter:
-
                     pknNode = new EnterOperationNode(designModel);
                     break;
                 default:

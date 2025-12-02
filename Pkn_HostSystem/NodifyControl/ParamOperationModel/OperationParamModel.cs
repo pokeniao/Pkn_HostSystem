@@ -3,6 +3,9 @@ using System.Windows;
 
 namespace Pkn_HostSystem.NodifyControl.ParamOperationModel
 {
+    /// <summary>
+    /// 参数配置中的传递输入输出
+    /// </summary>
     public partial class OperationParamModel : ObservableObject
     {
         //姓名

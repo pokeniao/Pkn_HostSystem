@@ -19,7 +19,6 @@ namespace Pkn_HostSystem.NodifyControl.Operation.StartOperation
         {
             node = _node;
             Log = new LogControl<AddOperation>();
-
             _func = Func;
         }
 

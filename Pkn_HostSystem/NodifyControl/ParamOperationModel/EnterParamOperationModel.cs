@@ -2,7 +2,7 @@
 
 namespace Pkn_HostSystem.NodifyControl.ParamOperationModel
 {
-    public partial class EnterParamOperationModel :ObservableObject
+    public partial class EnterParamOperationModel :ObservableObject, IOperationModel
     {
         //触发类型
         [ObservableProperty] private string triggerType = "循环触发";

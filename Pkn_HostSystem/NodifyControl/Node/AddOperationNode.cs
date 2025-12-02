@@ -12,12 +12,7 @@ namespace Pkn_HostSystem.NodifyControl.Node
 {
     public partial class AddOperationNode : PknNode
     {
-        /// <summary>
-        /// 输出
-        /// </summary>
-        [ObservableProperty] private ObservableCollectionExtended<OperationParamModel> outputParams = new ObservableCollectionExtended<OperationParamModel>();
-
-        public AddOperationNode(DesignModel designModel)
+        public AddOperationNode(DesignModel designModel,Object model = null)
         {
             DesignModel = designModel;
             NodeName = "加法节点";
@@ -29,7 +24,7 @@ namespace Pkn_HostSystem.NodifyControl.Node
 
 
             MyConnector myConnector = new("输出", Id, ConnectorTypeEnum.Output);
-            myConnector.Value = outputParams;
+            myConnector.Value = OutputParams;
             Output.Add(myConnector);
 
             OperationParamModel operationParamModel = new()

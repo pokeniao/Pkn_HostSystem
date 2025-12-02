@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using DynamicData.Binding;
+using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
@@ -9,6 +10,7 @@ using Pkn_HostSystem.NodifyControl.Node;
 using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
+using Pkn_HostSystem.NodifyControl.ParamOperationModel;
 using Pkn_HostSystem.ViewModels.Page;
 using System.Collections.ObjectModel;
 
@@ -68,12 +70,16 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave
                 List<LocalSaveNode> localSaveNodes = designModelLocalSaveNodify.Nodes;
                 foreach (LocalSaveNode localSaveNode in localSaveNodes)
                 {
-                    PknNode pknNode = DesignTreeNode.CreateNode(localSaveNode.NodeType,designModel);
+                    //Node节点和端子重新创建
+                    PknNode pknNode = DesignTreeNode.CreateNode(localSaveNode.NodeType,designModel,localSaveNode.model);
                     pknNode.Id = localSaveNode.Id;
                     pknNode.Location = localSaveNode.Location;
-                    pknNode.Input = designModelLocalSaveNodify.GetInputOrOutput(localSaveNode.Input);
-                    pknNode.Output = designModelLocalSaveNodify.GetInputOrOutput(localSaveNode.Output);
-
+                    designModelLocalSaveNodify.ResetInputOrOutput(localSaveNode.Input , pknNode.Input);
+                    designModelLocalSaveNodify.ResetInputOrOutput(localSaveNode.Output, pknNode.Output);
+                    pknNode.InputParams = new ObservableCollectionExtended<OperationParamModel>(localSaveNode.InputParam);
+                    pknNode.OutputParams =
+                        new ObservableCollectionExtended<OperationParamModel>(localSaveNode.OutputParam);
+                    
                     Nodes.Add(pknNode);
                 }
                 //在获得线

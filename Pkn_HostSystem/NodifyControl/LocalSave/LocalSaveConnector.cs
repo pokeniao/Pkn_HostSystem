@@ -14,8 +14,6 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave
 
         public ConnectorTypeEnum ConnectorType { get; set; }
 
-        public List<LocalSaveConnector> ValueObservers { get; set; }
-
         public Point Anchor { get; set; }
     }
 }
