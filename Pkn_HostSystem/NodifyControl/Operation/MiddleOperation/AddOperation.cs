@@ -1,12 +1,15 @@
-﻿using DynamicData.Binding;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using DynamicData.Binding;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Node;
 using Pkn_HostSystem.NodifyControl.Operation.Base;
 using Pkn_HostSystem.NodifyControl.Operation.Interface;
 using Pkn_HostSystem.NodifyControl.ParamOperationModel;
 using Pkn_HostSystem.ViewModels.Page;
 using System.Windows;
+using System.Windows.Documents;
 
 namespace Pkn_HostSystem.NodifyControl.Operation.MiddleOperation
 {
@@ -17,17 +20,20 @@ namespace Pkn_HostSystem.NodifyControl.Operation.MiddleOperation
 
         private AddOperationNode node;
 
-        private LogControl<DesignViewModel> Log = DesignViewModel.Log;
+        //创建一个Log ,
+        private LogControl<DesignModel> Log ;
 
         public AddOperation(AddOperationNode _node)
         {
             node = _node;
             _func = Func;
+            Log = _node.DesignModel.Log;
         }
 
 
         private void Func()
         {
+        
             //获取参数
             var Params = node.InputParams;
             double sum = 0;

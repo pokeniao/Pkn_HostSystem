@@ -2,6 +2,7 @@
 using DynamicData.Binding;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation.StartOperation;
@@ -18,8 +19,9 @@ namespace Pkn_HostSystem.NodifyControl.Node
         [ObservableProperty]
         private EnterParamOperationModel model = new EnterParamOperationModel();
 
-        public EnterOperationNode()
+        public EnterOperationNode(DesignModel designModel)
         {
+            DesignModel = designModel;
             NodeName = "Start节点";
             NodeType = NodeEnum.Enter;
             Operation = new EnterOperation(this);

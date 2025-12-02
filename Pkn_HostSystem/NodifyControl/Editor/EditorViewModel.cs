@@ -190,7 +190,6 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         public void Run()
         {
             //1. 寻找到IStartOperation节点,作为起始节点
-
             PknNode startNode = Nodes.FirstOrDefault(n => n.Operation is IStartOperation);
             if (startNode == null)
             {

@@ -31,7 +31,8 @@ namespace Pkn_HostSystem.Views.Pages
             DataContext = ViewModel;
             ViewModel.setSnackbarPresenter(SnackbarPresenter);
             ViewModel.setHSmartWindowControl(HSmartWindowControlWPF);
-            ViewModel.SetLogRichTextBox(LogRichTextBox);
+            //将富文本赋值
+            ViewModel.SetRichTextBox(LogRichTextBox);
         }
         /// <summary>
         /// 放下拖拽添加
@@ -45,7 +46,7 @@ namespace Pkn_HostSystem.Views.Pages
                                                 && e.Data.GetData(typeof(TreeNodes)) is TreeNodes treeNodes)
             {
                 //创建一个Node
-                PknNode pknNode = DesignTreeNode.GetNode(treeNodes.NodeType);
+                PknNode pknNode = DesignTreeNode.CreateNode(treeNodes.NodeType,ViewModel.DesignModel);
                 //设置位置
                 pknNode.Location = editor.GetLocationInsideEditor(e);
                 editorViewModel.Nodes.Add(pknNode);
@@ -91,9 +92,6 @@ namespace Pkn_HostSystem.Views.Pages
 
         private void DesignPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // LogRichTextBox.MaxHeight = (e.NewSize.Height / 3) + 2;
-
-
         }
 
         private void MenuItem_OnClick(object sender, RoutedEventArgs e)

@@ -12,6 +12,11 @@ using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
+using Pkn_HostSystem.NodifyControl.Node;
+using Pkn_HostSystem.NodifyControl.Node.Base;
+using Pkn_HostSystem.NodifyControl.Operation.Interface;
+using Pkn_HostSystem.NodifyControl.Operation.StartOperation;
+using Pkn_HostSystem.NodifyControl.ParamOperationModel;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
@@ -682,8 +687,8 @@ public partial class HomePageViewModel : ObservableRecipient
     {
         if (HomePageModel.PlcAlarmRunButton == "启用")
         {
-            PlcAlarmRun();
             HomePageModel.PlcAlarmRunButton = "停止";
+            PlcAlarmRun();
         } 
         else
         {
@@ -698,8 +703,12 @@ public partial class HomePageViewModel : ObservableRecipient
 
     public async void PlcAlarmRun()
     {
-        plcAlarmRunCts = new CancellationTokenSource();
-        await PlcAlarmRunCyc(plcAlarmRunCts);
+        if (HomePageModel.PlcAlarmRunButton == "停止")
+        {
+            plcAlarmRunCts = new CancellationTokenSource();
+            await PlcAlarmRunCyc(plcAlarmRunCts);
+        }
+    
     }
 
     public async Task PlcAlarmRunCyc(CancellationTokenSource cts)
@@ -710,8 +719,14 @@ public partial class HomePageViewModel : ObservableRecipient
             {
                 //读线圈,连续1000个地址
                 NetWork netWork = GlobalManager.GetNetWork(HomePageModel.PlcAlarmConnectName);
+                if (netWork == null)
+                {
+                    throw new Exception("通讯连接为null,请检查通讯是否打开");
+                }
+
                 //读线圈数量
-                bool[] readCoils01 = await  netWork.ModbusBase.ReadCoils_01(HomePageModel.PlcAlarmSlaveAddress,HomePageModel.PlcAlarmStartAddress,1000);
+                bool[] readCoils01 = await netWork.ModbusBase.ReadCoils_01(HomePageModel.PlcAlarmSlaveAddress,
+                    HomePageModel.PlcAlarmStartAddress, 1000);
 
                 for (int i = 0; i < 1000; i++)
                 {
@@ -734,7 +749,9 @@ public partial class HomePageViewModel : ObservableRecipient
                             string FilePath = Path.Combine(saveDirectory, $"{DateTime.Now:yyyy-MM-dd}.csv");
                             CsvHelper csvHelper = new CsvHelper(FilePath);
                             csvHelper.Load();
-                            csvHelper.AddRow([$"{DateTime.Now:yyyy-MM-dd HH:mm:ss}",$"{HomePageModel.PlcAlarmItems[i].Alarm}"]);
+                            csvHelper.AddRow([
+                                $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}", $"{HomePageModel.PlcAlarmItems[i].Alarm}"
+                            ]);
                             csvHelper.Save(cts.Token);
                             HomePageModel.PlcAlarmItems[i].OldMemory = true;
                         }
@@ -745,8 +762,12 @@ public partial class HomePageViewModel : ObservableRecipient
                         HomePageModel.PlcAlarmItems[i].OldMemory = false;
                     }
                 }
+
                 await Task.Delay(300);
             }
+        }
+        catch (TaskCanceledException e)
+        {
         }
         catch (Exception e)
         {
@@ -768,18 +789,20 @@ public partial class HomePageViewModel : ObservableRecipient
     [RelayCommand]
     public void ReturnEditButton(HomePage page)
     {
+        //获取前选中的Model
         DesignModel model = page.HomeProjectDataGrid.SelectedValue as DesignModel;
 
         if (model == null)
         {
             return;
         }
-
+        //获取项目名
         string Value = model.ProjectName;
 
 
         if (!string.IsNullOrEmpty(Value))
         {
+            //从字典中取出设计页面的Model,并赋值给页面
             DesignViewModel designViewModel = Ioc.Default.GetRequiredService<DesignViewModel>();
             DesignModel designModel = GlobalManager.ProjectDictionary.Lookup(Value).Value;
             designViewModel.DesignModel = designModel;
@@ -843,10 +866,46 @@ public partial class HomePageViewModel : ObservableRecipient
     {
         try
         {
+            //更具入口节点判断
+            //获取到节点
+            var nodes = model.EditorViewModel.Nodes;
+            //1. 寻找到IStartOperation节点,作为起始节点
+            PknNode startNode = nodes.FirstOrDefault(n => n.Operation is IStartOperation);
+
+            if (startNode == null)
+            {
+                Log.Info($"[{TraceContext.Name}]--未找到起始节点,请添加一个IStartOperation节点");
+                throw new Exception("未找到一个开始节点");
+            }
+            //定义变量,触发类型和时间
+            string triggerType = "";
+            int triggerTime = 100;
+            //找到起始节点转换成起始节点
+            switch (startNode.NodeType)
+            {
+                case NodeEnum.Enter:
+                    EnterOperationNode? enterOperationNode = startNode as EnterOperationNode;
+                    EnterParamOperationModel enterParamOperationModel = enterOperationNode.Model;
+                    triggerType = enterParamOperationModel.TriggerType;
+                    triggerTime = enterParamOperationModel.TriggerTime;
+                    break;
+            }
             while (!model.cts.Token.IsCancellationRequested)
             {
+                //更具不同触发类型进行不同逻辑
+                switch (triggerType)
+                {
 
-                await Task.Delay(1000, model.cts.Token);
+                    case "循环触发":
+                        model.EditorViewModel.RunCommand.Execute(null);
+                        break;
+                    case "消息触发":
+                        break;
+                }
+
+
+
+                await Task.Delay(triggerTime, model.cts.Token);
             }
         }
         catch (TaskCanceledException)

@@ -68,7 +68,7 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave
                 List<LocalSaveNode> localSaveNodes = designModelLocalSaveNodify.Nodes;
                 foreach (LocalSaveNode localSaveNode in localSaveNodes)
                 {
-                    PknNode pknNode = DesignTreeNode.GetNode(localSaveNode.NodeType);
+                    PknNode pknNode = DesignTreeNode.CreateNode(localSaveNode.NodeType,designModel);
                     pknNode.Id = localSaveNode.Id;
                     pknNode.Location = localSaveNode.Location;
                     pknNode.Input = designModelLocalSaveNodify.GetInputOrOutput(localSaveNode.Input);

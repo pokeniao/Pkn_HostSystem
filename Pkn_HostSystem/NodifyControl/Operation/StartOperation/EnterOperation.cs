@@ -12,7 +12,7 @@ namespace Pkn_HostSystem.NodifyControl.Operation.StartOperation
     {
         private readonly Action _func;
 
-        private EnterOperationNode node;
+        public EnterOperationNode node;
 
         public LogControl<AddOperation> Log;
         public EnterOperation(EnterOperationNode _node)

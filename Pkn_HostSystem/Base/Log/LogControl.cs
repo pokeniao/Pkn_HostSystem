@@ -19,22 +19,39 @@ namespace Pkn_HostSystem.Base.Log
 
         public ISnackbarService SnackbarService { get; set; }
 
-
+        /// <summary>
+        /// 默认赋值总页面统计的FlowDocument
+        /// </summary>
         public FlowDocument FlowDocument { get; set; } = GlobalManager.LogRichTextBoxDocument;
-
+        /// <summary>
+        /// 默认富文本也是总页面的
+        /// </summary>
         public RichTextBox RichTextBox { get; set; } = GlobalManager.LogRichTextBox;
 
 
         public LogControl()
         {
             Log = LogManager.GetLogger(typeof(T));
-            // FlowDocument = new FlowDocument();
         }
 
-        public LogControl(FlowDocument flowDocument)
+        /// <summary>
+        /// 手动创建FlowDocument 记录当前所属日志, RichTextBox富文本为多个时,调用时,单独赋值RichTextBox
+        /// </summary>
+        /// <param name="flowDocument"></param>
+        public LogControl(FlowDocument flowDocument):this()
         {
-            Log = LogManager.GetLogger(typeof(T));
             FlowDocument = flowDocument;
+        }
+        /// <summary>
+        /// 手动创建FlowDocument ,多个FlowDocument 对应一个RichTextBox时.
+        /// </summary>
+        /// <param name="flowDocument"></param>
+        /// <param name="richTextBox"></param>
+
+        public LogControl(FlowDocument flowDocument,RichTextBox richTextBox) : this()
+        {
+            FlowDocument = flowDocument;
+            RichTextBox = richTextBox;
         }
 
         public LogControl(ISnackbarService snackbarService) : this()

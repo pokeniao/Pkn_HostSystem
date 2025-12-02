@@ -295,14 +295,12 @@
                             BorderThickness="1" />
 
                     <RichTextBox
-
                         Grid.Row="2" BorderThickness="0"
                         Name="LogRichTextBox"
                         IsReadOnly="True"
                         Background="{ui:ThemeResource CardStrokeColorDefaultSolidBrush}"
                         VerticalScrollBarVisibility="Auto"
-                        HorizontalScrollBarVisibility="Auto"
-                        FontSize="9">
+                        HorizontalScrollBarVisibility="Auto">
                         <RichTextBox.ContextMenu>
                             <ContextMenu Opened="ContextMenu_OnOpened">
                                 <MenuItem Header="清除日志" Click="MenuItem_OnClick" />

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using HalconDotNet;
@@ -12,6 +13,7 @@ using Pkn_HostSystem.NodifyControl.Editor;
 using Pkn_HostSystem.NodifyControl.LocalSave;
 using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
 using Pkn_HostSystem.Static;
+using Pkn_HostSystem.Views.Pages;
 using System.Collections.ObjectModel;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
@@ -24,7 +26,6 @@ namespace Pkn_HostSystem.ViewModels.Page
         [ObservableProperty] private ObservableCollection<TreeNodes> nodes;
 
         public SnackbarService SnackbarService { get; set; }
-        public static LogControl<DesignViewModel> Log;
 
 
         #region 视觉参数
@@ -61,7 +62,6 @@ namespace Pkn_HostSystem.ViewModels.Page
         public DesignViewModel()
         {
             SnackbarService = new SnackbarService();
-            Log = new LogControl<DesignViewModel>(SnackbarService);
             HalconTool = new HalconTool(HalconControl);
             ProjectModel = LocalSaveNodifyMethod.Load();
             if (ProjectModel == null)
@@ -81,17 +81,19 @@ namespace Pkn_HostSystem.ViewModels.Page
         /// <param name="DesignModel"></param>
         public void init()
         {
+            //改变Notify的 EditorViewModel
             EditorViewModel = DesignModel.EditorViewModel;
+            //赋值项目名
             ProjectName = DesignModel.ProjectName;
+            //赋值树状节点
             Nodes = DesignTreeNode.TreeNodesList;
-        }
-
-        public void SetLogRichTextBox(RichTextBox richTextBox)
-        {
-            Log.RichTextBox = richTextBox;
-            Log.FlowDocument = richTextBox.Document;
+            //赋值日志记录
+            DesignPage designPage = Ioc.Default.GetRequiredService<DesignPage>();
+            designPage.LogRichTextBox.Document = DesignModel.Log.FlowDocument;
+            designPage.LogRichTextBox.Document.FontSize = 9;
 
         }
+
         #region 弹窗SnackbarService
 
         public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)
@@ -113,6 +115,16 @@ namespace Pkn_HostSystem.ViewModels.Page
 
             LocalSaveNodifyMethod.Save();
             JsonTool<ProjectModel>.Save(ProjectModel);
+        }
+
+        public void SetRichTextBox(RichTextBox richTextBox)
+        {
+            if (DesignModel!=null)
+            {
+                DesignModel.Log.RichTextBox = richTextBox;
+            }
+
+          
         }
     }
 }

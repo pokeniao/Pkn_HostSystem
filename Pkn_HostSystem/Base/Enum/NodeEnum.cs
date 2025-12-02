@@ -2,7 +2,7 @@
 {
     public enum NodeEnum
     {
-        Enter,//手动触发节点
+        Enter,//起始节点
         Add ,
         Subtract,
         Multiply,

@@ -1,6 +1,7 @@
-﻿
+﻿using Microsoft.Identity.Client;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation;
@@ -30,25 +31,30 @@ namespace Pkn_HostSystem.NodifyControl.Node.DesignTreeNode
                 ]
             }
         };
+
         /// <summary>
         /// 更具TreeNodes创建一个MyNode
         /// </summary>
         /// <param name="treeNodes"></param>
         /// <returns></returns>
-        public static PknNode GetNode(NodeEnum NodeType)
+        public static PknNode CreateNode(NodeEnum NodeType, DesignModel designModel)
         {
+            PknNode pknNode;
+
             switch (NodeType)
             {
                 case NodeEnum.Add:
-                    return new AddOperationNode();
+                    pknNode = new AddOperationNode(designModel);
+                    break;
                 case NodeEnum.Enter:
-                    return new EnterOperationNode();
-                default:
-                    return new Base.PknNode()
-                    {
 
-                    };
+                    pknNode = new EnterOperationNode(designModel);
+                    break;
+                default:
+                    pknNode = new PknNode();
+                    break;
             }
+            return pknNode;
         }
     }
 }

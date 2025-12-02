@@ -2,6 +2,7 @@
 using DynamicData.Binding;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
+using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation.MiddleOperation;
@@ -16,8 +17,9 @@ namespace Pkn_HostSystem.NodifyControl.Node
         /// </summary>
         [ObservableProperty] private ObservableCollectionExtended<OperationParamModel> outputParams = new ObservableCollectionExtended<OperationParamModel>();
 
-        public AddOperationNode()
+        public AddOperationNode(DesignModel designModel)
         {
+            DesignModel = designModel;
             NodeName = "加法节点";
             NodeType = NodeEnum.Add;
             Operation = new AddOperation(this);
