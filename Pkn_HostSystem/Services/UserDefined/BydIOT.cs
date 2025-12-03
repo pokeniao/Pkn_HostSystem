@@ -1,11 +1,11 @@
 ﻿using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.Service.UserDefined.Interface;
+using Pkn_HostSystem.Services.UserDefined.Interface;
 using Pkn_HostSystem.Static;
 using System.Net.Sockets;
 
-namespace Pkn_HostSystem.Service.UserDefined
+namespace Pkn_HostSystem.Services.UserDefined
 {
     public class PppIOT :IUserDefined
     {

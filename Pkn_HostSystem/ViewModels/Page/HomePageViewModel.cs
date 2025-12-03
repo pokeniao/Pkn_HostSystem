@@ -17,6 +17,7 @@ using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Operation.Interface;
 using Pkn_HostSystem.NodifyControl.Operation.StartOperation;
 using Pkn_HostSystem.NodifyControl.ParamOperationModel;
+using Pkn_HostSystem.Services.Core;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
@@ -46,10 +47,11 @@ public partial class HomePageViewModel : ObservableRecipient
 
     public HalconTool HalconTool { get; set; }
 
-
     public UserLoginModel UserLoginModel { get; set; } = new UserLoginModel();
     public HomeSetConnectModel HomeSetConnectModel { get; set; } = new();
     public SnackbarService SnackbarService { get; set; } = new();
+
+    public NetWorkTriggerLogic<HomePageViewModel> NetWorkTriggerLogic;
 
     public List<string> NetMethod { get; set; } =
         ["ModbusTcp", "ModbusRtu", "Tcp客户端", "Tcp服务器", "基恩士上位链路通讯", "串口232/485"];
@@ -110,6 +112,8 @@ public partial class HomePageViewModel : ObservableRecipient
 
 
         Log = new LogControl<HomePageViewModel>(SnackbarService);
+
+        NetWorkTriggerLogic = new NetWorkTriggerLogic<HomePageViewModel>(Log);
     }
 
     #region 弹窗SnackbarService
@@ -880,6 +884,7 @@ public partial class HomePageViewModel : ObservableRecipient
             //定义变量,触发类型和时间
             string triggerType = "";
             int triggerTime = 100;
+            NetWorkTriggerModel netWorkTriggerModel =null;
             //找到起始节点转换成起始节点
             switch (startNode.NodeType)
             {
@@ -888,6 +893,7 @@ public partial class HomePageViewModel : ObservableRecipient
                     EnterParamOperationModel enterParamOperationModel = enterOperationNode.Model;
                     triggerType = enterParamOperationModel.TriggerType;
                     triggerTime = enterParamOperationModel.TriggerTime;
+                    netWorkTriggerModel = enterParamOperationModel.NetWorkTriggerModel;
                     break;
             }
             while (!model.cts.Token.IsCancellationRequested)
@@ -900,6 +906,8 @@ public partial class HomePageViewModel : ObservableRecipient
                         model.EditorViewModel.RunCommand.Execute(null);
                         break;
                     case "消息触发":
+                        NetWorkTriggerLogic.RunFunc+= () => model.EditorViewModel.RunCommand.Execute(null);
+                        await NetWorkTriggerLogic.TriggerLogic(netWorkTriggerModel, model.cts);
                         break;
                 }
 

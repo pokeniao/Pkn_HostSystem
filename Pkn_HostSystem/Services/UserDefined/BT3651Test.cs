@@ -1,8 +1,7 @@
-﻿using Pkn_HostSystem.Service.UserDefined.Interface;
+﻿using Pkn_HostSystem.Services.UserDefined.Interface;
 using Pkn_HostSystem.Static;
 
-
-namespace Pkn_HostSystem.Service.UserDefined
+namespace Pkn_HostSystem.Services.UserDefined
 {
     public class BT3651Test : IUserDefined
     {

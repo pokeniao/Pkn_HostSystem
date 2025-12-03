@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using log4net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
@@ -8,15 +7,13 @@ using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Pojo;
-using Pkn_HostSystem.Service.Stations;
-using Pkn_HostSystem.Service.Stations.Interface;
-using Pkn_HostSystem.Service.UserDefined.Interface;
+using Pkn_HostSystem.Services.Stations;
+using Pkn_HostSystem.Services.UserDefined.Interface;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using RestSharp;
-using System.Net.Sockets;
 
-namespace Pkn_HostSystem.Service.UserDefined
+namespace Pkn_HostSystem.Services.UserDefined
 {
     public class SR1000 : IUserDefined
     {

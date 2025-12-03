@@ -1,14 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Pkn_HostSystem.Models.Core;
+using System.Diagnostics;
 
 namespace Pkn_HostSystem.NodifyControl.ParamOperationModel
 {
-    public partial class EnterParamOperationModel :ObservableObject, IOperationModel
+    public partial class EnterParamOperationModel : ObservableObject, IOperationModel
     {
-        //触发类型
-        [ObservableProperty] private string triggerType = "循环触发";
 
-        //触发时间
-        [ObservableProperty] private int triggerTime = 300;
+
+
+        [ObservableProperty] private NetWorkTriggerModel netWorkTriggerModel  = new NetWorkTriggerModel();
+
+
+
 
     }
 }

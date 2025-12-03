@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace Pkn_HostSystem.Service.ModbusTool;
+namespace Pkn_HostSystem.Services.Page.ModbusTool;
 
 /// <summary>
 /// 返回正常的

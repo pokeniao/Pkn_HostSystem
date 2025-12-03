@@ -1,38 +1,31 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using HalconDotNet;
-using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
-using log4net;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
-using Pkn_HostSystem.Base.Halcon;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Pojo;
-using Pkn_HostSystem.Models.Windows;
-using Pkn_HostSystem.Service.Stations;
-using Pkn_HostSystem.Service.UserDefined.Interface;
+using Pkn_HostSystem.Services.Stations;
+using Pkn_HostSystem.Services.UserDefined.Interface;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using RestSharp;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Windows.Media;
-using static OpenTK.Graphics.OpenGL.GL;
 
-namespace Pkn_HostSystem.Service.UserDefined
+namespace Pkn_HostSystem.Services.UserDefined
 {
-    public class Voc1 : IUserDefined
+    public class Voc2:IUserDefined
     {
         public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts, params object[] args)
         {
             try
             {
-                StaticArrayRegister.WriteRegisterValue(0, 0);
+                StaticArrayRegister.WriteRegisterValue(1,0);
                 //一.获取数据
                 var eachStation = TraceContext.GetParam("EachStation");
                 //获取工站
@@ -50,7 +43,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                 VOCPojo vocPojo = homePageViewModel.HomePageModel.VocPojo;
                 //获取串口
                 //获得网络,遍历获取对应的网络
-                var netWork = GlobalManager.GetNetWork("VOC检漏仪器1(不能修改名称不然会运行失败)");
+                var netWork = GlobalManager.GetNetWork("VOC检测仪器2(不能修改名称不然会运行失败)");
                 if (netWork == null)
                 {
                     StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "获取不到串口网络", true);
@@ -67,22 +60,23 @@ namespace Pkn_HostSystem.Service.UserDefined
                 }
                 //获取PLC的 ModbusBase
                 ModbusBase PlcModbusTcp = netWork2.ModbusBase;
-                station1.电芯条码1 = GetString(await PlcModbusTcp.ReadHoldingRegisters_03(1, 40, 10)).Trim('\0').Trim('\n').Trim('\r');
-                station1.电芯条码2 = GetString(await PlcModbusTcp.ReadHoldingRegisters_03(1, 60, 10)).Trim('\0').Trim('\n').Trim('\r');
-                station1.腔体号 = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 120, 2)).ToString();
-                station1.正压值 = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 122, 2)).ToString();
-                station1.负压值 = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 124, 2)).ToString();
+                station1.电芯条码1 = GetString(await PlcModbusTcp.ReadHoldingRegisters_03(1, 80, 10)).Trim('\0').Trim('\n').Trim('\r');
+                station1.电芯条码2 = GetString(await PlcModbusTcp.ReadHoldingRegisters_03(1, 100, 10)).Trim('\0').Trim('\n').Trim('\r');
+                station1.腔体号 = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 130, 2)).ToString();
+                station1.正压值 = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 132, 2)).ToString();
+                station1.负压值 = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 134, 2)).ToString();
+                
                 //保压时间
-                string holeTime ="";
+                string holeTime = "";
                 //冲正压泄压时间
                 string preTime = "";
 
                 switch (station1.腔体号)
                 {
                     case "1":
-                    //保压时间
-                    holeTime = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 190, 2)).ToString();
-                    preTime= GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 200, 2)).ToString();
+                        //保压时间
+                        holeTime = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 190, 2)).ToString();
+                        preTime = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 200, 2)).ToString();
                         break;
                     case "2":
                         //保压时间
@@ -110,8 +104,12 @@ namespace Pkn_HostSystem.Service.UserDefined
                         preTime = GetOneRegister(await PlcModbusTcp.ReadHoldingRegisters_03(1, 205, 2)).ToString();
                         break;
                 }
-                double MaxValue =0;
-                //等待3秒,管道气体流入需要时间
+
+
+
+                double MaxValue = 0;
+
+                //等待2秒,管道气体流入需要时间
                 await Task.Delay(3000);
                 // 检测时长
                 for (int i = 1; i <= (int)vocPojo.TestTime; i++)
@@ -209,27 +207,27 @@ namespace Pkn_HostSystem.Service.UserDefined
                 }
                 //存储数值
                 station1.VOC最大值 = MaxValue.ToString();
-
                 //比较大小
-                if(MaxValue > vocPojo.TriggerMax)
+                if (MaxValue > vocPojo.TriggerMax)
                 {
                     station1.结果 = "NG";
                     StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "结果NG", true);
                     //将电阻 电压写入到寄存器中
-                    StaticArrayRegister.WriteRegisterValue(0, 3);
+                    StaticArrayRegister.WriteRegisterValue(1, 3);
                 }
                 else
                 {
+                    //返回结果
                     station1.结果 = "OK";
                     StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "结果OK", true);
-                    StaticArrayRegister.WriteRegisterValue(0, 2);
+                    //将电阻 电压写入到寄存器中
+                    StaticArrayRegister.WriteRegisterValue(1, 2);
                 }
-
                 string save =
                     "{\r\n\"时间\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\",\r\n\"条码一\":\"" + station1.电芯条码1 + "\",\r\n\"条码二\":\"" + station1.电芯条码2 + "\",\r\n\"腔体号\":\"" + station1.腔体号 + "\",\r\n\"正压值\":\"" + station1.正压值 + "\",\r\n\"负压值\":\"" + station1.负压值 + "\",\r\n\"结果\":\"" + station1.结果 + "\",\r\n\"检测第一秒\":\"" + station1.Voc_1s + "\",\r\n\"检测第二秒\":\"" + station1.Voc_2s + "\",\r\n\"检测第三秒\":\"" + station1.Voc_3s + "\",\r\n\"检测第四秒\":\"" + station1.Voc_4s + "\",\r\n\"检测第五秒\":\"" + station1.Voc_5s + "\",\r\n\"检测第六秒\":\"" + station1.Voc_6s + "\"}";
                 //本地保存
                 //不存在,创建
-               string saveDirectory = Path.Combine(GlobalManager.SaveFile,"VOC");
+                string saveDirectory = Path.Combine(GlobalManager.SaveFile, "VOC");
                 if (!Directory.Exists(saveDirectory))
                     Directory.CreateDirectory(saveDirectory);
                 string FilePath = Path.Combine(saveDirectory, $"{DateTime.Now:yyyy-MM-dd}.csv");
@@ -240,8 +238,10 @@ namespace Pkn_HostSystem.Service.UserDefined
                 csvHelper.Save(cts.Token);
                 StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "本地日志已更新", true);
 
+
                 if (vocPojo.MesOn)
                 {
+
                     if (!station1.电芯条码1.IsNullOrEmpty())
                     {
                         //上传Mes
@@ -351,8 +351,9 @@ namespace Pkn_HostSystem.Service.UserDefined
                         };
                         string json = JsonConvert.SerializeObject(data);
                         restRequest.AddParameter("jsonData", json);
-                        RestResponse httpResponse = await restClient.ExecuteAsync(restRequest);
                         StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"上传Json:{json}", true);
+                        RestResponse httpResponse = await restClient.ExecuteAsync(restRequest);
+
                         if (httpResponse.IsSuccessStatusCode)
                         {
                             JObject jObject = JObject.Parse(httpResponse.Content);
@@ -375,7 +376,6 @@ namespace Pkn_HostSystem.Service.UserDefined
                             station1.Mes上传 = "失败";
                         }
                     }
-
                     if (!station1.电芯条码2.IsNullOrEmpty())
                     {
                         //上传Mes
@@ -485,8 +485,9 @@ namespace Pkn_HostSystem.Service.UserDefined
                         };
                         string json = JsonConvert.SerializeObject(data);
                         restRequest.AddParameter("jsonData", json);
-                        RestResponse httpResponse = await restClient.ExecuteAsync(restRequest);
                         StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"上传Json:{json}", true);
+                        RestResponse httpResponse = await restClient.ExecuteAsync(restRequest);
+
                         if (httpResponse.IsSuccessStatusCode)
                         {
                             JObject jObject = JObject.Parse(httpResponse.Content);
@@ -509,7 +510,6 @@ namespace Pkn_HostSystem.Service.UserDefined
                             station1.Mes上传 = "失败";
                         }
                     }
-
                 }
                 else
                 {
@@ -519,16 +519,16 @@ namespace Pkn_HostSystem.Service.UserDefined
             }
             catch (Exception e)
             {
-                StaticArrayRegister.WriteRegisterValue(0, 4);
+                StaticArrayRegister.WriteRegisterValue(1, 4);
                 return (false, e);
             }
-            //字符串处理
-        }
 
+        }
         public async Task<string> ErrorMessage(CancellationTokenSource cts, params object[] args)
         {
             throw new NotImplementedException();
         }
+
 
         public string GetString(ushort[] readHoldingRegisters03)
         {
@@ -549,7 +549,7 @@ namespace Pkn_HostSystem.Service.UserDefined
             }
 
             //输出ASCII码转换后的结果
-            return  Encoding.ASCII.GetString(result_4.ToArray()).Trim('\0');
+            return Encoding.ASCII.GetString(result_4.ToArray()).Trim('\0');
         }
 
 
@@ -557,6 +557,5 @@ namespace Pkn_HostSystem.Service.UserDefined
         {
             return (short)readHoldingRegisters03[0];
         }
-
     }
 }

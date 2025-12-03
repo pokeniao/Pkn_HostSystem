@@ -1,4 +1,4 @@
-﻿namespace Pkn_HostSystem.Service.UserDefined.Interface
+﻿namespace Pkn_HostSystem.Services.UserDefined.Interface
 {
     public interface IUserDefined
     {

@@ -1,0 +1,137 @@
+﻿<UserControl x:Class="Pkn_HostSystem.Views.UserControls.NetWorkTrigger.NetWorkTriggerUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             mc:Ignorable="d" 
+             d:DesignHeight="407" d:DesignWidth="338">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+
+
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
+                   Text="触发类型" Margin="5" TextAlignment="Center" />
+        <ComboBox 
+            Grid.Row="0"  
+            Grid.Column="1"
+            Margin="0 0 0 5"
+            SelectedValue="{Binding NetWorkTriggerModel.TriggerType, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay , UpdateSourceTrigger=PropertyChanged}"
+            SelectedValuePath="Content">
+            <ComboBoxItem Content="循环触发" />
+            <ComboBoxItem Content="消息触发" />
+        </ComboBox>
+        <TextBlock Grid.Row="0" Grid.Column="2" 
+                   Text="触发时间(ms)" Margin="5" TextAlignment="Center"/>
+        <ui:NumberBox
+            Grid.Row="0"
+            Grid.Column="3"
+            Margin="0 0 0 5"
+            Value="{Binding  NetWorkTriggerModel.TriggerTime  ,RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay , UpdateSourceTrigger=PropertyChanged}"
+            ClearButtonEnabled="False"
+            />
+
+        <Grid
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Visibility="{Binding NetWorkTriggerModel.showTriggerSet ,RelativeSource={RelativeSource AncestorType=UserControl}}">
+            <StackPanel>
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock Text="触发对象" Margin="5" TextAlignment="Center" />
+                    <ComboBox Width="200"
+                              ItemsSource="{Binding NetWorkTriggerModel.NetWorkList,RelativeSource={RelativeSource AncestorType=UserControl},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                              DisplayMemberPath="NetworkDetailed.Name"
+                              SelectedValuePath="NetworkDetailed.Name"
+                              SelectionChanged="Selector_OnSelectionChanged"
+                              SelectedValue="{Binding NetWorkTriggerModel.NetworkName, RelativeSource={RelativeSource AncestorType=UserControl},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                </WrapPanel>
+                <Grid>
+                    <StackPanel>
+                            <WrapPanel Margin="0,10,0,0">
+                                <TextBlock Text="触发消息(Int)" Margin="5" TextAlignment="Center" />
+                                <ui:NumberBox Width="150"
+                                              ClearButtonEnabled="False"
+                                              BorderThickness="0"
+                                              FontSize="15"
+                                              Value="{Binding NetWorkTriggerModel.TriggerMessage,RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                            </WrapPanel>
+
+                            <!-- <WrapPanel Margin="0,10,0,0"> -->
+                            <!--     <TextBlock Text="触发模式" Margin="5" TextAlignment="Center" /> -->
+                            <!--     <ComboBox Width="150" -->
+                            <!--               ItemsSource="{Binding TriggerReturnMethodList}" -->
+                            <!--               SelectedValue="{Binding NetWorkTriggerModel.TriggerReturnMethod,UpdateSourceTrigger= PropertyChanged}" /> -->
+                            <!-- </WrapPanel> -->
+                            <StackPanel>
+                                <WrapPanel Margin="0,10,0,0">
+                                    <TextBlock Text="完成返回消息(Int)" Margin="5"
+                                                                       TextAlignment="Center" />
+                                    <ui:NumberBox Width="150"
+                                                  ClearButtonEnabled="False"
+                                                  BorderThickness="0"
+                                                  FontSize="15"
+                                                  Value="{Binding NetWorkTriggerModel.SuccessResponseMessage,RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                                </WrapPanel>
+                                <WrapPanel Margin="0,10,0,0">
+                                    <TextBlock Text="失败返回消息(Int)" Margin="5" />
+                                    <ui:NumberBox Width="150"
+                                                  ClearButtonEnabled="False"
+                                                  BorderThickness="0"
+                                                  FontSize="15"
+                                                  Value="{Binding NetWorkTriggerModel.FailResponseMessage , RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                                </WrapPanel>
+                            </StackPanel>
+
+                            <WrapPanel Margin="0,10,0,0"
+                                       Visibility="{Binding LoadMesAddAndUpdateWindowModel.ShowModbusTriggerParam ,Converter={StaticResource BooleanVisibilityConverter}}"
+                                       >
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
+                                    <ui:NumberBox
+                                        ClearButtonEnabled="False"
+                                        Value="{Binding LoadMesAddAndUpdateWindowModel.StationAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                        Width="120" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
+                                    <ui:NumberBox
+                                        ClearButtonEnabled="False"
+                                        Value="{Binding LoadMesAddAndUpdateWindowModel.StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                        Width="120" />
+                                </StackPanel>
+                            </WrapPanel>
+
+                            <WrapPanel Margin="0,10,0,0"
+                                       Visibility="{Binding LoadMesAddAndUpdateWindowModel.ShowKeyenceHostLinkParam ,Converter={StaticResource BooleanVisibilityConverter}}">
+                                <StackPanel Orientation="Horizontal" Margin="0,5">
+                                    <TextBlock Text="DM地址" Margin="5" TextAlignment="Center" />
+                                    <ui:NumberBox
+                                        ClearButtonEnabled="False"
+                                        Value="{Binding LoadMesAddAndUpdateWindowModel.StartAddress ,UpdateSourceTrigger=PropertyChanged}"
+                                        Width="120" />
+                                </StackPanel>
+                            </WrapPanel>
+                        </StackPanel>
+                </Grid>
+
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</UserControl>

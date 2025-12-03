@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
-using Pkn_HostSystem.Service.LoadMes;
+using Pkn_HostSystem.Services.Page.LoadMes;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;

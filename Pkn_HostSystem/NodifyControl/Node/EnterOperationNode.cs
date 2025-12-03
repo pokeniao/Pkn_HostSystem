@@ -1,12 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DynamicData;
 using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.NodifyControl.LocalSave;
 using Pkn_HostSystem.NodifyControl.Node.Base;
 using Pkn_HostSystem.NodifyControl.Node.Connector;
 using Pkn_HostSystem.NodifyControl.Operation.StartOperation;
 using Pkn_HostSystem.NodifyControl.ParamOperationModel;
+using Pkn_HostSystem.Static;
 
 namespace Pkn_HostSystem.NodifyControl.Node
 {
@@ -22,6 +25,7 @@ namespace Pkn_HostSystem.NodifyControl.Node
                 JObject? jObject = model as JObject;
                 model = jObject?.ToObject<EnterParamOperationModel>();
             }
+            GlobalManager.NetWorkDictionary.Connect().Bind(Model.NetWorkTriggerModel.NetWorkList).Subscribe();
 
             IModel = Model;
             DesignModel = designModel;

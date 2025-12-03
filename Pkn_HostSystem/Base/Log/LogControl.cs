@@ -70,7 +70,7 @@ namespace Pkn_HostSystem.Base.Log
         {
             try
             {
-                Log.Info(message);
+                Log.Info($"[{TraceContext.Name}]--" + message);
             }
             catch (Exception e)
             {
@@ -82,7 +82,7 @@ namespace Pkn_HostSystem.Base.Log
         {
             try
             {
-                Log.Error(message);
+                Log.Error($"[{TraceContext.Name}]--" + message);
             }
             catch (Exception e)
             {

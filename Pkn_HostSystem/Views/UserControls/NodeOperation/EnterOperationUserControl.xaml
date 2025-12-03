@@ -40,32 +40,8 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock
-                Grid.Row="0" 
-                Grid.Column="0"
-                Text="触发类型" Margin="5" />
-            <ComboBox 
-                Grid.Row="0"  
-                Grid.Column="1"
-                Width="150"
-                Margin="0 0 0 5"
-                SelectedValue="{Binding Model.TriggerType}"
-                SelectedValuePath="Content">
-                <ComboBoxItem Content="循环触发" />
-                <ComboBoxItem Content="消息触发" />
-            </ComboBox>
 
-            <TextBlock
-                Grid.Row="1"
-                Grid.Column="0"
-                Text="触发时间(ms)" Margin="5" />
-            <ui:NumberBox
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="0 0 0 5"
-                Value="{Binding Model.TriggerTime , UpdateSourceTrigger=PropertyChanged}"
-                ClearButtonEnabled="False"
-                Width="150" />
+
 
         </Grid>
 

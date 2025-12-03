@@ -1,17 +1,12 @@
-﻿using Azure.Core;
-using Newtonsoft.Json.Linq;
-using Pkn_HostSystem.Base;
-using Pkn_HostSystem.Base.Enum;
+﻿using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.Models.Core.Interface;
 using Pkn_HostSystem.Models.Windows;
-using Pkn_HostSystem.Service.LoadMes.Interface;
-using Pkn_HostSystem.Service.Stations;
+using Pkn_HostSystem.Services.Page.LoadMes.Interface;
+using Pkn_HostSystem.Services.Stations;
 using Pkn_HostSystem.Static;
-using RestSharp;
 
-namespace Pkn_HostSystem.Service.LoadMes.Decorator
+namespace Pkn_HostSystem.Services.Page.LoadMes.Decorator
 {
     /// <summary>
     /// 装饰模式,装饰器

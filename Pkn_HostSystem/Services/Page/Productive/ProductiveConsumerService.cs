@@ -5,7 +5,7 @@ using Pkn_HostSystem.Models.Core;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 
-namespace Pkn_HostSystem.Service.Productive
+namespace Pkn_HostSystem.Services.Page.Productive
 {
     public class ProductiveConsumerService
     {

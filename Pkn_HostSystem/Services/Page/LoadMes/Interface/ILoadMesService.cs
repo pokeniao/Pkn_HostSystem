@@ -1,8 +1,7 @@
-﻿using Pkn_HostSystem.Base.Log;
-using Pkn_HostSystem.Models.Core;
+﻿using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Windows;
 
-namespace Pkn_HostSystem.Service.LoadMes.Interface
+namespace Pkn_HostSystem.Services.Page.LoadMes.Interface
 {
 
     public interface ILoadMesService

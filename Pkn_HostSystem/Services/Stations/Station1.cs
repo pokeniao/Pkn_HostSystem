@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Pkn_HostSystem.Base.Log;
-using Pkn_HostSystem.Service.Stations.Interface;
-using Pkn_HostSystem.Static;
-namespace Pkn_HostSystem.Service.Stations
+using Pkn_HostSystem.Services.Stations.Interface;
+
+namespace Pkn_HostSystem.Services.Stations
 {
     public partial class Station1 : ObservableObject, IStation
     {

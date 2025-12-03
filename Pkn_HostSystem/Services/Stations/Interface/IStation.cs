@@ -1,6 +1,4 @@
-﻿using Pkn_HostSystem.Models.Core;
-
-namespace Pkn_HostSystem.Service.Stations.Interface
+﻿namespace Pkn_HostSystem.Services.Stations.Interface
 {
     public interface IStation
     {

@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using Newtonsoft.Json;
 using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.Service.LoadMes.Interface;
+using Pkn_HostSystem.Services.Page.LoadMes.Interface;
 using System.Windows;
 
 namespace Pkn_HostSystem.Models.Windows

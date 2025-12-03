@@ -8,7 +8,7 @@
       xmlns:system="clr-namespace:System;assembly=System.Runtime"
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:page1="clr-namespace:Pkn_HostSystem.ViewModels.Page"
-      xmlns:modbusTool="clr-namespace:Pkn_HostSystem.Service.ModbusTool"
+      xmlns:modbusTool="clr-namespace:Pkn_HostSystem.Services.Page.ModbusTool"
       d:DataContext="{d:DesignInstance page:ModbusToolViewModel}"
       mc:Ignorable="d"
       d:DesignHeight="714.5" d:DesignWidth="1000"

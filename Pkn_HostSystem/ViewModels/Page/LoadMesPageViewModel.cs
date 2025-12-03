@@ -9,7 +9,7 @@ using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
-using Pkn_HostSystem.Service.LoadMes;
+using Pkn_HostSystem.Services.Page.LoadMes;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
@@ -427,7 +427,6 @@ public partial class LoadMesPageViewModel : ObservableRecipient, IRecipient<AddO
                         }
                     }
                 }
-
                 //判断是什么通讯
                 if (netWork != null)
                 {

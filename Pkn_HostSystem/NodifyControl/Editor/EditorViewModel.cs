@@ -187,7 +187,7 @@ namespace Pkn_HostSystem.NodifyControl.Editor
         }
 
         [RelayCommand]
-        public void Run()
+        public async void Run()
         {
             //1. 寻找到IStartOperation节点,作为起始节点
             PknNode startNode = Nodes.FirstOrDefault(n => n.Operation is IStartOperation);
@@ -201,10 +201,10 @@ namespace Pkn_HostSystem.NodifyControl.Editor
             IStartOperation startOperation = startNode.Operation as IStartOperation;
              startOperation.Execute();
             //3. 递归执行后续节点的方法
-            ExecuteNextNodes(startNode);
+           await ExecuteNextNodes(startNode);
         }
 
-        private void ExecuteNextNodes(PknNode currentNode)
+        private async Task ExecuteNextNodes(PknNode currentNode)
         {
             //找到所有连接到当前节点输出端子的连接
             var outgoingConnections = Connectors.Where(c => currentNode.Output.Contains(c.Source)).ToList();
