@@ -49,8 +49,8 @@ namespace Pkn_HostSystem.ViewModels.Windows
 
                 var data = new
                 {
-                    MachineId = LoginModel.MachineId,
-                    Mi = LoginModel.Mi,
+                    MachineId = homePageModel.VocPojo.MachineId,
+                    Mi = homePageModel.VocPojo.Mi,
                     UserNumber = LoginModel.UserNumber,
                     PassWord = LoginModel.PassWord,
                     Formula=""
@@ -82,10 +82,10 @@ namespace Pkn_HostSystem.ViewModels.Windows
                         restRequest = new RestRequest("/GetSpecifications", Method.Post);
                         var data2 = new
                         {
-                            MachineId = LoginModel.MachineId,
+                            MachineId = homePageModel.VocPojo.MachineId,
                             TimeStamp = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}",
                             OperatorId = result,
-                            Sn = LoginModel.Mi,
+                            Sn = homePageModel.VocPojo.Mi,
                             Type = "MI",
                             GroupCode = homePageModel.VocPojo.GroupCode,
                         };

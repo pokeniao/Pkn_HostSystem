@@ -43,12 +43,6 @@
                 <ColumnDefinition Width="0.5*"/> 
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <!-- 设备编号 -->
-            <TextBlock HorizontalAlignment="Center" Margin="10 " Grid.Row="1" Grid.Column="0" Text="设备编号" />
-            <TextBox  Grid.Row="1" Grid.Column="1"  Margin="0 0 0 10" Text="{Binding LoginModel.MachineId}"/>
-            <!-- Mi号 -->
-            <TextBlock HorizontalAlignment="Center" Margin="10 " Grid.Row="2" Grid.Column="0" Text="MI号" />
-            <TextBox  Grid.Row="2" Grid.Column="1"  Margin="0 0 0 10" Text="{Binding LoginModel.Mi}"/>
             <!-- 登入账号 -->
             <TextBlock HorizontalAlignment="Center" Margin="10 " Grid.Row="3" Grid.Column="0" Text="登录账号" />
             <TextBox  Grid.Row="3" Grid.Column="1"  Margin="0 0 0 10" Text="{Binding LoginModel.UserNumber}"/>

@@ -10,6 +10,9 @@ using Pkn_HostSystem.ViewModels.Page;
 using RestSharp;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Net;
+using System.Net.Http;
+using System.Security.Authentication;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -76,7 +79,6 @@ public class LoadMesService : ILoadMesService
     #endregion
 
     #region 发送Http任务
-
     /// <summary>
     /// 发送Http任务
     /// </summary>
@@ -88,8 +90,22 @@ public class LoadMesService : ILoadMesService
         string request,
         CancellationTokenSource cts)
     {
+        // System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+        // 创建 HttpClientHandler，强制 TLS1.2
+        var handler = new HttpClientHandler
+        {
+            SslProtocols = SslProtocols.Tls12
+        };
+
+        // 创建 RestSharp ClientOptions，并指定 handler
+        var options = new RestClientOptions(item.HttpPath)
+        {
+            ConfigureMessageHandler = _ => handler
+        };
+        Log.Info($"[{TraceContext.Name}]--以强制TLS为1.2");
         //创建连接
-        var client = new RestClient(item.HttpPath);
+        var client = new RestClient(options);
         RestRequest requestBody;
         //创建请求
         switch (item.Ajax)
@@ -179,7 +195,6 @@ public class LoadMesService : ILoadMesService
                 requestBody = new RestRequest(item.Api, Method.Delete);
                 break;
             case "PUT":
-
                 //日志显示发送内容
                 Log.Info($"[{TraceContext.Name}]--发送PUT请求,内容: \r\n {request}");
                 requestBody = new RestRequest(item.Api, Method.Put);
@@ -202,7 +217,6 @@ public class LoadMesService : ILoadMesService
                         requestBody.AddStringBody(request, DataFormat.None);
                         break;
                 }
-
                 break;
             default:
                 requestBody = new RestRequest();
