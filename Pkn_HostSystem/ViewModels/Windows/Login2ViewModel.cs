@@ -5,11 +5,13 @@ using Gma.System.MouseKeyHook;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
+using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
+using Pkn_HostSystem.Views.Pages.LoginWindowPage;
 using RestSharp;
 using System.Text;
 using Wpf.Ui;
@@ -22,6 +24,8 @@ namespace Pkn_HostSystem.ViewModels.Windows
         public SnackbarService SnackbarService { get; set; }
         public LogControl<Login2ViewModel> Log;
         public LoginModel LoginModel { get; set; }
+
+        public LoginWindowPage2 Page { get; set; }
 
         public Login2ViewModel()
         {
@@ -76,16 +80,34 @@ namespace Pkn_HostSystem.ViewModels.Windows
                 // 执行登录逻辑
                 SwipingCardLogin();
                 LoginModel.SwipingCardLogin = "点击刷卡登入";
+                Page.Close();
             }
         }
 
-
+        private CancellationTokenSource timeOutCts;
 
         private async void SwipingCardLogin()
         {
             //获取到当前密码
             try
             {
+                if (timeOutCts != null)
+                {
+                    
+                    timeOutCts.Cancel();
+                }
+                timeOutCts = new CancellationTokenSource();
+
+                //获取PLC
+                var netWork = GlobalManager.GetNetWork("PLC(不能修改名称不然会运行失败)");
+                if (netWork == null)
+                {
+                    Log.Error($"登入成功但与PLC通讯连接失败");
+                    return;
+                }
+                //获取PLC的 ModbusBase
+                ModbusBase PlcModbusTcp = netWork.ModbusBase;
+
                 var homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
                 UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
                 HomePageModel homePageModel = homePageViewModel.HomePageModel;
@@ -93,9 +115,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
         
                 RestClient restClient = new RestClient(homePageModel.VocPojo.MesHttp);
                 RestRequest restRequest = new RestRequest("/LoginDevice", Method.Post);
-        
-                // 设置 Content-Type
-                //restRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+                
 
                 
                 var data = new
@@ -111,12 +131,12 @@ namespace Pkn_HostSystem.ViewModels.Windows
                 Log.Info($"设备登录权限管控接口:\r\n{response.Content}");
                 if (response.IsSuccessStatusCode)
                 {
-                   
                     JObject jObject = JObject.Parse(response.Content);
                     if (jObject["status"]?.ToString() == "true")
                     {
+
                         //员工权限等级
-                        string testResult = jObject.SelectToken("testResultDetails[0].EmpLevel")?.ToString();
+                        string testResult = jObject.SelectToken("testResult")?.ToString();
                         ushort write = 0;
                         switch (testResult)
                         {
@@ -126,22 +146,27 @@ namespace Pkn_HostSystem.ViewModels.Windows
                                 break;
                             case "2":
                                 userLoginModel.Name = "技术员 ";
+                                timeOutTimer(userLoginModel, PlcModbusTcp, timeOutCts);
                                 write = 2;
                                 break;
                             case "3":
                                 userLoginModel.Name = "工程师 ";
+                                timeOutTimer(userLoginModel, PlcModbusTcp, timeOutCts);
                                 write = 3;
                                 break;
                             case "4":
                                 userLoginModel.Name = "MES权限 ";
-                                write = 5;
+                                timeOutTimer(userLoginModel, PlcModbusTcp, timeOutCts);
+                                write = 1;
                                 break;
                             case "5":
                                 userLoginModel.Name = "品质管理权限 ";
-                                write = 6;
+                                timeOutTimer(userLoginModel, PlcModbusTcp, timeOutCts);
+                                write = 1;
                                 break;
                             case "6":
                                 userLoginModel.Name = "管理员 ";
+                                timeOutTimer(userLoginModel, PlcModbusTcp, timeOutCts);
                                 write = 4;
                                 break;
                         }
@@ -153,6 +178,13 @@ namespace Pkn_HostSystem.ViewModels.Windows
                         //职位
                         string emp = jObject.SelectToken("testResultDetails[0].TcdpCode")?.ToString();
                         userLoginModel.Emp = emp;
+
+                        userLoginModel.LoginState = true;
+                        UserContext.Current.Permission = (LoginPermissionEnum)write;
+
+                        //写入权限等级
+                        await PlcModbusTcp.WriteRegister_06(1, 300, write);
+
                         Log.SuccessAndShowTask("登录成功");
 
                         //获取上岗校验
@@ -173,41 +205,24 @@ namespace Pkn_HostSystem.ViewModels.Windows
                         {
                             if (jObject["status"]?.ToString() == "true")
                             {
+                                //写入上岗校验成功
+                                await PlcModbusTcp.WriteRegister_06(1, 301, 0);
                                 //登入账号result储存
                                 userLoginModel.Id = jObject["result"]?.ToString();
                                 Log.Info($"登入成功返回Id:{userLoginModel.Id}");
-
-                                //获取PLC
-                                var netWork = GlobalManager.GetNetWork("PLC(不能修改名称不然会运行失败)");
-                                if (netWork == null)
-                                {
-                                    userLoginModel.Name = "";
-                                    userLoginModel.Emp = "";
-                                    userLoginModel.Id = "";
-                                    Log.Error($"登入成功但与PLC通讯连接失败");
-                                    return;
-                                }
-                                //获取PLC的 ModbusBase
-                                ModbusBase PlcModbusTcp = netWork.ModbusBase;
-                                //写入权限等级
-                                await PlcModbusTcp.WriteRegister_06(1, 300, write);
-
-
                             }
                             else
                             {
-                                userLoginModel.Name = "";
-                                userLoginModel.Emp = "";
-                                userLoginModel.Id = "";
+                                //写入上岗校验失败
+                                await PlcModbusTcp.WriteRegister_06(1, 301, 1);
                                 Log.Error($"上岗证校验失败,{jObject["result"]?.ToString()}");
                                 return;
                             }
                         }
                         else
                         {
-                            userLoginModel.Name = "";
-                            userLoginModel.Emp = "";
-                            userLoginModel.Id = "";
+                            //写入上岗校验失败
+                            await PlcModbusTcp.WriteRegister_06(1, 301, 1);
                             Log.Error(response.ErrorMessage == null
                                 ? $"上岗证校验获取失败:\r\n{response.Content}"
                                 : $"上岗证校验获取失败:\r\n{response.ErrorMessage}");
@@ -256,18 +271,12 @@ namespace Pkn_HostSystem.ViewModels.Windows
                             }
                             else
                             {
-                                userLoginModel.Name = "";
-                                userLoginModel.Emp = "";
-                                userLoginModel.Id = "";
                                 Log.Error($"参数下发获取失败,{jObject["result"]?.ToString()}");
                                 return;
                             }
                         }
                         else
                         {
-                            userLoginModel.Name = "";
-                            userLoginModel.Emp = "";
-                            userLoginModel.Id = "";
                             Log.Error(response.ErrorMessage == null
                                 ? $"参数下发获取失败:\r\n{response.Content}"
                                 : $"参数下发获取失败:\r\n{response.ErrorMessage}");
@@ -279,6 +288,8 @@ namespace Pkn_HostSystem.ViewModels.Windows
                         userLoginModel.Name = "";
                         userLoginModel.Emp = "";
                         userLoginModel.Id = "";
+                        userLoginModel.LoginState = false;
+                        UserContext.Current.Permission = LoginPermissionEnum.Lv0;
                         Log.ErrorAndShowTask($"登录失败,{jObject["result"]?.ToString()}");
                     }
                 }
@@ -287,6 +298,8 @@ namespace Pkn_HostSystem.ViewModels.Windows
                     userLoginModel.Name = "";
                     userLoginModel.Emp = "";
                     userLoginModel.Id = "";
+                    userLoginModel.LoginState = false;
+                    UserContext.Current.Permission = LoginPermissionEnum.Lv0;
                     Log.ErrorAndShowTask(response.ErrorMessage == null
                         ? $"登入失败:\r\n{response.Content}"
                         : $"登入失败:\r\n{response.ErrorMessage}");
@@ -298,6 +311,18 @@ namespace Pkn_HostSystem.ViewModels.Windows
             }
         }
 
+
+        public async Task timeOutTimer(UserLoginModel userLoginModel,ModbusBase PlcModbusTcp, CancellationTokenSource cts)
+        {
+            //延迟5分钟
+            await Task.Delay(300000,cts.Token);
+            userLoginModel.Name = "";
+            userLoginModel.Emp = "";
+            userLoginModel.Id = "";
+            userLoginModel.LoginState = false;
+            UserContext.Current.Permission = (LoginPermissionEnum)0;
+            await PlcModbusTcp.WriteRegister_06(1, 302, 1);
+        }
 
 
         #region 弹窗SnackbarService

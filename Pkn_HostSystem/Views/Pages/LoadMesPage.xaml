@@ -7,6 +7,8 @@
       xmlns:viewModels="clr-namespace:Pkn_HostSystem.ViewModels"
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:page1="clr-namespace:Pkn_HostSystem.ViewModels.Page"
+      xmlns:static="clr-namespace:Pkn_HostSystem.Static"
+      xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance page:LoadMesPageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
@@ -15,7 +17,9 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       SizeChanged="LoadMesPage_OnSizeChanged"
       Title="LoadMesPage">
-
+    <Page.Resources>
+        <converter:PermissionToBoolConverter x:Key="PermissionToBoolConverter" />
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -36,6 +40,7 @@
                 <TextBlock Grid.Row="0" Text="请求列表" FontSize="18" Margin="33,10" />
                 <DataGrid
                     Grid.Row="1"
+                    IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
                     Name="DataGrid"
                     Margin="30,0"
                     BorderThickness="1"
@@ -66,13 +71,21 @@
                     </DataGrid.Columns>
                 </DataGrid>
                 <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10">
-                    <Button Content="添加" Width="70" Margin="30,0,0,0" Command="{Binding AddHttpButtonCommand}" />
-                    <Button Content="修改" Width="70" Margin="30,0,0,0" Command="{Binding UpdateHttpButtonCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
-                    <Button Content="删除" Width="70" Margin="30,0,0,0" Command="{Binding DeleteHttpButtonCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
-                    <Button Content="手动发送" Width="90" Margin="30,0,0,0" Command="{Binding JogHttpButtonCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
+                    <Button 
+                        IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                        Content="添加" Width="70" Margin="30,0,0,0" Command="{Binding AddHttpButtonCommand}" />
+                    <Button 
+                        IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                        Content="修改" Width="70" Margin="30,0,0,0" Command="{Binding UpdateHttpButtonCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
+                    <Button 
+                        IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                        Content="删除" Width="70" Margin="30,0,0,0" Command="{Binding DeleteHttpButtonCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
+                    <Button 
+                        IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                        Content="手动发送" Width="90" Margin="30,0,0,0" Command="{Binding JogHttpButtonCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
                 </StackPanel>
             </Grid>
             <Grid Grid.Column="1">

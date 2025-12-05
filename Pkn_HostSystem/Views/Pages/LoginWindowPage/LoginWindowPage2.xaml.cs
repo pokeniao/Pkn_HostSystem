@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.ViewModels.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -15,6 +16,7 @@ namespace Pkn_HostSystem.Views.Pages.LoginWindowPage
         {
             InitializeComponent();
             ViewModel = Ioc.Default.GetRequiredService<Login2ViewModel>();
+            ViewModel.Page = this;
             DataContext = ViewModel;
             ViewModel.setSnackbarPresenter(SnackbarPresenter);
         }
@@ -23,6 +25,12 @@ namespace Pkn_HostSystem.Views.Pages.LoginWindowPage
         {
             if (e.Key == Key.Enter)
                 e.Handled = true;   // 阻止回车触发按钮
+        }
+        public void Close()
+        {
+            var window = Window.GetWindow(this);
+            window?.Close();
+
         }
     }
 }

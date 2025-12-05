@@ -5,6 +5,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:windows="clr-namespace:Pkn_HostSystem.ViewModels.Windows"
+      xmlns:static="clr-namespace:Pkn_HostSystem.Static"
+      xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
       mc:Ignorable="d"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -12,6 +14,9 @@
       d:DataContext="{d:DesignInstance windows:LoginViewModel}"
       d:DesignHeight="300" d:DesignWidth="500"
       Title="LoginWindowPage1">
+    <Page.Resources>
+        <converter:PermissionToBoolConverter x:Key="PermissionToBoolConverter"/>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -34,24 +39,36 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+        
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.5*"/> 
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <!-- 登入账号 -->
-            <TextBlock HorizontalAlignment="Center" Margin="10 " Grid.Row="3" Grid.Column="0" Text="登录账号" />
-            <TextBox  Grid.Row="3" Grid.Column="1"  Margin="0 0 0 10" Text="{Binding LoginModel.UserNumber}"/>
+            <TextBlock HorizontalAlignment="Center" Margin="10 " Grid.Row="0" Grid.Column="0" Text="登录账号" />
+            <TextBox  Grid.Row="0" Grid.Column="1"  Margin="0 0 0 10" Text="{Binding LoginModel.UserNumber}"/>
             <!-- 密码 -->
-            <TextBlock HorizontalAlignment="Center" Margin="10" Grid.Row="4" Grid.Column="0" Text="密码"/>
-            <ui:PasswordBox Name="PasswordBox" Icon="{ui:SymbolIcon Password24}" PlaceholderEnabled="True" PlaceholderText="Password..." Grid.Row="4" Grid.Column="1" />
-            <!-- 登入 -->
-            <Button Grid.Row="5"  Grid.ColumnSpan="2" Content="登入" HorizontalAlignment="Center" Margin="20" Width="100"
-                    Command="{Binding LoginButtonCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
+            <TextBlock HorizontalAlignment="Center" Margin="10" Grid.Row="1" Grid.Column="0" Text="密码"/>
+            <ui:PasswordBox Name="PasswordBox" Icon="{ui:SymbolIcon Password24}" PlaceholderEnabled="True" PlaceholderText="Password..." Grid.Row="1" Grid.Column="1" />
+
+            <Grid Grid.Row="2" Grid.ColumnSpan="2" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="*"/>
+                    <ColumnDefinition  Width="*"/>
+                </Grid.ColumnDefinitions>
+                <!-- 登入 -->
+                <Button Grid.Row="0"  Grid.Column="0"  Content="登入" HorizontalAlignment="Right" Margin="20" Width="100"
+                       
+                        Command="{Binding LoginButtonCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
+                <!-- 登入 -->
+                <Button Grid.Row="0"  Grid.Column="1" Content="登出" HorizontalAlignment="Left" Margin="20" Width="100"
+                        Command="{Binding LoginOutButtonCommand}"
+                        IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv1}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
+
+            </Grid>
+           
         </Grid>
         <ui:SnackbarPresenter Grid.Row="1"  Name="SnackbarPresenter" />
     </Grid>

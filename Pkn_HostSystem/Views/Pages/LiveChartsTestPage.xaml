@@ -8,7 +8,8 @@
       xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
       xmlns:wpf="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
       xmlns:system="clr-namespace:System;assembly=mscorlib"
- 
+      xmlns:static="clr-namespace:Pkn_HostSystem.Static"
+
       mc:Ignorable="d"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -17,6 +18,11 @@
       d:DesignHeight="714.5" d:DesignWidth="1000"
       SizeChanged="LiveChartsTestPage_OnSizeChanged"
       Title="LiveChartsTestPage">
+
+    <Page.Resources>
+        <converter:PermissionToBoolConverter x:Key="PermissionToBoolConverter"/>
+    </Page.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1.7*" />
@@ -116,6 +122,7 @@
             </Border>
 
             <Button Grid.RowSpan="2" HorizontalAlignment="Right" Command="{Binding SetParamButtonCommand}"
+                    IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}">
                 <ui:SymbolIcon Symbol="ChevronUp24" />
                 <Button.LayoutTransform>

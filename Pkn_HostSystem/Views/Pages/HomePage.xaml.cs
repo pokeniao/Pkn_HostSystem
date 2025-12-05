@@ -330,7 +330,7 @@ namespace Pkn_HostSystem.Views.Pages
 
             vocPojo.MachineId = vocPojo.SetMachineId;
             vocPojo.GroupCode = vocPojo.SetGroupCode;
-
+            vocPojo.Mi = vocPojo.SetMi;
             vocPojo.MesHttp = vocPojo.SetMesHttp;
         }
 
