@@ -891,8 +891,8 @@ public partial class HomePageViewModel : ObservableRecipient
                 case NodeEnum.Enter:
                     EnterOperationNode? enterOperationNode = startNode as EnterOperationNode;
                     EnterParamOperationModel enterParamOperationModel = enterOperationNode.Model;
-                    triggerType = enterParamOperationModel.TriggerType;
-                    triggerTime = enterParamOperationModel.TriggerTime;
+                    triggerType = enterParamOperationModel.NetWorkTriggerModel.TriggerType;
+                    triggerTime = enterParamOperationModel.NetWorkTriggerModel.TriggerTime;
                     netWorkTriggerModel = enterParamOperationModel.NetWorkTriggerModel;
                     break;
             }
