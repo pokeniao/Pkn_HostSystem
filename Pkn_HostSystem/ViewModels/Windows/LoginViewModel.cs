@@ -113,6 +113,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
             userLoginModel.Id = "";
             userLoginModel.LoginState = false;
             UserContext.Current.Permission = (LoginPermissionEnum)0;
+            Log.Info($"登入超时,自动退出");
         }
         #region 弹窗SnackbarService
         public void setSnackbarPresenter(SnackbarPresenter snackbarPresenter)

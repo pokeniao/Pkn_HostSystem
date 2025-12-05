@@ -203,6 +203,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
                         Log.Info($"上岗证校验:\r\n{response.Content}");
                         if (response.IsSuccessStatusCode)
                         {
+                            jObject = JObject.Parse(response.Content);
                             if (jObject["status"]?.ToString() == "true")
                             {
                                 //写入上岗校验成功
@@ -321,7 +322,9 @@ namespace Pkn_HostSystem.ViewModels.Windows
             userLoginModel.Id = "";
             userLoginModel.LoginState = false;
             UserContext.Current.Permission = (LoginPermissionEnum)0;
+            await PlcModbusTcp.WriteRegister_06(1, 300, 0);
             await PlcModbusTcp.WriteRegister_06(1, 302, 1);
+            Log.Info($"登入超时,自动退出");
         }
 
 
