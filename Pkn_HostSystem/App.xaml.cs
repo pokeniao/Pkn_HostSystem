@@ -36,16 +36,17 @@ namespace Pkn_HostSystem
             GlobalManager.StartTime = DateTimeOffset.Now;
             AppRunOn();
 
-            OnStartupWindow onStartupWindow = new OnStartupWindow();
-            try
-            {
-                onStartupWindow.Show();
-            }
-            catch (InvalidOperationException
-                   exception)
-            {
-                return;
-            }
+            //禁用开机机器码校验
+            // OnStartupWindow onStartupWindow = new OnStartupWindow();
+            // try
+            // {
+            //     onStartupWindow.Show();
+            // }
+            // catch (InvalidOperationException
+            //        exception)
+            // {
+            //     return;
+            // }
 
 
             await Task.Run(async () =>
@@ -61,7 +62,7 @@ namespace Pkn_HostSystem
             Application.Current.MainWindow = mainWindow;
             mainWindow.Show();
             base.OnStartup(e); // 只有当 App.Xaml 中设置了 StartupUri="MainWindow.xaml" 才需要
-            onStartupWindow.Close();
+            // onStartupWindow.Close();
 
             Ioc.Default.GetRequiredService<LiveChartsTestViewModel>().Log
                 .Info($"启动耗时{(DateTimeOffset.Now - GlobalManager.StartTime).TotalMilliseconds} ms");

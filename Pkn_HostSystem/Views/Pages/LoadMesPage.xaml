@@ -110,7 +110,6 @@
                         Margin="20,10"
                         HorizontalAlignment="Right">
                         <Button Content="清空日志" Margin="10,0" Click="ClearLog" />
-                        <Button Content="滑动到底部" Click="ButtonBase_OnClick" />
                     </WrapPanel>
             </Grid>
         </Grid>

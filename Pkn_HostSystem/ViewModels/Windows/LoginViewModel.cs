@@ -1,9 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Page;
@@ -11,14 +8,12 @@ using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using Pkn_HostSystem.Views.Pages.LoginWindowPage;
-using RestSharp;
-using System.Reactive;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
 namespace Pkn_HostSystem.ViewModels.Windows
 {
-    public partial class LoginViewModel:ObservableRecipient
+    public partial class LoginViewModel : ObservableRecipient
     {
         public SnackbarService SnackbarService { get; set; }
         public LogControl<LoginViewModel> Log;
@@ -49,10 +44,10 @@ namespace Pkn_HostSystem.ViewModels.Windows
                 LoginModel.PassWord = page.PasswordBox.Password;
                 var homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
                 UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
-                if (LoginModel.PassWord == "15577729871" && LoginModel.UserNumber =="pokeniao")
+                if (LoginModel.PassWord == "123456" && LoginModel.UserNumber == "admin")
                 {
                     userLoginModel.LoginState = true;
-                    userLoginModel.Name = "pokeniao";
+                    userLoginModel.Name = "admin";
                     userLoginModel.Emp = "管理员";
                     userLoginModel.Id = "1";
                     timeOutTimer(userLoginModel, timeOutCts);

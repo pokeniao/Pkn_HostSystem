@@ -1154,6 +1154,10 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -1166,114 +1170,98 @@
                                     <TextBlock Grid.Row="0" Grid.Column="2" Text="当前值" HorizontalAlignment="Center"
                                                Margin="10" />
 
-                                    <!-- 测试时间 -->
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="测试时间" Margin="10" />
+                                    <!-- 电阻上限设置 -->
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="电阻上限设置(mΩ)" Margin="10" />
                                     <ui:NumberBox Grid.Row="1" Grid.Column="1"
                                                   SmallChange="1"
                                                   Width="140"
                                                   Maximum="20"
                                                   Minimum="0"
                                                   Margin="0  0 0 5"
-                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},
-                                        Path=Permission,
-                                        Converter={StaticResource PermissionToBoolConverter},
-                                        ConverterParameter=Lv2
-                                        }"
-
-                                                  Value="{Binding HomePageModel.VocPojo.SetValueTestTime , UpdateSourceTrigger= PropertyChanged}" />
+                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                  Value="{Binding HomePageModel.ElectricityTest.SetResistanceUpLimit , UpdateSourceTrigger= PropertyChanged}" />
                                     <TextBlock Grid.Row="1" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.TestTime}" />
+                                               Text="{Binding HomePageModel.ElectricityTest.ResistanceUpLimit}" />
 
-                                    <!-- 触发阈值 -->
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="VOC NG触发阈值" Margin="10" />
+                                    <!-- 电阻下限设置 -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="电阻下限设置(mΩ)" Margin="10" />
                                     <ui:NumberBox Grid.Row="2" Grid.Column="1" Width="140"
                                                   SmallChange="0.001"
                                                   Margin="0  0 0 5"
-                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},
-                                                   Path=Permission,
-                                        Converter={StaticResource PermissionToBoolConverter},
-                                        ConverterParameter=Lv2
-                                        }"
-
-                                                  Value="{Binding HomePageModel.VocPojo.SetValueTriggerMax ,UpdateSourceTrigger=PropertyChanged }" />
+                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                  Value="{Binding HomePageModel.ElectricityTest.SetResistanceLowLimit ,UpdateSourceTrigger=PropertyChanged }" />
                                     <TextBlock Grid.Row="2" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.TriggerMax}" />
+                                               Text="{Binding HomePageModel.ElectricityTest.ResistanceLowLimit}" />
 
-                                    <!-- 上传地址 -->
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="上传地址" Margin="10" />
-                                    <ui:TextBox Grid.Row="3" Grid.Column="1" Width="140"
-                                                Margin="0  0 0 5"
-                                                IsEnabled="{Binding Source={x:Static static:UserContext.Current},
-                                        Path=Permission,
-                                        Converter={StaticResource PermissionToBoolConverter},
-                                        ConverterParameter=Lv2
-                                        }"
-
-
-                                                Text="{Binding HomePageModel.VocPojo.SetMesHttp ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <!-- 电压上限设置 -->
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="电压上限设置(V)" Margin="10" />
+                                    <ui:NumberBox Grid.Row="3" Grid.Column="1" Width="140"
+                                                  Margin="0  0 0 5"
+                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                  Value="{Binding HomePageModel.ElectricityTest.SetVoltageUpLimit ,UpdateSourceTrigger=PropertyChanged }" />
                                     <TextBlock Grid.Row="3" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.MesHttp}" />
-
-
-                                    <!-- 设备编号 -->
-                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="设备编号" Margin="10" />
-                                    <ui:TextBox Grid.Row="4" Grid.Column="1" Width="140"
-                                                Margin="0  0 0 5"
-                                                IsEnabled="{Binding Source={x:Static static:UserContext.Current},
-                                        Path=Permission,
-                                        Converter={StaticResource PermissionToBoolConverter},
-                                        ConverterParameter=Lv2
-                                        }"
-                                                Text="{Binding HomePageModel.VocPojo.SetMachineId ,UpdateSourceTrigger=PropertyChanged }" />
+                                               Text="{Binding HomePageModel.ElectricityTest.VoltageUpLimit}" />
+                                    <!-- 电压下限设置 -->
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="电压下限设置(V)" Margin="10" />
+                                    <ui:NumberBox Grid.Row="4" Grid.Column="1" Width="140"
+                                                  Margin="0  0 0 5"
+                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                  Value="{Binding HomePageModel.ElectricityTest.SetVoltageLowLimit ,UpdateSourceTrigger=PropertyChanged }" />
                                     <TextBlock Grid.Row="4" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.MachineId}" />
+                                               Text="{Binding HomePageModel.ElectricityTest.VoltageLowLimit}" />
 
-                                    <!-- 工序 -->
-                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="工序" Margin="10" />
+
+                                    <!-- 岗位 -->
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="岗位" Margin="10" />
                                     <ui:TextBox Grid.Row="5" Grid.Column="1" Width="140"
-                                                Margin="0  0 0 5"
-                                                IsEnabled="{Binding Source={x:Static static:UserContext.Current},
-                                        Path=Permission,
-                                        Converter={StaticResource PermissionToBoolConverter},
-                                        ConverterParameter=Lv2
-                                        }"
-                                                Text="{Binding HomePageModel.VocPojo.SetGroupCode ,UpdateSourceTrigger=PropertyChanged }" />
+                                                  Margin="0  0 0 5"
+                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                  Text="{Binding HomePageModel.ElectricityTest.SetMachineId ,UpdateSourceTrigger=PropertyChanged }" />
                                     <TextBlock Grid.Row="5" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.GroupCode}" />
+                                               Text="{Binding HomePageModel.ElectricityTest.MachineId}" />
 
-                                    <!-- MI号 -->
-                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="MI" Margin="10" />
+                                    <!-- 工序 -->
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="工序" Margin="10" />
                                     <ui:TextBox Grid.Row="6" Grid.Column="1" Width="140"
                                                 Margin="0  0 0 5"
-                                                IsEnabled="{Binding Source={x:Static static:UserContext.Current},
-                                        Path=Permission,
-                                        Converter={StaticResource PermissionToBoolConverter},
-                                        ConverterParameter=Lv1
-                                        }"
-                                                Text="{Binding HomePageModel.VocPojo.SetMi ,UpdateSourceTrigger=PropertyChanged }" />
+                                                IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                Text="{Binding HomePageModel.ElectricityTest.SetGroupCode ,UpdateSourceTrigger=PropertyChanged }" />
                                     <TextBlock Grid.Row="6" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.Mi}" />
-                                    <!-- 上传mes -->
-                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="启用上传mes" Margin="10" />
-                                    <ui:ToggleSwitch Grid.Row="7" Grid.Column="1"
-                                                     IsEnabled="{Binding Source={x:Static static:UserContext.Current},
-                                        Path=Permission,
-                                        Converter={StaticResource PermissionToBoolConverter},
-                                        ConverterParameter=Lv2
-                                        }"
-                                                     IsChecked="{Binding HomePageModel.VocPojo.MesOn}" />
+                                               Text="{Binding HomePageModel.ElectricityTest.GroupCode}" />
+
+                                    <!-- 电压标准值 -->
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="电压标准值" Margin="10" />
+                                    <ui:TextBox Grid.Row="7" Grid.Column="1" Width="140"
+                                                Margin="0  0 0 5"
+                                                IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                Text="{Binding HomePageModel.ElectricityTest.SetVoltageStandard ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="7" Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding HomePageModel.ElectricityTest.VoltageStandard}" />
+
+                                    <!-- 电阻标准值 -->
+                                    <TextBlock Grid.Row="8" Grid.Column="0" Text="电阻标准值" Margin="10" />
+                                    <ui:TextBox Grid.Row="8" Grid.Column="1" Width="140"
+                                                Margin="0  0 0 5"
+                                                IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                Text="{Binding HomePageModel.ElectricityTest.SetResistanceStandard ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="8" Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding HomePageModel.ElectricityTest.ResistanceStandard}" />
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">

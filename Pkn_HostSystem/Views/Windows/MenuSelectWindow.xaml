@@ -5,6 +5,8 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:page="clr-namespace:Pkn_HostSystem.Models.Page"
+                 xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
+                 xmlns:static="clr-namespace:Pkn_HostSystem.Static"
                  mc:Ignorable="d"
                  WindowStartupLocation="CenterScreen"
                  ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -13,7 +15,9 @@
                  d:DesignHeight="714.5" d:DesignWidth="1000"
                  d:DataContext="{d:DesignInstance page:MenuSelectModel}"
                  Title="MenuSelectWindow" Height="414.5" Width="300">
-
+    <Window.Resources>
+        <converter:PermissionToBoolConverter x:Key="PermissionToBoolConverter" />
+    </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -37,8 +41,12 @@
         </ListBox>
         <Grid Grid.Row="2">
             <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right" Margin=" 0 0 0 10">
-                <Button Content="添加" Margin="20 0" Click="ButtonBase_OnClick3" Width="70"/>
-                <Button Content="确认" Click="ButtonBase_OnClick2" Width="70"/>
+                <Button 
+                    IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                    Content="添加" Margin="20 0" Click="ButtonBase_OnClick3" Width="70"/>
+                <Button 
+                    IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                    Content="确认" Click="ButtonBase_OnClick2" Width="70"/>
                 <Button Content="取消" Margin="20 0" Click="ButtonBase_OnClick" Width="70"/>
             </StackPanel>
         </Grid>

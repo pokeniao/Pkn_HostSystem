@@ -59,7 +59,7 @@ public class CsvHelper
                 var fields = ParseCsvLine(line2);
                 _rows2.Add(fields);
             }
-            //比较一下 那个内容长, 就取用那个的
+            //比较一下 那个内容长, 就取用那个的(防止加载的是旧缓存覆盖新缓存)
             if (_rows.Count < _rows2.Count)
             {
                 _rows = _rows2;
@@ -68,6 +68,30 @@ public class CsvHelper
     }
     //读取长度
     public int GetLineLength => _rows.Count;
+
+    //读取指定行
+    public List<string>? GetRow(int rowIndex) 
+    {
+        if (rowIndex >= 0 && rowIndex < _rows.Count)
+        {
+            return _rows[rowIndex];
+        }
+        return null;
+    }
+    //更具单元格值获取行号(倒序)
+    public int GetRowIndexByCellValue(int columnIndex, string cellValue)
+    {
+        for (int i = _rows.Count -1; i >= 0 ; i--)
+        {
+            if (columnIndex >= 0 && columnIndex < _rows[i].Count &&
+                _rows[i][columnIndex] == cellValue)
+            {
+                return i;
+            }
+        }
+        return -1; // 未找到
+    }
+
 
     // 添加一行
     public void AddRow(params string[] fields)
@@ -83,6 +107,27 @@ public class CsvHelper
         {
             _rows[rowIndex][columnIndex] = newValue;
         }
+    }
+
+    // 修改整行,替换整行数据(Json)
+    public void UpdateRowFromJson(int rowIndex, string json)
+    {
+        if (rowIndex < 0 || rowIndex >= _rows.Count) return;
+        Dictionary<string, object>? dict;
+        try
+        {
+            dict = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+        }
+        catch (Exception e)
+        {
+            Log.Error($"{nameof(CsvHelper)}--本地保存失败,Json格式不正确:{e.Message}");
+            return;
+        }
+        if (dict == null || dict.Count == 0) return;
+        // 若已有表头，按表头顺序写入值，找不到的列填空
+        var header = _rows[0];
+        var row = header.Select(h => dict.TryGetValue(h, out var value) ? value?.ToString() ?? "" : "").ToList();
+        _rows[rowIndex] = row;
     }
 
     // 导出 List<T> 到 CSV，支持是否带表头
@@ -150,7 +195,7 @@ public class CsvHelper
                 foreach (var row in _rows)
                 {
                     token.ThrowIfCancellationRequested(); // 检查取消,抛出异常
-                    writer.WriteLine(string.Join(",", row.Select(EscapeCsv)));
+                    writer.WriteLine(string.Join(",", row.Select(EscapeCsv)));// row.Select(EscapeCsv) 相当于  row.Select(x => EscapeCsv(x))
                 }
             }
 
@@ -204,6 +249,7 @@ public class CsvHelper
 
         // 若已有表头，按表头顺序写入值，找不到的列填空
         var header = _rows[0];
+        //更具表头顺序,字段添加数据
         var row = header.Select(h => dict.TryGetValue(h, out var value) ? value?.ToString() ?? "" : "").ToList();
 
         _rows.Add(row);
@@ -265,13 +311,20 @@ public class CsvHelper
     {
         if (field.Contains(',') || field.Contains('"') || field.Contains('\n'))
         {
+            //将引号替换为两个引号
             field = field.Replace("\"", "\"\"");
+            //又用引号包裹起来
             return $"\"{field}\"";
         }
 
         return field;
     }
 
+    /// <summary>
+    /// 解析 CSV 行，处理引号和逗号 ,并返回当前行为List<string>
+    /// </summary>
+    /// <param name="line"></param>
+    /// <returns></returns>
     private static List<string> ParseCsvLine(string line)
     {
         var result = new List<string>(); // 存解析后的字段
@@ -324,7 +377,12 @@ public class CsvHelper
     }
 
 
-    // 类型转换
+    /// <summary>
+    /// 类型转换 , 将对应字符串转换为目标类型
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="targetType"></param>
+    /// <returns></returns>
     private object ConvertToType(string value, Type targetType)
     {
         if (targetType == typeof(string)) return value;
