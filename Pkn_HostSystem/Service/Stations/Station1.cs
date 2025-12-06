@@ -173,7 +173,7 @@ namespace Pkn_HostSystem.Service.Stations
 
                         TraceContext.UpdateParam("start", DateTime.Now);
                         Station1 station1 = new Station1();
-                        station1.时间 = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                        station1.时间 = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                         station1.电阻上限 = Volatile.Read(ref GlobalManager.ArrayRegister[50]).ToString();
                         station1.电阻下限 = Volatile.Read(ref GlobalManager.ArrayRegister[51]).ToString();
                         station1.电压上限 = Volatile.Read(ref GlobalManager.ArrayRegister[52]).ToString();
