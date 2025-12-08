@@ -1,14 +1,10 @@
-﻿using DynamicData;
-using DynamicData.Binding;
-using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.NodifyControl.Node.Base;
-using Pkn_HostSystem.NodifyControl.Node.Connector;
-using Pkn_HostSystem.NodifyControl.ParamOperationModel;
-using Pkn_HostSystem.Static;
+﻿using DynamicData.Binding;
+using Pkn_HostSystem.NodifyControl.Nodes.Connector;
+using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+
 
 namespace Pkn_HostSystem.Views.UserControls.OperationDataGrid
 {
@@ -25,32 +21,32 @@ namespace Pkn_HostSystem.Views.UserControls.OperationDataGrid
         /// <summary>
         /// 参数
         /// </summary>
-        public ObservableCollection<OperationParamModel> NeedItemSource
+        public ObservableCollection<OperationModel> NeedItemSource
         {
-            get => (ObservableCollection<OperationParamModel>)GetValue(NeedItemSourceProperty);
+            get => (ObservableCollection<OperationModel>)GetValue(NeedItemSourceProperty);
             set => SetValue(NeedItemSourceProperty, value);
         }
 
         public static readonly DependencyProperty NeedItemSourceProperty =
             DependencyProperty.Register(
                 nameof(NeedItemSource),
-                typeof(ObservableCollection<OperationParamModel>),
+                typeof(ObservableCollection<OperationModel>),
                 typeof(PknOperationDataGrid),
                 new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
 
-        public ObservableCollectionExtended<OperationParamModel> InputParams
+        public ObservableCollectionExtended<OperationModel> InputParams
         {
-            get => (ObservableCollectionExtended<OperationParamModel>)GetValue(InputParamsProperty);
+            get => (ObservableCollectionExtended<OperationModel>)GetValue(InputParamsProperty);
             set => SetValue(InputParamsProperty, value);
         }
 
         public static readonly DependencyProperty InputParamsProperty =
             DependencyProperty.Register(
                 nameof(InputParams),
-                typeof(ObservableCollectionExtended<OperationParamModel>),
+                typeof(ObservableCollectionExtended<OperationModel>),
                 typeof(PknOperationDataGrid),
-                new FrameworkPropertyMetadata(new ObservableCollectionExtended<OperationParamModel>()));
+                new FrameworkPropertyMetadata(new ObservableCollectionExtended<OperationModel>()));
 
 
         /// <summary>
@@ -78,7 +74,7 @@ namespace Pkn_HostSystem.Views.UserControls.OperationDataGrid
 
         private void MenuItem_OnClick(object sender, RoutedEventArgs e)
         {
-            OperationParamModel? dataGridOperationParam = DataGrid.SelectedValue as OperationParamModel;
+            OperationModel? dataGridOperationParam = DataGrid.SelectedValue as OperationModel;
 
             if (dataGridOperationParam == null) return;
 
@@ -116,7 +112,7 @@ namespace Pkn_HostSystem.Views.UserControls.OperationDataGrid
                 {
                     continue;
                 }
-                List<ObservableCollection<OperationParamModel>> myConnectorInputValue = connector.InputValue;
+                List<ObservableCollection<OperationModel>> myConnectorInputValue = connector.InputValue;
                 foreach (var observableCollection in myConnectorInputValue)
                 {
                     if (observableCollection == null)

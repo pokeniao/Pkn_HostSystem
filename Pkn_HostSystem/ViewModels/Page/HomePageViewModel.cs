@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using DynamicData.Binding;
-using HalconDotNet;
 using Microsoft.Win32;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
@@ -11,26 +10,20 @@ using Pkn_HostSystem.Base.Halcon;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
-using Pkn_HostSystem.Models.Windows;
-using Pkn_HostSystem.NodifyControl.Node;
-using Pkn_HostSystem.NodifyControl.Node.Base;
-using Pkn_HostSystem.NodifyControl.Operation.Interface;
-using Pkn_HostSystem.NodifyControl.Operation.StartOperation;
-using Pkn_HostSystem.NodifyControl.ParamOperationModel;
+using Pkn_HostSystem.NodifyControl.Operations.Interface;
 using Pkn_HostSystem.Services.Core;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
-using S7.Net;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.IO.Ports;
 using System.Windows;
-using System.Windows.Media;
-using System.Windows.Threading;
 using System.Xml.Linq;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using EnterOperationModel = Pkn_HostSystem.NodifyControl.OperationModels.Models.EnterOperationModel;
+using EnterOperationNode = Pkn_HostSystem.NodifyControl.Nodes.EnterOperationNode;
+using PknNode = Pkn_HostSystem.NodifyControl.Nodes.Core.PknNode;
 
 namespace Pkn_HostSystem.ViewModels.Page;
 
@@ -64,7 +57,8 @@ public partial class HomePageViewModel : ObservableRecipient
     public List<ComBoxEnumItem<CameraShowSizeEnum>> CameraShowMethodList { get; set; } = Enum
         .GetValues(typeof(CameraShowSizeEnum)).Cast<CameraShowSizeEnum>().Select(v =>
             new ComBoxEnumItem<CameraShowSizeEnum>(
-            ) { Value = v, Display = v.GetDescription() }).ToList();
+            )
+            { Value = v, Display = v.GetDescription() }).ToList();
 
     public HomePageViewModel()
     {
@@ -76,7 +70,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 NetWorkList = new ObservableCollectionExtended<NetWork>(),
                 RegisterItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100)
                     .Select(index => new RegisterItem(index))),
-                PlcAlarmItems = new ObservableCollection<PlcAlarmItem>(Enumerable.Range(0,1000).Select(index => new PlcAlarmItem(index)))
+                PlcAlarmItems = new ObservableCollection<PlcAlarmItem>(Enumerable.Range(0, 1000).Select(index => new PlcAlarmItem(index)))
             };
         }
 
@@ -693,10 +687,10 @@ public partial class HomePageViewModel : ObservableRecipient
         {
             HomePageModel.PlcAlarmRunButton = "停止";
             PlcAlarmRun();
-        } 
+        }
         else
         {
-            if (plcAlarmRunCts!=null) 
+            if (plcAlarmRunCts != null)
             {
                 plcAlarmRunCts.Cancel();
             }
@@ -712,7 +706,7 @@ public partial class HomePageViewModel : ObservableRecipient
             plcAlarmRunCts = new CancellationTokenSource();
             await PlcAlarmRunCyc(plcAlarmRunCts);
         }
-    
+
     }
 
     public async Task PlcAlarmRunCyc(CancellationTokenSource cts)
@@ -884,18 +878,19 @@ public partial class HomePageViewModel : ObservableRecipient
             //定义变量,触发类型和时间
             string triggerType = "";
             int triggerTime = 100;
-            NetWorkTriggerModel netWorkTriggerModel =null;
+            NetWorkTriggerModel netWorkTriggerModel = null;
             //找到起始节点转换成起始节点
             switch (startNode.NodeType)
             {
                 case NodeEnum.Enter:
                     EnterOperationNode? enterOperationNode = startNode as EnterOperationNode;
-                    EnterParamOperationModel enterParamOperationModel = enterOperationNode.Model;
-                    triggerType = enterParamOperationModel.NetWorkTriggerModel.TriggerType;
-                    triggerTime = enterParamOperationModel.NetWorkTriggerModel.TriggerTime;
-                    netWorkTriggerModel = enterParamOperationModel.NetWorkTriggerModel;
+                    EnterOperationModel enterOperationModel = enterOperationNode.Model;
+                    triggerType = enterOperationModel.NetWorkTriggerModel.TriggerType;
+                    triggerTime = enterOperationModel.NetWorkTriggerModel.TriggerTime;
+                    netWorkTriggerModel = enterOperationModel.NetWorkTriggerModel;
                     break;
             }
+            NetWorkTriggerLogic.RunFunc += () => model.EditorViewModel.RunCommand.Execute(null);
             while (!model.cts.Token.IsCancellationRequested)
             {
                 //更具不同触发类型进行不同逻辑
@@ -906,7 +901,6 @@ public partial class HomePageViewModel : ObservableRecipient
                         model.EditorViewModel.RunCommand.Execute(null);
                         break;
                     case "消息触发":
-                        NetWorkTriggerLogic.RunFunc+= () => model.EditorViewModel.RunCommand.Execute(null);
                         await NetWorkTriggerLogic.TriggerLogic(netWorkTriggerModel, model.cts);
                         break;
                 }

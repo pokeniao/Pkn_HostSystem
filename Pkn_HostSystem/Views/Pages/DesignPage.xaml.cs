@@ -1,20 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Nodify;
 using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.NodifyControl.Editor;
-using Pkn_HostSystem.NodifyControl.Node;
-using Pkn_HostSystem.NodifyControl.Node.Base;
-using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
+using Pkn_HostSystem.NodifyControl.Nodes.Core;
+using Pkn_HostSystem.NodifyControl.ViewModels.Editor;
 using Pkn_HostSystem.ViewModels.Page;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Clipboard = System.Windows.Clipboard;
-using DataObject = System.Windows.DataObject;
-using DragDropEffects = System.Windows.DragDropEffects;
-using DragEventArgs = System.Windows.DragEventArgs;
-using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+
 
 namespace Pkn_HostSystem.Views.Pages
 {
@@ -46,7 +40,7 @@ namespace Pkn_HostSystem.Views.Pages
                                                 && e.Data.GetData(typeof(TreeNodes)) is TreeNodes treeNodes)
             {
                 //创建一个Node
-                PknNode pknNode = DesignTreeNode.CreateNode(treeNodes.NodeType,ViewModel.DesignModel);
+                PknNode pknNode = DesignTreeNode.CreateNode(treeNodes.NodeType, ViewModel.DesignModel);
                 //设置位置
                 pknNode.Location = editor.GetLocationInsideEditor(e);
                 editorViewModel.Nodes.Add(pknNode);

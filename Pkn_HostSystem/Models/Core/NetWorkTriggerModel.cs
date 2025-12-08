@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using Newtonsoft.Json;
+using Pkn_HostSystem.Static;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace Pkn_HostSystem.Models.Core
@@ -18,27 +20,81 @@ namespace Pkn_HostSystem.Models.Core
         [ObservableProperty] private int triggerTime = 300;
 
         //触发网络名称
+        [NotifyPropertyChangedFor(nameof(showModbusTriggerParam))]
+        [NotifyPropertyChangedFor(nameof(showKeyenceTriggerParam))]
         [ObservableProperty] private string networkName ;
 
+        partial void OnNetworkNameChanged(string value)
+        {
+            NetMethod.Clear();
+            switch (GlobalManager.GetNetWork(value)?.NetworkDetailed.NetMethod)
+            {
+                case "ModbusTcp":
+                    NetMethod.Add("01读线圈");
+                    NetMethod.Add("02读输入状态");
+                    NetMethod.Add("03读保持寄存器");
+                    NetMethod.Add("04读输入寄存器");
+                    NetMethod.Add("05写单线圈");
+                    NetMethod.Add("06写单寄存器");
+                    NetMethod.Add("0F写多线圈");
+                    NetMethod.Add("10写多寄存器");
+                    break;
+                case "ModbusRtu":
+                    NetMethod.Add("01读线圈");
+                    NetMethod.Add("02读输入状态");
+                    NetMethod.Add("03读保持寄存器");
+                    NetMethod.Add("04读输入寄存器");
+                    NetMethod.Add("05写单线圈");
+                    NetMethod.Add("06写单寄存器");
+                    NetMethod.Add("0F写多线圈");
+                    NetMethod.Add("10写多寄存器");
+                    break;
+                case "基恩士上位链路通讯":
+                    NetMethod.Add("读DM寄存器");
+                    NetMethod.Add("读多DM寄存器");
+                    NetMethod.Add("读R线圈");
+                    NetMethod.Add("写DM寄存器");
+                    NetMethod.Add("写R线圈");
+                    NetMethod.Add("写字符串/写多DM");
+                    break;
+            }
+        }
+
+
+
         //站点地址
-        [ObservableProperty] private string stationAddress;
+        [ObservableProperty] private string stationAddress = "1";
 
         //起始地址
-        [ObservableProperty] private string startAddress;
+        [ObservableProperty] private string startAddress = "0";
 
         //触发的信息
-        [ObservableProperty] private string triggerMessage;
+        [ObservableProperty] private string triggerMessage = "1";
 
         //成功写回信息
-        [ObservableProperty] private string successResponseMessage;
+        [ObservableProperty] private string successResponseMessage = "2";
 
         //失败写回信息
-        [ObservableProperty] private string failResponseMessage;
+        [ObservableProperty] private string failResponseMessage = "3";
+        //数量
+        [ObservableProperty] private string count = "1";
 
-        //触发返回的信息
-        [ObservableProperty] private string triggerReturnMessage;
+        //方法s
+        [ObservableProperty] private ObservableCollection<string> netMethod = new ObservableCollection<string>();
+
+        //选中的方法名
+        [ObservableProperty] private string netMethodName;
+
+
+        [ObservableProperty] private List<ModbusToolPojo<object>> readDvgList = new ();
+        [ObservableProperty] private ObservableCollection<ModbusToolPojo<object>> writeDvgList = new();
 
         public Visibility showTriggerSet => TriggerType == "消息触发" ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility showModbusTriggerParam =>GlobalManager.GetNetWork(networkName)?.NetworkDetailed.NetMethod == "ModbusTcp" ||
+            GlobalManager.GetNetWork(networkName)?.NetworkDetailed.NetMethod == "ModbusRtu" ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility showKeyenceTriggerParam => GlobalManager.GetNetWork(networkName)?.NetworkDetailed.NetMethod == "基恩士上位链路通讯" ? Visibility.Visible : Visibility.Collapsed;
 
     }
 }

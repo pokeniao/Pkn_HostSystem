@@ -7,13 +7,13 @@
       xmlns:page="clr-namespace:Pkn_HostSystem.ViewModels.Page"
       xmlns:ha="http://schemas.mvtec.com/halcondotnet"
       xmlns:nodify="https://miroiu.github.io/nodify"
-      xmlns:node1="clr-namespace:Pkn_HostSystem.NodifyControl.Node"
-      xmlns:connector1="clr-namespace:Pkn_HostSystem.NodifyControl.Node.Connector"
-      xmlns:connection1="clr-namespace:Pkn_HostSystem.NodifyControl.Connection"
-      xmlns:converters="clr-namespace:Pkn_HostSystem.NodifyControl.Converters"
-      xmlns:nodifyControl="clr-namespace:Pkn_HostSystem.NodifyControl"
-      xmlns:base="clr-namespace:Pkn_HostSystem.NodifyControl.Node.Base"
+
       xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
+      xmlns:base1="clr-namespace:Pkn_HostSystem.NodifyControl.Base"
+      xmlns:converters="clr-namespace:Pkn_HostSystem.NodifyControl.Base.Converters"
+      xmlns:core="clr-namespace:Pkn_HostSystem.NodifyControl.Nodes.Core"
+      xmlns:connector="clr-namespace:Pkn_HostSystem.NodifyControl.Nodes.Connector"
+      xmlns:connection="clr-namespace:Pkn_HostSystem.NodifyControl.ViewModels.Connection"
       mc:Ignorable="d"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -24,7 +24,7 @@
 
       Title="DesignPage">
     <Page.Resources>
-        <nodifyControl:BindingProxy x:Key="EditorProxy"
+        <base1:BindingProxy x:Key="EditorProxy"
                                     DataContext="{Binding  EditorViewModel}" />
         <converters:ConnectorOffsetConverter x:Key="ConnectorOffsetConverter" />
         <converter:MultiplyConverter x:Key="MultiplyConverter" />
@@ -143,14 +143,14 @@
 
                         <!-- 控制Node节点 -->
                         <nodify:NodifyEditor.ItemTemplate>
-                            <DataTemplate DataType="{x:Type base:PknNode}">
+                            <DataTemplate DataType="{x:Type core:PknNode}">
                                 <nodify:Node
                                     Header="{Binding NodeName}"
                                     Input="{Binding Input}"
                                     Output="{Binding Output}">
                                     <!-- 输入 -->
                                     <nodify:Node.InputConnectorTemplate>
-                                        <DataTemplate DataType="{x:Type connector1:MyConnector}">
+                                        <DataTemplate DataType="{x:Type connector:MyConnector}">
                                             <nodify:NodeInput
                                                 Header="{Binding ConnectorName}"
                                                 Anchor="{Binding Anchor, Mode=OneWayToSource}"
@@ -159,7 +159,7 @@
                                     </nodify:Node.InputConnectorTemplate>
                                     <!-- 输出 -->
                                     <nodify:Node.OutputConnectorTemplate>
-                                        <DataTemplate DataType="{x:Type connector1:MyConnector}">
+                                        <DataTemplate DataType="{x:Type connector:MyConnector}">
                                             <nodify:NodeInput
                                                 Header="{Binding ConnectorName}"
                                                 Anchor="{Binding Anchor, Mode=OneWayToSource}"
@@ -171,7 +171,7 @@
                         </nodify:NodifyEditor.ItemTemplate>
                         <!-- 控制Node连接 -->
                         <nodify:NodifyEditor.ConnectionTemplate>
-                            <DataTemplate DataType="{x:Type connection1:ConnectorViewModel}">
+                            <DataTemplate DataType="{x:Type connection:ConnectorViewModel}">
                                 <nodify:StepConnection
                                     Source="{Binding Source.Anchor}"
                                     Target="{Binding Target.Anchor}"
@@ -256,7 +256,7 @@
                         </nodify:NodifyEditor.ItemContainerStyle>
                         <!-- 控制预连接时的逻辑 -->
                         <nodify:NodifyEditor.PendingConnectionTemplate>
-                            <DataTemplate DataType="{x:Type connection1:PendingConnectionViewModel}">
+                            <DataTemplate DataType="{x:Type connection:PendingConnectionViewModel}">
                                 <nodify:PendingConnection
                                     AllowOnlyConnectors="True"
                                     CompletedCommand="{Binding FinishCommand}"

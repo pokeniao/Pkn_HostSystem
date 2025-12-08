@@ -4,7 +4,6 @@
     {
         Enter,//起始节点
         Add ,
-        Subtract,
-        Multiply,
+        ModbusTcp,
     }
 }

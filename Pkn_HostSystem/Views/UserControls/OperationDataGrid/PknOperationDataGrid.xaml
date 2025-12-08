@@ -64,7 +64,7 @@
                                     DisplayMemberPath="Name"
                                     Visibility="{Binding ShowDynamicParamVisibility}"
                                     ItemsSource="{Binding InputParams, RelativeSource={RelativeSource AncestorType=UserControl} }"
-                                    SelectedValue="{Binding DynParam,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                    SelectedValue="{Binding Dyn,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>

@@ -1,18 +1,6 @@
 ﻿using Pkn_HostSystem.Models.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Pkn_HostSystem.Views.UserControls.NetWorkTrigger
 {
@@ -35,7 +23,7 @@ namespace Pkn_HostSystem.Views.UserControls.NetWorkTrigger
             nameof(NetWorkTriggerModel),
             typeof(NetWorkTriggerModel),
             typeof(NetWorkTriggerUserControl),
-            new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
             );
         /// <summary>
         /// 通讯选择改变
@@ -44,7 +32,7 @@ namespace Pkn_HostSystem.Views.UserControls.NetWorkTrigger
         /// <param name="e"></param>
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+
         }
     }
 }

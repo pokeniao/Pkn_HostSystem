@@ -6,17 +6,16 @@ using HalconDotNet;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Halcon;
-using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
-using Pkn_HostSystem.NodifyControl.Editor;
-using Pkn_HostSystem.NodifyControl.LocalSave;
-using Pkn_HostSystem.NodifyControl.Node.DesignTreeNode;
+using Pkn_HostSystem.NodifyControl.LocalSave.Services;
+using Pkn_HostSystem.NodifyControl.Nodes.Core;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using System.Collections.ObjectModel;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using EditorViewModel = Pkn_HostSystem.NodifyControl.ViewModels.Editor.EditorViewModel;
 using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace Pkn_HostSystem.ViewModels.Page
@@ -58,7 +57,7 @@ namespace Pkn_HostSystem.ViewModels.Page
         [ObservableProperty] private string projectName;
 
 
-        public ProjectModel ProjectModel { get; set; } 
+        public ProjectModel ProjectModel { get; set; }
         public DesignViewModel()
         {
             SnackbarService = new SnackbarService();
@@ -119,12 +118,12 @@ namespace Pkn_HostSystem.ViewModels.Page
 
         public void SetRichTextBox(RichTextBox richTextBox)
         {
-            if (DesignModel!=null)
+            if (DesignModel != null)
             {
                 DesignModel.Log.RichTextBox = richTextBox;
             }
 
-          
+
         }
     }
 }

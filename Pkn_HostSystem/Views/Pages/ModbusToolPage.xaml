@@ -40,10 +40,7 @@
                 </Grid.RowDefinitions>
                 <TabControl Margin="20 0" 
                                   Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                               
-                               
-                >
+                                  BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                     <TabItem
                         Width="120">
                         <TabItem.Header>
@@ -193,7 +190,7 @@
                             </StackPanel>
                         </WrapPanel>
                         <WrapPanel>
-                            <StackPanel Orientation="Horizontal" Margin="5">
+                            <StackPanel Orientation="Horizontal" Margin="5">    
                                 <TextBlock Text="起始地址" TextAlignment="Right" Width="70" FontSize="15"
                                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="8">
                                 </TextBlock>
