@@ -238,15 +238,15 @@
                     AutoGenerateColumns="false"
                     CanUserAddRows="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn IsReadOnly="True" Header="地址(address)" Binding="{Binding address }" />
+                        <DataGridTextColumn IsReadOnly="True" Header="地址(address)" Binding="{Binding Address }" />
                         <DataGridTemplateColumn Header="值(value)">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <TextBlock Text="{Binding value}"
+                                        <TextBlock Text="{Binding Value}"
                                                    Visibility="{Binding valueIsBool,Converter={StaticResource openTextBoxbyTrue}}" />
                                         <CheckBox
-                                            IsChecked="{Binding value ,UpdateSourceTrigger=PropertyChanged ,Mode=TwoWay}"
+                                            IsChecked="{Binding Value ,UpdateSourceTrigger=PropertyChanged ,Mode=TwoWay}"
                                             Visibility="{Binding valueIsBool,Converter={StaticResource openCheckBoxbyFalse}}" />
                                     </Grid>
                                 </DataTemplate>
@@ -254,7 +254,7 @@
                             <DataGridTemplateColumn.CellEditingTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <TextBox Text="{Binding value}"
+                                        <TextBox Text="{Binding Value}"
                                                  Visibility="{Binding valueIsBool,Converter={StaticResource openTextBoxbyTrue}}" />
 
                                     </Grid>
@@ -281,8 +281,8 @@
                     Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="地址(address)" Binding="{Binding address }"></DataGridTextColumn>
-                        <DataGridTextColumn Header="值(value)" Binding="{Binding value }"></DataGridTextColumn>
+                        <DataGridTextColumn Header="地址(address)" Binding="{Binding Address }"></DataGridTextColumn>
+                        <DataGridTextColumn Header="值(value)" Binding="{Binding Value }"></DataGridTextColumn>
                     </DataGrid.Columns>
                 </ui:DataGrid>
             </Grid>

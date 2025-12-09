@@ -96,7 +96,7 @@ namespace Pkn_HostSystem.Views.Pages
                 int key = viewModel.ModbusToolModel.StartAddress;
                 for (int i = 0; i < viewModel.ModbusToolModel.ReadCount; i++)
                 {
-                    bindingList.Add(new ModbusToolPojo<object>() { address = key++, value = (object)false ,valueIsBool =true});
+                    bindingList.Add(new ModbusToolPojo<object>() { Address = key++, Value = (object)false ,valueIsBool =true});
                 }
 
                 return bindingList;
@@ -107,7 +107,7 @@ namespace Pkn_HostSystem.Views.Pages
                 for (int i = 0; i < viewModel.ModbusToolModel.ReadCount; i++)
                 {
                     bindingList.Add(new ModbusToolPojo<object>()
-                        { address = currentAddress, value = (A)(object)(ushort)0, valueIsBool = false });
+                        { Address = currentAddress, Value = (A)(object)(ushort)0, valueIsBool = false });
                     currentAddress++;
                 }
                 return bindingList;

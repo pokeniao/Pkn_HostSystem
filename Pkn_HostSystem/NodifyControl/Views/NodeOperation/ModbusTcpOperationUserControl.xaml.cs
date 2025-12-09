@@ -1,22 +1,10 @@
-﻿using Pkn_HostSystem.Models.Core;
+﻿using DynamicData;
+using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Nodes;
 using Pkn_HostSystem.NodifyControl.OperationModels.Models;
 using Pkn_HostSystem.Static;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 
 namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
@@ -36,7 +24,7 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
         //数量改变
         private void NumberBox_ValueChanged(object sender, Wpf.Ui.Controls.NumberBoxValueChangedEventArgs args)
         {
-           
+
             refreshWriteDgv();
         }
         #endregion
@@ -56,7 +44,6 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                     refreshWriteDgv();
                     break;
             }
-    
         }
 
 
@@ -71,54 +58,99 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                     case "05写单线圈":
                         model.NetWorkTriggerModel.Count = "1";
                         NumberBox.IsEnabled = false;
-                        model.NetWorkTriggerModel.WriteDvgList = WriteView<bool>();
+                         WriteDvgView<bool>();
                         break;
                     case "06写单寄存器":
                         model.NetWorkTriggerModel.Count = "1";
                         NumberBox.IsEnabled = false;
-                        model.NetWorkTriggerModel.WriteDvgList = WriteView<ushort>();
+                        WriteDvgView<ushort>();
                         break;
                     case "0F写多线圈":
                         NumberBox.IsEnabled = true;
-                        model.NetWorkTriggerModel.WriteDvgList = WriteView<bool>();
+                        WriteDvgView<bool>();
                         break;
                     case "10写多寄存器":
                         NumberBox.IsEnabled = true;
-                        model.NetWorkTriggerModel.WriteDvgList = WriteView<ushort>();
-                        break;
-                    default:
-                        NumberBox.IsEnabled = true;
-                        model.NetWorkTriggerModel.WriteDvgList = null;
+                        WriteDvgView<ushort>();
                         break;
                 }
         }
 
-        private ObservableCollection<ModbusToolPojo<object>> WriteView<A>()
+        private void WriteDvgView<A>()
         {
             ModbusTcpOperationNode modbusTcpOperationNode = (ModbusTcpOperationNode)DataContext;
             var model = modbusTcpOperationNode?.Model;
-            ObservableCollection<ModbusToolPojo<object>> bindingList = new ObservableCollection<ModbusToolPojo<object>>();
+            int startAddress = int.Parse(model.NetWorkTriggerModel.StartAddress);
             if (typeof(A) == typeof(bool))
             {
-                int key = int.Parse(model.NetWorkTriggerModel.StartAddress);
+                // model.NetWorkTriggerModel.WriteDvgList.Clear();
+              
                 for (int i = 0; i < int.Parse(model.NetWorkTriggerModel.Count); i++)
                 {
-                    bindingList.Add(new ModbusToolPojo<object>() { address = key++, value = (object)false, valueIsBool = true });
+                    if (i>= model.NetWorkTriggerModel.WriteDvgList.Count)
+                    {
+                        model.NetWorkTriggerModel.WriteDvgList.Add(new ModbusToolPojo<object>() { Address = startAddress + i, Value = false, valueIsBool = true });
+                    }
+                    else
+                    {
+                        model.NetWorkTriggerModel.WriteDvgList[i].Address = startAddress + i;
+                    }
                 }
 
-                return bindingList;
             }
             else
             {
-                int currentAddress = int.Parse(model.NetWorkTriggerModel.StartAddress);
+                // model.NetWorkTriggerModel.WriteDvgList.Clear();
                 for (int i = 0; i < int.Parse(model.NetWorkTriggerModel.Count); i++)
                 {
-                    bindingList.Add(new ModbusToolPojo<object>()
-                    { address = currentAddress, value = (A)(object)(ushort)0, valueIsBool = false });
-                    currentAddress++;
+                    if (i >= model.NetWorkTriggerModel.WriteDvgList.Count)
+                    {
+                        model.NetWorkTriggerModel.WriteDvgList.Add(new ModbusToolPojo<object>() { Address = startAddress + i, Value = (A)(object)(ushort)0, valueIsBool = false });
+                    }
+                    else
+                    {
+                        model.NetWorkTriggerModel.WriteDvgList[i].Address = startAddress + i;
+                    }
+
                 }
-                return bindingList;
+            }
+            if (model.NetWorkTriggerModel.WriteDvgList.Count > int.Parse(model.NetWorkTriggerModel.Count))
+            {
+                int count = model.NetWorkTriggerModel.WriteDvgList.Count-1;
+                for (int i = int.Parse(model.NetWorkTriggerModel.Count)-1; i < count; i++)
+                {
+                    model.NetWorkTriggerModel.WriteDvgList.RemoveAt(int.Parse(model.NetWorkTriggerModel.Count));
+                }
             }
         }
+
+
+        // private ObservableCollection<ModbusToolPojo<object>> WriteView<A>()
+        // {
+        //     ModbusTcpOperationNode modbusTcpOperationNode = (ModbusTcpOperationNode)DataContext;
+        //     var model = modbusTcpOperationNode?.Model;
+        //     ObservableCollection<ModbusToolPojo<object>> bindingList = new ObservableCollection<ModbusToolPojo<object>>();
+        //     if (typeof(A) == typeof(bool))
+        //     {
+        //         int key = int.Parse(model.NetWorkTriggerModel.StartAddress);
+        //         for (int i = 0; i < int.Parse(model.NetWorkTriggerModel.Count); i++)
+        //         {
+        //             bindingList.Add(new ModbusToolPojo<object>() { address = key++, value = (object)false, valueIsBool = true });
+        //         }
+        //
+        //         return bindingList;
+        //     }
+        //     else
+        //     {
+        //         int currentAddress = int.Parse(model.NetWorkTriggerModel.StartAddress);
+        //         for (int i = 0; i < int.Parse(model.NetWorkTriggerModel.Count); i++)
+        //         {
+        //             bindingList.Add(new ModbusToolPojo<object>()
+        //             { address = currentAddress, value = (A)(object)(ushort)0, valueIsBool = false });
+        //             currentAddress++;
+        //         }
+        //         return bindingList;
+        //     }
+        // }
     }
 }

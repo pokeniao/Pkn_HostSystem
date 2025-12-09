@@ -20,14 +20,39 @@ namespace Pkn_HostSystem.Models.Core
         [ObservableProperty] private int triggerTime = 300;
 
         //触发网络名称
-        [NotifyPropertyChangedFor(nameof(showModbusTriggerParam))]
-        [NotifyPropertyChangedFor(nameof(showKeyenceTriggerParam))]
-        [ObservableProperty] private string networkName ;
+        private string networkName;
 
-        partial void OnNetworkNameChanged(string value)
+        public string NetworkName
         {
+            get => networkName;
+
+            set
+            {
+                //当通讯断掉的时候,防止清除掉上次连接的连接名
+                if (string.IsNullOrEmpty(value))
+                {
+                    return; 
+                }
+             
+                SetProperty(ref networkName, value);
+                OnPropertyChanged(nameof(showModbusTriggerParam));
+                OnPropertyChanged(nameof(showKeyenceTriggerParam));
+                OnNetworkNameChanged(value);
+            }
+        }
+
+
+        public void OnNetworkNameChanged(string value)
+        {
+            string? networkDetailedNetMethod = GlobalManager.GetNetWork(value)?.NetworkDetailed.NetMethod;
+            if (networkDetailedNetMethod == null)
+            {
+                return;
+            }
+
+
             NetMethod.Clear();
-            switch (GlobalManager.GetNetWork(value)?.NetworkDetailed.NetMethod)
+            switch (networkDetailedNetMethod)
             {
                 case "ModbusTcp":
                     NetMethod.Add("01读线圈");

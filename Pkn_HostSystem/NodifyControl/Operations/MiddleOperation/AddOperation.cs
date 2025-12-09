@@ -11,7 +11,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
     public class AddOperation : BaseOperation<AddOperationNode> 
     {
 
-        public AddOperation(AddOperationNode _node):base(_node) { }
+        public AddOperation(AddOperationNode _node):base(_node, new AddOperationUserControl()) { }
 
 
         protected override async Task OnExecute()
@@ -39,7 +39,6 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
 
         public override FrameworkElement GetConfigView()
         {
-            var view = new AddOperationUserControl();
             view.DataContext = node;
             return view;
         }

@@ -54,7 +54,8 @@
             <StackPanel>
                 <WrapPanel Margin="0,10,0,0">
                     <TextBlock Text="触发对象" Margin="5" TextAlignment="Center" />
-                    <ComboBox Width="200"
+                    <TextBlock Text="{Binding  NetWorkTriggerModel.NetworkName, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="5" TextAlignment="Center" />
+                    <ComboBox Width="150"
                               ItemsSource="{Binding NetWorkTriggerModel.NetWorkList,RelativeSource={RelativeSource AncestorType=UserControl},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                               DisplayMemberPath="NetworkDetailed.Name"
                               SelectedValuePath="NetworkDetailed.Name"

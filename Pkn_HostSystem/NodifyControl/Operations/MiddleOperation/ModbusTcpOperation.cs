@@ -9,8 +9,10 @@ using System.Windows;
 
 namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
 {
-    public class ModbusTcpOperation(ModbusTcpOperationNode node) : BaseOperation<ModbusTcpOperationNode>(node)
+    public class ModbusTcpOperation(ModbusTcpOperationNode node) : BaseOperation<ModbusTcpOperationNode>(node, new ModbusTcpOperationUserControl())
     {
+
+
         protected override async Task OnExecute()
         {
 
@@ -103,7 +105,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                         await ModbusBase.WriteCoil_05(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress),
-                            (bool)node.Model.NetWorkTriggerModel.WriteDvgList[0].value
+                            (bool)node.Model.NetWorkTriggerModel.WriteDvgList[0].Value
                             );
                     }
                     catch (Exception exception)
@@ -116,7 +118,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                         await ModbusBase.WriteRegister_06(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress), 
                             ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress),
-                            ushort.Parse((string)node.Model.NetWorkTriggerModel.WriteDvgList[0].value.ToString()));
+                            ushort.Parse((string)node.Model.NetWorkTriggerModel.WriteDvgList[0].Value.ToString()));
                     }
                     catch (Exception exception)
                     {
@@ -127,7 +129,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                     {
                         var coils = new List<bool>();
                         foreach (var modbusPojo in Enumerable.ToArray<ModbusToolPojo<object>>(node.Model.NetWorkTriggerModel.WriteDvgList))
-                            coils.Add((bool)modbusPojo.value);
+                            coils.Add((bool)modbusPojo.Value);
 
                         await ModbusBase.WriteCoils_0F(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
@@ -144,7 +146,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                     try
                     {
                         foreach (ModbusToolPojo<object> modbusPojo in Enumerable.ToArray<ModbusToolPojo<object>>(node.Model.NetWorkTriggerModel.WriteDvgList))
-                            registers.Add(ushort.Parse(modbusPojo.value.ToString()));
+                            registers.Add(ushort.Parse(modbusPojo.Value.ToString()));
 
                         await ModbusBase.WriteRegisters_10(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
@@ -165,7 +167,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
         {
             var address = ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress);
             var modbusPojos = value.Select((b, index) => new ModbusToolPojo<object>
-            { address = address++, value = b }).ToList();
+            { Address = address++, Value = b }).ToList();
             node.Model.NetWorkTriggerModel.ReadDvgList = modbusPojos;
         }
 
@@ -173,7 +175,6 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
 
         public override FrameworkElement GetConfigView()
         {
-            var view = new ModbusTcpOperationUserControl();
             view.DataContext = node;
             return view;
         }

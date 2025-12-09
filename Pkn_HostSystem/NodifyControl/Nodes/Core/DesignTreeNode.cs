@@ -47,15 +47,15 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
             switch (NodeType)
             {
                 case NodeEnum.Add:
-                    pknNode = new AddOperationNode(designModel);
+                    pknNode = new AddOperationNode(designModel,model);
                     break;
                 case NodeEnum.Enter:
-                    pknNode = new EnterOperationNode(designModel);
+                    pknNode = new EnterOperationNode(designModel,model);
                     break;
 
                 case NodeEnum.ModbusTcp:
 
-                    pknNode = new ModbusTcpOperationNode(designModel);
+                    pknNode = new ModbusTcpOperationNode(designModel,model);
                     break;
             }
             return pknNode;

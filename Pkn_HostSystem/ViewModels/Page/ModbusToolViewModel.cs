@@ -187,7 +187,7 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 {
                     await ModbusBase.WriteCoil_05((byte)ModbusToolModel.SlaveAddress,
                         (ushort)ModbusToolModel.StartAddress,
-                        (bool)ModbusToolModel.WriteDvgList[0].value);
+                        (bool)ModbusToolModel.WriteDvgList[0].Value);
                 }
                 catch (Exception exception)
                 {
@@ -202,7 +202,7 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 {
                     await ModbusBase.WriteRegister_06((byte)ModbusToolModel.SlaveAddress,
                         (ushort)ModbusToolModel.StartAddress,
-                        ushort.Parse((string)ModbusToolModel.WriteDvgList[0].value.ToString()));
+                        ushort.Parse((string)ModbusToolModel.WriteDvgList[0].Value.ToString()));
                 }
                 catch (Exception exception)
                 {
@@ -217,7 +217,7 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 {
                     var coils = new List<bool>();
                     foreach (var modbusPojo in Enumerable.ToArray<ModbusToolPojo<object>>(ModbusToolModel.WriteDvgList))
-                        coils.Add((bool)modbusPojo.value);
+                        coils.Add((bool)modbusPojo.Value);
 
                     await ModbusBase.WriteCoils_0F((byte)ModbusToolModel.SlaveAddress,
                         (ushort)ModbusToolModel.StartAddress,
@@ -236,7 +236,7 @@ public partial class ModbusToolViewModel : ObservableRecipient
                 try
                 {
                     foreach (ModbusToolPojo<object> modbusPojo in Enumerable.ToArray<ModbusToolPojo<object>>(ModbusToolModel.WriteDvgList))
-                        registers.Add(ushort.Parse(modbusPojo.value.ToString()));
+                        registers.Add(ushort.Parse(modbusPojo.Value.ToString()));
 
                     await ModbusBase.WriteRegisters_10((byte)ModbusToolModel.SlaveAddress,
                         (ushort)ModbusToolModel.StartAddress, registers.ToArray()
@@ -258,7 +258,7 @@ public partial class ModbusToolViewModel : ObservableRecipient
     {
         var address = (int)ModbusToolModel.StartAddress;
         var modbusPojos = value.Select((b, index) => new ModbusToolPojo<object>
-        { address = address++, value = b }).ToList();
+        { Address = address++, Value = b }).ToList();
         ModbusToolModel.ReadDvgList = modbusPojos;
     }
 

@@ -7,11 +7,13 @@ using System.Windows;
 
 namespace Pkn_HostSystem.NodifyControl.Operations.Core
 {
-    public abstract class BaseOperation<TNode>(TNode node) : IOperation
+    public abstract class BaseOperation<TNode>(TNode node, FrameworkElement view) : IOperation
     {
         protected readonly LogControl<DesignModel> Log = (node as PknNode)?.DesignModel.Log ?? throw new ArgumentException("Node 必须是 PknNode 派生类");
         public TNode node { get; } = node;
 
+
+        public FrameworkElement view { get; } = view;
         /// <summary>
         /// 动态遍历 更具动态名 获取动态值
         /// </summary>

@@ -9,7 +9,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.StartOperation
     public class EnterOperation : BaseOperation<EnterOperationNode>, IStartOperation
     {
 
-        public EnterOperation(EnterOperationNode _node):base(_node) { }
+        public EnterOperation(EnterOperationNode _node):base(_node, new EnterOperationUserControl()) { }
 
 
         protected override async Task OnExecute()
@@ -19,7 +19,6 @@ namespace Pkn_HostSystem.NodifyControl.Operations.StartOperation
 
         public override FrameworkElement GetConfigView()
         {
-            var view = new EnterOperationUserControl();
             view.DataContext = node;
             return view;
         }
