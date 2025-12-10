@@ -1,13 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Nodes.Connector;
 using Pkn_HostSystem.NodifyControl.OperationModels.Interface;
-using Pkn_HostSystem.NodifyControl.OperationModels.Models;
+using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using Pkn_HostSystem.NodifyControl.Operations.Interface;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -53,24 +52,24 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
         /// <summary>
         /// 输入参数
         /// </summary>
-        [ObservableProperty] private ObservableCollectionExtended<OperationModels.Models.Core.OperationModel> inputParams = new ObservableCollectionExtended<OperationModels.Models.Core.OperationModel>();
+        [ObservableProperty] private ObservableCollectionExtended<OperationModel> inputParams = new();
 
-        [ObservableProperty] private ObservableCollectionExtended<OperationModels.Models.Core.OperationModel> outputParams = new ObservableCollectionExtended<OperationModels.Models.Core.OperationModel>();
+        [ObservableProperty] private ObservableCollectionExtended<OperationModel> outputParams = new();
 
         /// <summary>
         /// 输入节点
         /// </summary>
-        public ObservableCollection<MyConnector> Input { get; set; } = new ObservableCollection<MyConnector>();
+        public ObservableCollection<MyConnector> Input { get; set; } = new();
 
         /// <summary>
         /// 输出节点
         /// </summary>
-        public ObservableCollection<MyConnector> Output { get; set; } = new ObservableCollection<MyConnector>();
+        public ObservableCollection<MyConnector> Output { get; set; } = new();
 
-        public PknNode(DesignModel _designModel , string _nodeName , NodeEnum _nodeType)
+        public PknNode(DesignModel _designModel, string _nodeName, NodeEnum _nodeType)
         {
 
-            DesignModel = _designModel; 
+            DesignModel = _designModel;
             NodeName = _nodeName;
             NodeType = _nodeType;
         }

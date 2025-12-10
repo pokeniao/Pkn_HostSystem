@@ -3,6 +3,7 @@ using DynamicData;
 using DynamicData.Binding;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
+using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -36,9 +37,9 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Connector
         /// <summary>
         /// 节点的所有输入
         /// </summary>
-        public List<ObservableCollection<OperationModels.Models.Core.OperationModel>> _inputValue = new List<ObservableCollection<OperationModels.Models.Core.OperationModel>>();
+        public List<ObservableCollection<OperationModel>> _inputValue = new();
 
-        public List<ObservableCollection<OperationModels.Models.Core.OperationModel>> InputValue
+        public List<ObservableCollection<OperationModel>> InputValue
         {
             get => _inputValue;
             set
@@ -50,45 +51,17 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Connector
         /// <summary>
         /// 节点的输出
         /// </summary>
-        private ObservableCollectionExtended<OperationModels.Models.Core.OperationModel> _value;
+        private ObservableCollectionExtended<OperationModel> _value;
 
-        public ObservableCollectionExtended<OperationModels.Models.Core.OperationModel> Value
+        public ObservableCollectionExtended<OperationModel> Value
         {
             get => _value;
             set
             {
                 SetProperty(ref _value, value);
-                // runChangeValue();
             }
         }
 
-        public void runChangeValue()
-        {
-            var observableChangeSet = Value.ToObservableChangeSet();
-
-            observableChangeSet
-                .AutoRefresh<OperationModels.Models.Core.OperationModel, string>(x => x.Name)
-                .AutoRefresh<OperationModels.Models.Core.OperationModel, string>(x => x.ParamMethod)
-                .AutoRefresh<OperationModels.Models.Core.OperationModel, string>(x => x.ParamValue)
-                .Subscribe(changes =>
-                {
-                    foreach (var change in changes)
-                    
-                    {
-                        //将值传递给连接到该连接器的所有连接器
-                        ValueObservers.ForEach(o =>
-                        {
-                            List<ObservableCollection<OperationModels.Models.Core.OperationModel>> inputValue = o.InputValue;
-
-                            if (Value != null)
-                            {
-                                //记录本次传递的值
-                                inputValue.Add(Value);
-                            }
-                        });
-                    }
-                });
-        }
 
         /// <summary>
         /// 用于存储所有连接到该连接器的连接器

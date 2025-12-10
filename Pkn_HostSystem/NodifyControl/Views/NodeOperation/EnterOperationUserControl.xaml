@@ -28,7 +28,7 @@
             Height="200"
             Margin="5"
             Grid.Row="1"
-            Inputs="{Binding}"
+            Node="{Binding}"
             NeedItemSource="{Binding OutputParams, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 
         <netWorkTrigger:NetWorkTriggerUserControl

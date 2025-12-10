@@ -1,5 +1,6 @@
 ﻿using DynamicData.Binding;
 using Pkn_HostSystem.NodifyControl.Nodes.Connector;
+using Pkn_HostSystem.NodifyControl.Nodes.Core;
 using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -17,6 +18,10 @@ namespace Pkn_HostSystem.Views.UserControls.OperationDataGrid
         {
             InitializeComponent();
         }
+        
+
+
+
 
         /// <summary>
         /// 参数
@@ -52,16 +57,16 @@ namespace Pkn_HostSystem.Views.UserControls.OperationDataGrid
         /// <summary>
         /// 传入DataContent
         /// </summary>
-        public object Inputs
+        public PknNode Node
         {
-            get => GetValue(InputsProperty);
-            set => SetValue(InputsProperty, value);
+            get => (PknNode)GetValue(NodeProperty);
+            set => SetValue(NodeProperty, value);
         }
 
-        public static readonly DependencyProperty InputsProperty =
+        public static readonly DependencyProperty NodeProperty =
             DependencyProperty.Register(
-                nameof(Inputs),
-                typeof(object),
+                nameof(Node),
+                typeof(PknNode),
                 typeof(PknOperationDataGrid),
                 new FrameworkPropertyMetadata(null));
 
@@ -99,9 +104,9 @@ namespace Pkn_HostSystem.Views.UserControls.OperationDataGrid
         private void ComboBox_OnDropDownOpened(object? sender, EventArgs e)
         {
             //获取全部接入
-            var myConnectors = Inputs as ObservableCollection<MyConnector>;
+            var myConnectors = Node.Input;
             InputParams.Clear();
-            if (Inputs == null)
+            if (Node.Input == null)
             {
                 InputParams.Clear();
                 return;

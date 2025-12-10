@@ -1,9 +1,6 @@
-﻿using DynamicData;
-using Pkn_HostSystem.Models.Core;
+﻿using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Nodes;
-using Pkn_HostSystem.NodifyControl.OperationModels.Models;
 using Pkn_HostSystem.Static;
-using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
 
@@ -22,7 +19,7 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
 
         #region 数据改变需要刷新WriteDgv
         //数量改变
-        private void NumberBox_ValueChanged(object sender, Wpf.Ui.Controls.NumberBoxValueChangedEventArgs args)
+        private void NumberBox_ValueChanged(object sender, NumberBoxValueChangedEventArgs args)
         {
 
             refreshWriteDgv();
@@ -58,7 +55,7 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                     case "05写单线圈":
                         model.NetWorkTriggerModel.Count = "1";
                         NumberBox.IsEnabled = false;
-                         WriteDvgView<bool>();
+                        WriteDvgView<bool>();
                         break;
                     case "06写单寄存器":
                         model.NetWorkTriggerModel.Count = "1";
@@ -84,10 +81,10 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
             if (typeof(A) == typeof(bool))
             {
                 // model.NetWorkTriggerModel.WriteDvgList.Clear();
-              
+
                 for (int i = 0; i < int.Parse(model.NetWorkTriggerModel.Count); i++)
                 {
-                    if (i>= model.NetWorkTriggerModel.WriteDvgList.Count)
+                    if (i >= model.NetWorkTriggerModel.WriteDvgList.Count)
                     {
                         model.NetWorkTriggerModel.WriteDvgList.Add(new ModbusToolPojo<object>() { Address = startAddress + i, Value = false, valueIsBool = true });
                     }
@@ -116,8 +113,8 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
             }
             if (model.NetWorkTriggerModel.WriteDvgList.Count > int.Parse(model.NetWorkTriggerModel.Count))
             {
-                int count = model.NetWorkTriggerModel.WriteDvgList.Count-1;
-                for (int i = int.Parse(model.NetWorkTriggerModel.Count)-1; i < count; i++)
+                int count = model.NetWorkTriggerModel.WriteDvgList.Count - 1;
+                for (int i = int.Parse(model.NetWorkTriggerModel.Count) - 1; i < count; i++)
                 {
                     model.NetWorkTriggerModel.WriteDvgList.RemoveAt(int.Parse(model.NetWorkTriggerModel.Count));
                 }

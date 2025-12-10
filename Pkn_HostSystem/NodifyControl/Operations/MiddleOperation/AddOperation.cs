@@ -1,17 +1,15 @@
-﻿using Pkn_HostSystem.Base.Log;
-using Pkn_HostSystem.Models.Page;
-using Pkn_HostSystem.NodifyControl.Nodes;
+﻿using Pkn_HostSystem.NodifyControl.Nodes;
+using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using Pkn_HostSystem.NodifyControl.Operations.Core;
-using Pkn_HostSystem.NodifyControl.Operations.Interface;
 using Pkn_HostSystem.NodifyControl.Views.NodeOperation;
 using System.Windows;
 
 namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
 {
-    public class AddOperation : BaseOperation<AddOperationNode> 
+    public class AddOperation : BaseOperation<AddOperationNode>
     {
 
-        public AddOperation(AddOperationNode _node):base(_node, new AddOperationUserControl()) { }
+        public AddOperation(AddOperationNode _node) : base(_node, new AddOperationUserControl()) { }
 
 
         protected override async Task OnExecute()
@@ -20,7 +18,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
             var Params = node.InputParams;
             double sum = 0;
             double a = 0;
-            foreach (OperationModels.Models.Core.OperationModel operationParam in Params)
+            foreach (OperationModel operationParam in Params)
             {
 
                 bool tryParse = double.TryParse(GetParamValue(operationParam), out a);

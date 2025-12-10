@@ -30,11 +30,13 @@ namespace Pkn_HostSystem.NodifyControl.OperationModels.Models.Core
         /// </summary>
         [ObservableProperty] private OperationModel _dyn;
 
-        // partial void OnDynParamChanged(OperationModel value)
-        // {
-        //     //用于显示
-        //     DynName = Dyn?.Name;
-        // }
+
+        partial void OnDynChanged(OperationModel value)
+        {
+            //用于显示
+            DynName = Dyn?.Name;
+        }
+
         /// <summary>
         /// 禁止修改
         /// </summary>
