@@ -1,6 +1,7 @@
 ﻿using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.NodifyControl.Nodes;
+using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using Pkn_HostSystem.NodifyControl.Operations.Core;
 using Pkn_HostSystem.NodifyControl.Views.NodeOperation;
 using Pkn_HostSystem.Static;
@@ -14,10 +15,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
 
         protected override async Task OnExecute()
         {
-
             await SendModbus();
-
-
         }
 
         public async Task SendModbus()
@@ -28,6 +26,8 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
 
             ModbusBase ModbusBase = netWork.ModbusBase;
 
+
+      
             switch (modelNetWorkTriggerModel.NetMethodName)
             {
                 case "01读线圈":
@@ -49,7 +49,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                         break;
                     }
 
-                    if (coils01 != null) readDGV(coils01);
+                    if (coils01 != null) ReadDvg(coils01);
                     break;
                 case "02读输入状态":
                     bool[] inputs02 = null;
@@ -69,7 +69,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                         break;
                     }
 
-                    if (inputs02 != null) readDGV(inputs02);
+                    if (inputs02 != null) ReadDvg(inputs02);
                     break;
                 case "03读保持寄存器":
                     ushort[] holdingRegisters03 = null;
@@ -89,7 +89,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                         break;
                     }
 
-                    if (holdingRegisters03 != null) readDGV(holdingRegisters03);
+                    if (holdingRegisters03 != null) ReadDvg(holdingRegisters03);
                     break;
                 case "04读输入寄存器":
                     ushort[] readInputRegisters04 = null;
@@ -108,7 +108,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                         Log.Error($"执行04读输入寄存器错误:{exception}");
                         break;
                     }
-                    if (readInputRegisters04 != null) readDGV(readInputRegisters04);
+                    if (readInputRegisters04 != null) ReadDvg(readInputRegisters04);
                     break;
                 case "05写单线圈":
                     try
@@ -117,7 +117,9 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                         await ModbusBase.WriteCoil_05(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress),
-                            (bool)node.Model.NetWorkTriggerModel.WriteDvgList[0].Value
+                            bool.Parse(
+                                GetParamValue(node.Model.NetWorkTriggerModel.WriteDvgList[0])
+                               )
                             );
                         Log.Info("执行05写单线圈完成");
                     }
@@ -133,7 +135,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                         await ModbusBase.WriteRegister_06(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress),
-                            ushort.Parse((string)node.Model.NetWorkTriggerModel.WriteDvgList[0].Value.ToString()));
+                            ushort.Parse(GetParamValue(node.Model.NetWorkTriggerModel.WriteDvgList[0])));
                         Log.Info("执行06写单寄存器完成");
                     }
                     catch (Exception exception)
@@ -146,8 +148,8 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                     {
                         Log.Info("执行0F写多线圈");
                         var coils = new List<bool>();
-                        foreach (var modbusPojo in Enumerable.ToArray<ModbusToolPojo<object>>(node.Model.NetWorkTriggerModel.WriteDvgList))
-                            coils.Add((bool)modbusPojo.Value);
+                        foreach (var modbusPojo in node.Model.NetWorkTriggerModel.WriteDvgList)
+                            coils.Add(bool.Parse(GetParamValue(modbusPojo)));
 
                         await ModbusBase.WriteCoils_0F(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
@@ -167,8 +169,8 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                     try
                     {
                         Log.Info("执行10写多寄存器");
-                        foreach (ModbusToolPojo<object> modbusPojo in Enumerable.ToArray<ModbusToolPojo<object>>(node.Model.NetWorkTriggerModel.WriteDvgList))
-                            registers.Add(ushort.Parse(modbusPojo.Value.ToString()));
+                        foreach (var modbusPojo in node.Model.NetWorkTriggerModel.WriteDvgList)
+                            registers.Add(ushort.Parse(GetParamValue(modbusPojo)));
 
                         await ModbusBase.WriteRegisters_10(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
@@ -188,12 +190,20 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
 
         #region 显示读DGV
 
-        public void readDGV<T>(T[] value)
+        public void ReadDvg<T>(T[] value)
         {
-            var address = ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress);
-            var modbusPojos = value.Select((b, index) => new ModbusToolPojo<object>
-            { Address = address++, Value = b }).ToList();
-            node.Model.NetWorkTriggerModel.ReadDvgList = modbusPojos;
+            var StartAddress = ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress);
+
+            ushort curAddress = StartAddress;
+            foreach (OperationModel nodeOutputParam in node.OutputParams)
+            {
+                if (nodeOutputParam.Name.Equals(curAddress.ToString()))
+                {
+                    nodeOutputParam.ParamValue = value[curAddress - StartAddress].ToString();
+                }
+                curAddress++;
+            }
+
         }
 
         #endregion

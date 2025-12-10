@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using Newtonsoft.Json;
+using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using Pkn_HostSystem.Static;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -111,8 +112,8 @@ namespace Pkn_HostSystem.Models.Core
         [ObservableProperty] private string netMethodName;
 
 
-        [ObservableProperty] private List<ModbusToolPojo<object>> readDvgList = new ();
-        [ObservableProperty] private ObservableCollection<ModbusToolPojo<object>> writeDvgList = new();
+        [ObservableProperty] private ObservableCollection<OperationModel> readDvgList = new ();
+        [ObservableProperty] private ObservableCollection<OperationModel> writeDvgList = new();
 
         public Visibility showTriggerSet => TriggerType == "消息触发" ? Visibility.Visible : Visibility.Collapsed;
 

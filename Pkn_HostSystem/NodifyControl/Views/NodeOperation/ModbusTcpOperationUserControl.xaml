@@ -105,67 +105,72 @@
                 <RowDefinition  Height="*"/>
             </Grid.RowDefinitions>
             <ui:TextBlock Grid.Row="0" Text="写入消息" Margin="30 5" FontSize="14" FontWeight="Black" HorizontalAlignment="Left"/>
-            <ui:DataGrid
-                    Grid.Row="1"
-                    Margin="10 0 15 20"
-                    Height="250"
-                    ItemsSource="{Binding Model.NetWorkTriggerModel.WriteDvgList , UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"
-                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
-                    ColumnWidth="*"
-                    AutoGenerateColumns="false"
-                    CanUserAddRows="False">
+
+            <DataGrid
+                Grid.Row="1"
+                Margin="10 0 15 20"
+                Height="250"
+                ItemsSource="{Binding Model.NetWorkTriggerModel.WriteDvgList , UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"
+                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                ColumnWidth="*"
+                AutoGenerateColumns="false"
+                CanUserAddRows="False"
+            >
                 <DataGrid.Columns>
-                    <DataGridTextColumn IsReadOnly="True" Header="地址(address)" Binding="{Binding Address }" />
-                    <DataGridTemplateColumn Header="值(value)">
+                    <DataGridTextColumn Header="地址(address)" Width="*"
+                                    Binding="{Binding Name ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    <DataGridTemplateColumn Header="方式" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ParamMethod ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <ComboBox
+                                SelectedValuePath="Content"
+                                IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                SelectedValue="{Binding ParamMethod ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBoxItem Content="常量" />
+                                    <ComboBoxItem Content="动态获取" />
+                                </ComboBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="值(value)" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
-                                    <TextBlock Text="{Binding Value}"
-                                                   Visibility="{Binding valueIsBool,Converter={StaticResource openTextBoxbyTrue}}" />
-                                    <CheckBox
-                                            IsChecked="{Binding Value ,UpdateSourceTrigger=PropertyChanged ,Mode=TwoWay}"
-                                            Visibility="{Binding valueIsBool,Converter={StaticResource openCheckBoxbyFalse}}" />
+                                    <TextBlock 
+                                    Visibility="{Binding ShowStaticParamVisibility}"
+                                    Text="{Binding ParamValue ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock 
+                                    Visibility="{Binding ShowDynamicParamVisibility}"
+                                    Text="{Binding DynName,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
                             <DataTemplate>
                                 <Grid>
-                                    <TextBox Text="{Binding Value}"
-                                                 Visibility="{Binding valueIsBool,Converter={StaticResource openTextBoxbyTrue}}" />
-
+                                    <TextBox Visibility="{Binding ShowStaticParamVisibility}"
+                                         IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                         Text="{Binding ParamValue ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                    <ComboBox
+                                    IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                    DropDownOpened="ComboBox_OnDropDownOpened"
+                                    DisplayMemberPath="Name"
+                                    Visibility="{Binding ShowDynamicParamVisibility}"
+                                    ItemsSource="{Binding InputParams2, RelativeSource={RelativeSource AncestorType=UserControl} }"
+                                    SelectedValue="{Binding Dyn,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
-            </ui:DataGrid>
-        </Grid>
-        <Grid Grid.Row="8"
-              Visibility="{Binding Model.NetWorkTriggerModel.showModbusTriggerParam}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition  Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="接受消息" Margin="30 5" FontSize="14" FontWeight="Black" HorizontalAlignment="Left"></TextBlock>
-            <ui:DataGrid
-                    Grid.Row="1"
-                    Margin="5 0 20  20"
-                    ItemsSource="{Binding Model.NetWorkTriggerModel.ReadDvgList , UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"
-                    BorderThickness="1"
-                    ColumnWidth="*"
-                    IsReadOnly="True"
-                    Height="250"
-                    AutoGenerateColumns="False"
-                    Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="地址(address)" Binding="{Binding Address ,UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"/>
-                    <DataGridTextColumn Header="值(value)" Binding="{Binding Value , UpdateSourceTrigger=PropertyChanged ,Mode=TwoWay }"/>
-                </DataGrid.Columns>
-            </ui:DataGrid>
+            </DataGrid>
         </Grid>
     </Grid>
 </UserControl>
