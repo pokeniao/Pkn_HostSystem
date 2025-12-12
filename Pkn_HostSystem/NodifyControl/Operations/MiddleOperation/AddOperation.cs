@@ -32,15 +32,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
             //添加到输出
             var outputParams = node.OutputParams;
             outputParams[0].ParamValue = sum.ToString();
-            Log.Info($"计算结果:{sum}");
+            Log.Info($" 计算结果:{sum}",$"{node.NodeName}:{node.Id}");
         }
-
-        public override FrameworkElement GetConfigView()
-        {
-            view.DataContext = node;
-            return view;
-        }
-
-
     }
 }

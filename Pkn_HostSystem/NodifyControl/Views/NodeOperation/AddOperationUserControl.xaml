@@ -20,10 +20,12 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="输入" Margin="5" />
         <operationDataGrid:PknOperationDataGrid  Grid.Row="1"
+                                                 Height="200"
                                                  Node="{Binding}"
                                                  NeedItemSource="{Binding InputParams , Mode=TwoWay }"/>
         <TextBlock Grid.Row="2" Text="输出" Margin="5" />
         <operationDataGrid:PknOperationDataGrid  Grid.Row="3" 
+                                                 Height="200"
                                                  Node="{Binding}"
                                                  NeedItemSource="{Binding OutputParams }"/>
     </Grid>

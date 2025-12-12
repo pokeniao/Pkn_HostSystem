@@ -14,7 +14,10 @@ namespace Pkn_HostSystem.Models.Page
         ///当前项目名称
         /// </summary>
         [ObservableProperty] private string projectName;
-
+        partial void OnProjectNameChanged(string value)
+        {
+            EditorViewModel.ProjectName = value;
+        }
         /// <summary>
         /// 执行任务
         /// </summary>

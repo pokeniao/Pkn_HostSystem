@@ -17,11 +17,6 @@ namespace Pkn_HostSystem.NodifyControl.Operations.StartOperation
             
         }
 
-        public override FrameworkElement GetConfigView()
-        {
-            view.DataContext = node;
-            return view;
-        }
 
     }
 }

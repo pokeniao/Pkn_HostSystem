@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using Newtonsoft.Json;
+using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.NodifyControl.Nodes.Connector;
 using Pkn_HostSystem.NodifyControl.Nodes.Core;
 using Pkn_HostSystem.NodifyControl.Operations.Interface;
@@ -14,6 +15,8 @@ namespace Pkn_HostSystem.NodifyControl.ViewModels.Editor
 {
     public partial class EditorViewModel : ObservableRecipient
     {
+
+        public string ProjectName { get; set; }
         /// <summary>
         /// 节点集合
         /// </summary>
@@ -189,6 +192,7 @@ namespace Pkn_HostSystem.NodifyControl.ViewModels.Editor
         [RelayCommand]
         public async void Run()
         {
+            TraceContext.Name = ProjectName;
             //1. 寻找到IStartOperation节点,作为起始节点
             PknNode startNode = Nodes.FirstOrDefault(n => n.Operation is IStartOperation);
             if (startNode == null)
@@ -207,7 +211,7 @@ namespace Pkn_HostSystem.NodifyControl.ViewModels.Editor
         private async Task ExecuteNextNodes(PknNode currentNode)
         {
             //找到所有连接到当前节点输出端子的连接
-            var outgoingConnections = Connectors.Where(c => currentNode.Output.Contains(c.Source)).ToList();
+            var outgoingConnections = Connectors.Where(c => currentNode.Output.Contains(c.Source) && c.Source.Enabled).ToList();
             //对于每个连接,找到连接的目标节点,并执行其方法
             foreach (var connection in outgoingConnections)
             {

@@ -6,6 +6,7 @@ using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.LocalSave.Pojo;
 using Pkn_HostSystem.NodifyControl.Nodes.Connector;
 using Pkn_HostSystem.NodifyControl.Nodes.Core;
+using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using Pkn_HostSystem.NodifyControl.ViewModels.Connection;
 using Pkn_HostSystem.NodifyControl.ViewModels.Editor;
 using Pkn_HostSystem.ViewModels.Page;
@@ -71,12 +72,15 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave.Services
                     PknNode pknNode = DesignTreeNode.CreateNode(localSaveNode.NodeType,designModel,localSaveNode.model);
                     pknNode.Id = localSaveNode.Id;
                     pknNode.Location = localSaveNode.Location;
-                    designModelLocalSaveNodify.ResetInputOrOutput(localSaveNode.Input , pknNode.Input);
-                    designModelLocalSaveNodify.ResetInputOrOutput(localSaveNode.Output, pknNode.Output);
-                    pknNode.InputParams = new ObservableCollectionExtended<OperationModels.Models.Core.OperationModel>(localSaveNode.InputParam);
-                    pknNode.OutputParams =
-                        new ObservableCollectionExtended<OperationModels.Models.Core.OperationModel>(localSaveNode.OutputParam);
-                    
+                    //输入参数
+                    pknNode.InputParams = new ObservableCollectionExtended<OperationModel>(localSaveNode.InputParam);
+                    //输出参数
+                    pknNode.OutputParams = new ObservableCollectionExtended<OperationModel>(localSaveNode.OutputParam);
+
+
+                    designModelLocalSaveNodify.ResetInputOrOutput(localSaveNode.Input, pknNode.Input, null);
+                    designModelLocalSaveNodify.ResetInputOrOutput(localSaveNode.Output, pknNode.Output, pknNode);
+               
                     Nodes.Add(pknNode);
                 }
                 //在获得线

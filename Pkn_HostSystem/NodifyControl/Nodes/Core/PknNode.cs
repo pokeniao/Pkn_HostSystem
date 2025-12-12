@@ -68,9 +68,8 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
 
         public PknNode(DesignModel _designModel, string _nodeName, NodeEnum _nodeType)
         {
-
             DesignModel = _designModel;
-            NodeName = _nodeName;
+            NodeName = _nodeName; 
             NodeType = _nodeType;
         }
     }

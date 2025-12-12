@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Page;
@@ -18,11 +19,11 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
             MyConnector connector = new("输入", Id, ConnectorTypeEnum.Input);
             Input.Add(connector);
 
-
-            MyConnector myConnector = new("输出", Id, ConnectorTypeEnum.Output);
-            myConnector.Value = OutputParams;
+            MyConnector myConnector = new("输出", Id, ConnectorTypeEnum.Output)
+            {
+                Value = OutputParams
+            };
             Output.Add(myConnector);
-
             OperationModel operationModel = new()
             {
                 Name = new SnowflakeIdGenerator(1, 1).GetId().ToString(),
@@ -30,7 +31,6 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
                 IsEnable = false,
                 NoDelete = true
             };
-
             //固定输出
             OutputParams.Add(operationModel);
         }

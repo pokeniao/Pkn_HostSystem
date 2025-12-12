@@ -23,29 +23,30 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
             // { "01读线圈", "02读输入状态", "03读保持寄存器", "04读输入寄存器", "05写单线圈", "06写单寄存器", "0F写多线圈", "10写多寄存器" };
             NetWorkTriggerModel modelNetWorkTriggerModel = node.Model.NetWorkTriggerModel;
             NetWork netWork = GlobalManager.GetNetWork(node.Model.NetWorkTriggerModel.NetworkName);
-
+            if (netWork == null)
+            {
+                Log.Error("");
+            }
             ModbusBase ModbusBase = netWork.ModbusBase;
 
-
-      
             switch (modelNetWorkTriggerModel.NetMethodName)
             {
                 case "01读线圈":
                     bool[] coils01 = null;
                     try
                     {
-                        Log.Info("执行01读线圈");
+                        Log.Info("执行01读线圈", $"{node.NodeName}:{node.Id}");
                         coils01 = await ModbusBase.ReadCoils_01(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.Count)
                             );
 
-                        Log.Info("执行01线圈完成");
+                        Log.Info("执行01读线圈完成", $"{node.NodeName}:{node.Id}");
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"执行01读线圈错误:{exception}");
+                        Log.Error($"执行01读线圈错误:{exception}", $"{node.NodeName}:{node.Id}");
                         break;
                     }
 
@@ -55,17 +56,17 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                     bool[] inputs02 = null;
                     try
                     {
-                        Log.Info("执行02读输入状态");
+                        Log.Info("执行02读输入状态", $"{node.NodeName}:{node.Id}");
                         inputs02 = await ModbusBase.ReadInputs_02(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.Count)
                             );
-                        Log.Info("执行02读输入状态完成");
+                        Log.Info("执行02读输入状态完成", $"{node.NodeName}:{node.Id}");
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"执行02读输入状态错误:{exception}");
+                        Log.Error($"执行02读输入状态错误:{exception}", $"{node.NodeName}:{node.Id}");
                         break;
                     }
 
@@ -75,17 +76,17 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                     ushort[] holdingRegisters03 = null;
                     try
                     {
-                        Log.Info("执行03读保持寄存器");
+                        Log.Info("执行03读保持寄存器", $"{node.NodeName}:{node.Id}");   
                         holdingRegisters03 = await ModbusBase.ReadHoldingRegisters_03(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.Count)
                             );
-                        Log.Info("执行03读保持寄存器完成");
+                        Log.Info("执行03读保持寄存器完成", $"{node.NodeName}:{node.Id}");
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"执行03读保持寄存器错误:{exception}");
+                        Log.Error($"执行03读保持寄存器错误:{exception}", $"{node.NodeName}:{node.Id}");
                         break;
                     }
 
@@ -95,17 +96,17 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                     ushort[] readInputRegisters04 = null;
                     try
                     {
-                        Log.Info("执行04读输入寄存器");
+                        Log.Info("执行04读输入寄存器", $"{node.NodeName}:{node.Id}");
                         readInputRegisters04 = await ModbusBase.ReadInputRegisters_04(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.Count)
                             );
-                        Log.Info("执行04读输入寄存器完成");
+                        Log.Info("执行04读输入寄存器完成", $"{node.NodeName}:{node.Id}");
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"执行04读输入寄存器错误:{exception}");
+                        Log.Error($"执行04读输入寄存器错误:{exception}", $"{node.NodeName}:{node.Id}");
                         break;
                     }
                     if (readInputRegisters04 != null) ReadDvg(readInputRegisters04);
@@ -113,7 +114,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                 case "05写单线圈":
                     try
                     {
-                        Log.Info("执行05写单线圈");
+                        Log.Info("执行05写单线圈", $"{node.NodeName}:{node.Id}");
                         await ModbusBase.WriteCoil_05(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress),
@@ -121,32 +122,32 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                                 GetParamValue(node.Model.NetWorkTriggerModel.WriteDvgList[0])
                                )
                             );
-                        Log.Info("执行05写单线圈完成");
+                        Log.Info("执行05写单线圈完成", $"{node.NodeName}:{node.Id}");
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"执行05写单线圈错误:{exception}");
+                        Log.Error($"执行05写单线圈错误:{exception}", $"{node.NodeName}:{node.Id}");
                     }
                     break;
                 case "06写单寄存器":
                     try
                     {
-                        Log.Info("执行06写单寄存器");
+                        Log.Info("执行06写单寄存器", $"{node.NodeName}:{node.Id}");
                         await ModbusBase.WriteRegister_06(
                             byte.Parse(node.Model.NetWorkTriggerModel.StationAddress),
                             ushort.Parse(node.Model.NetWorkTriggerModel.StartAddress),
                             ushort.Parse(GetParamValue(node.Model.NetWorkTriggerModel.WriteDvgList[0])));
-                        Log.Info("执行06写单寄存器完成");
+                        Log.Info("执行06写单寄存器完成", $"{node.NodeName}:{node.Id}");
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"执行06写单寄存器错误:{exception}");
+                        Log.Error($"执行06写单寄存器错误:{exception}", $"{node.NodeName}:{node.Id}");
                     }
                     break;
                 case "0F写多线圈":
                     try
                     {
-                        Log.Info("执行0F写多线圈");
+                        Log.Info("执行0F写多线圈", $"{node.NodeName}:{node.Id}");
                         var coils = new List<bool>();
                         foreach (var modbusPojo in node.Model.NetWorkTriggerModel.WriteDvgList)
                             coils.Add(bool.Parse(GetParamValue(modbusPojo)));
@@ -157,18 +158,18 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                             coils.ToArray()
                         );
 
-                        Log.Info("执行0F写多线圈完成");
+                        Log.Info("执行0F写多线圈完成", $"{node.NodeName}:{node.Id}");
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"执行0F写多线圈错误:{exception}");
+                        Log.Error($"执行0F写多线圈错误:{exception}", $"{node.NodeName}:{node.Id}");
                     }
                     break;
                 case "10写多寄存器":
                     var registers = new List<ushort>();
                     try
                     {
-                        Log.Info("执行10写多寄存器");
+                        Log.Info("执行10写多寄存器", $"{node.NodeName}:{node.Id}");
                         foreach (var modbusPojo in node.Model.NetWorkTriggerModel.WriteDvgList)
                             registers.Add(ushort.Parse(GetParamValue(modbusPojo)));
 
@@ -178,11 +179,11 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                             registers.ToArray()
                         );
 
-                        Log.Info("执行10写多寄存器完成");
+                        Log.Info("执行10写多寄存器完成", $"{node.NodeName}:{node.Id}");
                     }
                     catch (Exception exception)
                     {
-                        Log.Error($"执行10写多寄存器错误:{exception}");
+                        Log.Error($"执行10写多寄存器错误:{exception}", $"{node.NodeName}:{node.Id}");
                     }
                     break;
             }
@@ -207,11 +208,5 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
         }
 
         #endregion
-
-        public override FrameworkElement GetConfigView()
-        {
-            view.DataContext = node;
-            return view;
-        }
     }
 }

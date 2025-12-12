@@ -19,6 +19,11 @@ namespace Pkn_HostSystem.NodifyControl.Operations.Core
         /// </summary>
         public string GetParamValue(OperationModel operationModel)
         {
+            if (operationModel == null)
+            {
+                return "";
+            }
+
             if (operationModel.ParamMethod.Equals("动态获取"))
             {
                 return GetParamValue(operationModel.Dyn);
@@ -35,6 +40,11 @@ namespace Pkn_HostSystem.NodifyControl.Operations.Core
         }
 
         protected abstract  Task OnExecute();
-        public abstract FrameworkElement GetConfigView();
+
+        public FrameworkElement GetConfigView()
+        {
+            view.DataContext = node;
+            return view;
+        }
     }
 }

@@ -34,6 +34,9 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Connector
 
         public ConnectorTypeEnum ConnectorType { get; set; }
 
+
+        public bool Enabled { get; set; } = true;
+
         /// <summary>
         /// 节点的所有输入
         /// </summary>

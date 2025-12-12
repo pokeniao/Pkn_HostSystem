@@ -29,23 +29,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="输入" Margin="5" />
-        <operationDataGrid:PknOperationDataGrid Grid.Row="1"
-                                                Height="200"
-                                                Node="{Binding}"
-                                                NeedItemSource="{Binding InputParams , Mode=TwoWay }" />
-
-        <TextBlock Grid.Row="2" Text="输出" Margin="5" />
-        <operationDataGrid:PknOperationDataGrid
-            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-            Height="200"
-            Margin="5"
-            Grid.Row="3"
-            Node="{Binding}"
-            NeedItemSource="{Binding OutputParams, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-
-
-        <WrapPanel Grid.Row="4">
+        <WrapPanel Grid.Row="0">
             <TextBlock Text="通讯地址" TextAlignment="Center" Margin="5"/>
             <TextBlock Text="{Binding Model.NetWorkTriggerModel.NetworkName}" TextAlignment="Center" Margin="5"/>
             <ComboBox Width="150"
@@ -53,19 +37,19 @@
                       DisplayMemberPath="NetworkDetailed.Name"
                       SelectedValuePath="NetworkDetailed.Name"
                       SelectedValue="{Binding  Model.NetWorkTriggerModel.NetworkName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-           
         </WrapPanel>
-        <WrapPanel Grid.Row="5"
+
+        <WrapPanel Grid.Row="2"
                    Margin="0,10,0,0"
                    >
             <TextBlock Text="通讯方式" TextAlignment="Center" Margin="5"/>
-        <ComboBox Width="150" 
+            <ComboBox Width="150" 
                   SelectionChanged="ComboBox_SelectionChanged"
                   ItemsSource="{Binding Model.NetWorkTriggerModel.NetMethod,Mode= TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   SelectedValue="{Binding Model.NetWorkTriggerModel.NetMethodName , UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"
         />
         </WrapPanel>
-        <WrapPanel Margin="0,10,0,0" Grid.Row="6"
+        <WrapPanel Margin="0,10,0,0" Grid.Row="3"
                    Visibility="{Binding Model.NetWorkTriggerModel.showModbusTriggerParam}">
             <StackPanel Orientation="Horizontal" Margin="0,5">
                 <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
@@ -98,7 +82,7 @@
         </WrapPanel>
 
 
-        <Grid  Grid.Row="7"
+        <Grid  Grid.Row="4"
                Visibility="{Binding Model.NetWorkTriggerModel.showModbusTriggerParam}">
             <Grid.RowDefinitions>
                 <RowDefinition  Height="Auto"/>
@@ -172,5 +156,24 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
+
+
+        <!-- <TextBlock Grid.Row="5" Text="输入" Margin="5" /> -->
+        <!-- <operationDataGrid:PknOperationDataGrid Grid.Row="6" -->
+        <!--                                         Height="200" -->
+        <!--                                         Node="{Binding}" -->
+        <!--                                         NeedItemSource="{Binding InputParams , Mode=TwoWay }" /> -->
+
+        <TextBlock Grid.Row="7" Text="输出" Margin="5" />
+        <operationDataGrid:PknOperationDataGrid
+            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+            Height="200"
+            Margin="5"
+            Grid.Row="8"
+            Node="{Binding}"
+            NeedItemSource="{Binding OutputParams, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+
+
     </Grid>
 </UserControl>

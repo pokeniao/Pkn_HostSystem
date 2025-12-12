@@ -5,9 +5,9 @@ using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Nodes.Connector;
 using Pkn_HostSystem.NodifyControl.Nodes.Core;
+using Pkn_HostSystem.NodifyControl.OperationModels.Models;
 using Pkn_HostSystem.NodifyControl.Operations.StartOperation;
 using Pkn_HostSystem.Static;
-using EnterOperationModel = Pkn_HostSystem.NodifyControl.OperationModels.Models.EnterOperationModel;
 
 namespace Pkn_HostSystem.NodifyControl.Nodes
 {
@@ -27,9 +27,11 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
             IModel = Model;
 
             Operation = new EnterOperation(this);
-            MyConnector myConnector = new MyConnector("输出", Id, ConnectorTypeEnum.Output);
-            myConnector.Value = OutputParams;
 
+            MyConnector myConnector = new("输出", Id, ConnectorTypeEnum.Output)
+            {
+                Value = OutputParams
+            };
             Output.Add(myConnector);
         }
 

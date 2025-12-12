@@ -145,9 +145,19 @@
                         <nodify:NodifyEditor.ItemTemplate>
                             <DataTemplate DataType="{x:Type core:PknNode}">
                                 <nodify:Node
-                                    Header="{Binding NodeName}"
                                     Input="{Binding Input}"
                                     Output="{Binding Output}">
+                                    <nodify:Node.Header>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition  Height="Auto"/>
+                                                <RowDefinition  Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Row="0" Text="{Binding NodeName}"/>
+                                            <TextBlock Grid.Row="1" Text="{Binding Id}" FontSize="9"/>
+                                        </Grid>
+                                    </nodify:Node.Header>
+
                                     <!-- 输入 -->
                                     <nodify:Node.InputConnectorTemplate>
                                         <DataTemplate DataType="{x:Type connector:MyConnector}">

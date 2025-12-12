@@ -19,10 +19,6 @@ namespace Pkn_HostSystem.Views.UserControls.OperationDataGrid
             InitializeComponent();
         }
         
-
-
-
-
         /// <summary>
         /// 参数
         /// </summary>
@@ -53,7 +49,6 @@ namespace Pkn_HostSystem.Views.UserControls.OperationDataGrid
                 typeof(PknOperationDataGrid),
                 new FrameworkPropertyMetadata(new ObservableCollectionExtended<OperationModel>()));
 
-
         /// <summary>
         /// 传入DataContent
         /// </summary>
@@ -70,13 +65,11 @@ namespace Pkn_HostSystem.Views.UserControls.OperationDataGrid
                 typeof(PknOperationDataGrid),
                 new FrameworkPropertyMetadata(null));
 
-
         /// <summary>
         /// 删除
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-
         private void MenuItem_OnClick(object sender, RoutedEventArgs e)
         {
             OperationModel? dataGridOperationParam = DataGrid.SelectedValue as OperationModel;

@@ -8,18 +8,18 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave.Services
 {
     public class LocalSaveNodify
     {
-        public List<LocalSaveNode> Nodes { get; set; } = new List<LocalSaveNode>();
+        public List<LocalSaveNode> Nodes { get; set; } = new();
 
-        public List<LocalSaveConnection> Connections { get; set; } = new List<LocalSaveConnection>();
+        public List<LocalSaveConnection> Connections { get; set; } = new();
 
 
         public List<LocalSaveNode> SaveNodes(ObservableCollection<PknNode> Nodes)
         {
-            List<LocalSaveNode> localSaveNodes = new List<LocalSaveNode>();
+            List<LocalSaveNode> localSaveNodes = new();
             List<PknNode> myNodes = Nodes.ToList();
             foreach (PknNode myNode in myNodes)
             {
-                LocalSaveNode localSaveNode = new LocalSaveNode()
+                LocalSaveNode localSaveNode = new()
                 {
                     Id = myNode.Id,
                     Location = myNode.Location,
@@ -33,7 +33,7 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave.Services
                 //输入
                 foreach (MyConnector input in myNode.Input)
                 {
-                    LocalSaveConnector localSaveConnector = new LocalSaveConnector()
+                    LocalSaveConnector localSaveConnector = new()
                     {
                         Id = input.Id,
                         NodeId = myNode.Id,
@@ -46,7 +46,7 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave.Services
                 //输出
                 foreach (MyConnector output in myNode.Output)
                 {
-                    LocalSaveConnector localSaveConnector = new LocalSaveConnector()
+                    LocalSaveConnector localSaveConnector = new()
                     {
                         Id = output.Id,
                         NodeId = myNode.Id,
@@ -56,25 +56,18 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave.Services
                     };
                     localSaveNode.Output.Add(localSaveConnector);
                 }
-
-
-
                 localSaveNodes.Add(localSaveNode);
             }
-
             return localSaveNodes;
         }
 
         public List<LocalSaveConnection> SaveConnections(ObservableCollection<ConnectorViewModel> Connections)
         {
-            List<LocalSaveConnection> localSaveConnections = new List<LocalSaveConnection>();
+            List<LocalSaveConnection> localSaveConnections = new();
             List<ConnectorViewModel> myConnections = Connections.ToList();
-
-
-
             foreach (ConnectorViewModel myConnection in myConnections)
             {
-                LocalSaveConnection localSaveConnection = new LocalSaveConnection()
+                LocalSaveConnection localSaveConnection = new()
                 {
                     SourceConectorId = myConnection.Source.Id,
                     TargetConectorId = myConnection.Target.Id
@@ -85,7 +78,7 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave.Services
         }
 
 
-        public  void ResetInputOrOutput(List<LocalSaveConnector> InputOrOutput , ObservableCollection<MyConnector> oldMyConnectors)
+        public  void ResetInputOrOutput(List<LocalSaveConnector> InputOrOutput , ObservableCollection<MyConnector> oldMyConnectors , PknNode node)
         {
             if (InputOrOutput.Count != oldMyConnectors.Count)
             {
@@ -97,6 +90,11 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave.Services
                 oldMyConnectors[i].Anchor = InputOrOutput[i].Anchor;
                 oldMyConnectors[i].NodeId = InputOrOutput[i].NodeId;
                 oldMyConnectors[i].ConnectorName = InputOrOutput[i].ConnectorName;
+                //不等于空表示是输出的接口
+                if (node != null)
+                {
+                    oldMyConnectors[i].Value = node.OutputParams;
+                }
             }
         }
     }

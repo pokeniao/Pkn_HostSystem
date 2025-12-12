@@ -3,7 +3,9 @@
     public enum NodeEnum
     {
         Enter,//起始节点
-        Add ,
-        ModbusTcp,
+        Add ,//加法运算
+        ModbusTcp,//ModbusTcp
+        If,//逻辑运算IF
+
     }
 }

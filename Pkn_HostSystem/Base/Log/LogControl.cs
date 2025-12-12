@@ -66,29 +66,62 @@ namespace Pkn_HostSystem.Base.Log
 
 
         #region 只记录
-        public void Info(string message)
+        public void Info(string message ,string head =null)
         {
             try
             {
-                Log.Info($"[{TraceContext.Name}]--" + message);
+                if (head!=null)
+                {
+                    Log.Info($"[{TraceContext.Name}] [{head}]--" + message);
+                }
+                else
+                {
+                    Log.Info($"[{TraceContext.Name}]--" + message);
+                }
+
+                    
             }
             catch (Exception e)
             {
                 Console.WriteLine($"log4net Info时发生错误:  {e}");
             }
-            LogRichTextBoxAdd("Info", message);
+
+            if (head !=null)
+            {
+                LogRichTextBoxAdd("Info", head, message);
+            }
+            else
+            {
+                LogRichTextBoxAdd("Info", message);
+            }
+               
         }
-        public void Error(string message)
+        public void Error(string message ,string head =null)
         {
             try
             {
-                Log.Error($"[{TraceContext.Name}]--" + message);
+                if (head != null)
+                {
+                    Log.Error($"[{TraceContext.Name}] [{head}]--" + message);
+                }
+                else
+                {
+                    Log.Error($"[{TraceContext.Name}]--" + message);
+                }
             }
             catch (Exception e)
             {
                 Console.WriteLine($"log4net Error时发生错误:  {e}");
             }
-            LogRichTextBoxAdd("Error", message);
+
+            if (head!=null)
+            {
+                LogRichTextBoxAdd("Error", head, message);
+            }
+            else
+            {
+                LogRichTextBoxAdd("Error", message);
+            }
         }
         #endregion
 
@@ -224,23 +257,6 @@ namespace Pkn_HostSystem.Base.Log
         #endregion
 
 
-        public void InfoToRichTextBox(string message, bool baseNeed = true)
-        {
-            LogRichTextBoxAdd("Info", message);
-            if (baseNeed)
-            {
-                Info(message);
-            }
-        }
-
-        public void ErrorToRichTextBox(string message, bool baseNeed = true)
-        {
-            LogRichTextBoxAdd("Error", message);
-            if (baseNeed)
-            {
-                Error(message);
-            }
-        }
 
 
         public void LogRichTextBoxAdd(string type, string message)
@@ -280,6 +296,43 @@ namespace Pkn_HostSystem.Base.Log
                 }
             });
         }
+        public void LogRichTextBoxAdd(string type,string head ,string message)
+        {
+            if (FlowDocument == null)
+            {
+                return;
+            }
 
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var paragraph = new Paragraph();
+                var color = type switch
+                {
+                    "Info" => Brushes.Gray,
+                    "Warn" => Brushes.Orange,
+                    "Error" => Brushes.Red,
+                    _ => Brushes.Gray
+                };
+                paragraph.Inlines.Add(new Run($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} ") { Foreground = Brushes.Green });
+                paragraph.Inlines.Add(new Run($"[{type}] ") { Foreground = color });
+                paragraph.Inlines.Add(new Run($"[{head}] ") { Foreground = color });
+                paragraph.Inlines.Add(new Run(message));
+                //添加到flowDocument中
+                FlowDocument.Blocks.Add(paragraph);
+
+                // 限制行数
+                if (FlowDocument.Blocks.Count > 300)
+                    FlowDocument.Blocks.Remove(FlowDocument.Blocks.FirstBlock); //移除到首行
+
+                //滑动到底部
+                if (RichTextBox != null)
+                {
+                    if (!RichTextBox.IsKeyboardFocusWithin)
+                    {
+                        RichTextBox.ScrollToEnd();
+                    }
+                }
+            });
+        }
     }
 }

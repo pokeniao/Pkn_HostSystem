@@ -10,13 +10,14 @@ using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.LocalSave.Services;
 using Pkn_HostSystem.NodifyControl.Nodes.Core;
+using Pkn_HostSystem.NodifyControl.ViewModels.Editor;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.Views.Pages;
 using System.Collections.ObjectModel;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
-using EditorViewModel = Pkn_HostSystem.NodifyControl.ViewModels.Editor.EditorViewModel;
 using RichTextBox = System.Windows.Controls.RichTextBox;
+
 
 namespace Pkn_HostSystem.ViewModels.Page
 {

@@ -11,6 +11,7 @@ using Pkn_HostSystem.ViewModels.Windows;
 using Pkn_HostSystem.Views.Pages;
 using Pkn_HostSystem.Views.Windows;
 using System.IO;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Threading;
@@ -125,7 +126,6 @@ namespace Pkn_HostSystem
             string path = Path.Combine(GlobalManager.AppFolder, "Logs");
             // 设置 log4net 全局变量
             log4net.GlobalContext.Properties["LOG_DIR"] = path;
-
             string path2 = Path.Combine(path, "log4net_debug");
             // 确保目录存在
             Directory.CreateDirectory(path2);
