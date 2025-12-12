@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Pkn_HostSystem.ViewModels.Windows;
+using Pkn_HostSystem.Views.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,13 @@ namespace Pkn_HostSystem.Views.Pages.LoginWindowPage
             ViewModel = Ioc.Default.GetRequiredService<LoginViewModel>();
             DataContext = ViewModel;
             ViewModel.setSnackbarPresenter(SnackbarPresenter);
+        }
+
+        public void Close()
+        {
+            var window = Window.GetWindow(this);
+            window?.Close();
+
         }
     }
 }

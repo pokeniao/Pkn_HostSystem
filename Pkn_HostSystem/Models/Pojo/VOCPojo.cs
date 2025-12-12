@@ -24,6 +24,11 @@ namespace Pkn_HostSystem.Models.Pojo
 
         [ObservableProperty] private string setGroupCode;
 
+        [ObservableProperty] private string mi;
+
+        [ObservableProperty] private string setMi;
+
+
         //上传mes启用
         [ObservableProperty] private bool mesOn =false;
 

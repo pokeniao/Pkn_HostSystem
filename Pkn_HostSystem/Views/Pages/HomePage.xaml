@@ -8,6 +8,7 @@
       xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
       xmlns:enums="clr-namespace:Pkn_HostSystem.Base.Enum"
       xmlns:gif="http://wpfanimatedgif.codeplex.com"
+      xmlns:static="clr-namespace:Pkn_HostSystem.Static"
       d:DataContext="{d:DesignInstance page:HomePageViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -18,8 +19,8 @@
       Title="HomePage">
     <Page.Resources>
         <converter:NewRowAllowButtonConverter x:Key="NewRowAllowButtonConverter" />
+        <converter:PermissionToBoolConverter x:Key="PermissionToBoolConverter" />
 
-        <converter:LoginVisibilityConverter x:Key="LoginVisibilityConverter" />
         <!-- 展开动画 -->
         <!-- 收缩动画 -->
         <Storyboard x:Key="OPENcontentPLC">
@@ -682,10 +683,8 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" ColumnSpan="2">
             <Grid>
-                <Grid Margin="8,0"
-                      Visibility="{Binding CurLoginState ,Converter={StaticResource LoginVisibilityConverter} ,ConverterParameter={x:Static enums:LoginPermissionEnum.UnLogIn}}">
+                <Grid Margin="8,0">
                 </Grid>
-
                 <Grid Margin="8,0" HorizontalAlignment="Right">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -783,7 +782,8 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="auto" />
                                 </Grid.RowDefinitions>
-                                <Grid Margin="15,0">
+                                <Grid Margin="15,0"
+                                      IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="0.5*" />
@@ -1144,8 +1144,13 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="0.3*" />
                                 </Grid.RowDefinitions>
-                                <Grid >
+                                <Grid>
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
@@ -1155,77 +1160,112 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                     
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="设置值" HorizontalAlignment="Center" Margin="10" />
-                                    <TextBlock Grid.Row="0" Grid.Column="2"  Text="当前值" HorizontalAlignment="Center" Margin="10" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
 
-                                    <!-- 测试时间 -->
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="测试时间" Margin="10" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="设置值"
+                                               HorizontalAlignment="Center" Margin="10" />
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="当前值" HorizontalAlignment="Center"
+                                               Margin="10" />
+
+                                    <!-- 电阻上限设置 -->
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="电阻上限设置(mΩ)" Margin="10" />
                                     <ui:NumberBox Grid.Row="1" Grid.Column="1"
-                                        SmallChange="1"
-                                        Width="140"
-                                        Maximum="20"
-                                        Minimum="0"
-                                        Margin="0  0 0 5"
-                                        Value="{Binding HomePageModel.VocPojo.SetValueTestTime , UpdateSourceTrigger= PropertyChanged}" />
-                                    <TextBlock Grid.Row="1" Grid.Column="2" 
+                                                  SmallChange="1"
+                                                  Width="140"
+                                                  Maximum="20"
+                                                  Minimum="0"
+                                                  Margin="0  0 0 5"
+                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                  Value="{Binding HomePageModel.ElectricityTest.SetResistanceUpLimit , UpdateSourceTrigger= PropertyChanged}" />
+                                    <TextBlock Grid.Row="1" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.TestTime}"/>
+                                               Text="{Binding HomePageModel.ElectricityTest.ResistanceUpLimit}" />
 
-                                    <!-- 触发阈值 -->
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="VOC NG触发阈值" Margin="10" />
+                                    <!-- 电阻下限设置 -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="电阻下限设置(mΩ)" Margin="10" />
                                     <ui:NumberBox Grid.Row="2" Grid.Column="1" Width="140"
                                                   SmallChange="0.001"
                                                   Margin="0  0 0 5"
-                                                  Value="{Binding HomePageModel.VocPojo.SetValueTriggerMax ,UpdateSourceTrigger=PropertyChanged }" />
-                                    <TextBlock Grid.Row="2" Grid.Column="2" 
+                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                  Value="{Binding HomePageModel.ElectricityTest.SetResistanceLowLimit ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="2" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.TriggerMax}"/>
+                                               Text="{Binding HomePageModel.ElectricityTest.ResistanceLowLimit}" />
 
-                                    <!-- 上传地址 -->
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="上传地址" Margin="10" />
-                                    <ui:TextBox Grid.Row="3" Grid.Column="1" Width="140"
-                                                Margin="0  0 0 5"
-                                                Text="{Binding HomePageModel.VocPojo.SetMesHttp ,UpdateSourceTrigger=PropertyChanged }" />
-                                    <TextBlock Grid.Row="3" Grid.Column="2" 
+                                    <!-- 电压上限设置 -->
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="电压上限设置(V)" Margin="10" />
+                                    <ui:NumberBox Grid.Row="3" Grid.Column="1" Width="140"
+                                                  Margin="0  0 0 5"
+                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                  Value="{Binding HomePageModel.ElectricityTest.SetVoltageUpLimit ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="3" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.MesHttp}"/>
-
-
-                                    <!-- 设备编号 -->
-                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="设备编号" Margin="10" />
-                                    <ui:TextBox Grid.Row="4" Grid.Column="1" Width="140"
-                                                Margin="0  0 0 5"
-                                                Text="{Binding HomePageModel.VocPojo.SetMachineId ,UpdateSourceTrigger=PropertyChanged }" />
-                                    <TextBlock Grid.Row="4" Grid.Column="2" 
+                                               Text="{Binding HomePageModel.ElectricityTest.VoltageUpLimit}" />
+                                    <!-- 电压下限设置 -->
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="电压下限设置(V)" Margin="10" />
+                                    <ui:NumberBox Grid.Row="4" Grid.Column="1" Width="140"
+                                                  Margin="0  0 0 5"
+                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                  Value="{Binding HomePageModel.ElectricityTest.SetVoltageLowLimit ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="4" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.MachineId}"/>
+                                               Text="{Binding HomePageModel.ElectricityTest.VoltageLowLimit}" />
+
+
+                                    <!-- 岗位 -->
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="岗位" Margin="10" />
+                                    <ui:TextBox Grid.Row="5" Grid.Column="1" Width="140"
+                                                  Margin="0  0 0 5"
+                                                  IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                  Text="{Binding HomePageModel.ElectricityTest.SetMachineId ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="5" Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding HomePageModel.ElectricityTest.MachineId}" />
 
                                     <!-- 工序 -->
-                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="工序" Margin="10" />
-                                    <ui:TextBox Grid.Row="5" Grid.Column="1" Width="140"
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="工序" Margin="10" />
+                                    <ui:TextBox Grid.Row="6" Grid.Column="1" Width="140"
                                                 Margin="0  0 0 5"
-                                                Text="{Binding HomePageModel.VocPojo.SetGroupCode ,UpdateSourceTrigger=PropertyChanged }" />
-                                    <TextBlock Grid.Row="5" Grid.Column="2" 
+                                                IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                Text="{Binding HomePageModel.ElectricityTest.SetGroupCode ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="6" Grid.Column="2"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Text="{Binding HomePageModel.VocPojo.GroupCode}"/>
+                                               Text="{Binding HomePageModel.ElectricityTest.GroupCode}" />
 
-                                    <!-- 上传mes -->
-                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="启用上传mes" Margin="10" />
-                                    <ui:ToggleSwitch Grid.Row="6" Grid.Column="1" IsChecked="{Binding HomePageModel.VocPojo.MesOn}"/>
+                                    <!-- 电压标准值 -->
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="电压标准值" Margin="10" />
+                                    <ui:TextBox Grid.Row="7" Grid.Column="1" Width="140"
+                                                Margin="0  0 0 5"
+                                                IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                Text="{Binding HomePageModel.ElectricityTest.SetVoltageStandard ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="7" Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding HomePageModel.ElectricityTest.VoltageStandard}" />
+
+                                    <!-- 电阻标准值 -->
+                                    <TextBlock Grid.Row="8" Grid.Column="0" Text="电阻标准值" Margin="10" />
+                                    <ui:TextBox Grid.Row="8" Grid.Column="1" Width="140"
+                                                Margin="0  0 0 5"
+                                                IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                                Text="{Binding HomePageModel.ElectricityTest.SetResistanceStandard ,UpdateSourceTrigger=PropertyChanged }" />
+                                    <TextBlock Grid.Row="8" Grid.Column="2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding HomePageModel.ElectricityTest.ResistanceStandard}" />
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
-                                        <Button  Content="设置" Width="100"  Margin="10,0" Click="SelectPppOrderButton" />
+                                        <Button Content="设置" Width="100" Margin="10,0" Click="SelectPppOrderButton" />
                                         <Button Content="收起" Width="100" Margin="15,0" Click="ButtonBase_OnClick2" />
                                     </StackPanel>
                                 </Grid>
@@ -1275,7 +1315,9 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="0.3*" />
                                 </Grid.RowDefinitions>
-                                <Grid>
+                                <Grid
+                                    IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                    >
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
@@ -1364,7 +1406,7 @@
                         </Border>
                     </Grid>
                     <!-- 数据库 -->
-                    <Grid  Margin="20,5,20,10">
+                    <Grid Margin="20,5,20,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0*" />
                             <ColumnDefinition />
@@ -1439,7 +1481,9 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="0.3*" />
                                 </Grid.RowDefinitions>
-                                <Grid>
+                                <Grid
+                                    IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                    >
                                     <StackPanel>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -1518,7 +1562,7 @@
                     通过 RenderTransformOrigin="0.43,0.52"调整决定坐标(需要修改)-->
                     <!--动画参数 内部Grid LayoutTransform参数 x=0.434782 y=0.18181818-->
                     <!-- 系统寄存器 -->
-                    <Grid  Margin="20,5,20,10">
+                    <Grid Margin="20,5,20,10">
                         <ui:CardAction
                             Name="Register_CardAction"
                             IsChevronVisible="False"
@@ -1566,7 +1610,9 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="0.3*" />
                                 </Grid.RowDefinitions>
-                                <Grid>
+                                <Grid
+                                    IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                    >
                                     <TabControl>
                                         <!-- <TabItem Width="120"> -->
                                         <!--     <TabItem.Header> -->
@@ -1635,13 +1681,13 @@
                         </Border>
                     </Grid>
                     <!-- PLC报警 -->
-                    <Grid  Margin="20,5,20,10">
+                    <Grid Margin="20,5,20,10">
                         <ui:CardAction
-                        Name="PlcAlarmCardAction"
-                        IsChevronVisible="False"
-                        VerticalAlignment="Stretch"
-                        Click="PlcAlarm_OnClick"
-                        Grid.ColumnSpan="2">
+                            Name="PlcAlarmCardAction"
+                            IsChevronVisible="False"
+                            VerticalAlignment="Stretch"
+                            Click="PlcAlarm_OnClick"
+                            Grid.ColumnSpan="2">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -1661,7 +1707,7 @@
                             Height="102"
                             BorderThickness="0"
                             Grid.ColumnSpan="2"
-                            Margin="0,4,0,4" 
+                            Margin="0,4,0,4"
                             RenderTransformOrigin="0.92,0.54">
                             <Border.RenderTransform>
                                 <TransformGroup>
@@ -1684,23 +1730,26 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="0.3*" />
                                 </Grid.RowDefinitions>
-                                <Grid >
+                                <Grid
+                                    IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
+                                    >
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
                                     <Grid Grid.Row="0">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition  Height="Auto"/>
-                                            <RowDefinition  Height="Auto"/>
-                                            <RowDefinition  Height="Auto"/>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition  Width="0.4*"/>
-                                            <ColumnDefinition  Width="0.6*"/>
+                                            <ColumnDefinition Width="0.4*" />
+                                            <ColumnDefinition Width="0.6*" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="通讯对象" Margin="90 5 5 5"  HorizontalAlignment="Left"/>
-                                        <ComboBox 
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="通讯对象" Margin="90 5 5 5"
+                                                   HorizontalAlignment="Left" />
+                                        <ComboBox
                                             Grid.Row="0"
                                             Grid.Column="1"
                                             Width="150"
@@ -1709,22 +1758,22 @@
                                             ItemsSource="{Binding DataContext.HomePageModel.NetWorkList ,RelativeSource={RelativeSource AncestorType=Page}}"
                                             SelectedValue="{Binding HomePageModel.PlcAlarmConnectName}"
                                             DisplayMemberPath="NetworkDetailed.Name"
-                                            SelectedValuePath="NetworkDetailed.Name"
-                                        />
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="站地址" Margin="90 5 5 5" HorizontalAlignment="Left"/>
-                                        <ui:NumberBox 
+                                            SelectedValuePath="NetworkDetailed.Name" />
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="站地址" Margin="90 5 5 5"
+                                                   HorizontalAlignment="Left" />
+                                        <ui:NumberBox
                                             Grid.Row="1"
                                             Grid.Column="1"
                                             Width="150"
                                             Margin="0 0 0 5"
                                             HorizontalAlignment="Left"
                                             ClearButtonEnabled="False"
-                                            Value="{Binding HomePageModel.PlcAlarmSlaveAddress}"/>
+                                            Value="{Binding HomePageModel.PlcAlarmSlaveAddress}" />
                                         <TextBlock
                                             Grid.Row="2"
                                             Grid.Column="0"
                                             Margin="90 5 5 5" HorizontalAlignment="Left"
-                                            Text="起始地址"/>
+                                            Text="起始地址" />
                                         <ui:NumberBox
                                             Grid.Row="2"
                                             Grid.Column="1"
@@ -1736,23 +1785,25 @@
                                     <DataGrid
                                         Grid.Row="1"
                                         Margin="10"
-                                        AutoGenerateColumns ="False"
+                                        AutoGenerateColumns="False"
                                         ItemsSource="{Binding HomePageModel.PlcAlarmItems}"
                                         HorizontalScrollBarVisibility="Visible">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Header="序号"
                                                                 Binding="{Binding Id}"
                                                                 Width="0.5*"
-                                                                IsReadOnly="True"/>
+                                                                IsReadOnly="True" />
                                             <DataGridTextColumn Header="报警内容"
                                                                 Width="*"
-                                                                Binding="{Binding Alarm}"/>
+                                                                Binding="{Binding Alarm}" />
                                         </DataGrid.Columns>
                                     </DataGrid>
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <StackPanel Orientation="Horizontal" Margin="0,10" HorizontalAlignment="Right">
-                                        <Button Content="{Binding HomePageModel.PlcAlarmRunButton}" Width="100" Margin="15,0" Command="{Binding PlcAlarmRunCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
+                                        <Button Content="{Binding HomePageModel.PlcAlarmRunButton}" Width="100"
+                                                Margin="15,0" Command="{Binding PlcAlarmRunCommand}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}" />
                                         <Button Content="收起" Width="100" Margin="15,0" Click="PlcAlarm_Close_OnClick" />
                                     </StackPanel>
                                 </Grid>
@@ -1770,6 +1821,7 @@
                         VerticalAlignment="Stretch"
                         Height="100"
                         Command="{Binding CreateProjectCommand}"
+                        IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
                         IsChevronVisible="False">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -1797,6 +1849,7 @@
                         Height="100"
                         Command="{Binding ReturnEditButtonCommand }"
                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"
+                        IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
                         IsChevronVisible="False">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -1819,6 +1872,7 @@
                         </Grid>
                     </ui:CardAction>
                     <Border
+                        IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv2}"
                         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                         Margin=" 20 20 20 20"
                         Height="350">
@@ -1831,10 +1885,10 @@
 
                         <DataGrid
                             Name="HomeProjectDataGrid"
-                            AutoGenerateColumns ="False"
+                            AutoGenerateColumns="False"
                             ItemsSource="{Binding HomePageModel.ProjectList}">
                             <DataGrid.Columns>
-                                <DataGridTextColumn 
+                                <DataGridTextColumn
                                     IsReadOnly="True"
                                     Header="项目名" Width="*" Binding="{Binding ProjectName}" />
                                 <DataGridTemplateColumn Header="运行" Width="0.9*">

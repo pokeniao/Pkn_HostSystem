@@ -10,13 +10,13 @@
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
 
-      d:DataContext="{d:DesignInstance windows:LoginViewModel}"
+      d:DataContext="{d:DesignInstance windows:Login2ViewModel}"
       d:DesignHeight="714.5" d:DesignWidth="1000"
       Title="LoginWindowPage2">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -28,6 +28,26 @@
             FontSize="15"
             Grid.ColumnSpan="2" VerticalAlignment="Center">
         </ui:TitleBar>
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock  Grid.Row="0" Text="{Binding LoginModel.SwipResult}"
+                        Margin="0 0  0 10"/>
+            <Button
+                Grid.Row="1"
+                IsDefault="False"
+                Padding="30"
+                Margin="0 0 0 40"
+                PreviewKeyDown="Button_PreviewKeyDown"
+                Command="{Binding SwipingCardLoginButtonCommand }">
+                <Button.Content>
+                    <TextBlock  Text="{Binding LoginModel.SwipingCardLogin }" FontSize="40"/>
+                </Button.Content>
+            </Button>
+        </Grid>
 
         <ui:SnackbarPresenter Name="SnackbarPresenter" />
     </Grid>

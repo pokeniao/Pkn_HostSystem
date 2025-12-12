@@ -6,6 +6,7 @@ using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Models.Windows;
 using System.Collections.ObjectModel;
+using System.Security.RightsManagement;
 using System.Windows;
 
 
@@ -68,7 +69,8 @@ public partial class HomePageModel : ObservableObject
 
     #region 自定义页
 
-    public VOCPojo VocPojo { get; set; }= new VOCPojo();
+    // public VOCPojo VocPojo { get; set; }= new VOCPojo();
+    public ElectricityTest ElectricityTest { get; set; }= new ElectricityTest();
     #endregion
 
 

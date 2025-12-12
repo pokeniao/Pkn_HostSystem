@@ -287,34 +287,8 @@ namespace Pkn_HostSystem.Views.Pages
 
         #endregion
 
-        #region  工单Combobox
+        #region  设置参数
 
-        /// <summary>
-        /// 下拉Combobox
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        // private async void SelectPppOrderDown(object? sender, EventArgs e)
-        // {
-        //     //进行一次查询
-        //     string httpName = HomePageViewModel.HomePageModel.HttpName;
-        //
-        //     var pppBase003OrderList = new PppBase003OrderList();
-        //     var (succeed, pppOrderLists) =
-        //         await pppBase003OrderList.GetPppOrderLists(httpName, new CancellationTokenSource());
-        //
-        //     if (succeed)
-        //     {
-        //         //返回结果,显示到页面Combobox提供选择
-        //         HomePageViewModel.HomePageModel.PppOrderLists = pppOrderLists;
-        //
-        //         Log.Info("获取工单成功");
-        //     }
-        //     else
-        //     {
-        //         Log.Info("获取工单失败--pppBase003OrderList.GetPppOrderLists返回false");
-        //     }
-        // }
         /// <summary>
         /// 设置参数
         /// </summary>
@@ -323,15 +297,16 @@ namespace Pkn_HostSystem.Views.Pages
         private void SelectPppOrderButton(object sender, RoutedEventArgs e)
         {
             HomePageModel homePageModel = HomePageViewModel.HomePageModel;
-            VOCPojo vocPojo = homePageModel.VocPojo;
+            ElectricityTest electricityTest = homePageModel.ElectricityTest;
 
-            vocPojo.TestTime = vocPojo.SetValueTestTime;
-            vocPojo.TriggerMax = vocPojo.SetValueTriggerMax;
-
-            vocPojo.MachineId = vocPojo.SetMachineId;
-            vocPojo.GroupCode = vocPojo.SetGroupCode;
-
-            vocPojo.MesHttp = vocPojo.SetMesHttp;
+            electricityTest.ResistanceLowLimit = electricityTest.SetResistanceLowLimit;
+            electricityTest.ResistanceUpLimit = electricityTest.SetResistanceUpLimit;
+            electricityTest.VoltageLowLimit = electricityTest.SetVoltageLowLimit;
+            electricityTest.VoltageUpLimit = electricityTest.SetVoltageUpLimit;
+            electricityTest.VoltageStandard = electricityTest.SetVoltageStandard;
+            electricityTest.ResistanceStandard = electricityTest.SetResistanceStandard;
+            electricityTest.MachineId = electricityTest.SetMachineId;
+            electricityTest.GroupCode = electricityTest.SetGroupCode;
         }
 
         #endregion

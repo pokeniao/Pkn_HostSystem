@@ -171,6 +171,7 @@ namespace Pkn_HostSystem
                     .AddSingleton<TcpToolViewModel>()
                     .AddSingleton<LiveChartsTestViewModel>()
                     .AddSingleton<LoginViewModel>() 
+                    .AddSingleton<Login2ViewModel>() 
                     .AddSingleton<SerialToolViewModel>()
                     .AddSingleton<DesignViewModel>()
 

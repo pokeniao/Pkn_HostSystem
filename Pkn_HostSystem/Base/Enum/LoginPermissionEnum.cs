@@ -2,14 +2,15 @@
 {
     public enum LoginPermissionEnum
     {
-        UnLogIn = 0,
+        Lv0 = 0,
 
-        LogIn = 1,
+        Lv1 = 1,
 
-        Manager =2 ,
+        Lv2 =2 ,
 
-        Developer = 3,
+        Lv3 = 3,
 
-        Operator = 4,
+        Lv4 = 4,
     }
+
 }

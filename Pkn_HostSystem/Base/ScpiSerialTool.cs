@@ -159,19 +159,34 @@ namespace Pkn_HostSystem.Base
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        public async Task WriteLine(string command)
+        public async Task<(bool, string)> WriteLine(string command)
         {
-            await EnsureConnected();
-            serialPort.WriteLine(command);
+            try
+            {
+                await EnsureConnected();
+                serialPort.WriteLine(command);
+                return (true, default);
+            }
+            catch (Exception e)
+            {
+                return (false, $"{e}");
+            }
+
         }
 
-        public async Task Write(string command)
+        public async Task<(bool, string)> Write(string command)
         {
-            await EnsureConnected();
-
-            byte[] bytes = System.Text.Encoding.ASCII.GetBytes(command);
-
-            serialPort.Write(bytes, 0, bytes.Length);
+            try
+            {
+                await EnsureConnected();
+                byte[] bytes = Encoding.ASCII.GetBytes(command);
+                serialPort.Write(bytes, 0, bytes.Length);
+                return (true, default);
+            }
+            catch (Exception e)
+            {
+                return (false, $"{e}");
+            }
         }
 
         /// <summary>
@@ -184,49 +199,55 @@ namespace Pkn_HostSystem.Base
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<(bool succeed, string response)> WriteLineAndWaitResponse(string command, int timeout = 3000)
         {
-            await EnsureConnected();
-
-            //写入内容
-            serialPort.WriteLine(command);
-            serialPort.DiscardInBuffer(); // 清空旧数据
-            var startTime = Environment.TickCount; // 记录开始时间
-            while (true)
+            try
             {
-                // 检查超时
-                int elapsed = Environment.TickCount - startTime;
-                if (elapsed >= timeout)
+                await EnsureConnected();
+                //写入内容
+                serialPort.WriteLine(command);
+                serialPort.DiscardInBuffer(); // 清空旧数据
+                var startTime = Environment.TickCount; // 记录开始时间
+                while (true)
                 {
-                    Log.Info($"[{TraceContext.Name}]--串口通讯,等待消息超时！");
-                    return (false, null);
+                    // 检查超时
+                    int elapsed = Environment.TickCount - startTime;
+                    if (elapsed >= timeout)
+                    {
+                        Log.Info($"[{TraceContext.Name}]--串口通讯,等待消息超时！");
+                        return (false, null);
+                    }
+
+                    // 检查是否有数据可读
+
+                    string? readLine = await Task.Run(() =>
+                    {
+                        try
+                        {
+                            return serialPort.ReadLine();
+                        }
+                        catch (TimeoutException)
+                        {
+                            // 串口设置的 ReadTimeout 到时间，但数据还没来，继续等待,  ReadTimeout 在serialPort.ReadLine(); 没有读取到东西,过一段时间就会超时,所以需要跳过这个
+                            return null;
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error($"[{TraceContext.Name}]--{e}");
+                            return null;
+                        }
+                    });
+                    if (!string.IsNullOrEmpty(readLine))
+                    {
+                        Log.Info($"[{TraceContext.Name}]--串口通讯,收到消息: {readLine}");
+                        return (true, readLine);
+                    }
+
+                    // 没数据，休息一下再看
+                    await Task.Delay(100);
                 }
-
-                // 检查是否有数据可读
-
-                string? readLine = await Task.Run(() =>
-                {
-                    try
-                    {
-                        return serialPort.ReadLine();
-                    }
-                    catch (TimeoutException)
-                    {
-                        // 串口设置的 ReadTimeout 到时间，但数据还没来，继续等待,  ReadTimeout 在serialPort.ReadLine(); 没有读取到东西,过一段时间就会超时,所以需要跳过这个
-                        return null;
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error($"[{TraceContext.Name}]--{e}");
-                        return null;
-                    }
-                });
-                if (!string.IsNullOrEmpty(readLine))
-                {
-                    Log.Info($"[{TraceContext.Name}]--串口通讯,收到消息: {readLine}");
-                    return (true, readLine);
-                }
-
-                // 没数据，休息一下再看
-                await Task.Delay(100);
+            }
+            catch (Exception e)
+            {
+                return (false, $"{e}");
             }
         }
 

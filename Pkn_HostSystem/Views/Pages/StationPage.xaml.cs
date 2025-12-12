@@ -77,13 +77,13 @@ namespace Pkn_HostSystem.Views.Pages
             int selectedIndex = TabControl2.SelectedIndex;
             switch (selectedIndex)
             {
-                case 0:
+                case 1:
                     selectedItem.UserLog.FlowDocument.Blocks.Clear();
                     break;
-                case 1:
+                case 2:
                     selectedItem.ErrorLog.FlowDocument.Blocks.Clear();
                     break;
-                case 2:
+                case 3:
                     selectedItem.DevLog.FlowDocument.Blocks.Clear();
                     break;
             }
