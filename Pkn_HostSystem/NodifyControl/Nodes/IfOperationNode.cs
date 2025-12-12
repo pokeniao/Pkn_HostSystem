@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Nodes.Connector;
@@ -14,6 +15,14 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
         [ObservableProperty] private IfOperationModel model = new();
         public IfOperationNode(DesignModel _designModel, Object model = null) : base(_designModel, "If", NodeEnum.If)
         {
+            //从本地读取
+            if (model != null)
+            {
+                JObject? jObject = model as JObject;
+                Model = jObject?.ToObject<IfOperationModel>();
+            }
+
+            IModel = Model;
             Operation = new IfOperation(this);
             MyConnector connector = new("输入", Id, ConnectorTypeEnum.Input);
             Input.Add(connector);
