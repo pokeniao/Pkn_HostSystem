@@ -56,8 +56,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                         station1 = StationBase.Items[i];
                     }
                 }
-
-                if (station1 == null && !string.IsNullOrEmpty(electricityTest.CurSN))
+                if (station1 == null)
                 {
                     station1 = new Station1();
                     station1.条码 = electricityTest.CurSN;
@@ -65,10 +64,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                     station1.型号 = electricityTest.CurSN.Substring(0, 2);
                     station1.批号 = electricityTest.CurSN.Substring(2, 4);
                 }
-                else
-                {
-                    return (false, "当前条码IsNullOrEmpty");
-                }
+               
 
                 //获取串口
                 //获得网络,遍历获取对应的网络
@@ -182,11 +178,8 @@ namespace Pkn_HostSystem.Service.UserDefined
                 csvHelper.Save(cts.Token);
                 StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "本地日志已更新");
                 //上传MES
-                RestClient restClient = new RestClient("http://10.30.98.94");
-                RestRequest restRequest = new RestRequest("/mes/service/SendDeviceInfo?WSDL", Method.Post);
-                UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
-                
-
+                RestClient restClient = new RestClient(electricityTest.HttpPath);
+                RestRequest restRequest = new RestRequest(electricityTest.ApiPath, Method.Post);
                 var data = new
                 {
                     TABLE = "mes_pack_tcodyjc",
@@ -229,14 +222,12 @@ namespace Pkn_HostSystem.Service.UserDefined
                     $"<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:webs=\"http://webs.modules.jeesite.thinkgem.com/\">\r\n   <soapenv:Header/>\r\n   <soapenv:Body>\r\n      <webs:GetDataDb>\r\n         <!--参数:-->\r\n          <arg0>dataSource11</arg0>\r\n         <arg1>{json}</arg1>\r\n      </webs:GetDataDb>\r\n   </soapenv:Body>\r\n</soapenv:Envelope> ";
                 restRequest.AddStringBody(xmlData, DataFormat.Xml);
                 RestResponse httpResponse = await restClient.ExecuteAsync(restRequest);
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"上传Json:{json}");
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"上传内容:{xmlData}");
                 if (httpResponse.IsSuccessStatusCode)
                 {
-                    JObject jObject = JObject.Parse(httpResponse.Content);
                     //判断是否是JSON格式,如果是转成输出
                     httpResponse.Content = JsonTool<Object>.TryFormatJson(httpResponse.Content, out _);
                     StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"上传mes成功 返回:\r\n{httpResponse.Content}");
-                    
                 }
                 else
                 {
