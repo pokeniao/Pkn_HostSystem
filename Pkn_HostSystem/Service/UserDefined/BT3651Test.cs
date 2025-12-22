@@ -123,12 +123,12 @@ namespace Pkn_HostSystem.Service.UserDefined
                         "得到电压结果NG");
                     result = false;
                 }
-                station1.电阻上限 = RHight.ToString();
-                station1.电阻值 = value.ToString();
-                station1.电阻下限 = RLow.ToString();
-                station1.电压上限 = VHight.ToString();
-                station1.电压值 = value2.ToString();
-                station1.电压下限 = VLow.ToString();
+                station1.电阻上限 = RHight.ToString("0.000");
+                station1.电阻值 = value.ToString("0.000");
+                station1.电阻下限 = RLow.ToString("0.000");
+                station1.电压上限 = VHight.ToString("0.000");
+                station1.电压值 = value2.ToString("0.000");
+                station1.电压下限 = VLow.ToString("0.000");
 
                 if (result)
                 {
