@@ -102,7 +102,7 @@ namespace Pkn_HostSystem.Views.Windows
 
         private void DeleteColForDg(object sender, RoutedEventArgs e)
         {
-            HttpHeader? item = HttpHeader.SelectedItem as HttpHeader;
+            HttpItem? item = HttpHeader.SelectedItem as HttpItem;
             if (item.Key != null)
             {
                 bool b = viewModel.LoadMesAddAndUpdateWindowModel.HttpHeaders.Remove(item);

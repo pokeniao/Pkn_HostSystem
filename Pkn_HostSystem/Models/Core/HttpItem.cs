@@ -1,6 +1,6 @@
 ﻿namespace Pkn_HostSystem.Models.Core
 {
-    public class HttpHeader
+    public class HttpItem
     {
         public string Key { get; set; }
         public string Value { get; set; }

@@ -12,7 +12,7 @@ namespace Pkn_HostSystem.Static
         public static UserContext Current => _current;
 
         // 实例的属性
-        private LoginPermissionEnum _permission = LoginPermissionEnum.Lv0;
+        private LoginPermissionEnum _permission = LoginPermissionEnum.Lv4;
         public LoginPermissionEnum Permission
         {
             get => _permission;

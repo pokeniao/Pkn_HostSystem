@@ -1,18 +1,12 @@
-﻿using Microsoft.VisualBasic;
-using Pkn_HostSystem.NodifyControl.Nodes;
-using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
+﻿using Pkn_HostSystem.NodifyControl.Nodes;
 using Pkn_HostSystem.NodifyControl.Operations.Core;
 using Pkn_HostSystem.NodifyControl.Views.NodeOperation;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Security.Permissions;
-using System.Windows;
 
 namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
 {
     public class IfOperation(IfOperationNode node) : BaseOperation<IfOperationNode>(node, new IfOperationUserControl())
     {
-        protected override async Task OnExecute()
+        protected override async Task OnExecute(CancellationTokenSource cts)
         {
             try
             {
@@ -24,6 +18,8 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
 
                 int i;
                 modelExpression = modelExpression.Replace(" ", "").Replace("\r", "").Replace("\n", "");
+
+                //先处理string.Count()的方法
                 while ((i = modelExpression.IndexOf("string.Count(")) != -1)
                 {
                     string s = modelExpression.Substring(i + 13);
@@ -38,7 +34,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                     int paramValueLength = paramValue.Length;
                     modelExpression = modelExpression.Replace($"string.Count({s2})", paramValueLength.ToString());
                 }
-
+                //处理string.Equals()的方法
                 while ((i = modelExpression.IndexOf("string.Equals(")) != -1)
                 {
                     string s = modelExpression.Substring(i + 14);
@@ -55,7 +51,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
                     modelExpression =
                         modelExpression.Replace($"string.Equals({s2})", paramValue1.Equals(paramValue2).ToString());
                 }
-
+                //进行括号筛选
                 modelExpression = runBracket(modelExpression);
 
                 if (bool.Parse(modelExpression))
@@ -188,7 +184,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
             bool f;
             if (keyValuePairs.Length == 0)
             {
-                return message;
+                return replace1(message);
             }
 
 

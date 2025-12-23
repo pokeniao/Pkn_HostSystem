@@ -26,9 +26,9 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
             Output.Add(myConnector);
             OperationModel operationModel = new()
             {
-                Name = new SnowflakeIdGenerator(1, 1).GetId().ToString(),
+                Name = "加法结果"+new SnowflakeIdGenerator(1, 1).GetId().ToString(),
                 ParamMethod = "常量",
-                IsEnable = false,
+                ReadOnly = true,
                 NoDelete = true
             };
             //固定输出

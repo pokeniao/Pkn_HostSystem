@@ -57,8 +57,7 @@ public partial class HomePageViewModel : ObservableRecipient
     public List<ComBoxEnumItem<CameraShowSizeEnum>> CameraShowMethodList { get; set; } = Enum
         .GetValues(typeof(CameraShowSizeEnum)).Cast<CameraShowSizeEnum>().Select(v =>
             new ComBoxEnumItem<CameraShowSizeEnum>(
-            )
-            { Value = v, Display = v.GetDescription() }).ToList();
+            ) { Value = v, Display = v.GetDescription() }).ToList();
 
     public HomePageViewModel()
     {
@@ -70,7 +69,9 @@ public partial class HomePageViewModel : ObservableRecipient
                 NetWorkList = new ObservableCollectionExtended<NetWork>(),
                 RegisterItems = new ObservableCollection<RegisterItem>(Enumerable.Range(0, 100)
                     .Select(index => new RegisterItem(index))),
-                PlcAlarmItems = new ObservableCollection<PlcAlarmItem>(Enumerable.Range(0, 1000).Select(index => new PlcAlarmItem(index)))
+                PlcAlarmItems =
+                    new ObservableCollection<PlcAlarmItem>(Enumerable.Range(0, 1000)
+                        .Select(index => new PlcAlarmItem(index)))
             };
         }
 
@@ -497,26 +498,18 @@ public partial class HomePageViewModel : ObservableRecipient
         if (item.IP != null || item.Com != null) currentState = "当前状态: 已配置";
 
         HomePageModel.CurrentSetName = "当前配置:" + item.Name + "    " + currentState;
-
-
-        if (item.IP != null)
-        {
-            HomeSetConnectModel.Ip = item.IP;
-            HomeSetConnectModel.Port = item.Port;
-            HomeSetConnectModel.TcpServerNeedListen = item.IsServerListen;
-        }
-
-        if (item.Com != null)
-        {
-            HomeSetConnectModel.Com = item.Com;
-            HomeSetConnectModel.BaudRate = item.BaudRate;
-            HomeSetConnectModel.DataBit = item.DataBits;
-            HomeSetConnectModel.Parity = item.Parity;
-            HomeSetConnectModel.StopBits = item.StopBits;
-            HomeSetConnectModel.NetMethod = item.NetMethod;
-            HomeSetConnectModel.TimeOut = item.TimeOut;
-            HomeSetConnectModel.NewLine = item.NewLine;
-        }
+        HomeSetConnectModel.Ip = item.IP;
+        HomeSetConnectModel.Port = item.Port;
+        HomeSetConnectModel.TcpServerNeedListen = item.IsServerListen;
+        HomeSetConnectModel.NetMethod = item.NetMethod;
+        HomeSetConnectModel.Com = item.Com;
+        HomeSetConnectModel.BaudRate = item.BaudRate;
+        HomeSetConnectModel.DataBit = item.DataBits;
+        HomeSetConnectModel.Parity = item.Parity;
+        HomeSetConnectModel.StopBits = item.StopBits;
+        HomeSetConnectModel.NetMethod = item.NetMethod;
+        HomeSetConnectModel.TimeOut = item.TimeOut;
+        HomeSetConnectModel.NewLine = item.NewLine;
     }
 
     [RelayCommand]
@@ -525,17 +518,17 @@ public partial class HomePageViewModel : ObservableRecipient
         var item = page.setConnectDg.SelectedItem as NetworkDetailed;
 
         page.IpSet.Visibility = Visibility.Collapsed;
-        item.IP = HomeSetConnectModel.Ip;
+        item.IP = HomeSetConnectModel?.Ip;
         item.Port = HomeSetConnectModel.Port;
-        item.Com = HomeSetConnectModel.Com;
-        item.BaudRate = HomeSetConnectModel.BaudRate;
-        item.DataBits = HomeSetConnectModel.DataBit;
+        item.Com = HomeSetConnectModel?.Com;
+        item.BaudRate = HomeSetConnectModel?.BaudRate;
+        item.DataBits = HomeSetConnectModel?.DataBit;
         item.Parity = HomeSetConnectModel.Parity;
         item.StopBits = HomeSetConnectModel.StopBits;
-        item.NetMethod = HomeSetConnectModel.NetMethod;
+        item.NetMethod = HomeSetConnectModel?.NetMethod;
         item.IsServerListen = HomeSetConnectModel.TcpServerNeedListen;
         item.TimeOut = HomeSetConnectModel.TimeOut;
-        item.NewLine = HomeSetConnectModel.NewLine;
+        item.NewLine = HomeSetConnectModel?.NewLine;
     }
 
     #endregion
@@ -680,6 +673,7 @@ public partial class HomePageViewModel : ObservableRecipient
 
 
     public CancellationTokenSource plcAlarmRunCts;
+
     [RelayCommand]
     public void PlcAlarmRun(HomePage page)
     {
@@ -694,6 +688,7 @@ public partial class HomePageViewModel : ObservableRecipient
             {
                 plcAlarmRunCts.Cancel();
             }
+
             HomePageModel.PlcAlarmRunButton = "启用";
         }
     }
@@ -706,7 +701,6 @@ public partial class HomePageViewModel : ObservableRecipient
             plcAlarmRunCts = new CancellationTokenSource();
             await PlcAlarmRunCyc(plcAlarmRunCts);
         }
-
     }
 
     public async Task PlcAlarmRunCyc(CancellationTokenSource cts)
@@ -794,6 +788,7 @@ public partial class HomePageViewModel : ObservableRecipient
         {
             return;
         }
+
         //获取项目名
         string Value = model.ProjectName;
 
@@ -838,6 +833,7 @@ public partial class HomePageViewModel : ObservableRecipient
             {
                 model.cts.Cancel();
             }
+
             //创建任务 ,并且启动
             model.cts = new CancellationTokenSource();
             //创建任务
@@ -875,6 +871,7 @@ public partial class HomePageViewModel : ObservableRecipient
                 Log.Info($"[{TraceContext.Name}]--未找到起始节点,请添加一个IStartOperation节点");
                 throw new Exception("未找到一个开始节点");
             }
+
             //定义变量,触发类型和时间
             string triggerType = "";
             int triggerTime = 100;
@@ -890,23 +887,20 @@ public partial class HomePageViewModel : ObservableRecipient
                     netWorkTriggerModel = enterOperationModel.NetWorkTriggerModel;
                     break;
             }
-            NetWorkTriggerLogic.RunFunc += () => model.EditorViewModel.RunCommand.Execute(null);
+
+            NetWorkTriggerLogic.RunFunc += () => model.EditorViewModel.Run(model.cts);
             while (!model.cts.Token.IsCancellationRequested)
             {
                 //更具不同触发类型进行不同逻辑
                 switch (triggerType)
                 {
-
                     case "循环触发":
-                        model.EditorViewModel.RunCommand.Execute(null);
+                        await model.EditorViewModel.Run(model.cts);
                         break;
                     case "消息触发":
                         await NetWorkTriggerLogic.TriggerLogic(netWorkTriggerModel, model.cts);
                         break;
                 }
-
-
-
                 await Task.Delay(triggerTime, model.cts.Token);
             }
         }

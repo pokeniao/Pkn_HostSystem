@@ -902,7 +902,7 @@
                                                 <WrapPanel>
                                                     <TextBlock Text="当前选择的通讯" Margin="10" TextAlignment="Center" />
                                                     <ComboBox Width="150" ItemsSource="{Binding NetMethod}"
-                                                              SelectedValue="{Binding HomeSetConnectModel.NetMethod}" />
+                                                              SelectedValue="{Binding HomeSetConnectModel.NetMethod ,UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}" />
                                                     <Button Content="设置" HorizontalAlignment="Right" Margin="20,5"
                                                             Command="{Binding CommitConfigCommand}"
                                                             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page} }" />

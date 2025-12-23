@@ -12,11 +12,9 @@ namespace Pkn_HostSystem.NodifyControl.Operations.StartOperation
         public EnterOperation(EnterOperationNode _node):base(_node, new EnterOperationUserControl()) { }
 
 
-        protected override async Task OnExecute()
+        protected override async Task OnExecute(CancellationTokenSource cts)
         {
             
         }
-
-
     }
 }

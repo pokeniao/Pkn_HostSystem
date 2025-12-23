@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
+using MessageBox = Wpf.Ui.Controls.MessageBox;
 
 namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
 {
@@ -184,7 +185,7 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                 {
                     //添加
                     modbusTcpOperationNode.OutputParams.Add(
-                        new OperationModel() { Name = (startAddress + i).ToString(),IsEnable = false , NoDelete = true}
+                        new OperationModel() { Name = (startAddress + i).ToString(),ReadOnly = true , NoDelete = true}
                         );
                 }
                 else
@@ -272,6 +273,36 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                 }
             }
         }
+        //通讯地址改变的时候
+        private async void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (NetNameComboBox.SelectedIndex == -1)
+            {
+                return;
+            }
 
+            if (NetNameComboBox.SelectedValue == null)  
+            {
+                return;
+            }
+
+            string? NetName = NetNameComboBox.SelectedValue.ToString();
+            NetWork netWork = GlobalManager.GetNetWork(NetName);
+
+            if (netWork== null)
+            {
+                NetNameComboBox.SelectedIndex = -1;
+                await new  MessageBox(){Content = "选中通讯不为ModbusTcp或ModbusRtu,或通讯处于关闭" }.ShowDialogAsync();
+                return;
+            }
+
+            if (!(netWork.NetworkDetailed.NetMethod == "ModbusTcp" || netWork.NetworkDetailed.NetMethod == "ModbusRtu"))
+            {
+                NetNameComboBox.SelectedIndex = -1;
+                await new MessageBox() { Content = "选中通讯不为ModbusTcp或ModbusRtu" }.ShowDialogAsync();
+                return;
+            }
+            
+        }
     }
 }

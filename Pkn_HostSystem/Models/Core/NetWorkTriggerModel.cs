@@ -11,7 +11,7 @@ namespace Pkn_HostSystem.Models.Core
     public partial class NetWorkTriggerModel :ObservableObject
     {
         //通讯网络列表
-        [JsonIgnore][ObservableProperty] private ObservableCollectionExtended<NetWork> netWorkList = new ObservableCollectionExtended<NetWork>();
+        [JsonIgnore][ObservableProperty] private ObservableCollectionExtended<NetWork> netWorkList = new();
         //触发类型
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(showTriggerSet))]
@@ -19,6 +19,9 @@ namespace Pkn_HostSystem.Models.Core
 
         //触发时间
         [ObservableProperty] private int triggerTime = 300;
+
+
+
 
         //触发网络名称
         private string networkName;
@@ -30,10 +33,10 @@ namespace Pkn_HostSystem.Models.Core
             set
             {
                 //当通讯断掉的时候,防止清除掉上次连接的连接名
-                if (string.IsNullOrEmpty(value))
-                {
-                    return; 
-                }
+                // if (value == null)
+                // {
+                //     return; 
+                // }
              
                 SetProperty(ref networkName, value);
                 OnPropertyChanged(nameof(showModbusTriggerParam));
@@ -64,6 +67,10 @@ namespace Pkn_HostSystem.Models.Core
                     NetMethod.Add("06写单寄存器");
                     NetMethod.Add("0F写多线圈");
                     NetMethod.Add("10写多寄存器");
+                    if (NetMethodName == null)
+                    {
+                        NetMethodName = "03读保持寄存器";
+                    }
                     break;
                 case "ModbusRtu":
                     NetMethod.Add("01读线圈");
@@ -74,6 +81,10 @@ namespace Pkn_HostSystem.Models.Core
                     NetMethod.Add("06写单寄存器");
                     NetMethod.Add("0F写多线圈");
                     NetMethod.Add("10写多寄存器");
+                    if (NetMethodName == null)
+                    {
+                        NetMethodName = "03读保持寄存器";
+                    }
                     break;
                 case "基恩士上位链路通讯":
                     NetMethod.Add("读DM寄存器");
@@ -82,6 +93,10 @@ namespace Pkn_HostSystem.Models.Core
                     NetMethod.Add("写DM寄存器");
                     NetMethod.Add("写R线圈");
                     NetMethod.Add("写字符串/写多DM");
+                    if (NetMethodName == null)
+                    {
+                        NetMethodName = "读多DM寄存器";
+                    }
                     break;
             }
         }

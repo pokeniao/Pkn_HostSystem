@@ -70,9 +70,6 @@ namespace Pkn_HostSystem.ViewModels.Page
             }
             GlobalManager.ProjectDictionary.AddOrUpdate(ProjectModel.ProjectList);
             GlobalManager.ProjectDictionary.Connect().Bind(ProjectModel.ProjectList).Subscribe(); //绑定
-
-
-
         }
 
         /// <summary>
@@ -112,7 +109,6 @@ namespace Pkn_HostSystem.ViewModels.Page
         public void Save()
         {
             //保存当前的节点和连接线
-
             LocalSaveNodifyMethod.Save();
             JsonTool<ProjectModel>.Save(ProjectModel);
         }
@@ -123,8 +119,6 @@ namespace Pkn_HostSystem.ViewModels.Page
             {
                 DesignModel.Log.RichTextBox = richTextBox;
             }
-
-
         }
     }
 }

@@ -34,12 +34,12 @@ namespace Pkn_HostSystem.NodifyControl.Operations.Core
             }
         }
 
-        public async Task Execute()
+        public async Task Execute(CancellationTokenSource cts)
         {
-            await OnExecute();
+            await OnExecute(cts);
         }
 
-        protected abstract  Task OnExecute();
+        protected abstract  Task OnExecute(CancellationTokenSource cts);
 
         public FrameworkElement GetConfigView()
         {

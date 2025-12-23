@@ -40,7 +40,7 @@ namespace Pkn_HostSystem.NodifyControl.OperationModels.Models.Core
         /// <summary>
         /// 禁止修改
         /// </summary>
-        [ObservableProperty] private bool isEnable = true;
+        [ObservableProperty] private bool readOnly = false;
         /// <summary>
         /// 禁止删除
         /// </summary>

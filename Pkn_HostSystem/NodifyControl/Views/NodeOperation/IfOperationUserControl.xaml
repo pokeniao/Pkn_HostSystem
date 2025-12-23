@@ -43,7 +43,7 @@
                 Margin="5,10"
                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
                 BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}"
-                Height="200"
+                Height="70"
                 BorderThickness="1"
                 CornerRadius="10">
                 <TextBox

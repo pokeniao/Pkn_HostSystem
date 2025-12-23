@@ -19,80 +19,84 @@
     <Grid VerticalAlignment="Top">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <WrapPanel Grid.Row="0">
-            <TextBlock Text="通讯地址" TextAlignment="Center" Margin="5"/>
-            <TextBlock Text="{Binding Model.NetWorkTriggerModel.NetworkName}" TextAlignment="Center" Margin="5"/>
-            <ComboBox Width="150"
-                      ItemsSource="{Binding Model.NetWorkTriggerModel.NetWorkList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                      DisplayMemberPath="NetworkDetailed.Name"
-                      SelectedValuePath="NetworkDetailed.Name"
-                      SelectedValue="{Binding  Model.NetWorkTriggerModel.NetworkName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <!-- 通讯地址 -->
+        <WrapPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left">
+            <TextBlock Text="通讯地址" TextAlignment="Center" Margin="5" />
+            <TextBlock Text="{Binding Model.NetWorkTriggerModel.NetworkName}" TextAlignment="Center" Margin="5" />
         </WrapPanel>
-
-        <WrapPanel Grid.Row="2"
-                   Margin="0,10,0,0"
-                   >
-            <TextBlock Text="通讯方式" TextAlignment="Center" Margin="5"/>
-            <ComboBox Width="150" 
+        <ComboBox
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin=" 0 0 0 5"
+            Name="NetNameComboBox"
+            ItemsSource="{Binding Model.NetWorkTriggerModel.NetWorkList,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+            SelectionChanged="Selector_OnSelectionChanged"
+            DisplayMemberPath="NetworkDetailed.Name"
+            SelectedValuePath="NetworkDetailed.Name"
+            SelectedValue="{Binding  Model.NetWorkTriggerModel.NetworkName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+        <!-- 通讯方式 -->
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="通讯方式" TextAlignment="Center" Margin="5" HorizontalAlignment="Left" />
+        <ComboBox Grid.Row="1" Grid.Column="1"
                   SelectionChanged="ComboBox_SelectionChanged"
+                  Margin=" 0 0 0 5"
                   ItemsSource="{Binding Model.NetWorkTriggerModel.NetMethod,Mode= TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  SelectedValue="{Binding Model.NetWorkTriggerModel.NetMethodName , UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"
-        />
-        </WrapPanel>
-        <WrapPanel Margin="0,10,0,0" Grid.Row="3"
-                   Visibility="{Binding Model.NetWorkTriggerModel.showModbusTriggerParam}">
-            <StackPanel Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
-                <ui:NumberBox
-                    ClearButtonEnabled="False"
-                    Minimum="1"
-                    Value="{Binding Model.NetWorkTriggerModel.StationAddress  ,UpdateSourceTrigger=PropertyChanged}"
-                    Width="120" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
-                <ui:NumberBox
-                    ClearButtonEnabled="False"
-                    Minimum="0"
-                    ValueChanged="NumberBox_ValueChanged"
-                    Value="{Binding Model.NetWorkTriggerModel.StartAddress,UpdateSourceTrigger=PropertyChanged}"
-                    Width="120" />
-            </StackPanel>
+                  SelectedValue="{Binding Model.NetWorkTriggerModel.NetMethodName , UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}" />
+        <!-- 站地址 -->
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="站地址" Margin="5" TextAlignment="Center" HorizontalAlignment="Left"/>
+        <ui:NumberBox
+            Grid.Row="2" Grid.Column="1"
+            Margin=" 0 0 0 5"
+            ClearButtonEnabled="False"
+            Minimum="1"
+            Value="{Binding Model.NetWorkTriggerModel.StationAddress  ,UpdateSourceTrigger=PropertyChanged}"
+            />
+        <TextBlock 
+            Grid.Row="3" Grid.Column="0"
+            Text="起始地址" Margin="5" TextAlignment="Center" HorizontalAlignment="Left"/>
+        <ui:NumberBox
+            Grid.Row="3" Grid.Column="1"
+            ClearButtonEnabled="False"
+            Minimum="0"
+            ValueChanged="NumberBox_ValueChanged"
+            Value="{Binding Model.NetWorkTriggerModel.StartAddress,UpdateSourceTrigger=PropertyChanged}"
+           Margin="0 0 0 5"/>
 
-            <StackPanel Orientation="Horizontal" Margin="0,5">
-                <TextBlock Text="数量" Margin="5" TextAlignment="Center" />
-                <ui:NumberBox
-                    Minimum="1"
-                    Name="NumberBox"
-                    ClearButtonEnabled="False"
-                    ValueChanged="NumberBox_ValueChanged"
-                    Value="{Binding Model.NetWorkTriggerModel.Count,UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"
-                    Width="120" />
-            </StackPanel>
-        </WrapPanel>
+        <TextBlock
+            Grid.Row="4" Grid.Column="0"
+            Text="数量" Margin="5" TextAlignment="Center" HorizontalAlignment="Left"/>
+        <ui:NumberBox
+            Grid.Row="4" Grid.Column="1"
+            Minimum="1"
+            Name="NumberBox"
+            ClearButtonEnabled="False"
+            ValueChanged="NumberBox_ValueChanged"
+            Value="{Binding Model.NetWorkTriggerModel.Count,UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"
+            Margin="0 0 0 5" />
 
 
-        <Grid  Grid.Row="4"
-               Visibility="{Binding Model.NetWorkTriggerModel.showModbusTriggerParam}">
+
+        <Grid Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition  Height="Auto"/>
-                <RowDefinition  Height="*"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <ui:TextBlock Grid.Row="0" Text="写入消息" Margin="30 5" FontSize="14" FontWeight="Black" HorizontalAlignment="Left"/>
-
+            <ui:TextBlock Grid.Row="0" Text="写入消息" Margin="5" FontWeight="Black"
+                          HorizontalAlignment="Left" />
             <DataGrid
                 Grid.Row="1"
-                Margin="10 0 15 20"
+                Margin="5"
                 Height="250"
                 ItemsSource="{Binding Model.NetWorkTriggerModel.WriteDvgList , UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"
                 Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -100,23 +104,23 @@
                 BorderThickness="1"
                 ColumnWidth="*"
                 AutoGenerateColumns="false"
-                CanUserAddRows="False"
-            >
+                CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="地址(address)" Width="*"
-                                    Binding="{Binding Name ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        Binding="{Binding Name ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                     <DataGridTemplateColumn Header="方式" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding ParamMethod ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock
+                                    Text="{Binding ParamMethod ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
                             <DataTemplate>
                                 <ComboBox
-                                SelectedValuePath="Content"
-                                IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                SelectedValue="{Binding ParamMethod ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                                    SelectedValuePath="Content"
+                                    IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                    SelectedValue="{Binding ParamMethod ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                                     <ComboBoxItem Content="常量" />
                                     <ComboBoxItem Content="动态获取" />
                                 </ComboBox>
@@ -127,12 +131,12 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
-                                    <TextBlock 
-                                    Visibility="{Binding ShowStaticParamVisibility}"
-                                    Text="{Binding ParamValue ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                                    <TextBlock 
-                                    Visibility="{Binding ShowDynamicParamVisibility}"
-                                    Text="{Binding DynName,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock
+                                        Visibility="{Binding ShowStaticParamVisibility}"
+                                        Text="{Binding ParamValue ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock
+                                        Visibility="{Binding ShowDynamicParamVisibility}"
+                                        Text="{Binding DynName,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -140,15 +144,15 @@
                             <DataTemplate>
                                 <Grid>
                                     <TextBox Visibility="{Binding ShowStaticParamVisibility}"
-                                         IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                         Text="{Binding ParamValue ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                             IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                             Text="{Binding ParamValue ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                     <ComboBox
-                                    IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                    DropDownOpened="ComboBox_OnDropDownOpened"
-                                    DisplayMemberPath="Name"
-                                    Visibility="{Binding ShowDynamicParamVisibility}"
-                                    ItemsSource="{Binding InputParams2, RelativeSource={RelativeSource AncestorType=UserControl} }"
-                                    SelectedValue="{Binding Dyn,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                        IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                        DropDownOpened="ComboBox_OnDropDownOpened"
+                                        DisplayMemberPath="Name"
+                                        Visibility="{Binding ShowDynamicParamVisibility}"
+                                        ItemsSource="{Binding InputParams2, RelativeSource={RelativeSource AncestorType=UserControl} }"
+                                        SelectedValue="{Binding Dyn,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>
@@ -158,21 +162,16 @@
         </Grid>
 
 
-        <!-- <TextBlock Grid.Row="5" Text="输入" Margin="5" /> -->
-        <!-- <operationDataGrid:PknOperationDataGrid Grid.Row="6" -->
-        <!--                                         Height="200" -->
-        <!--                                         Node="{Binding}" -->
-        <!--                                         NeedItemSource="{Binding InputParams , Mode=TwoWay }" /> -->
-
-        <TextBlock Grid.Row="7" Text="输出" Margin="5" />
-        <operationDataGrid:PknOperationDataGrid
+        <TextBlock Grid.Row="6" Grid.Column="0"
+                   Text="输出" Margin="5" />
+        <operationDataGrid:PknOperationDataGrid Grid.Column="0"
             Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
             Height="200"
             Margin="5"
-            Grid.Row="8"
+            Grid.Row="7"
+            Grid.ColumnSpan="2"
             Node="{Binding}"
             NeedItemSource="{Binding OutputParams, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-
 
 
     </Grid>

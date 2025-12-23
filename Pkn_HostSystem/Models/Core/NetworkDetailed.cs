@@ -16,34 +16,39 @@ public class NetworkDetailed
     /// 网络名称
     /// </summary>
     public string Name { get; set; }
+
     /// <summary>
-    /// 当前选择的通讯模式 :
+    /// 当前选择的通讯模式:
     /// </summary>
-    public string NetMethod { get; set; } 
+    public string NetMethod { get; set; } = "ModbusTcp";
     /// <summary>
     /// 是否处于运行状态
     /// </summary>
     public bool Open { get; set; }
+
     /// <summary>
     /// 当前Ip地址
     /// </summary>
-    public string IP { get; set; }
+    public string IP { get; set; } = "127.0.0.1";
+
     /// <summary>
     /// 当前端口号
     /// </summary>
-    public int Port { get; set; }
+    public int Port { get; set; } = 502;
     /// <summary>
     /// 当前Com口
     /// </summary>
     public string Com { get; set; }
+
     /// <summary>
     /// 比特率
     /// </summary>
-    public string BaudRate { get; set; }
+    public string BaudRate { get; set; } = "9600";
+
     /// <summary>
     /// 数据位
     /// </summary>
-    public string DataBits { get; set; }
+    public string DataBits { get; set; } = "8";
     /// <summary>
     /// 停止位
     /// </summary>
@@ -56,11 +61,12 @@ public class NetworkDetailed
     /// <summary>
     /// 串口超时时间
     /// </summary>
-    public int TimeOut { get; set; }
+    public int TimeOut { get; set; } = 3000;
+
     /// <summary>
     /// 串口换行符
     /// </summary>
-    public string NewLine { get; set; }
+    public string NewLine { get; set; } = "\n";
 
     /// <summary>
     /// 服务器是否是监听模式

@@ -6,7 +6,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.Interface
     {
 
 
-        Task Execute();
+        Task Execute(CancellationTokenSource cts);
         /// <summary>
         /// 用于显示参数页面
         /// </summary>

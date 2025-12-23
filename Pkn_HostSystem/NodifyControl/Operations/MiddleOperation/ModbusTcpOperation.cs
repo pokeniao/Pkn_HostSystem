@@ -13,7 +13,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
     {
 
 
-        protected override async Task OnExecute()
+        protected override async Task OnExecute(CancellationTokenSource cts)
         {
             await SendModbus();
         }
@@ -25,7 +25,8 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
             NetWork netWork = GlobalManager.GetNetWork(node.Model.NetWorkTriggerModel.NetworkName);
             if (netWork == null)
             {
-                Log.Error("");
+                Log.Error("通讯未连接,未找到netWork", $"{node.NodeName}:{node.Id}");
+                return;
             }
             ModbusBase ModbusBase = netWork.ModbusBase;
 

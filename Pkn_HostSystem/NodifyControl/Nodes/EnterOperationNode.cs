@@ -23,6 +23,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
                 JObject? jObject = model as JObject;
                 Model = jObject?.ToObject<EnterOperationModel>();
             }
+
             GlobalManager.NetWorkDictionary.Connect().Bind(Model.NetWorkTriggerModel.NetWorkList).Subscribe();
             IModel = Model;
 

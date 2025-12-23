@@ -17,116 +17,135 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-
+            <ColumnDefinition Width="*"/>
 
         </Grid.ColumnDefinitions>
-
+        <!-- 触发类型 -->
         <TextBlock Grid.Row="0"
                    Grid.Column="0"
-                   Text="触发类型" Margin="5" TextAlignment="Center" />
+                   Text="触发类型" Margin="5" TextAlignment="Center"
+                   HorizontalAlignment="Left"/>
         <ComboBox 
             Grid.Row="0"  
             Grid.Column="1"
+            HorizontalAlignment="Left"
             Margin="0 0 0 5"
             SelectedValue="{Binding NetWorkTriggerModel.TriggerType, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay , UpdateSourceTrigger=PropertyChanged}"
             SelectedValuePath="Content">
             <ComboBoxItem Content="循环触发" />
             <ComboBoxItem Content="消息触发" />
         </ComboBox>
-        <TextBlock Grid.Row="0" Grid.Column="2" 
-                   Text="触发时间(ms)" Margin="5" TextAlignment="Center"/>
+        <!-- 触发时间 -->
+        <TextBlock Grid.Row="1" Grid.Column="0" 
+                   HorizontalAlignment="Left"
+                   Text="触发时间(ms)" Margin="5 5 31 5" TextAlignment="Center"/>
         <ui:NumberBox
-            Grid.Row="0"
-            Grid.Column="3"
+            Grid.Row="1"
+            Grid.Column="1"
             Margin="0 0 0 5"
+            HorizontalAlignment="Left"
             Value="{Binding  NetWorkTriggerModel.TriggerTime  ,RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay , UpdateSourceTrigger=PropertyChanged}"
-            ClearButtonEnabled="False"
-            />
+            ClearButtonEnabled="False"/>
 
         <Grid
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.Column="0"
-            Grid.ColumnSpan="4"
+            Grid.ColumnSpan="2"
             Visibility="{Binding NetWorkTriggerModel.showTriggerSet ,RelativeSource={RelativeSource AncestorType=UserControl}}">
-            <StackPanel>
-                <WrapPanel Margin="0,10,0,0">
-                    <TextBlock Text="触发对象" Margin="5" TextAlignment="Center" />
-                    <TextBlock Text="{Binding  NetWorkTriggerModel.NetworkName, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="5" TextAlignment="Center" />
-                    <ComboBox Width="150"
-                              ItemsSource="{Binding NetWorkTriggerModel.NetWorkList,RelativeSource={RelativeSource AncestorType=UserControl},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                              DisplayMemberPath="NetworkDetailed.Name"
-                              SelectedValuePath="NetworkDetailed.Name"
-                          
-                              SelectedValue="{Binding NetWorkTriggerModel.NetworkName, RelativeSource={RelativeSource AncestorType=UserControl},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-                </WrapPanel>
-                <Grid>
-                    <StackPanel>
-                            <WrapPanel Margin="0,10,0,0">
-                                <TextBlock Text="触发消息(Int)" Margin="5" TextAlignment="Center" />
-                                <ui:NumberBox Width="150"
-                                              ClearButtonEnabled="False"
-                                              BorderThickness="0"
-                                              FontSize="15"
-                                              Value="{Binding NetWorkTriggerModel.TriggerMessage,RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
-                            </WrapPanel>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- 触发对象 -->
+            <WrapPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,5" HorizontalAlignment="Left">
+                <TextBlock Text="触发对象" Margin="5 5 5 5" TextAlignment="Center" HorizontalAlignment="Left" />
+                <TextBlock Text="{Binding  NetWorkTriggerModel.NetworkName, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="5" TextAlignment="Center" HorizontalAlignment="Left"/>
+            </WrapPanel>
+            <ComboBox Grid.Row="0" Grid.Column="1" 
+                      HorizontalAlignment="Left"
+                      ItemsSource="{Binding NetWorkTriggerModel.NetWorkList,RelativeSource={RelativeSource AncestorType=UserControl},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                      DisplayMemberPath="NetworkDetailed.Name"
+                      SelectedValuePath="NetworkDetailed.Name"
+                      SelectedValue="{Binding NetWorkTriggerModel.NetworkName, RelativeSource={RelativeSource AncestorType=UserControl},Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                      Margin="0,0,0,5"/>
 
-                            <StackPanel
-                                Visibility="Collapsed"
-                                >
-                                <WrapPanel Margin="0,10,0,0">
-                                    <TextBlock Text="完成返回消息(Int)" Margin="5"
-                                                                       TextAlignment="Center" />
-                                    <ui:NumberBox Width="150"
-                                                  ClearButtonEnabled="False"
-                                                  BorderThickness="0"
-                                                  FontSize="15"
-                                                  Value="{Binding NetWorkTriggerModel.SuccessResponseMessage,RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
-                                </WrapPanel>
-                                <WrapPanel Margin="0,10,0,0">
-                                    <TextBlock Text="失败返回消息(Int)" Margin="5" />
-                                    <ui:NumberBox Width="150"
-                                                  ClearButtonEnabled="False"
-                                                  BorderThickness="0"
-                                                  FontSize="15"
-                                                  Value="{Binding NetWorkTriggerModel.FailResponseMessage , RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
-                                </WrapPanel>
-                            </StackPanel>
+            <!-- 触发消息(Int) -->
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="触发消息(Int)" Margin="5" TextAlignment="Center" HorizontalAlignment="Left"/>
+            <ui:NumberBox
+                Grid.Row="1" Grid.Column="1"
+                ClearButtonEnabled="False"
+                BorderThickness="0"
+                FontSize="15"
+                Margin="0,0,0,5"
+                Value="{Binding NetWorkTriggerModel.TriggerMessage,RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
 
-                            <WrapPanel Margin="0,10,0,0"
-                                       Visibility="{Binding NetWorkTriggerModel.showModbusTriggerParam,RelativeSource={RelativeSource AncestorType= UserControl}}">
-                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                    <TextBlock Text="站地址" Margin="5" TextAlignment="Center" />
-                                    <ui:NumberBox
-                                        ClearButtonEnabled="False"
-                                        Value="{Binding NetWorkTriggerModel.StationAddress ,RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged}"
-                                        Width="120" />
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                    <TextBlock Text="起始地址" Margin="5" TextAlignment="Center" />
-                                    <ui:NumberBox
-                                        ClearButtonEnabled="False"
-                                        Value="{Binding NetWorkTriggerModel.StartAddress ,RelativeSource={RelativeSource AncestorType=UserControl},UpdateSourceTrigger=PropertyChanged}"
-                                        Width="120" />
-                                </StackPanel>
-                            </WrapPanel>
+            <!-- 完成返回消息(Int) -->
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="完成返回消息(Int)" Margin="5"
+                       TextAlignment="Center" />
+            <ui:NumberBox Grid.Row="2" Grid.Column="1" 
+                          ClearButtonEnabled="False"
+                          BorderThickness="0"
+                          FontSize="15"
+                          Margin="0,0,0,5"
+                          Value="{Binding NetWorkTriggerModel.SuccessResponseMessage,RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+            <!-- 失败返回消息(Int) -->
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="失败返回消息(Int)" Margin="5" />
+            <ui:NumberBox Grid.Row="3" Grid.Column="1" 
+                          ClearButtonEnabled="False"
+                          BorderThickness="0"
+                          FontSize="15"
+                          Margin="0,0,0,5"
+                          Value="{Binding NetWorkTriggerModel.FailResponseMessage , RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
 
-                            <WrapPanel Margin="0,10,0,0"
-                                       Visibility="{Binding NetWorkTriggerModel.showKeyenceTriggerParam ,RelativeSource={RelativeSource AncestorType=UserControl}}">
-                                <StackPanel Orientation="Horizontal" Margin="0,5">
-                                    <TextBlock Text="DM地址" Margin="5" TextAlignment="Center" />
-                                    <ui:NumberBox
-                                        ClearButtonEnabled="False"
-                                        Value="{Binding NetWorkTriggerModel.StartAddress ,RelativeSource={RelativeSource AncestorType=UserControl},UpdateSourceTrigger=PropertyChanged}"
-                                        Width="120" />
-                                </StackPanel>
-                            </WrapPanel>
-                        </StackPanel>
-                </Grid>
+            <Grid Grid.Row="4" Grid.ColumnSpan="2" 
+                       Visibility="{Binding NetWorkTriggerModel.showModbusTriggerParam,RelativeSource={RelativeSource AncestorType= UserControl}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="站地址" Margin="5" TextAlignment="Center" 
+                           HorizontalAlignment="Left"/>
+                <ui:NumberBox Grid.Row="0" Grid.Column="1"
+                    ClearButtonEnabled="False"
+                    Value="{Binding NetWorkTriggerModel.StationAddress ,RelativeSource={RelativeSource AncestorType=UserControl} ,UpdateSourceTrigger=PropertyChanged}"
+                    Margin="0,0,0,5" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="起始地址" Margin="5" TextAlignment="Center"
+                           HorizontalAlignment="Left"/>
+                <ui:NumberBox Grid.Row="1" Grid.Column="1"
+                    ClearButtonEnabled="False"
+                    Value="{Binding NetWorkTriggerModel.StartAddress ,RelativeSource={RelativeSource AncestorType=UserControl},UpdateSourceTrigger=PropertyChanged}"
+                    Margin="0,0,0,5" />
+            </Grid>
 
-            </StackPanel>
+            <Grid Grid.Row="5" Grid.ColumnSpan="2" 
+                       Visibility="{Binding NetWorkTriggerModel.showKeyenceTriggerParam ,RelativeSource={RelativeSource AncestorType=UserControl}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="DM地址" Margin="5  5 64 5" TextAlignment="Center" HorizontalAlignment="Left" />
+                <ui:NumberBox Grid.Row="0" Grid.Column="1"
+                    ClearButtonEnabled="False"
+                    Margin="0,0,0,5"
+                    Value="{Binding NetWorkTriggerModel.StartAddress ,RelativeSource={RelativeSource AncestorType=UserControl},UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
         </Grid>
 
     </Grid>

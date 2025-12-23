@@ -15,18 +15,17 @@ namespace Pkn_HostSystem.NodifyControl.ViewModels.Editor
 {
     public partial class EditorViewModel : ObservableRecipient
     {
-
         public string ProjectName { get; set; }
+
         /// <summary>
         /// 节点集合
         /// </summary>
-        public ObservableCollection<PknNode> Nodes { get; set; } = new ObservableCollection<PknNode>();
+        public ObservableCollection<PknNode> Nodes { get; set; } = new();
 
         /// <summary>
         /// 连接点集合
         /// </summary>
-        public ObservableCollection<ConnectorViewModel> Connectors { get; set; } =
-            new ObservableCollection<ConnectorViewModel>();
+        public ObservableCollection<ConnectorViewModel> Connectors { get; set; } = new();
 
         /// <summary>
         /// 添加连接预处理
@@ -47,8 +46,7 @@ namespace Pkn_HostSystem.NodifyControl.ViewModels.Editor
         /// 选中的
         /// </summary>
         [JsonIgnore]
-        public ObservableCollection<PknNode> SelectedConnectors { get; set; } =
-            new ObservableCollection<PknNode>();
+        public ObservableCollection<PknNode> SelectedConnectors { get; set; } = new();
 
         public EditorViewModel()
         {
@@ -189,8 +187,36 @@ namespace Pkn_HostSystem.NodifyControl.ViewModels.Editor
             Nodes.Remove(l2);
         }
 
+
+        private CancellationTokenSource runCts;
+
         [RelayCommand]
         public async void Run()
+        {
+            if (runCts != null)
+            {
+                runCts.Cancel();
+            }
+
+            runCts = new CancellationTokenSource();
+            TraceContext.Name = ProjectName;
+            //1. 寻找到IStartOperation节点,作为起始节点
+            PknNode startNode = Nodes.FirstOrDefault(n => n.Operation is IStartOperation);
+            if (startNode == null)
+            {
+                MessageBox.Show("未找到起始节点,请添加一个IStartOperation节点");
+                return;
+            }
+
+            //2. 执行起始节点的方法
+            IStartOperation startOperation = startNode.Operation as IStartOperation;
+            await startOperation.Execute(runCts);
+            //3. 递归执行后续节点的方法
+            await ExecuteNextNodes(startNode, runCts);
+        }
+
+
+        public async Task Run(CancellationTokenSource cts)
         {
             TraceContext.Name = ProjectName;
             //1. 寻找到IStartOperation节点,作为起始节点
@@ -203,15 +229,17 @@ namespace Pkn_HostSystem.NodifyControl.ViewModels.Editor
 
             //2. 执行起始节点的方法
             IStartOperation startOperation = startNode.Operation as IStartOperation;
-            await startOperation.Execute();
+            await startOperation.Execute(cts);
             //3. 递归执行后续节点的方法
-            await ExecuteNextNodes(startNode);
+            await ExecuteNextNodes(startNode, cts);
         }
 
-        private async Task ExecuteNextNodes(PknNode currentNode)
+
+        private async Task ExecuteNextNodes(PknNode currentNode, CancellationTokenSource cts)
         {
             //找到所有连接到当前节点输出端子的连接
-            var outgoingConnections = Connectors.Where(c => currentNode.Output.Contains(c.Source) && c.Source.Enabled).ToList();
+            var outgoingConnections = Connectors.Where(c => currentNode.Output.Contains(c.Source) && c.Source.Enabled)
+                .ToList();
             //对于每个连接,找到连接的目标节点,并执行其方法
             foreach (var connection in outgoingConnections)
             {
@@ -220,9 +248,9 @@ namespace Pkn_HostSystem.NodifyControl.ViewModels.Editor
                 {
                     //执行下一个节点的方法
                     var operation = nextNode.Operation;
-                    await operation.Execute();
+                    await operation.Execute(cts);
                     //递归执行下一个节点
-                    ExecuteNextNodes(nextNode);
+                    await ExecuteNextNodes(nextNode, cts);
                 }
             }
         }

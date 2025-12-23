@@ -12,7 +12,7 @@ namespace Pkn_HostSystem.NodifyControl.Operations.MiddleOperation
         public AddOperation(AddOperationNode _node) : base(_node, new AddOperationUserControl()) { }
 
 
-        protected override async Task OnExecute()
+        protected override async Task OnExecute(CancellationTokenSource cts)
         {
             //获取参数
             var Params = node.InputParams;

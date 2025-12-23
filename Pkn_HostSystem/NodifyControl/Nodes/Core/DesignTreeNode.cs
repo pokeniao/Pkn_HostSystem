@@ -30,7 +30,8 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
                 Name = "通讯",
                 Children =
                     [
-                        new TreeNodes(name: "ModbusTcp", nodeType: NodeEnum.ModbusTcp)
+                        new TreeNodes(name: "ModbusTcp", nodeType: NodeEnum.ModbusTcp),
+                        new TreeNodes("Http",NodeEnum.Http)
                     ]
             },
             new ()
@@ -66,6 +67,9 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
                     break;
                 case NodeEnum.If:
                     pknNode = new IfOperationNode(designModel, model);
+                    break;
+                case NodeEnum.Http:
+                    pknNode = new HttpOperationNode(designModel, model);
                     break;
             }
             return pknNode;

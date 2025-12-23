@@ -219,7 +219,7 @@ namespace Pkn_HostSystem.Models.Windows
         /// <summary>
         /// 创建Http请求头
         /// </summary>
-        [ObservableProperty] private ObservableCollection<HttpHeader> httpHeaders = new();
+        [ObservableProperty] private ObservableCollection<HttpItem> httpHeaders = new();
 
 
         /// <summary>

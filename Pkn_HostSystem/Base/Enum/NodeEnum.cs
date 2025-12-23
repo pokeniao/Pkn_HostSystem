@@ -6,6 +6,6 @@
         Add ,//加法运算
         ModbusTcp,//ModbusTcp
         If,//逻辑运算IF
-
+        Http,//Http请求
     }
 }
