@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.VisualBasic.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
@@ -14,7 +15,9 @@ using Pkn_HostSystem.Service.UserDefined.Interface;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
 using RestSharp;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Windows.Documents;
 
 
@@ -47,6 +50,39 @@ namespace Pkn_HostSystem.Service.UserDefined
                 }
 
                 KeyenceHostLinkTool keyenceHostLinkTool = plcNetWork.KeyenceHostLinkTool;
+                //本地获取条码
+
+                (bool s, ushort[] responseUshorts) = await keyenceHostLinkTool.ReadDMWords(1040, 20, cts);
+
+                if (!s || responseUshorts == null)
+                {
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header,
+                        "基恩士上链路读取DM失败");
+                    return (false, null);
+                }
+
+                ushort[] readDmWords = responseUshorts;
+
+                var bytes = new List<byte>();
+                foreach (var itemUshort in readDmWords)
+                {
+                    //转成16进制
+                    var v = itemUshort.ToString("x4");
+                    //从2索引截取到结尾
+                    var high = v.Substring(2);
+                    var low = v.Substring(0, 2);
+                    var ByteLow = byte.Parse(low, NumberStyles.HexNumber);
+                    var ByteHigh = byte.Parse(high, NumberStyles.HexNumber);
+
+                    //低位在前
+                    bytes.Add(ByteLow);
+                    bytes.Add(ByteHigh);
+                }
+
+                //输出ASCII码转换后的结果
+                electricityTest.CurSN = Encoding.ASCII.GetString(bytes.ToArray());
+
+
                 //获取对应条码行
                 Station1 station1 = null;
                 for (int i = StationBase.Items.Count - 1; i >= 0; i--)
@@ -56,6 +92,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                         station1 = StationBase.Items[i];
                     }
                 }
+
                 if (station1 == null)
                 {
                     station1 = new Station1();
@@ -64,7 +101,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                     station1.型号 = electricityTest.CurSN.Substring(0, 2);
                     station1.批号 = electricityTest.CurSN.Substring(2, 4);
                 }
-               
+
 
                 //获取串口
                 //获得网络,遍历获取对应的网络
@@ -83,8 +120,8 @@ namespace Pkn_HostSystem.Service.UserDefined
                 if (!succeed)
                 {
                     StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header,
-                        "扫码串口WriteLineAndWaitResponse执行失败");
-                    return (false, "扫码串口WriteLineAndWaitResponse执行失败");
+                        "电测仪串口WriteLineAndWaitResponse执行失败");
+                    return (false, "电测仪串口WriteLineAndWaitResponse执行失败");
                 }
 
                 //处理电测字符串
@@ -112,17 +149,18 @@ namespace Pkn_HostSystem.Service.UserDefined
                 bool result = true;
                 if (!(RHight > value && value > RLow))
                 {
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header,
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header,
                         "得到电阻结果NG");
                     result = false;
                 }
 
                 if (!(VHight > value2 && value2 > VLow))
                 {
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header,
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header,
                         "得到电压结果NG");
                     result = false;
                 }
+
                 station1.电阻上限 = RHight.ToString("0.000");
                 station1.电阻值 = value.ToString("0.000");
                 station1.电阻下限 = RLow.ToString("0.000");
@@ -175,6 +213,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                 {
                     csvHelper.UpdateRowFromJson(rowIndexByCellValue, save);
                 }
+
                 csvHelper.Save(cts.Token);
                 StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, "本地日志已更新");
                 //上传MES
@@ -186,7 +225,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                     DCNO = "DCNO",
                     USERNO = "USERNO",
                     CONTNO = "CONTNO",
-                    O1= $"{station1.条码}",
+                    O1 = $"{station1.条码}",
                     O2 = $"{electricityTest.MachineId}",
                     O3 = $"{electricityTest.GroupCode}",
                     O4 = $"{station1.型号}",
@@ -222,16 +261,19 @@ namespace Pkn_HostSystem.Service.UserDefined
                     $"<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:webs=\"http://webs.modules.jeesite.thinkgem.com/\">\r\n   <soapenv:Header/>\r\n   <soapenv:Body>\r\n      <webs:GetDataDb>\r\n         <!--参数:-->\r\n          <arg0>dataSource11</arg0>\r\n         <arg1>{json}</arg1>\r\n      </webs:GetDataDb>\r\n   </soapenv:Body>\r\n</soapenv:Envelope> ";
                 restRequest.AddStringBody(xmlData, DataFormat.Xml);
                 RestResponse httpResponse = await restClient.ExecuteAsync(restRequest);
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"上传内容:{xmlData}");
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header,
+                    $"上传内容:{xmlData}");
                 if (httpResponse.IsSuccessStatusCode)
                 {
                     //判断是否是JSON格式,如果是转成输出
                     httpResponse.Content = JsonTool<Object>.TryFormatJson(httpResponse.Content, out _);
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"上传mes成功 返回:\r\n{httpResponse.Content}");
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header,
+                        $"上传mes成功 返回:\r\n{httpResponse.Content}");
                 }
                 else
                 {
-                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, httpResponse.ErrorMessage == null ? httpResponse.Content : httpResponse.ErrorMessage);
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header,
+                        httpResponse.ErrorMessage == null ? httpResponse.Content : httpResponse.ErrorMessage);
                     return (false, $"mes上传失败");
                 }
 

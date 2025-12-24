@@ -53,11 +53,31 @@ namespace Pkn_HostSystem.Service.UserDefined
                     return (false, "扫码串口WriteLineAndWaitResponse执行失败");
                 
                 }
-                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, $"扫码成功返回:{response}");
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"扫码成功返回:{response}");
                 //记录当前扫码结果
                 electricityTest.CurSN = response;
-                Station1 station1 = new();
 
+                //获取PLC
+                var plcNetWork = GlobalManager.GetNetWork("PLC");
+                if (plcNetWork == null)
+                {
+                    StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header,
+                        "GetNetWork获取不到PLC");
+                    return (false, "GetNetWork获取不到PLC");
+                }
+
+                KeyenceHostLinkTool keyenceHostLinkTool = plcNetWork.KeyenceHostLinkTool;
+
+                bool writeDmString = await keyenceHostLinkTool.WriteDMString(int.Parse("1010"),
+                    response, cts);
+
+                if (!writeDmString)
+                {
+                    return (false, "扫码结果写入PLC失败");
+                }
+
+
+                Station1 station1 = new();
                 station1.时间 = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 station1.条码 = response;
                 station1.型号 = response.Substring(0, 2);
