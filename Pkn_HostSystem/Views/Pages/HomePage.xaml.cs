@@ -307,6 +307,8 @@ namespace Pkn_HostSystem.Views.Pages
             electricityTest.ResistanceStandard = electricityTest.SetResistanceStandard;
             electricityTest.MachineId = electricityTest.SetMachineId;
             electricityTest.GroupCode = electricityTest.SetGroupCode;
+            electricityTest.ApiPath = electricityTest.SetApiPath;
+            electricityTest.HttpPath = electricityTest.SetHttpPath;
         }
 
         #endregion

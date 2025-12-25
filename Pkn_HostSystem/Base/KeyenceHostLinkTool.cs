@@ -1,4 +1,6 @@
-﻿using Pkn_HostSystem.Base.Log;
+﻿using Newtonsoft.Json.Linq;
+using Pkn_HostSystem.Base.Log;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -110,7 +112,7 @@ namespace Pkn_HostSystem.Base
         /// <returns></returns>
         public async Task<bool> WriteDM<T>(int address, T value, CancellationTokenSource cts) where T : struct
         {
-            Log.Info($"WriteDM执行,address:{address} ,value: {value}");
+            Log.Info($"[{TraceContext.Name}]--WriteDM执行,address:{address} ,value: {value}");
             string String = KeyenceMcDataConverter.ConvertToWriteData(value);
             //判断是否是32位
             bool is32Bit = Is32BitType<T>();
@@ -119,7 +121,7 @@ namespace Pkn_HostSystem.Base
             //发送数据
             (bool succeed, string? response) = await SendCommand(command, cts);
 
-            Log.Info($"[{TraceContext.Name}]--基恩士写入后收到返回内容:{response}");
+            Log.Info($"[{TraceContext.Name}]--基恩士写单寄存器后收到返回内容:{response}");
 
             bool equals = response.Trim().Equals("OK", StringComparison.OrdinalIgnoreCase);
 
@@ -136,6 +138,8 @@ namespace Pkn_HostSystem.Base
         public async Task<(bool succeed, ushort[] response)> ReadDMWords(int startAddress, int count,
             CancellationTokenSource cts)
         {
+
+            Log.Info($"[{TraceContext.Name}]--ReadDMWords执行: RDS DM{startAddress}.H {count}");
             (bool succeed, string response) = await SendCommand($"RDS DM{startAddress}.H {count}", cts);
 
             if (!succeed)
@@ -145,7 +149,7 @@ namespace Pkn_HostSystem.Base
 
             // 统一去掉空格、换行
             response = response.Replace(" ", "").Trim();
-
+            Log.Info($"[{TraceContext.Name}]--ReadDMWords返回: {response}");
             ushort[] values = new ushort[count];
 
             //转成16进制存储
@@ -198,7 +202,7 @@ namespace Pkn_HostSystem.Base
 
             string command = cmdBuilder.ToString();
 
-            Log.Info($"[{TraceContext.Name}]--基恩士写入字符串:{command}");
+            Log.Info($"[{TraceContext.Name}]--基恩士写字符串:{command}");
             // 发送
             (bool succeed, string response) = await SendCommand(command, cts);
 
@@ -250,7 +254,7 @@ namespace Pkn_HostSystem.Base
 
                     if (!noLog)
                     {
-                        Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送");
+                        Log.Info($"[{TraceContext.Name}]--上位链路协议发送完成");
                     }
                 }
                 catch (Exception ex)
@@ -260,7 +264,7 @@ namespace Pkn_HostSystem.Base
                 }
 
                 if (!noLog)
-                    Log.Info($"[{TraceContext.Name}]--基恩士上位链路协议发送后,等待消息返回");
+                    Log.Info($"[{TraceContext.Name}]--上位链路协议等待消息返回");
                 byte[] buffer = new byte[256];
 
                 var startTime = Environment.TickCount; // 获取当前时间戳
@@ -272,7 +276,7 @@ namespace Pkn_HostSystem.Base
                         int elapsed = Environment.TickCount - startTime;
                         if (elapsed > 3000) // 超时3秒
                         {
-                            Log.Error($"[{TraceContext.Name}]--基恩士上位链路协议发送后,等待消息返回超时");
+                            Log.Error($"[{TraceContext.Name}]--上位链路协议等待消息返回超时");
                             return (false, "基恩士超时");
                         }
 
@@ -285,13 +289,17 @@ namespace Pkn_HostSystem.Base
                             int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length,cts.Token);
 
                             sb.Append(Encoding.ASCII.GetString(buffer, 0, bytesRead));
-
                             //  一次读完一帧，并自动丢弃多余粘包内容。
                             if (sb.ToString().Contains("\r\n"))
                             {
                                 var raw = sb.ToString();
                                 var cleanLines = raw.Split(["\r\n"], StringSplitOptions.RemoveEmptyEntries);
                                 string response = cleanLines.FirstOrDefault() ?? "";
+
+                                if (!noLog)
+                                {
+                                    Log.Info($"[{TraceContext.Name}]--上位链路协议接收到返回:{response}");
+                                }
                                 return (true, response);
                             }
                         }
@@ -303,14 +311,12 @@ namespace Pkn_HostSystem.Base
                         Log.Error($"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行读取消息时,出现异常{e.Message}");
                         return (false, $"[{TraceContext.Name}]--在基恩士上链路通讯TCP客户端执行读取消息时,出现异常{e.Message}");
                     }
-       
                 }
             }
             finally
             {
                 _commLock.Release();
             }
-         
             return (false, "未收到数据");
         }
     }

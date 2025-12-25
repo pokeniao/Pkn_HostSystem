@@ -64,5 +64,17 @@ namespace Pkn_HostSystem.Models.Pojo
         [ObservableProperty] private string setResistanceStandard ="";
 
 
+        /// <summary>
+        /// HTTP路径
+        /// </summary>
+        [ObservableProperty] private string httpPath = "http://10.30.98.94";
+        [ObservableProperty] private string setHttpPath = "";
+        /// <summary>
+        /// Api路径
+        /// </summary>
+        [ObservableProperty] private string apiPath = "/mes/service/SendDeviceInfo?WSDL";
+        [ObservableProperty] private string setApiPath = "";
+
+
     }
 }
