@@ -2204,8 +2204,10 @@ public class LoadMesService : ILoadMesService
                         bytes.Add(ByteHigh);
                     }
 
+                    string response2 = Encoding.ASCII.GetString(bytes.ToArray()).Trim('\0');
+
                     //输出ASCII码转换后的结果
-                    return (true, Encoding.ASCII.GetString(bytes.ToArray()));
+                    return (true, response2);
             }
         }
         catch (Exception e)

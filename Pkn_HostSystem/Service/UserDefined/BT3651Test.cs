@@ -52,7 +52,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                 KeyenceHostLinkTool keyenceHostLinkTool = plcNetWork.KeyenceHostLinkTool;
                 //本地获取条码
 
-                (bool s, ushort[] responseUshorts) = await keyenceHostLinkTool.ReadDMWords(1040, 20, cts);
+                (bool s, ushort[] responseUshorts) = await keyenceHostLinkTool.ReadDMWords(1040, 19, cts);
 
                 if (!s || responseUshorts == null)
                 {
@@ -78,16 +78,16 @@ namespace Pkn_HostSystem.Service.UserDefined
                     bytes.Add(ByteLow);
                     bytes.Add(ByteHigh);
                 }
-
                 //输出ASCII码转换后的结果
-                electricityTest.CurSN = Encoding.ASCII.GetString(bytes.ToArray());
-
+                string snResponse = Encoding.ASCII.GetString(bytes.ToArray()).Trim('\0');
+                StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header,
+                    $"读取PLC的条码结果:{snResponse}");
 
                 //获取对应条码行
                 Station1 station1 = null;
                 for (int i = StationBase.Items.Count - 1; i >= 0; i--)
                 {
-                    if (StationBase.Items[i].条码 == electricityTest.CurSN)
+                    if (StationBase.Items[i].条码 == snResponse)
                     {
                         station1 = StationBase.Items[i];
                     }
@@ -96,10 +96,10 @@ namespace Pkn_HostSystem.Service.UserDefined
                 if (station1 == null)
                 {
                     station1 = new Station1();
-                    station1.条码 = electricityTest.CurSN;
+                    station1.条码 = snResponse;
                     station1.时间 = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                    station1.型号 = electricityTest.CurSN.Substring(0, 2);
-                    station1.批号 = electricityTest.CurSN.Substring(2, 4);
+                    station1.型号 = snResponse.Substring(0, 2);
+                    station1.批号 = snResponse.Substring(2, 4);
                 }
 
 
@@ -203,7 +203,7 @@ namespace Pkn_HostSystem.Service.UserDefined
                 CsvHelper csvHelper = new CsvHelper(FilePath);
                 csvHelper.Load();
 
-                int rowIndexByCellValue = csvHelper.GetRowIndexByCellValue(1, electricityTest.CurSN);
+                int rowIndexByCellValue = csvHelper.GetRowIndexByCellValue(1, snResponse);
                 save = JsonTool<object>.TryFormatJson(save, out bool isJson);
                 if (rowIndexByCellValue == -1)
                 {
