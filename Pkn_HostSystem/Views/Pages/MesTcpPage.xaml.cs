@@ -200,9 +200,9 @@ namespace Pkn_HostSystem.Views.Pages
                     viewModel.MesTcpModel.FunctionCodeList =
                     [
                         "单寄存器(无符号)", "单寄存器(有符号)",
-                        "双寄存器;无符号;BigEndian", "双寄存器;无符号;LittleEndian", "双寄存器;无符号;WordSwap", "双寄存器;无符号;ByteSwap",
-                        "双寄存器;有符号;BigEndian", "双寄存器;有符号;LittleEndian", "双寄存器;有符号;WordSwap", "双寄存器;有符号;ByteSwap",
-                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;WordSwap", "32位浮点数;ByteSwap",
+                        "双寄存器;无符号;BigEndian", "双寄存器;无符号;LittleEndian", "双寄存器;无符号;BigEndianByteSwap", "双寄存器;无符号;LittleEndianByteSwap",
+                        "双寄存器;有符号;BigEndian", "双寄存器;有符号;LittleEndian", "双寄存器;有符号;BigEndianByteSwap", "双寄存器;有符号;LittleEndianByteSwap",
+                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;BigEndianByteSwap", "32位浮点数;LittleEndianByteSwap",
                         "ASCII字符串(高低位)", "ASCII字符串(低高位)"
                     ];
                     break;
@@ -211,9 +211,9 @@ namespace Pkn_HostSystem.Views.Pages
                     viewModel.MesTcpModel.FunctionCodeList =
                     [
                         "单寄存器(无符号)", "单寄存器(有符号)",
-                        "双寄存器;无符号;BigEndian", "双寄存器;无符号;LittleEndian", "双寄存器;无符号;WordSwap", "双寄存器;无符号;ByteSwap",
-                        "双寄存器;有符号;BigEndian", "双寄存器;有符号;LittleEndian", "双寄存器;有符号;WordSwap", "双寄存器;有符号;ByteSwap",
-                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;WordSwap", "32位浮点数;ByteSwap",
+                        "双寄存器;无符号;BigEndian", "双寄存器;无符号;LittleEndian", "双寄存器;无符号;BigEndianByteSwap", "双寄存器;无符号;LittleEndianByteSwap",
+                        "双寄存器;有符号;BigEndian", "双寄存器;有符号;LittleEndian", "双寄存器;有符号;BigEndianByteSwap", "双寄存器;有符号;LittleEndianByteSwap",
+                        "32位浮点数;BigEndian", "32位浮点数;LittleEndian", "32位浮点数;BigEndianByteSwap", "32位浮点数;LittleEndianByteSwap",
                         "ASCII字符串(高低位)", "ASCII字符串(低高位)"
                     ];
                     break;

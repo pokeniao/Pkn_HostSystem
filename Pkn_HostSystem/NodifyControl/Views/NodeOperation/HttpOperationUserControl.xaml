@@ -81,7 +81,6 @@
                         Width="20"
                         Height="2"
                         BorderThickness="5"
-
                         BorderBrush="{ui:ThemeResource CardStrokeColorDefaultBrush}" />
                     <TextBlock Text="请求头" />
                     <Border

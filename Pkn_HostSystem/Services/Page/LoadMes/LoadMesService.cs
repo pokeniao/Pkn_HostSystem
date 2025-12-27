@@ -2038,13 +2038,13 @@ public class LoadMesService : ILoadMesService
                     List<uint> uInt32List2 =
                         ModbusDoubleRegisterTool.ToUInt32List(holdingRegisters03, ModbusEndian.LittleEndian);
                     return (true, string.Join(",", Array.ConvertAll(uInt32List2.ToArray(), p => $"{p}")));
-                case "双寄存器;无符号;WordSwap":
+                case "双寄存器;无符号;BigEndianByteSwap":
                     List<uint> uInt32List3 =
-                        ModbusDoubleRegisterTool.ToUInt32List(holdingRegisters03, ModbusEndian.WordSwap);
+                        ModbusDoubleRegisterTool.ToUInt32List(holdingRegisters03, ModbusEndian.BigEndianByteSwap);
                     return (true, string.Join(",", Array.ConvertAll(uInt32List3.ToArray(), p => $"{p}")));
-                case "双寄存器;无符号;ByteSwap":
+                case "双寄存器;无符号;LittleEndianByteSwap":
                     List<uint> uInt32List4 =
-                        ModbusDoubleRegisterTool.ToUInt32List(holdingRegisters03, ModbusEndian.ByteSwap);
+                        ModbusDoubleRegisterTool.ToUInt32List(holdingRegisters03, ModbusEndian.LittleEndianByteSwap);
                     return (true, string.Join(",", Array.ConvertAll(uInt32List4.ToArray(), p => $"{p}")));
                 case "双寄存器;有符号;BigEndian":
                     List<int> int32List1 =
@@ -2054,13 +2054,13 @@ public class LoadMesService : ILoadMesService
                     List<int> int32List2 =
                         ModbusDoubleRegisterTool.ToInt32List(holdingRegisters03, ModbusEndian.LittleEndian);
                     return (true, string.Join(",", Array.ConvertAll(int32List2.ToArray(), p => $"{p}")));
-                case "双寄存器;有符号;WordSwap":
+                case "双寄存器;有符号;BigEndianByteSwap":
                     List<int> int32List3 =
-                        ModbusDoubleRegisterTool.ToInt32List(holdingRegisters03, ModbusEndian.WordSwap);
+                        ModbusDoubleRegisterTool.ToInt32List(holdingRegisters03, ModbusEndian.BigEndianByteSwap);
                     return (true, string.Join(",", Array.ConvertAll(int32List3.ToArray(), p => $"{p}")));
-                case "双寄存器;有符号;ByteSwap":
+                case "双寄存器;有符号;LittleEndianByteSwap":
                     List<int> int32List4 =
-                        ModbusDoubleRegisterTool.ToInt32List(holdingRegisters03, ModbusEndian.ByteSwap);
+                        ModbusDoubleRegisterTool.ToInt32List(holdingRegisters03, ModbusEndian.LittleEndianByteSwap);
                     return (true, string.Join(",", Array.ConvertAll(int32List4.ToArray(), p => $"{p}")));
                 case "32位浮点数;BigEndian":
                     List<float> floatList1 =
@@ -2068,15 +2068,15 @@ public class LoadMesService : ILoadMesService
                     return (true, string.Join(",", Array.ConvertAll(floatList1.ToArray(), p => $"{p}")));
                 case "32位浮点数;LittleEndian":
                     List<float> floatList3 =
-                        ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.WordSwap);
-                    return (true, string.Join(",", Array.ConvertAll(floatList3.ToArray(), p => $"{p}")));
-                case "32位浮点数;WordSwap":
-                    List<float> floatList4 =
-                        ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.ByteSwap);
-                    return (true, string.Join(",", Array.ConvertAll(floatList4.ToArray(), p => $"{p}")));
-                case "32位浮点数;ByteSwap":
-                    List<float> floatList2 =
                         ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.LittleEndian);
+                    return (true, string.Join(",", Array.ConvertAll(floatList3.ToArray(), p => $"{p}")));
+                case "32位浮点数;BigEndianByteSwap":
+                    List<float> floatList4 =
+                        ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.BigEndianByteSwap);
+                    return (true, string.Join(",", Array.ConvertAll(floatList4.ToArray(), p => $"{p}")));
+                case "32位浮点数;LittleEndianByteSwap":
+                    List<float> floatList2 =
+                        ModbusDoubleRegisterTool.ToFloatList(holdingRegisters03, ModbusEndian.LittleEndianByteSwap);
                     return (true, string.Join(",", Array.ConvertAll(floatList2.ToArray(), p => $"{p}")));
                 case "ASCII字符串(低高位)":
                     var result_3 = new List<byte>();

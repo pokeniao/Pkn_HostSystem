@@ -2,10 +2,10 @@
 {
     public enum ModbusEndian
     {
-        BigEndian, // 高字在前，高字节在前
-        LittleEndian, // 低字在前，低字节在前
-        WordSwap, // 低字在前，高字节在前
-        ByteSwap // 高字在前，低字节在前
+        BigEndian,              // 低字在前，高字节在后       FF00 FF01  ->  FF00FF01
+        LittleEndian,           // 高字在前, 低字在后,逆序    FF00 FF01  ->  01FF00FF
+        BigEndianByteSwap,      // 高字在前，低字在后         FF00 FF01  ->  FF01FF00
+        LittleEndianByteSwap    // 低字在前，高字节在后,逆序  FF00 FF01  ->  00FF01FF
     }
 
     /// <summary>
@@ -42,26 +42,6 @@
             foreach (var u in ToUInt32List(registers, endian))
             {
                 byte[] bytes = BitConverter.GetBytes(u);
-                if (BitConverter.IsLittleEndian)
-                {
-                    // BitConverter 是小端，需要按实际顺序翻转
-                    switch (endian)
-                    {
-                        case ModbusEndian.BigEndian:
-                            Array.Reverse(bytes);
-                            break;
-                        case ModbusEndian.LittleEndian:
-                            // 不动
-                            break;
-                        case ModbusEndian.WordSwap:
-                            bytes = new byte[] { bytes[2], bytes[3], bytes[0], bytes[1] };
-                            break;
-                        case ModbusEndian.ByteSwap:
-                            bytes = new byte[] { bytes[1], bytes[0], bytes[3], bytes[2] };
-                            break;
-                    }
-                }
-
                 result.Add(BitConverter.ToSingle(bytes, 0));
             }
 
@@ -75,35 +55,34 @@
             switch (endian)
             {
                 case ModbusEndian.BigEndian:
-                    // word1: 高位, word2: 低位
+                    // 低字在前，高字节在后
+                    bytes[0] = (byte)(word2 & 0xFF);
+                    bytes[1] = (byte)(word2 >> 8);
+                    bytes[2] = (byte)(word1 & 0xFF);
+                    bytes[3] = (byte)(word1 >> 8);
+                    break;
+
+                case ModbusEndian.LittleEndian:
+                    // ModbusEndian.BigEndian 的逆向
                     bytes[0] = (byte)(word1 >> 8);
                     bytes[1] = (byte)(word1 & 0xFF);
                     bytes[2] = (byte)(word2 >> 8);
                     bytes[3] = (byte)(word2 & 0xFF);
                     break;
 
-                case ModbusEndian.LittleEndian:
-                    // word1: 低位, word2: 高位
-                    bytes[0] = (byte)(word1 & 0xFF);
-                    bytes[1] = (byte)(word1 >> 8);
-                    bytes[2] = (byte)(word2 & 0xFF);
-                    bytes[3] = (byte)(word2 >> 8);
-                    break;
+                case ModbusEndian.BigEndianByteSwap:
 
-                case ModbusEndian.WordSwap:
-                    // word1: 低位, word2: 高位, 但字节顺序不换
                     bytes[0] = (byte)(word2 >> 8);
                     bytes[1] = (byte)(word2 & 0xFF);
                     bytes[2] = (byte)(word1 >> 8);
                     bytes[3] = (byte)(word1 & 0xFF);
                     break;
 
-                case ModbusEndian.ByteSwap:
-                    // word1: 高位, word2: 低位, 但字节顺序倒转
-                    bytes[0] = (byte)(word2 & 0xFF);
-                    bytes[1] = (byte)(word2 >> 8);
-                    bytes[2] = (byte)(word1 & 0xFF);
-                    bytes[3] = (byte)(word1 >> 8);
+                case ModbusEndian.LittleEndianByteSwap:
+                    bytes[0] = (byte)(word1 & 0xFF);
+                    bytes[1] = (byte)(word1 >> 8);
+                    bytes[2] = (byte)(word2 & 0xFF);
+                    bytes[3] = (byte)(word2 >> 8);
                     break;
             }
 

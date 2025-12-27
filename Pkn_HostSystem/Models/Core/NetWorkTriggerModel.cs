@@ -126,9 +126,15 @@ namespace Pkn_HostSystem.Models.Core
         //选中的方法名
         [ObservableProperty] private string netMethodName;
 
-
+        
         [ObservableProperty] private ObservableCollection<OperationModel> readDvgList = new ();
         [ObservableProperty] private ObservableCollection<OperationModel> writeDvgList = new();
+
+        //格式
+        [ObservableProperty] private string format = "单寄存器(无符号)";
+        //上一次的格式,用于决定是否需要更新
+        public string LastFormat { get; set; }
+
 
         public Visibility showTriggerSet => TriggerType == "消息触发" ? Visibility.Visible : Visibility.Collapsed;
 

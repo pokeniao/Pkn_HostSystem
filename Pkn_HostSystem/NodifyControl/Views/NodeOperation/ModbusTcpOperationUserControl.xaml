@@ -7,6 +7,7 @@
              xmlns:nodes="clr-namespace:Pkn_HostSystem.NodifyControl.Nodes"
              xmlns:operationDataGrid="clr-namespace:Pkn_HostSystem.Views.UserControls.OperationDataGrid"
              xmlns:modbusTool="clr-namespace:Pkn_HostSystem.Services.Page.ModbusTool"
+             xmlns:converter="clr-namespace:Pkn_HostSystem.Base.Converter"
              mc:Ignorable="d"
              ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
              ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -15,9 +16,11 @@
     <UserControl.Resources>
         <modbusTool:openTextBoxbyTrue x:Key="openTextBoxbyTrue" />
         <modbusTool:openCheckBoxbyFalse x:Key="openCheckBoxbyFalse" />
+        <converter:IsEnableConvertReadOnlyConverter x:Key="IsEnableConvertReadOnlyConverter" />
     </UserControl.Resources>
     <Grid VerticalAlignment="Top">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -47,37 +50,71 @@
             SelectedValuePath="NetworkDetailed.Name"
             SelectedValue="{Binding  Model.NetWorkTriggerModel.NetworkName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
         <!-- 通讯方式 -->
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="通讯方式" TextAlignment="Center" Margin="5" HorizontalAlignment="Left" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="通讯方式" TextAlignment="Center" Margin="5"
+                   HorizontalAlignment="Left" />
         <ComboBox Grid.Row="1" Grid.Column="1"
                   SelectionChanged="ComboBox_SelectionChanged"
                   Margin=" 0 0 0 5"
                   ItemsSource="{Binding Model.NetWorkTriggerModel.NetMethod,Mode= TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   SelectedValue="{Binding Model.NetWorkTriggerModel.NetMethodName , UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}" />
-        <!-- 站地址 -->
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="站地址" Margin="5" TextAlignment="Center" HorizontalAlignment="Left"/>
-        <ui:NumberBox
+
+        <!-- 格式类型 -->
+        <TextBlock
+            Grid.Row="2" Grid.Column="0"
+            Text="格式类型" Margin="5" TextAlignment="Center" HorizontalAlignment="Left" />
+        <ComboBox
+            Name="FormatComboBox"
             Grid.Row="2" Grid.Column="1"
+            Margin="0 0 0 5"
+            SelectedValuePath="Content"
+            SelectionChanged="ComboBox_SelectionChanged"
+            SelectedValue="{Binding Model.NetWorkTriggerModel.Format, UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"
+        >
+            <ComboBoxItem Content="单寄存器(无符号)" />
+            <ComboBoxItem Content="单寄存器(有符号)" />
+            <ComboBoxItem Content="双寄存器;无符号;BigEndian" />
+            <ComboBoxItem Content="双寄存器;无符号;LittleEndian" />
+            <ComboBoxItem Content="双寄存器;无符号;BigEndianByteSwap" />
+            <ComboBoxItem Content="双寄存器;无符号;LittleEndianByteSwap" />
+            <ComboBoxItem Content="双寄存器;有符号;BigEndian" />
+            <ComboBoxItem Content="双寄存器;有符号;LittleEndian" />
+            <ComboBoxItem Content="双寄存器;有符号;BigEndianByteSwap" />
+            <ComboBoxItem Content="双寄存器;有符号;LittleEndianByteSwap" />
+            <ComboBoxItem Content="32位浮点数;BigEndian" />
+            <ComboBoxItem Content="32位浮点数;LittleEndian" />
+            <ComboBoxItem Content="32位浮点数;BigEndianByteSwap" />
+            <ComboBoxItem Content="32位浮点数;LittleEndianByteSwap" />
+            <ComboBoxItem Content="ASCII字符串(高低位)" />
+            <ComboBoxItem Content="ASCII字符串(低高位)" />
+        </ComboBox>
+
+        <!-- 站地址 -->
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="站地址" Margin="5" TextAlignment="Center" HorizontalAlignment="Left" />
+        <ui:NumberBox
+            Grid.Row="3" Grid.Column="1"
             Margin=" 0 0 0 5"
             ClearButtonEnabled="False"
             Minimum="1"
-            Value="{Binding Model.NetWorkTriggerModel.StationAddress  ,UpdateSourceTrigger=PropertyChanged}"
-            />
-        <TextBlock 
-            Grid.Row="3" Grid.Column="0"
-            Text="起始地址" Margin="5" TextAlignment="Center" HorizontalAlignment="Left"/>
+            Value="{Binding Model.NetWorkTriggerModel.StationAddress  ,UpdateSourceTrigger=PropertyChanged}" />
+
+        <!-- 起始地址 -->
+        <TextBlock
+            Grid.Row="4" Grid.Column="0"
+            Text="起始地址" Margin="5" TextAlignment="Center" HorizontalAlignment="Left" />
         <ui:NumberBox
-            Grid.Row="3" Grid.Column="1"
+            Grid.Row="4" Grid.Column="1"
             ClearButtonEnabled="False"
             Minimum="0"
             ValueChanged="NumberBox_ValueChanged"
             Value="{Binding Model.NetWorkTriggerModel.StartAddress,UpdateSourceTrigger=PropertyChanged}"
-           Margin="0 0 0 5"/>
+            Margin="0 0 0 5" />
 
+        <!-- 数量 -->
         <TextBlock
-            Grid.Row="4" Grid.Column="0"
-            Text="数量" Margin="5" TextAlignment="Center" HorizontalAlignment="Left"/>
+            Grid.Row="5" Grid.Column="0"
+            Text="数量" Margin="5" TextAlignment="Center" HorizontalAlignment="Left" />
         <ui:NumberBox
-            Grid.Row="4" Grid.Column="1"
+            Grid.Row="5" Grid.Column="1"
             Minimum="1"
             Name="NumberBox"
             ClearButtonEnabled="False"
@@ -86,8 +123,8 @@
             Margin="0 0 0 5" />
 
 
-
-        <Grid Grid.Row="5" Grid.ColumnSpan="2" Grid.Column="0">
+        <!-- 写入消息 -->
+        <Grid Grid.Row="6" Grid.ColumnSpan="2" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -119,7 +156,7 @@
                             <DataTemplate>
                                 <ComboBox
                                     SelectedValuePath="Content"
-                                    IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                    IsEnabled="{Binding ReadOnly ,Converter={StaticResource IsEnableConvertReadOnlyConverter} ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                     SelectedValue="{Binding ParamMethod ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                                     <ComboBoxItem Content="常量" />
                                     <ComboBoxItem Content="动态获取" />
@@ -144,10 +181,10 @@
                             <DataTemplate>
                                 <Grid>
                                     <TextBox Visibility="{Binding ShowStaticParamVisibility}"
-                                             IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                             IsReadOnly="{Binding ReadOnly ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                              Text="{Binding ParamValue ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
                                     <ComboBox
-                                        IsEnabled="{Binding IsEnable ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                        IsEnabled="{Binding ReadOnly ,Converter={StaticResource IsEnableConvertReadOnlyConverter} ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                         DropDownOpened="ComboBox_OnDropDownOpened"
                                         DisplayMemberPath="Name"
                                         Visibility="{Binding ShowDynamicParamVisibility}"
@@ -161,18 +198,16 @@
             </DataGrid>
         </Grid>
 
-
-        <TextBlock Grid.Row="6" Grid.Column="0"
+        <!-- 输出 -->
+        <TextBlock Grid.Row="7" Grid.Column="0"
                    Text="输出" Margin="5" />
         <operationDataGrid:PknOperationDataGrid Grid.Column="0"
-            Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
-            Height="200"
-            Margin="5"
-            Grid.Row="7"
-            Grid.ColumnSpan="2"
-            Node="{Binding}"
-            NeedItemSource="{Binding OutputParams, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-
-
+                                                Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                                Height="200"
+                                                Margin="5"
+                                                Grid.Row="8"
+                                                Grid.ColumnSpan="2"
+                                                Node="{Binding}"
+                                                NeedItemSource="{Binding OutputParams, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
     </Grid>
 </UserControl>
