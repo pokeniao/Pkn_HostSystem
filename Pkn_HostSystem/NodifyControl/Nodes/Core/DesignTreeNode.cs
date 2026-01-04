@@ -1,4 +1,5 @@
-﻿using Pkn_HostSystem.Base.Enum;
+﻿using Nodify;
+using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
 using System.Collections.ObjectModel;
@@ -31,6 +32,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
                 Children =
                     [
                         new TreeNodes(name: "ModbusTcp", nodeType: NodeEnum.ModbusTcp),
+                        new TreeNodes("串口RS232/485",NodeEnum.Rs232),
                         new TreeNodes("Http",NodeEnum.Http)
                     ]
             },
@@ -70,6 +72,9 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
                     break;
                 case NodeEnum.Http:
                     pknNode = new HttpOperationNode(designModel, model);
+                    break;
+                case NodeEnum.Rs232:
+                    pknNode = new Rs232OperationNode(designModel, model);
                     break;
             }
             return pknNode;

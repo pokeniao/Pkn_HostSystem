@@ -264,7 +264,12 @@ namespace Pkn_HostSystem.Base
             try
             {
                 await EnsureConnected();
-                return (true, serialPort.ReadLine());
+
+                string run = await Task.Run(async () => serialPort.ReadLine());
+
+
+
+                return (true, run);
             }
             catch (TimeoutException e)
             {

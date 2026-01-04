@@ -846,6 +846,9 @@ public partial class HomePageViewModel : ObservableRecipient
         {
             //停止
             model.cts.Cancel();
+
+            NetWorkTriggerLogic.RunFunc -= () => model.EditorViewModel.Run(model.cts);
+            NetWorkTriggerLogic.RunFunc = null;
             model.Task = new Lazy<Task>(() => RunProjectTask(model));
             Log.Info($"[{TraceContext.Name}]--任务已关闭");
         }

@@ -95,7 +95,7 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                    Content="任务(旧)"
+                    Content="任务"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:LoadMesPage}">
                     <ui:NavigationViewItem.Icon>
@@ -113,7 +113,7 @@
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                    Content="任务(Demo)"
+                    Content="项目"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:DesignPage}">
                     <ui:NavigationViewItem.Icon>
