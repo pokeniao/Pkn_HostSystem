@@ -8,5 +8,6 @@
         If,//逻辑运算IF
         Http,//Http请求
         Rs232,//232通讯
+        StringDispose,// 字符串处理
     }
 }

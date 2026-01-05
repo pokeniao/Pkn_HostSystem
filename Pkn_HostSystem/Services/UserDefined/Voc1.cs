@@ -6,6 +6,7 @@ using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Core.Interface;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Services.Stations;
@@ -23,6 +24,8 @@ namespace Pkn_HostSystem.Services.UserDefined
     {
         public async Task<(bool Succeed, object Return)> Main(CancellationTokenSource cts, params object[] args)
         {
+            EachStation<Station1>? StationBase = GlobalManager.StationDictionary.Lookup("VOC检测").Value as EachStation<Station1>;
+
             // try
             // {
             //     StaticArrayRegister.WriteRegisterValue(0, 0);

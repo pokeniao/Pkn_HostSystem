@@ -26,23 +26,31 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
                     new TreeNodes(name: "加法", nodeType: NodeEnum.Add)
                 ]
             },
-            new ()
+            new()
             {
                 Name = "通讯",
                 Children =
-                    [
-                        new TreeNodes(name: "ModbusTcp", nodeType: NodeEnum.ModbusTcp),
-                        new TreeNodes("串口RS232/485",NodeEnum.Rs232),
-                        new TreeNodes("Http",NodeEnum.Http)
-                    ]
+                [
+                    new TreeNodes(name: "ModbusTcp", nodeType: NodeEnum.ModbusTcp),
+                    new TreeNodes("串口RS232/485", NodeEnum.Rs232),
+                    new TreeNodes("Http", NodeEnum.Http)
+                ]
             },
-            new ()
+            new()
+            {
+                Name = "通用",
+                Children =
+                [
+                    new TreeNodes("字符串处理", NodeEnum.StringDispose)
+                ]
+            },
+            new()
             {
                 Name = "逻辑类",
                 Children =
-                    [
-                    new TreeNodes(name:"If",nodeType:NodeEnum.If)
-                    ]
+                [
+                    new TreeNodes(name: "If", nodeType: NodeEnum.If)
+                ]
             }
         };
 
@@ -51,21 +59,20 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
         /// </summary>
         /// <param name="treeNodes"></param>
         /// <returns></returns>
-        public static PknNode CreateNode(NodeEnum NodeType, DesignModel designModel , Object model = null)
+        public static PknNode CreateNode(NodeEnum NodeType, DesignModel designModel, Object model = null)
         {
             PknNode pknNode = null;
 
             switch (NodeType)
             {
                 case NodeEnum.Add:
-                    pknNode = new AddOperationNode(designModel,model);
+                    pknNode = new AddOperationNode(designModel, model);
                     break;
                 case NodeEnum.Enter:
-                    pknNode = new EnterOperationNode(designModel,model);
+                    pknNode = new EnterOperationNode(designModel, model);
                     break;
-
                 case NodeEnum.ModbusTcp:
-                    pknNode = new ModbusTcpOperationNode(designModel,model);
+                    pknNode = new ModbusTcpOperationNode(designModel, model);
                     break;
                 case NodeEnum.If:
                     pknNode = new IfOperationNode(designModel, model);
@@ -76,7 +83,11 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
                 case NodeEnum.Rs232:
                     pknNode = new Rs232OperationNode(designModel, model);
                     break;
+                case NodeEnum.StringDispose:
+                    pknNode = new StringOperationNode(designModel, model);
+                    break;
             }
+
             return pknNode;
         }
     }

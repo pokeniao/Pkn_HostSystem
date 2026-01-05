@@ -156,7 +156,7 @@ public static class GlobalManager
     /// <returns></returns>
     public static List<Type> GetUserDefinedTypes()
     {
-        string namespaceName = "Pkn_HostSystem.Service.UserDefined";
+        string namespaceName = "Pkn_HostSystem.Services.UserDefined";
         //返回当前项目集下筛选的内容 ,这里筛选的是CLass ,更具命名空间
         IEnumerable<Type> types = Asssembly
             .GetTypes()

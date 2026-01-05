@@ -10,6 +10,9 @@ using Pkn_HostSystem.Base.Halcon;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
 using Pkn_HostSystem.Models.Page;
+using Pkn_HostSystem.NodifyControl.Nodes;
+using Pkn_HostSystem.NodifyControl.Nodes.Core;
+using Pkn_HostSystem.NodifyControl.OperationModels.Models;
 using Pkn_HostSystem.NodifyControl.Operations.Interface;
 using Pkn_HostSystem.Services.Core;
 using Pkn_HostSystem.Static;
@@ -21,9 +24,6 @@ using System.Windows;
 using System.Xml.Linq;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
-using EnterOperationModel = Pkn_HostSystem.NodifyControl.OperationModels.Models.EnterOperationModel;
-using EnterOperationNode = Pkn_HostSystem.NodifyControl.Nodes.EnterOperationNode;
-using PknNode = Pkn_HostSystem.NodifyControl.Nodes.Core.PknNode;
 
 namespace Pkn_HostSystem.ViewModels.Page;
 
@@ -845,7 +845,7 @@ public partial class HomePageViewModel : ObservableRecipient
         else
         {
             //停止
-            model.cts.Cancel();
+            model?.cts?.Cancel();
 
             NetWorkTriggerLogic.RunFunc -= () => model.EditorViewModel.Run(model.cts);
             NetWorkTriggerLogic.RunFunc = null;
