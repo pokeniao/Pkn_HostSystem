@@ -25,7 +25,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Connector
         /// <summary>
         /// 定义一个测试连接器的名称
         /// </summary>
-        public string ConnectorName { get; set; }
+        [ObservableProperty] private string connectorName;
 
         /// <summary>
         /// 当前连接器所属的节点ID

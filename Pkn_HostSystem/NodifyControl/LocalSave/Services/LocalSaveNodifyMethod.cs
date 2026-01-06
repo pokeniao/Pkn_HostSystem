@@ -116,6 +116,65 @@ namespace Pkn_HostSystem.NodifyControl.LocalSave.Services
 
                     Connectors.Add(connectorViewModel);
                 }
+                //将每个节点的动态获取重新赋值
+                foreach (var node in Nodes)
+                {
+                    //获取当前节点的输入和输出
+                    foreach (var operationModel in node.InputParams)
+                    {
+                        //遍历所有输入端子
+                        foreach (MyConnector inputConnector in node.Input)
+                        {
+                            //端子中找到对应的有输入端子的线
+                            var sourceInputList = Connectors.Where(c => c.Target == inputConnector).ToList();
+                            //遍历所有连接线，找到对应的输出端子
+                            foreach (var sourceOutputConnection in sourceInputList)
+                            {
+                                //获取满足的端子
+                                MyConnector sourceOutputConnector = sourceOutputConnection.Source;
+                                //原的所有输出OperationModel    
+                                var sourceOutputOperationModels = sourceOutputConnector.Value;
+
+                                foreach (var sourceOutputOperationModel in sourceOutputOperationModels)
+                                {
+                                    if (sourceOutputOperationModel.Name == operationModel.DynName)
+                                    {
+                                        operationModel.Dyn = sourceOutputOperationModel;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //获取当前节点的输入和输出
+                    foreach (var operationModel in node.OutputParams)
+                    {
+                        //遍历所有输入端子
+                        foreach (MyConnector inputConnector in node.Input)
+                        {
+                            //端子中找到对应的有输入端子的线
+                            var sourceInputList = Connectors.Where(c => c.Target == inputConnector).ToList();
+                            //遍历所有连接线，找到对应的输出端子
+                            foreach (var sourceOutputConnection in sourceInputList)
+                            {
+                                //获取满足的端子
+                                MyConnector sourceOutputConnector = sourceOutputConnection.Source;
+                                //原的所有输出OperationModel    
+                                var sourceOutputOperationModels = sourceOutputConnector.Value;
+
+                                foreach (var sourceOutputOperationModel in sourceOutputOperationModels)
+                                {
+                                    if (sourceOutputOperationModel.Name == operationModel.DynName)
+                                    {
+                                        operationModel.Dyn = sourceOutputOperationModel;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
             }
 
             return load;
