@@ -49,7 +49,8 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
                 Name = "逻辑类",
                 Children =
                 [
-                    new TreeNodes(name: "If", nodeType: NodeEnum.If)
+                    new TreeNodes(name: "If", nodeType: NodeEnum.If),
+                    new TreeNodes(name:"Switch",nodeType:NodeEnum.Switch)
                 ]
             }
         };
@@ -85,6 +86,9 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
                     break;
                 case NodeEnum.StringDispose:
                     pknNode = new StringOperationNode(designModel, model);
+                    break;
+                case NodeEnum.Switch:
+                    pknNode = new SwitchOperationNode(designModel, model);
                     break;
             }
 
