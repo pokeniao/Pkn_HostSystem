@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -36,45 +37,35 @@
         <ComboBox Grid.Row="0" Grid.Column="1"
                   Margin=" 0 0 0 5"
                   SelectedValuePath="Content"
+                  SelectionChanged="Selector_OnSelectionChanged"
                   SelectedValue="{Binding Model.Method, UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}">
             <ComboBoxItem Content="拼接" />
             <ComboBoxItem Content="分割" />
             <ComboBoxItem Content="切割" />
+            <ComboBoxItem Content="索引" />
+            <ComboBoxItem Content="索引(倒序)" />
         </ComboBox>
 
-        <!-- 分割符 -->
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="分割符" TextAlignment="Center" Margin="5"
-                   HorizontalAlignment="Left" />
-        <TextBox Grid.Row="1" Grid.Column="1"
-                 Margin=" 0 0 0 5"
-                 Text="{Binding Model.Slicing , UpdateSourceTrigger= PropertyChanged , Mode=TwoWay}" />
 
 
-        <!-- 切割 -->
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="切割起始位置" TextAlignment="Center" Margin="5"
-                   HorizontalAlignment="Left" />
-        <ui:NumberBox Grid.Row="2" Grid.Column="1"
-                 Margin=" 0 0 0 5"
-                 Value="{Binding Model.SlicingStartIndex , UpdateSourceTrigger= PropertyChanged , Mode=TwoWay}" />
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="切割" TextAlignment="Center" Margin="5"
-                   HorizontalAlignment="Left" />
-        <ui:NumberBox Grid.Row="3" Grid.Column="1"
-                      Margin=" 0 0 0 5"
-                      Value="{Binding Model.SlicingEndIndex , UpdateSourceTrigger= PropertyChanged , Mode=TwoWay}" />
-
-
-
-        <TextBlock Grid.Row="4"
+        <TextBlock Grid.Row="6"
                    Grid.Column="0"
                    Text="输入" Margin="5" />
-        <operationDataGrid:PknOperationDataGrid Grid.Row="5"
-                                                Grid.ColumnSpan="2"
+
+
+        <TextBlock Grid.Row="7"
+                   Grid.Column="0"
+                   Visibility="{Binding Model.showAddVisibility}"
+                   FontSize="8" 
+                   Text="拼接所有输入" Margin="15 5 5 5" />
+        <operationDataGrid:PknOperationDataGrid Grid.Row="8"
+                                                Grid.ColumnSpan="2" Grid.Column="0"
                                                 Height="200"
                                                 Node="{Binding}"
                                                 NeedItemSource="{Binding InputParams , Mode=TwoWay }" />
-        <TextBlock Grid.Row="6" Text="输出" Margin="5" />
-        <operationDataGrid:PknOperationDataGrid Grid.Row="7"
-                                                Grid.ColumnSpan="2"
+        <TextBlock Grid.Row="9" Grid.Column="0" Text="输出" Margin="5" />
+        <operationDataGrid:PknOperationDataGrid Grid.Row="10"
+                                                Grid.ColumnSpan="2" Grid.Column="0"
                                                 Height="200"
                                                 Node="{Binding}"
                                                 NeedItemSource="{Binding OutputParams }" />

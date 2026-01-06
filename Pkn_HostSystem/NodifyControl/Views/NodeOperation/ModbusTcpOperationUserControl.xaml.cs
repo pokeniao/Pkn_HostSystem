@@ -241,7 +241,7 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                     if (i >= model.NetWorkTriggerModel.WriteDvgList.Count)
                     {
                         model.NetWorkTriggerModel.WriteDvgList.Add(
-                            new OperationModel() { Name = (startAddress + i).ToString(), ParamValue = "False" });
+                            new OperationModel() { Name = (startAddress + i).ToString(), ParamValue = "False", NameReadOnly = true });
                     }
                     else
                     {
@@ -260,7 +260,7 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                     if (i >= model.NetWorkTriggerModel.WriteDvgList.Count)
                     {
                         model.NetWorkTriggerModel.WriteDvgList.Add(
-                            new OperationModel() { Name = (startAddress + i).ToString(), ParamValue = "0" }
+                            new OperationModel() { Name = (startAddress + i).ToString(), ParamValue = "0" , NameReadOnly = true}
                         );
                     }
                     else
@@ -354,7 +354,10 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                 {
                     //添加
                     modbusTcpOperationNode.OutputParams.Add(
-                        new OperationModel() { Name = (startAddress + i).ToString(), ReadOnly = true, NoDelete = true }
+                        new OperationModel() { Name = (startAddress + i).ToString(),
+                            NameReadOnly = true,
+                            ValueReadOnly = true,
+                            MethodReadOnly = true, NoDelete = true }
                     );
                 }
                 else
@@ -435,7 +438,9 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                         new OperationModel()
                         {
                             Name = (startAddress + i * 2).ToString(),
-                            ReadOnly = true,
+                            NameReadOnly = true,
+                            ValueReadOnly = true,
+                            MethodReadOnly = true,
                             NoDelete = true
                         }
                     );
@@ -515,7 +520,7 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                 {
                     //添加
                     modbusTcpOperationNode.OutputParams.Add(
-                        new OperationModel() { Name = (startAddress).ToString(), ReadOnly = true, NoDelete = true }
+                        new OperationModel() { Name = (startAddress).ToString(), NameReadOnly = true, ValueReadOnly = true, MethodReadOnly = true, NoDelete = true }
                     );
                 }
                 else

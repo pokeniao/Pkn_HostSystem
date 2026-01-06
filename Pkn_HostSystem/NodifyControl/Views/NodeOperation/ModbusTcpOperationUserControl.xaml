@@ -143,8 +143,14 @@
                 AutoGenerateColumns="false"
                 CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="地址(address)" Width="*"
-                                        Binding="{Binding Name ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                    <DataGridTemplateColumn Header="地址(address)" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Text="{Binding Name,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="方式" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -156,7 +162,7 @@
                             <DataTemplate>
                                 <ComboBox
                                     SelectedValuePath="Content"
-                                    IsEnabled="{Binding ReadOnly ,Converter={StaticResource IsEnableConvertReadOnlyConverter} ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                    IsEnabled="{Binding NameReadOnly ,Converter={StaticResource IsEnableConvertReadOnlyConverter} ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                     SelectedValue="{Binding ParamMethod ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                                     <ComboBoxItem Content="常量" />
                                     <ComboBoxItem Content="动态获取" />

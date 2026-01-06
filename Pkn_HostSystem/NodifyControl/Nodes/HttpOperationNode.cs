@@ -39,7 +39,9 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
             {
                 Name = "Http请求结果"+new SnowflakeIdGenerator(1, 1).GetId().ToString(),
                 ParamMethod = "常量",
-                ReadOnly = true,
+                NameReadOnly = true,
+                ValueReadOnly = true,
+                MethodReadOnly = true,
                 NoDelete = true
             };
             //固定输出
@@ -49,7 +51,9 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
             {
                 Name = "请求返回结果" + new SnowflakeIdGenerator(1, 1).GetId().ToString(),
                 ParamMethod = "常量",
-                ReadOnly = true,
+                NameReadOnly = true,
+                ValueReadOnly = true,
+                MethodReadOnly = true,
                 NoDelete = true
             };
             //固定输出

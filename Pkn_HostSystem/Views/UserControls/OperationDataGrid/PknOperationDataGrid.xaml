@@ -31,9 +31,9 @@
 
                     <DataGridTemplateColumn.CellEditingTemplate>
                         <DataTemplate>
-                            <TextBox 
-                                IsReadOnly="{Binding ReadOnly ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                                Text="{Binding Name , UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}"  />
+                            <TextBox
+                                IsReadOnly="{Binding NameReadOnly ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                Text="{Binding Name , UpdateSourceTrigger=PropertyChanged , Mode=TwoWay}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
@@ -47,7 +47,7 @@
                         <DataTemplate>
                             <ComboBox
                                 SelectedValuePath="Content"
-                                IsEnabled="{Binding ReadOnly , Converter={StaticResource IsEnableConvertReadOnlyConverter}  ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                IsEnabled="{Binding MethodReadOnly , Converter={StaticResource IsEnableConvertReadOnlyConverter}  ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                 SelectedValue="{Binding ParamMethod ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                                 <ComboBoxItem Content="常量" />
                                 <ComboBoxItem Content="动态获取" />
@@ -59,16 +59,14 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
-                                <TextBlock 
+                                <TextBlock
                                     Visibility="{Binding ShowStaticParamVisibility}"
-                                    Text="{Binding ParamValue ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                                    MaxHeight="100"
-                                    />
-                                <TextBlock 
+                                    Text="{Binding ParamValue ,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                    MaxHeight="100" />
+                                <TextBlock
                                     Visibility="{Binding ShowDynamicParamVisibility}"
-                                    Text="{Binding DynName,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                                    MaxHeight="100"
-                                    />
+                                    Text="{Binding DynName,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                    MaxHeight="100" />
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -76,14 +74,13 @@
                         <DataTemplate>
                             <Grid>
                                 <TextBox Visibility="{Binding ShowStaticParamVisibility}"
-                                         IsReadOnly="{Binding ReadOnly ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                         IsReadOnly="{Binding ValueReadOnly ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                          Text="{Binding ParamValue ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                          MaxHeight="100"
                                          HorizontalScrollBarVisibility="Visible"
-                                         VerticalScrollBarVisibility="Visible"
-                                         />
+                                         VerticalScrollBarVisibility="Visible" />
                                 <ComboBox
-                                                                IsEnabled="{Binding ReadOnly , Converter={StaticResource IsEnableConvertReadOnlyConverter}  ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                    IsEnabled="{Binding ValueReadOnly , Converter={StaticResource IsEnableConvertReadOnlyConverter}  ,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                                     DropDownOpened="ComboBox_OnDropDownOpened"
                                     DisplayMemberPath="Name"
                                     Visibility="{Binding ShowDynamicParamVisibility}"

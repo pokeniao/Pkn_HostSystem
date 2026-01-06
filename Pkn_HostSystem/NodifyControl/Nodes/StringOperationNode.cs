@@ -1,17 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json.Linq;
-using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Nodes.Connector;
 using Pkn_HostSystem.NodifyControl.Nodes.Core;
 using Pkn_HostSystem.NodifyControl.OperationModels.Models;
-using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using Pkn_HostSystem.NodifyControl.Operations.MiddleOperation;
 
 namespace Pkn_HostSystem.NodifyControl.Nodes
 {
-    public partial class StringOperationNode:PknNode
+    public partial class StringOperationNode : PknNode
     {
         [ObservableProperty] private StringOperationModel model = new();
 
@@ -25,6 +23,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
                 Model = jObject?.ToObject<StringOperationModel>();
             }
 
+            IModel = Model;
             Operation = new StringOperation(this);
 
             MyConnector connector = new("输入", Id, ConnectorTypeEnum.Input);
