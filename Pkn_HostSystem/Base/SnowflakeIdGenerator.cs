@@ -17,6 +17,8 @@ public class SnowflakeIdGenerator
 
     private readonly long _workerId;
     private readonly long _datacenterId;
+
+    //_sequence 和_lastTimestamp保证在使用GetId时,哪怕同一毫秒也不会重复
     private long _sequence = 0L;
     private long _lastTimestamp = -1L;
 

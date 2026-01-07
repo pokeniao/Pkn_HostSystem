@@ -41,7 +41,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
 
             OperationModel operationModel = new()
             {
-                Name = "串口返回结果" + new SnowflakeIdGenerator(1, 1).GetId().ToString(),
+                Name = "串口返回结果" + GlobalManager.SnowflakeId.GetId(),
                 ParamMethod = "常量",
                 NameReadOnly = true,
                 ValueReadOnly = true,
@@ -53,7 +53,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
 
             OperationModel operationModel1 = new()
             {
-                Name = "串口返回信息" + new SnowflakeIdGenerator(1, 1).GetId().ToString(),
+                Name = "串口返回信息" + GlobalManager.SnowflakeId.GetId(),
                 ParamMethod = "常量",
                 NameReadOnly = true,
                 ValueReadOnly = true,

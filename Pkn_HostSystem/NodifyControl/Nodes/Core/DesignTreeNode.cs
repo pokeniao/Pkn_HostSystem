@@ -41,7 +41,9 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
                 Name = "通用",
                 Children =
                 [
-                    new TreeNodes("字符串处理", NodeEnum.StringDispose)
+                    new TreeNodes("字符串处理", NodeEnum.StringDispose),
+                    new TreeNodes("本地保存",NodeEnum.LocalSave),
+                    new TreeNodes("Json处理",NodeEnum.JsonProcessing)
                 ]
             },
             new()
@@ -89,6 +91,12 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
                     break;
                 case NodeEnum.Switch:
                     pknNode = new SwitchOperationNode(designModel, model);
+                    break;
+                case NodeEnum.LocalSave:
+                    pknNode = new LocalSaveOperationNode(designModel, model);
+                    break;
+                case NodeEnum.JsonProcessing:
+                    pknNode = new JsonOperationNode(designModel, model);
                     break;
             }
 

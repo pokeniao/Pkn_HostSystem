@@ -19,6 +19,9 @@ namespace Pkn_HostSystem.Static;
 
 public static class GlobalManager
 {
+
+    public static readonly SnowflakeIdGenerator SnowflakeId = new SnowflakeIdGenerator(1, 1);
+
     /// <summary>
     /// 日志的富文本
     /// </summary>

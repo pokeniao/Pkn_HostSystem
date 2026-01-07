@@ -1,4 +1,5 @@
 ﻿using Pkn_HostSystem.Base;
+using Pkn_HostSystem.Static;
 using System.IO.Ports;
 
 namespace Pkn_HostSystem.Models.Core;
@@ -11,7 +12,7 @@ public class NetworkDetailed
     /// <summary>
     /// 网路的独立ID
     /// </summary>
-    public string Id { get; set; } = new SnowflakeIdGenerator(1, 1).GetId().ToString();
+    public string Id { get; set; } = GlobalManager.SnowflakeId.GetId().ToString();
     /// <summary>
     /// 网络名称
     /// </summary>

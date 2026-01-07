@@ -1,27 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using DynamicData;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.NodifyControl.Nodes;
 using Pkn_HostSystem.NodifyControl.Nodes.Connector;
 using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using Pkn_HostSystem.NodifyControl.ViewModels.Editor;
 using Pkn_HostSystem.ViewModels.Page;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Wpf.Ui.Controls;
 
 namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
 {
@@ -40,12 +26,12 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
         {
             SwitchOperationNode? switchOperationNode = DataContext as SwitchOperationNode;
 
-            int count = switchOperationNode.Model.SwitchCount +1;
+            int count = switchOperationNode.Model.SwitchCount + 1;
             ArrayList list = new();
 
             //计算不能删除的
             int cur = 0;
-            int inputParamsCount = switchOperationNode.InputParams.Count ;
+            int inputParamsCount = switchOperationNode.InputParams.Count;
             for (int i = 0; i < inputParamsCount; i++)
             {
                 if (switchOperationNode.InputParams[i].NoDelete == true)
@@ -74,7 +60,7 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                     cur2--;
                 }
             }
-            else if(cur < count)
+            else if (cur < count)
             {
                 //小于需要添加
                 //添加数量
@@ -82,7 +68,9 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                 {
                     switchOperationNode.InputParams.Add(new OperationModel()
                     {
-                        Name = (i).ToString(), NameReadOnly = true, NoDelete = true,
+                        Name = (i).ToString(),
+                        NameReadOnly = true,
+                        NoDelete = true,
                     });
                     cur2++;
                 }
@@ -92,10 +80,10 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                 switchOperationNode.InputParams.Add(operationModel);
             }
 
-            int cur3 = cur2 + cur ;
+            int cur3 = cur2 + cur;
             //更具不能删除的节点创建 接口
             //判断有多少节点了,需不需要添加 , 因为默认有一个了,所以应该-1
-            int outputCount = switchOperationNode.Output.Count -1 ;
+            int outputCount = switchOperationNode.Output.Count - 1;
 
 
             int cur4 = cur3 - 1;
@@ -104,30 +92,30 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                 //小于,需要添加节点
                 for (int i = 0; i < cur4; i++)
                 {
-                    
-                    if (i<=outputCount-1)
+
+                    if (i <= outputCount - 1)
                     {
                         //仅做更新
-                        switch (switchOperationNode.InputParams[i+1].ParamMethod)
+                        switch (switchOperationNode.InputParams[i + 1].ParamMethod)
                         {
                             case "常量":
-                                switchOperationNode.Output[i+1].ConnectorName = switchOperationNode.InputParams[i+1].ParamValue;
+                                switchOperationNode.Output[i + 1].ConnectorName = switchOperationNode.InputParams[i + 1].ParamValue;
                                 break;
                             case "动态获取":
-                                switchOperationNode.Output[i+1].ConnectorName = "\""+switchOperationNode.InputParams[i+1].DynName+"\"";
+                                switchOperationNode.Output[i + 1].ConnectorName = "\"" + switchOperationNode.InputParams[i + 1].DynName + "\"";
                                 break;
                         }
                     }
                     else
                     {
                         string connectorName = "";
-                        switch (switchOperationNode.InputParams[i+1].ParamMethod)
+                        switch (switchOperationNode.InputParams[i + 1].ParamMethod)
                         {
                             case "常量":
-                                connectorName = switchOperationNode.InputParams[i+1].ParamValue;
+                                connectorName = switchOperationNode.InputParams[i + 1].ParamValue;
                                 break;
                             case "动态获取":
-                                connectorName = "\"" + switchOperationNode.InputParams[i+1].DynName + "\"";
+                                connectorName = "\"" + switchOperationNode.InputParams[i + 1].DynName + "\"";
                                 break;
                         }
                         //添加节点
@@ -146,7 +134,7 @@ namespace Pkn_HostSystem.NodifyControl.Views.NodeOperation
                 for (int i = outputCount; i > cur4; i--)
                 {
                     //移除节点前先断开所有连接
-                    MyConnector myConnector = switchOperationNode.Output[cur4+1];
+                    MyConnector myConnector = switchOperationNode.Output[cur4 + 1];
 
                     EditorViewModel editorViewModel = Ioc.Default.GetRequiredService<DesignViewModel>().DesignModel.EditorViewModel;
                     editorViewModel.DisconnectConnectorCommand.Execute(myConnector);

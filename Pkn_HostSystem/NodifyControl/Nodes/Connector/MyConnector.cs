@@ -4,6 +4,7 @@ using DynamicData.Binding;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
+using Pkn_HostSystem.Static;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -20,7 +21,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Connector
 
             
         }
-        public string Id = new SnowflakeIdGenerator(1, 1).GetId().ToString();
+        public string Id = GlobalManager.SnowflakeId.GetId().ToString();
 
         /// <summary>
         /// 定义一个测试连接器的名称

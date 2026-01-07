@@ -1,18 +1,16 @@
-﻿
-using Newtonsoft.Json.Linq;
-using Pkn_HostSystem.Base;
-using Pkn_HostSystem.Base.Enum;
+﻿using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.NodifyControl.Nodes.Connector;
 using Pkn_HostSystem.NodifyControl.Nodes.Core;
 using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using Pkn_HostSystem.NodifyControl.Operations.MiddleOperation;
+using Pkn_HostSystem.Static;
 
 namespace Pkn_HostSystem.NodifyControl.Nodes
 {
     public partial class AddOperationNode : PknNode
     {
-        public AddOperationNode(DesignModel designModel,Object model = null) : base(designModel, "加法节点", NodeEnum.Add)
+        public AddOperationNode(DesignModel designModel, Object model = null) : base(designModel, "加法节点", NodeEnum.Add)
         {
             Operation = new AddOperation(this);
 
@@ -26,7 +24,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
             Output.Add(myConnector);
             OperationModel operationModel = new()
             {
-                Name = "加法结果"+new SnowflakeIdGenerator(1, 1).GetId().ToString(),
+                Name = "加法结果" + GlobalManager.SnowflakeId.GetId(),
                 ParamMethod = "常量",
                 NameReadOnly = true,
                 ValueReadOnly = true,

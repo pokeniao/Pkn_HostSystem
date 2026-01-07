@@ -8,6 +8,7 @@ using Pkn_HostSystem.NodifyControl.Nodes.Core;
 using Pkn_HostSystem.NodifyControl.OperationModels.Models;
 using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using Pkn_HostSystem.NodifyControl.Operations.MiddleOperation;
+using Pkn_HostSystem.Static;
 
 namespace Pkn_HostSystem.NodifyControl.Nodes
 {
@@ -37,7 +38,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
 
             OperationModel operationModel = new()
             {
-                Name = "Http请求结果"+new SnowflakeIdGenerator(1, 1).GetId().ToString(),
+                Name = "Http请求结果"+GlobalManager.SnowflakeId.GetId().ToString(),
                 ParamMethod = "常量",
                 NameReadOnly = true,
                 ValueReadOnly = true,
@@ -49,7 +50,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes
 
             OperationModel operationModel2 = new()
             {
-                Name = "请求返回结果" + new SnowflakeIdGenerator(1, 1).GetId().ToString(),
+                Name = "请求返回结果" + GlobalManager.SnowflakeId.GetId().ToString(),
                 ParamMethod = "常量",
                 NameReadOnly = true,
                 ValueReadOnly = true,

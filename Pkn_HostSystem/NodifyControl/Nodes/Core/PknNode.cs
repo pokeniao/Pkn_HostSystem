@@ -8,6 +8,7 @@ using Pkn_HostSystem.NodifyControl.Nodes.Connector;
 using Pkn_HostSystem.NodifyControl.OperationModels.Interface;
 using Pkn_HostSystem.NodifyControl.OperationModels.Models.Core;
 using Pkn_HostSystem.NodifyControl.Operations.Interface;
+using Pkn_HostSystem.Static;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -16,7 +17,7 @@ namespace Pkn_HostSystem.NodifyControl.Nodes.Core
     public partial class PknNode : ObservableObject
     {
 
-        public string Id { get; set; } = new SnowflakeIdGenerator(1, 1).GetId().ToString();
+        public string Id { get; set; } = GlobalManager.SnowflakeId.GetId().ToString();
 
         public string NodeName { get; set; }
 
