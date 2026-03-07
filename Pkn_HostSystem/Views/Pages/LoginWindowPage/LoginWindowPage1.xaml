@@ -51,7 +51,6 @@
             <!-- 密码 -->
             <TextBlock HorizontalAlignment="Center" Margin="10" Grid.Row="1" Grid.Column="0" Text="密码"/>
             <ui:PasswordBox Name="PasswordBox" Icon="{ui:SymbolIcon Password24}" PlaceholderEnabled="True" PlaceholderText="Password..." Grid.Row="1" Grid.Column="1" />
-
             <Grid Grid.Row="2" Grid.ColumnSpan="2" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition  Width="*"/>
@@ -59,16 +58,13 @@
                 </Grid.ColumnDefinitions>
                 <!-- 登入 -->
                 <Button Grid.Row="0"  Grid.Column="0"  Content="登入" HorizontalAlignment="Right" Margin="20" Width="100"
-                       
                         Command="{Binding LoginButtonCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
                 <!-- 登入 -->
                 <Button Grid.Row="0"  Grid.Column="1" Content="登出" HorizontalAlignment="Left" Margin="20" Width="100"
                         Command="{Binding LoginOutButtonCommand}"
                         IsEnabled="{Binding Source={x:Static static:UserContext.Current},Path=Permission,Converter={StaticResource PermissionToBoolConverter},ConverterParameter=Lv1}"
                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Page}}"/>
-
             </Grid>
-           
         </Grid>
         <ui:SnackbarPresenter Grid.Row="1"  Name="SnackbarPresenter" />
     </Grid>

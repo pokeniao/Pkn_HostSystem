@@ -39,7 +39,6 @@
         </Grid.ColumnDefinitions>
 
         <ui:TitleBar
-
             Title="Pkn_HostSystem"
             FontSize="18"
             Grid.ColumnSpan="2" VerticalAlignment="Center">
@@ -47,7 +46,6 @@
                 <ui:ImageIcon Source="../../Assets/pokeniao_logo_圆角_128.ico" />
             </ui:TitleBar.Icon>
         </ui:TitleBar>
-
         <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" Grid.ColumnSpan="2" OpenPaneLength="220"
                            PaneClosed="RootNavigation_OnPaneClosed"
                            PaneOpened="RootNavigation_OnPaneOpened"
@@ -85,7 +83,6 @@
                         <ui:SymbolIcon Symbol="DataPie24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-
                 <ui:NavigationViewItem
                     Content="工位"
                     NavigationCacheMode="Enabled"
@@ -120,7 +117,6 @@
                         <ui:SymbolIcon Symbol="ArrowRepeatAll24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-
                 <ui:NavigationViewItem
                     Content="视觉"
                     NavigationCacheMode="Enabled"

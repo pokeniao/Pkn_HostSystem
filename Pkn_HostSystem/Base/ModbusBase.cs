@@ -35,11 +35,11 @@ namespace Pkn_HostSystem.Base
         /// 通知任务事件
         /// </summary>
         private TaskCompletionSource<bool> _connectTcs = new TaskCompletionSource<bool>();
+
         /// <summary>
         /// 避免并发访问
         /// </summary>
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-
 
 
         #region 判断是否连接上
@@ -276,6 +276,7 @@ namespace Pkn_HostSystem.Base
                 {
                     tcpClient.Close();
                     tcpClient.Dispose();
+                    _connectTcs.TrySetResult(false);
                     tcpClient = null;
                 }
         }
@@ -292,6 +293,7 @@ namespace Pkn_HostSystem.Base
         #endregion
 
         #region 01读线圈
+
         /// <summary>
         /// 01读线圈
         /// </summary>
@@ -305,9 +307,15 @@ namespace Pkn_HostSystem.Base
             var timeoutTask = Task.Delay(3000);
             // 等待连接真正建立好_connectTcs.Task和timeoutTask ,WhenAny只要满足一个就放行
             var completedTask = await Task.WhenAny(_connectTcs.Task, timeoutTask);
+            //我方建立ModbusTcp连接超时
             if (completedTask != _connectTcs.Task)
             {
                 throw new TimeoutException("ReadCoils_01 连接建立超时");
+            }
+            //对方ModbusTcp断开
+            if (!IsTCPConnect())
+            {
+                throw new TimeoutException("ModbusTcp 断开,ReadCoils_01 失败");
             }
 
             //SemaphoreSlim 线程流量控制
@@ -326,11 +334,12 @@ namespace Pkn_HostSystem.Base
             {
                 _semaphore.Release();
             }
-
         }
+
         #endregion
 
         #region 02读输入状态
+
         /// <summary>
         /// 02读输入状态
         /// </summary>
@@ -343,10 +352,17 @@ namespace Pkn_HostSystem.Base
             var timeoutTask = Task.Delay(3000);
             // 等待连接真正建立好_connectTcs.Task和timeoutTask ,WhenAny只要满足一个就放行
             var completedTask = await Task.WhenAny(_connectTcs.Task, timeoutTask);
+            //我方建立ModbusTcp连接超时
             if (completedTask != _connectTcs.Task)
             {
                 throw new TimeoutException("ReadInputs_02 连接建立超时");
             }
+            //对方ModbusTcp断开
+            if (!IsTCPConnect())
+            {
+                throw new TimeoutException("ModbusTcp 断开,ReadInputs_02 失败");
+            }
+
             //SemaphoreSlim 线程流量控制
             await _semaphore.WaitAsync();
             try
@@ -364,6 +380,7 @@ namespace Pkn_HostSystem.Base
                 _semaphore.Release();
             }
         }
+
         #endregion
 
         #region 03读保存寄存器
@@ -381,16 +398,24 @@ namespace Pkn_HostSystem.Base
             var timeoutTask = Task.Delay(3000);
             // 等待连接真正建立好_connectTcs.Task和timeoutTask ,WhenAny只要满足一个就放行
             var completedTask = await Task.WhenAny(_connectTcs.Task, timeoutTask);
+            //我方建立ModbusTcp连接超时
             if (completedTask != _connectTcs.Task)
             {
                 throw new TimeoutException("ReadHoldingRegisters_03 连接建立超时");
             }
+            //对方ModbusTcp断开
+            if (!IsTCPConnect())
+            {
+                throw new TimeoutException("ModbusTcp 断开,ReadHoldingRegisters_03 失败");
+            }
+
             //SemaphoreSlim 线程流量控制
             await _semaphore.WaitAsync();
             try
             {
                 //2025-11-28 .将modbusMaster.ReadHoldingRegistersAsync 异步写法改成同步,因为NModbus的异步并不能保证读写一致,会出现事务问题System.0.l0Exception:Response was not of expected transaction iD, Expected 3597, received 3594
-                return await Task.Run( () => modbusMaster.ReadHoldingRegisters(slaveAddress, startAddress, ReadCount));
+                return await Task.Run(() =>
+                    modbusMaster.ReadHoldingRegisters(slaveAddress, startAddress, ReadCount));
             }
             catch (Exception e)
             {
@@ -401,9 +426,11 @@ namespace Pkn_HostSystem.Base
                 _semaphore.Release();
             }
         }
+
         #endregion
 
         #region 04读取输入寄存器
+
         /// <summary>
         /// 04读取输入寄存器
         /// </summary>
@@ -417,10 +444,17 @@ namespace Pkn_HostSystem.Base
             var timeoutTask = Task.Delay(3000);
             // 等待连接真正建立好_connectTcs.Task和timeoutTask ,WhenAny只要满足一个就放行
             var completedTask = await Task.WhenAny(_connectTcs.Task, timeoutTask);
+            //我方建立ModbusTcp连接超时
             if (completedTask != _connectTcs.Task)
             {
                 throw new TimeoutException("ReadInputRegisters_04 连接建立超时");
             }
+            //对方ModbusTcp断开
+            if (!IsTCPConnect())
+            {
+                throw new TimeoutException("ModbusTcp 断开,ReadInputRegisters_04 失败");
+            }
+
             //SemaphoreSlim 线程流量控制
             await _semaphore.WaitAsync();
             try
@@ -438,9 +472,11 @@ namespace Pkn_HostSystem.Base
                 _semaphore.Release();
             }
         }
+
         #endregion
 
         #region 05写单线圈
+
         /// <summary>
         /// 05写单线圈
         /// </summary>
@@ -454,10 +490,18 @@ namespace Pkn_HostSystem.Base
             var timeoutTask = Task.Delay(3000);
             // 等待连接真正建立好_connectTcs.Task和timeoutTask ,WhenAny只要满足一个就放行
             var completedTask = await Task.WhenAny(_connectTcs.Task, timeoutTask);
+            //我方建立ModbusTcp连接超时
             if (completedTask != _connectTcs.Task)
             {
                 throw new TimeoutException("WriteCoil_05 连接建立超时");
             }
+
+            //对方ModbusTcp断开
+            if (!IsTCPConnect())
+            {
+                throw new TimeoutException("ModbusTcp 断开,WriteCoil_05 失败");
+            }
+
             //SemaphoreSlim 线程流量控制
             await _semaphore.WaitAsync();
             try
@@ -491,10 +535,17 @@ namespace Pkn_HostSystem.Base
             var timeoutTask = Task.Delay(3000);
             // 等待连接真正建立好_connectTcs.Task和timeoutTask ,WhenAny只要满足一个就放行
             var completedTask = await Task.WhenAny(_connectTcs.Task, timeoutTask);
+            //我方建立ModbusTcp连接超时
             if (completedTask != _connectTcs.Task)
             {
                 throw new TimeoutException("WriteRegister_06 连接建立超时");
             }
+            //对方ModbusTcp断开
+            if (!IsTCPConnect())
+            {
+                throw new TimeoutException("ModbusTcp 断开,WriteRegister_06 失败");
+            }
+
             //SemaphoreSlim 线程流量控制
             await _semaphore.WaitAsync();
             try
@@ -528,9 +579,15 @@ namespace Pkn_HostSystem.Base
             var timeoutTask = Task.Delay(3000);
             // 等待连接真正建立好_connectTcs.Task和timeoutTask ,WhenAny只要满足一个就放行
             var completedTask = await Task.WhenAny(_connectTcs.Task, timeoutTask);
+            //我方建立ModbusTcp连接超时
             if (completedTask != _connectTcs.Task)
             {
                 throw new TimeoutException("WriteCoils_0F 连接建立超时");
+            }
+            //对方ModbusTcp断开
+            if (!IsTCPConnect())
+            {
+                throw new TimeoutException("ModbusTcp 断开,WriteCoils_0F 失败");
             }
             //SemaphoreSlim 线程流量控制
             await _semaphore.WaitAsync();
@@ -551,6 +608,7 @@ namespace Pkn_HostSystem.Base
         #endregion
 
         #region 10写多寄存器
+
         /// <summary>
         /// 10写多寄存器
         /// </summary>
@@ -564,10 +622,19 @@ namespace Pkn_HostSystem.Base
             var timeoutTask = Task.Delay(3000);
             // 等待连接真正建立好_connectTcs.Task和timeoutTask ,WhenAny只要满足一个就放行
             var completedTask = await Task.WhenAny(_connectTcs.Task, timeoutTask);
+
+            //我方建立ModbusTcp连接超时
             if (completedTask != _connectTcs.Task)
             {
                 throw new TimeoutException("WriteRegisters_10 连接建立超时");
             }
+            //对方ModbusTcp断开
+            if (!IsTCPConnect())
+            {
+                throw new TimeoutException("ModbusTcp 断开,WriteRegisters_10 失败");
+            }
+
+
             //SemaphoreSlim 线程流量控制
             await _semaphore.WaitAsync();
             try
@@ -598,6 +665,5 @@ namespace Pkn_HostSystem.Base
                 stream.Read(discard, 0, discard.Length);
             }
         }
-
     }
 }

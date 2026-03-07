@@ -1,13 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.VisualBasic.ApplicationServices;
-using Microsoft.VisualBasic.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Enum;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
-using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Pojo;
 using Pkn_HostSystem.Services.Stations;
 using Pkn_HostSystem.Services.UserDefined.Interface;
@@ -17,7 +13,6 @@ using RestSharp;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Windows.Documents;
 
 namespace Pkn_HostSystem.Services.UserDefined
 {
