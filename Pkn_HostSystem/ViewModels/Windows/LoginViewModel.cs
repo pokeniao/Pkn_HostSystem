@@ -49,10 +49,10 @@ namespace Pkn_HostSystem.ViewModels.Windows
                 LoginModel.PassWord = page.PasswordBox.Password;
                 var homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
                 UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
-                if (LoginModel.PassWord == "15577729871" && LoginModel.UserNumber =="pokeniao")
+                if (LoginModel.PassWord == "123456" && LoginModel.UserNumber =="admin")
                 {
                     userLoginModel.LoginState = true;
-                    userLoginModel.Name = "pokeniao";
+                    userLoginModel.Name = "admin";
                     userLoginModel.Emp = "管理员";
                     userLoginModel.Id = "1";
                     timeOutTimer(userLoginModel, timeOutCts);

@@ -128,13 +128,22 @@ namespace Pkn_HostSystem.Service.UserDefined
 
                     //处理字符串
                     string[] strings = response.Split(":");
-                    response = strings[1];
-                    response = response.Substring(0, response.IndexOf("PPB"));
+
+                    if (strings.Length >= 2)
+                    {
+                        response = strings[1];
+                        response = response.Substring(0, response.IndexOf("PPB"));
+                    }
+                    else
+                    {
+                        response = response.Substring(0, response.IndexOf("PPB"));
+                    }
+
 
                     succeed = double.TryParse(response, out double responseDouble);
                     if (!succeed)
                     {
-                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "数据转成double类型失败", true);
+                        StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Error, StationBase.Header, "数据转成double类型失败 返回内容:"+ response, true);
                         return (false, "数据转成double类型失败");
                     }
                     StationManager.StationLog(StationLogEnum.UserLog, InfoAndErrorEnum.Info, StationBase.Header, $"检测腔体{station1.腔体号},第{i}秒,VOC数据:{responseDouble}", true);

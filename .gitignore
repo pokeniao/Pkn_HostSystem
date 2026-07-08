@@ -365,3 +365,4 @@ FodyWeavers.xsd
 
 */Pkn_HostSystem.msi
 */Pkn_HostSystemInstall.exe
+*.zip
