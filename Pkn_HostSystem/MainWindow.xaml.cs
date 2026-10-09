@@ -35,7 +35,7 @@ namespace Pkn_HostSystem
             //启动先自适应电脑主题
             ApplicationThemeManager.ApplySystemTheme();
             InitializeComponent();
-
+            HomeTitle.Text = "设备名称";
             // Loaded:当元素被布局、呈现并准备好进行交互时，将触发此事件
             // // Loaded += (_, _) => RootNavigation.Navigate(typeof(HomePage));
             Loaded += (_, _) =>
@@ -169,6 +169,8 @@ namespace Pkn_HostSystem
                 return;
             }
 
+            
+            HomeTitleButtonStart.Margin = new Thickness(e.NewSize.Width / 2 - 200 - (HomeTitle.Text.Length * 10), 0, 0, 0);
             _isPaneOpenedOrClosedFromCode = true;
             RootNavigation.SetCurrentValue(NavigationView.IsPaneOpenProperty, e.NewSize.Width > 1100);
             _isPaneOpenedOrClosedFromCode = false;

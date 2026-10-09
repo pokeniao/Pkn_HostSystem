@@ -167,7 +167,14 @@ public partial class SettingsPageViewModel : ObservableRecipient
             if (!IsAutoStartEnabled())
             {
                 //写入注册表
-                runKey.SetValue(AppName, $"\"{exePath}\"");
+                try
+                {
+                    runKey.SetValue(AppName, $"\"{exePath}\"");
+                }
+                catch (Exception ex)
+                {
+                    Log.ErrorAndShowTask($"开机自启动设置失败,注册表写入失败: {ex.Message}");
+                }
             }
 
             if (IsAutoStartEnabled())

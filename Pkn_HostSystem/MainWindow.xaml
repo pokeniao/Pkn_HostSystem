@@ -39,12 +39,28 @@
         </Grid.ColumnDefinitions>
 
         <ui:TitleBar
-            Title="Pkn_HostSystem"
+          
             FontSize="18"
             Grid.ColumnSpan="2" VerticalAlignment="Center">
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="../../Assets/pokeniao_logo_圆角_128.ico" />
             </ui:TitleBar.Icon>
+            <ui:TitleBar.Header>
+                <TextBlock x:Name="HomeTitle" Text="Pkn_HostSystem" FontSize="20" Margin="5 10"  />
+            </ui:TitleBar.Header>
+            <ui:TitleBar.CenterContent>
+                <StackPanel x:Name="HomeTitleButtonStart"  Orientation="Horizontal">
+                    <Button Margin="10 0 0 0 ">
+                        <ui:SymbolIcon Symbol="Play24" FontSize="40" />
+                    </Button>
+                    <Button Margin="10 0 0 0 ">
+                        <ui:SymbolIcon Symbol="Pause24" FontSize="40" />
+                    </Button>
+                    <Button Margin="10 0 0 0">
+                        <ui:SymbolIcon Symbol="Stop24" FontSize="40" />
+                    </Button>
+                </StackPanel>
+            </ui:TitleBar.CenterContent>
         </ui:TitleBar>
         <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" Grid.ColumnSpan="2" OpenPaneLength="220"
                            PaneClosed="RootNavigation_OnPaneClosed"
