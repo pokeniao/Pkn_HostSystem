@@ -65,8 +65,8 @@
 		<PackageReference Include="System.Management" Version="9.0.8" />
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-		<PackageReference Include="WPF-UI" Version="4.0.3" />
-		<PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.3" />
+		<PackageReference Include="WPF-UI" Version="4.3.0" />
+		<PackageReference Include="WPF-UI.DependencyInjection" Version="4.3.0" />
 		<PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
 	</ItemGroup>
 
@@ -88,6 +88,15 @@
 		</None>
 		<None Update="Config\log4net.config">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="lib\Glink500.dll">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="lib\gts.dll">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="lib\gt_rn.dll">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="lib\halcon.dll">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>

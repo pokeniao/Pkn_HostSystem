@@ -2,6 +2,7 @@
 using Pkn_HostSystem.Base;
 using Pkn_HostSystem.Base.Log;
 using Pkn_HostSystem.Models.Core;
+using Pkn_HostSystem.Models.Page;
 using Pkn_HostSystem.Models.Windows;
 using Pkn_HostSystem.Static;
 using Pkn_HostSystem.ViewModels.Page;
@@ -23,19 +24,33 @@ namespace Pkn_HostSystem
     /// </summary>
     public partial class MainWindow
     {
+        //单例模式,方便其他地方获取到MainWindow的实例
+        private static MainWindow minstance;
+        public static MainWindow Instance {
+            get
+            {
+                return minstance;
+            }
+        }
+
+        public UserLoginModel UserLoginModel { get; set; } = new UserLoginModel()
+        {
+           Emp="点击登入"
+        };
         //预加载
         public MainWindow()
         {
+            minstance = this;
             //这个赋值不能少,因为用了框架,少了,下面代码会运行报错,但是也不会影响执行
             DataContext = this;
-
+       
             //如果系统主题或颜色改变，自动更新应用程序背景。
             //SystemThemeWatcher.Watch(this);
 
             //启动先自适应电脑主题
             ApplicationThemeManager.ApplySystemTheme();
             InitializeComponent();
-
+            HomeTitle.Text = "设备名称";
             // Loaded:当元素被布局、呈现并准备好进行交互时，将触发此事件
             // // Loaded += (_, _) => RootNavigation.Navigate(typeof(HomePage));
             Loaded += (_, _) =>
@@ -169,6 +184,8 @@ namespace Pkn_HostSystem
                 return;
             }
 
+            
+            HomeTitleButtonStart.Margin = new Thickness(e.NewSize.Width / 2 - 200 - (HomeTitle.Text.Length * 10), 0, 0, 0);
             _isPaneOpenedOrClosedFromCode = true;
             RootNavigation.SetCurrentValue(NavigationView.IsPaneOpenProperty, e.NewSize.Width > 1100);
             _isPaneOpenedOrClosedFromCode = false;
@@ -216,6 +233,12 @@ namespace Pkn_HostSystem
                    
                 }
             }
+        }
+
+        private void Login_Button_Click(object sender, RoutedEventArgs e)
+        {
+            LoginWindow loginWindow = new LoginWindow();
+            loginWindow.ShowDialog();
         }
     }
 }

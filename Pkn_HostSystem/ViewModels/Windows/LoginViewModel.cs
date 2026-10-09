@@ -42,8 +42,7 @@ namespace Pkn_HostSystem.ViewModels.Windows
                 timeOutCts = new CancellationTokenSource();
 
                 LoginModel.PassWord = page.PasswordBox.Password;
-                var homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
-                UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
+                UserLoginModel userLoginModel = MainWindow.Instance.UserLoginModel;
                 if (LoginModel.PassWord == "123456" && LoginModel.UserNumber == "admin")
                 {
                     userLoginModel.LoginState = true;
@@ -83,11 +82,10 @@ namespace Pkn_HostSystem.ViewModels.Windows
                 timeOutCts = new CancellationTokenSource();
 
                 LoginModel.PassWord = page.PasswordBox.Password;
-                var homePageViewModel = Ioc.Default.GetRequiredService<HomePageViewModel>();
-                UserLoginModel userLoginModel = homePageViewModel.UserLoginModel;
+                UserLoginModel userLoginModel = MainWindow.Instance.UserLoginModel;
                 userLoginModel.LoginState = false;
                 userLoginModel.Name = "";
-                userLoginModel.Emp = "";
+                userLoginModel.Emp = "点击登入";
                 userLoginModel.Id = "";
                 UserContext.Current.Permission = (LoginPermissionEnum)0;
             }

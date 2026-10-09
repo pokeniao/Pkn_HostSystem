@@ -40,7 +40,6 @@ public partial class HomePageViewModel : ObservableRecipient
 
     public HalconTool HalconTool { get; set; }
 
-    public UserLoginModel UserLoginModel { get; set; } = new UserLoginModel();
     public HomeSetConnectModel HomeSetConnectModel { get; set; } = new();
     public SnackbarService SnackbarService { get; set; } = new();
 
@@ -552,18 +551,6 @@ public partial class HomePageViewModel : ObservableRecipient
     }
 
     #endregion
-
-    #region 登入
-
-    [RelayCommand]
-    public void Login()
-    {
-        LoginWindow loginWindow = new LoginWindow();
-        loginWindow.ShowDialog();
-    }
-
-    #endregion
-
 
     #region 视觉
 

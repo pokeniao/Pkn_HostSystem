@@ -681,49 +681,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" ColumnSpan="2">
-            <Grid>
-                <Grid Margin="8,0">
-                </Grid>
-                <Grid Margin="8,0" HorizontalAlignment="Right">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Ellipse
-                        x:Name="Ellipse"
-                        Grid.RowSpan="2"
-                        Width="32"
-                        Height="32"
-                        Margin="6"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Fill="{ui:ThemeResource ControlStrongStrokeColorDefaultBrush}" />
-                    <StackPanel Grid.Row="0"
-                                Grid.Column="1" Orientation="Horizontal">
-                        <TextBlock
-                            Margin="12,6,0,0"
-                            FontWeight="Bold"
-                            Text="{Binding UserLoginModel.Emp}" />
-                        <ui:Button Margin="3" Opacity="0.5 "
-                                   ToolTipService.ToolTip="切换登入"
-                                   Command="{Binding LoginCommand}">
-                            <ui:SymbolIcon Symbol="ChevronDown24" FontSize="10" />
-                        </ui:Button>
-                    </StackPanel>
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="12,0,0,6"
-                        Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                        Text="{Binding UserLoginModel.Name}" />
-                </Grid>
-            </Grid>
-        </Grid>
+
         <Grid Grid.Row="1" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
