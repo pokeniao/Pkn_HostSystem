@@ -227,6 +227,14 @@
                                 <ui:SymbolIcon Symbol="Wrench16" />
                             </ui:NavigationViewItem.Icon>
                         </ui:NavigationViewItem>
+                        <ui:NavigationViewItem
+                            Content="固高运动控制卡"
+                            NavigationCacheMode="Enabled"
+                            TargetPageType="{x:Type pages:MotionPage}">
+                            <ui:NavigationViewItem.Icon>
+                                <ui:SymbolIcon Symbol="Wrench16" />
+                            </ui:NavigationViewItem.Icon>
+                        </ui:NavigationViewItem>
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>

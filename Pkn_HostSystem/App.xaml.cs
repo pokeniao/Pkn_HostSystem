@@ -174,12 +174,12 @@ namespace Pkn_HostSystem
                     .AddSingleton<Login2ViewModel>() 
                     .AddSingleton<SerialToolViewModel>()
                     .AddSingleton<DesignViewModel>()
-
-                      //页面单例 ,预加载
-                      // .AddSingleton<LoginWindowPage1>()
-                      // .AddSingleton<LoginWindowPage2>()
-                      // .AddSingleton<LoginWindowManagePage>()
-                      // .AddSingleton<LoginWindowRegisterPage>()
+                    .AddSingleton<MotionToolViewModel>()
+                    //页面单例 ,预加载
+                    // .AddSingleton<LoginWindowPage1>()
+                    // .AddSingleton<LoginWindowPage2>()
+                    // .AddSingleton<LoginWindowManagePage>()
+                    // .AddSingleton<LoginWindowRegisterPage>()
                     .AddSingleton<DesignPage>()
                     .AddSingleton<SerialToolPage>()
                     .AddSingleton<StationPage>()
@@ -192,6 +192,7 @@ namespace Pkn_HostSystem
                     .AddSingleton<ModbusToolPage>()
                     .AddSingleton<S7ToolPage>()
                     .AddSingleton<TcpToolPage>()
+                    .AddSingleton<MotionPage>()
                     .AddSingleton<LiveChartsTestPage>() //AddTransient每次导航会new 一个新对象
                     // .BuildServiceProvider()  Microsoft.Extensions.DependencyInjection原生
                     .BuildDynamicProxyProvider() //AspectCore中的Ioc,支持Aop
